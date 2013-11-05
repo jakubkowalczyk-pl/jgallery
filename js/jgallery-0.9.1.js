@@ -1,10 +1,10 @@
 /*!
- * jGallery v0.9.2
+ * jGallery v0.9.1
  * http://jgallery.jakubkowalczyk.pl/
  *
  * Released under the MIT license
  *
- * Date: 2013-10-29 
+ * Date: 2013-10-16
  */
 ( function( $ ) {
     $.fn.jGallery = function( options ) {
@@ -12,8 +12,7 @@
             'autostart': false,
             'canClose': true,
             'canResize': true,
-            'backgroundColor': '#000',
-            'textColor': '#fff',
+            'descriptions': false,
             'thumbnails': true,
             'thumbnailsFullScreen': true,
             'thumbType': 'image', // [ image | square | number ]
@@ -22,8 +21,8 @@
             'thumbHeight': 100, //px
             'thumbWidthOnFullScreen': 100, //px
             'thumbHeightOnFullScreen': 100, //px
-            'showEffect': 'rotate-room-right', // [ rotate-room-right | rotate-room-left | rotate-room-up | rotate-room-down ] http://jgallery.jakubkowalczyk.pl/demo.php
-            'hideEffect': 'rotate-room-right', //[ rotate-room-right | rotate-room-left | rotate-room-up | rotate-room-down ] http://jgallery.jakubkowalczyk.pl/demo.php
+            'showEffect': 'rotate-room-right', // [ rotate-room-right | rotate-room-left | rotate-room-up | rotate-room-down ] http://jgallery.jakubkowalczyk.pl/demo.php?transitions
+            'hideEffect': 'rotate-room-right', //[ rotate-room-right | rotate-room-left | rotate-room-up | rotate-room-down ] http://jgallery.jakubkowalczyk.pl/demo.php?transitions
             'showTimingFunction': 'linear', // [ linear | ease | ease-in | ease-out | ease-in-out | cubic-bezier(n,n,n,n) ]
             'hideTimingFunction': 'linear', // [ linear | ease | ease-in | ease-out | ease-in-out | cubic-bezier(n,n,n,n) ]
             'showDuration': '0.5s',
@@ -43,6 +42,7 @@
             'slideshowRandomAutostart': false,
             'slideshowInterval': '8s',
             'preloadAll': false,
+            'theme': 'black', // [ black | white ]
             'disabledOnIE7AndOlder': true,
             'initGallery': function() {},
             'showPhoto': function() {},
@@ -59,7 +59,6 @@
         var $window = $( window );
         
         function jGallery( $this ) {
-            var $head = $( 'head' );
             var $body;
             var loader;
             var $jGallery;
@@ -71,6 +70,7 @@
             var $random = $();
             var $thumbsChangeViewToFullScreen;
             var $thumbsChangeAlbum = $();
+            var $descriptions;
             var $thumbnails;
             var $thumbnailsContainer;
             var $thumbnailsPrev;
@@ -110,6 +110,7 @@
             }
             
             function setUserOptions() {
+                $jGallery.removeClass( 'white black' ).addClass( $.fn.jGalleryOptions[ intId ].theme );
                 $resize = $zoomContainer.find( '.resize' );
                 $.fn.jGalleryOptions[ intId ].canResize ? $resize.show() : $resize.hide();
                 $.fn.jGalleryOptions[ intId ].canClose ? $zoomContainer.find( '.close' ).show() : $zoomContainer.find( '.close' ).hide();
@@ -131,14 +132,11 @@
 
                 $thumbsChangeViewToFullScreen = $zoomContainer.find( '.full-screen' );
                 $thumbnailsClose = $thumbnails.find( '.close' );
-               
-                $.fn.jGalleryOptions[ intId ].thumbnailsFullScreen ? $thumbsChangeViewToFullScreen.add( $thumbnailsClose ).show() : $thumbsChangeViewToFullScreen.add( $thumbnailsClose ).hide();
-                $.fn.jGalleryOptions[ intId ].thumbnailsFullScreen ? $zoomContainer.find( '.change-album' ).show() : $zoomContainer.find( '.change-album' ).hide();
                 
-                $head.append( getCssForColours( {
-                    strBg: $.fn.jGalleryOptions[ intId ].backgroundColor,
-                    strText: $.fn.jGalleryOptions[ intId ].textColor
-                } ) );
+                $.fn.jGalleryOptions[ intId ].thumbnailsFullScreen ? $thumbsChangeViewToFullScreen.add( $thumbnailsClose ).show() : $thumbsChangeViewToFullScreen.add( $thumbnailsClose ).hide();
+ 
+                $.fn.jGalleryOptions[ intId ].descriptions ? $descriptions.show() : $descriptions.hide();
+                $.fn.jGalleryOptions[ intId ].thumbnailsFullScreen ? $zoomContainer.find( '.change-album' ).show() : $zoomContainer.find( '.change-album' ).hide();
             }
 
             function progress( $this ) {
@@ -185,6 +183,7 @@
                 $next = $zoomContainer.children( '.next' );
                 $zoom = $zoomContainer.children( '.zoom' );
                 $progress = progress( $zoomContainer.children( '.progress' ) );
+                $descriptions = $jGallery.find( '.descriptions' );
                 $thumbnails = $jGallery.find( '.thumbnails' );
                 $thumbnailsContainer = $thumbnails.find( '.container' );
                 $thumbnailsPrev = $thumbnails.children( '.prev' );
@@ -215,7 +214,7 @@
                     var intNo = 1;
                     
                     $images.find( 'a:has(img:first-child:last-child)' ).each( function() {
-                        $container.append( $( this ).addClass( 'hidden' ) );
+                        $container.append( $( this ) );
                         $container.children( ':last-child' ).attr( 'data-jgallery-photo-id', intI++ ).attr( 'data-jgallery-number', intNo++ );
                     } );
                 }
@@ -253,12 +252,10 @@
                             <span class="prev btn hidden"><span class="icon-chevron-left ico"></span></span>\
                             <span class="next btn hidden"><span class="icon-chevron-right ico"></span></span>\
                         </div>\
+                        <div class="descriptions"></div>\
                         <div class="zoom-container">\
                             <div class="title before"></div>\
-                            <div id="pt-main" class="zoom before pt-perspective">\
-                                <div class="left" />\
-                                <div class="right" />\
-                            </div>\
+                            <div id="pt-main" class="zoom before pt-perspective"></div>\
                             <span class="icon-chevron-left prev btn btn-large"></span>\
                             <span class="icon-chevron-right next btn btn-large"></span>\
                             <span class="progress"></span>\
@@ -427,14 +424,14 @@
                     }
                 } );
 
-                $prev.add( $zoom.find( '.left' ) ).on( {
+                $prev.on( {
                     click: function() {
                         slideshowStop();
                         showPrevPhoto();
                     }
                 } );
 
-                $next.add( $zoom.find( '.right' ) ).on( {
+                $next.on( {
                     click: function() {
                         slideshowStop();
                         showNextPhoto();
@@ -805,6 +802,7 @@
                     booLoadingInProgress = false;
                     return;
                 }
+                $descriptions.html( '' );
                 refreshZoomNav();
                 clearTimeout( loader );
                 
@@ -874,7 +872,8 @@
                     success: function() {
                         $zoom.find( 'img' ).addClass( 'loaded' );
                         $zoomContainer.overlay( {'hide': true, 'hideLoader': true} );
-                        clearInterval( loader );                                                  
+                        clearInterval( loader );
+                        $descriptions.html( $a.attr( 'data-description' ) );                                                    
                         loader = setTimeout( function() {
                             loadPhotoSuccess( $imgThumb );
                         }, 500 );
@@ -963,7 +962,6 @@
                         start: function() {},
                         success: function(){
                             showNextThumb();
-                            $thumbnailsA.parent( '.album:not(.active)' ).children( '.hidden' ).removeClass( 'hidden' );
                             $thumbnails.addClass( 'loaded' );
                             $thumbnailsImg.each( function() {
                                 var $image = $( this );
@@ -979,7 +977,10 @@
             }
             
             function showNextThumb() {
-                var $nextThumb = $thumbnailsA.parent( '.album.active' ).children( '.hidden' ).eq( 0 );
+                $thumbnailsA.removeClass( 'hidden' );
+                return;
+                
+                var $nextThumb = $thumbnailsA.filter( '.hidden' ).eq( 0 );
                 setTimeout( function() {
                     $nextThumb.removeClass( 'hidden' );
                     if ( $nextThumb.length ) {
@@ -1323,8 +1324,7 @@
            }
            intCount = parseInt( $images.length );
            options.start();
-           check();
-           //intCount == 1 && ! isCrossDomain( $images.eq( 0 ).attr( 'src' ) ) && document.location.hostname != '' ? checkOne() : check();
+           intCount == 1 && ! isCrossDomain( $images.eq( 0 ).attr( 'src' ) ) && document.location.hostname != '' ? checkOne() : check();
        } );
    };
    
@@ -1376,133 +1376,5 @@
 
     function isHorizontal( $image ) {
         return $image.width() > $image.height();
-    }
-    
-    function getCssForColours( objOptions ) {
-        objOptions = $.extend( {
-            strBg: 'rgb( 0, 0, 0 )',
-            strText: 'rgb( 255, 255, 255 )'
-        }, objOptions );
-        
-        var arrBg = tinycolor( objOptions.strBg ).toRgb();
-        var arrBgAlt = arrBg.r + arrBg.g + arrBg.b > 375 ? tinycolor.darken( objOptions.strBg ).toRgb() : tinycolor.lighten( objOptions.strBg ).toRgb();
-        var arrText = tinycolor( objOptions.strText ).toRgb();
-                
-        return '\
-            <style type="text/css">\
-            .jgallery {\
-              background: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
-            }\
-            .jgallery .btn {\
-              color: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
-              background: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
-            }\
-            .jgallery .btn.active {\
-              color: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
-            }\
-            .jgallery .btn:hover {\
-              text-shadow: none;\
-              text-shadow: 0 0 .15em rgba(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ',.75), 0 0 .45em rgba(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ',.5);\
-            }\
-            .jgallery .change-album .menu {\
-              background: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
-            }\
-            .jgallery .change-album .menu .item {\
-              border-color: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
-              color: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
-            }\
-            .jgallery .change-album .menu .item:hover {\
-              background: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
-              color: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
-            }\
-            .jgallery .zoom-container .title {\
-              color: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
-            }\
-            .jgallery .zoom-container .nav-bottom {\
-              background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
-            }\
-            .jgallery .zoom-container .nav-bottom .btn {\
-                background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
-            }\
-            .jgallery .thumbnails {\
-              background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
-            }\
-            .jgallery .thumbnails .ico {\
-              color: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
-            }\
-            .jgallery .thumbnails.full-screen .prev:before {\
-              background-image: -webkit-gradient(linear,left 0%,left 100%,from(rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 1 )),to(rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 0)));\
-              background-image: -webkit-linear-gradient(top,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 1 ),0%,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 0),100%);\
-              background-image: -moz-linear-gradient(top,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 1 ) 0%,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 0) 100%);\
-              background-image: linear-gradient(to bottom,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 1 ) 0%,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 0) 100%);\
-              background-repeat: repeat-x;\
-            }\
-            .jgallery .thumbnails.full-screen .next:before {\
-              background-image: -webkit-gradient(linear,left 0%,left 100%,from(rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 0)),to(rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 1)));\
-              background-image: -webkit-linear-gradient(top,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 0),0%,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 1),100%);\
-              background-image: -moz-linear-gradient(top,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 0) 0%,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 1) 100%);\
-              background-image: linear-gradient(to bottom,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 0) 0%,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 1) 100%);\
-              background-repeat: repeat-x;\
-            }\
-            .jgallery .thumbnails.images a:after {\
-              background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
-            }\
-            .jgallery .thumbnails.full-screen .prev,\
-            .jgallery .thumbnails.full-screen .next {\
-              background: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
-            }\
-            .jgallery .thumbnails.square a {\
-              background: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
-              color: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
-            }\
-            .jgallery .overlayContainer .overlay {\
-              background: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
-              color: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
-            }\
-            .jgallery .overlayContainer .imageLoaderPositionAbsolute:after {\
-              border-color: rgba(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ', .5 );\
-            }\
-            .jgallery .thumbnails-horizontal .prev {\
-              background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
-            }\
-            .jgallery .thumbnails-horizontal .prev:before {\
-              background-image: -webkit-gradient(linear,0% top,100% top,from(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 )),to(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 )));\
-              background-image: -webkit-linear-gradient(left,color-stop(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 0%),color-stop(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 100%));\
-              background-image: -moz-linear-gradient(left,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 100%);\
-              background-image: linear-gradient(to right,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 100%);\
-              background-repeat: repeat-x;\
-            }\
-            .jgallery .thumbnails-horizontal .next {\
-              background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
-            }\
-            .jgallery .thumbnails-horizontal .next:before {\
-              background-image: -webkit-gradient(linear,0% top,100% top,from(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 )),to(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 )));\
-              background-image: -webkit-linear-gradient(left,color-stop(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 0%),color-stop(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 100%));\
-              background-image: -moz-linear-gradient(left,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 100%);\
-              background-image: linear-gradient(to right,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 100%);\
-              background-repeat: repeat-x;\
-            }\
-            .jgallery .thumbnails-vertical .prev {\
-              background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
-            }\
-            .jgallery .thumbnails-vertical .prev:before {\
-              background-image: -webkit-gradient(linear,left 0%,left 100%,from(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 )),to(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 )));\
-              background-image: -webkit-linear-gradient(top,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ),0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ),100%);\
-              background-image: -moz-linear-gradient(top,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 100%);\
-              background-image: linear-gradient(to bottom,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 100%);\
-              background-repeat: repeat-x;\
-            }\
-            .jgallery .thumbnails-vertical .next {\
-              background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
-            }\
-            .jgallery .thumbnails-vertical .next:before {\
-              background-image: -webkit-gradient(linear,left 0%,left 100%,from(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 )),to(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 )));\
-              background-image: -webkit-linear-gradient(top,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ),0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ),100%);\
-              background-image: -moz-linear-gradient(top,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 100%);\
-              background-image: linear-gradient(to bottom,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 100%);\
-              background-repeat: repeat-x;\
-            }\
-            </style>\
-        ';
     }
 } ) ( jQuery );

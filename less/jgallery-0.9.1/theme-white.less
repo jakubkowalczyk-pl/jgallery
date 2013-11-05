@@ -1,0 +1,139 @@
+.jgallery.white {
+    background: #eee;
+
+    .btn {
+        color: #000;
+        background: #fff;
+
+        &.inactive {
+            color: #999;
+        }
+
+        &.active {
+            color: #000;
+        }
+
+        &:hover {
+            text-shadow: none;
+        }
+    }
+
+    .change-album .menu {
+        background: #fff;
+
+        .item {
+            border-color: #ccc;
+            color: #444;
+
+            &:hover {
+                color: #000;
+                background: #eee;
+            }
+
+            &.active {
+                color: #444;
+                background: #ddd;
+            }
+        }
+    }
+
+    .zoom-container {
+        .title {
+            color: #000;
+        }
+
+        .nav-bottom {
+            background: #fff;
+        }
+    }
+
+    .thumbnails {
+        background: #fff;
+
+        .ico {
+            color: #000;
+        }
+
+        &.full-screen {
+            background: #eee;
+
+            .prev:before {
+                #gradient > .vertical( ~"rgba(238,238,238,1)", ~"rgba(238,238,238,0)" );
+            }
+
+            .next:before {
+                #gradient > .vertical( ~"rgba(238,238,238,0)", ~"rgba(238,238,238,1)" );
+            }
+        }
+
+        &.images {
+            a {
+                &:after {
+                    background: #fff;
+                    opacity: .5;
+                }
+
+                &.active:after {
+                    opacity: .125;
+                }
+            }
+
+            &:hover a {
+                &:after {
+                    opacity: .25;
+                }
+
+                &:hover:after {
+                    opacity: 0;
+                }
+
+                &.active:after {
+                    opacity: 0;
+                }
+            }
+        }
+
+        &.full-screen {
+            .prev,
+            .next {
+                background: #eee;
+            }
+        }
+
+        &.square a {
+            background: #666;
+            color: #fff;
+        }
+    }
+
+    .overlayContainer {
+        .overlay {
+            background: #eee;
+            color: #000;
+        }
+
+        .imageLoaderPositionAbsolute:after {
+            background: #fff;
+        }
+    }
+
+    .thumbnails-horizontal {
+        .prev:before {
+            #gradient > .horizontal( ~"rgba(255,255,255,1)", ~"rgba(255,255,255,0)" );
+        }
+
+        .next:before {
+            #gradient > .horizontal( ~"rgba(255,255,255,0)", ~"rgba(255,255,255,1)" );
+        }
+    }
+
+    .thumbnails-vertical {
+        .prev:before {
+            #gradient > .vertical( ~"rgba(255,255,255,1)", ~"rgba(255,255,255,0)" );
+        }
+
+        .next:before {
+            #gradient > .vertical( ~"rgba(255,255,255,0)", ~"rgba(255,255,255,1)" );
+        }
+    }
+}

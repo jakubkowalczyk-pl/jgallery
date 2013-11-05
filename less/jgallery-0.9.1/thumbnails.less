@@ -1,0 +1,71 @@
+.jgallery .thumbnails {
+    background: #111;
+    position: absolute;
+    z-index: 3;
+    font-size: 0;
+    line-height: 0;
+    overflow: hidden;
+}
+.jgallery .thumbnails .container {
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    overflow: hidden;
+}
+.jgallery .thumbnails .album {
+    display: none;
+}
+.jgallery .thumbnails .album.active {
+    display: inline;
+}
+.jgallery .thumbnails a {
+    -webkit-border-radius: .6em;
+    border-radius: .6em;
+    display: inline-block;
+}
+.jgallery .thumbnails a:hover:not(.active) {
+    -webkit-border-radius: 2px !important;
+    border-radius: 2px !important;
+}
+.jgallery .thumbnails a img {
+    -webkit-border-radius: .6em;
+    border-radius: .6em;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    -o-transition: all 0.5s;
+    transition: all 0.5s;
+}
+.jgallery .thumbnails a:hover:not(.active) img {
+    -webkit-border-radius: 2px !important;
+    border-radius: 2px !important;
+}
+.jgallery .thumbnails .prev,
+.jgallery .thumbnails .next {
+    font-size: 24px;
+    text-align: center;
+    background: #111;
+    opacity: 1;
+    .box-shadow( none );
+    cursor: pointer;
+    position: absolute;
+    
+}
+.jgallery .thumbnails .ico {
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    line-height: 40px;
+    color: #fff;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+}
+.jgallery .thumbnails .close {
+    opacity: 0;
+    display: none;
+}
+.jgallery .thumbnails .change-album {
+    display: none;
+}

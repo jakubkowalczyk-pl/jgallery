@@ -25,17 +25,20 @@ html, body {
         font-size: 60px;
         font-weight: bold;
         letter-spacing: -0.02em;
+        .animation( overlay-container 2s linear infinite );
         text-align: center;
         position: absolute;
         z-index: 10001;
 
         &.preloadAll:after {
             border-radius: 1.7em;
+            background: rgba( 255, 255, 255, .12 );
             left: 0;
             top: 0;
             bottom: 0;
             right: 0;
             content: "";
+            .animation( overlay-circle 2s linear infinite );
             position: absolute;
             z-index: 0;
         }
@@ -56,7 +59,6 @@ html, body {
                 padding-left: .117em;
                 font-size: .5em;
                 font-weight: normal;
-                .animation( percent 1s linear infinite );
                 content: "%";
             }
         }
@@ -76,26 +78,74 @@ body.overlayContainer > .overlay {
     }
 }
 
-@keyframes percent {
+@keyframes overlay-container {
     0% {
-        opacity: .1;
+        width: 3em;
+        height: 3em;
+        line-height: 2.9em;
+        margin: -1.5em 0 0 -1.5em;
     }
     50% {
-        opacity: 1;
+        width: 4em;
+        height: 4em;
+        line-height: 3.867em;
+        margin: -2em 0 0 -2em;
     }
     100% {
-        opacity: .1;
+        width: 3em;
+        height: 3em;
+        line-height: 2.9em;
+        margin: -1.5em 0 0 -1.5em;
     }
 }
 
-@-webkit-keyframes percent {
+@-webkit-keyframes overlay-container {
     0% {
-        opacity: .1;
+        width: 3em;
+        height: 3em;
+        line-height: 2.9em;
+        margin: -1.5em 0 0 -1.5em;
     }
     50% {
+        width: 4em;
+        height: 4em;
+        line-height: 3.867em;
+        margin: -2em 0 0 -2em;
+    }
+    100% {
+        width: 3em;
+        height: 3em;
+        line-height: 2.9em;
+        margin: -1.5em 0 0 -1.5em;
+    }
+}
+
+@keyframes overlay-circle {
+    0% {
+        border-radius: 1.7em;
+        opacity: .4;
+    }
+    50% {
+        border-radius: 2.267em;
         opacity: 1;
     }
     100% {
-        opacity: .1;
+        border-radius: 1.7em;
+        opacity: .4;
+    }
+}
+
+@-webkit-keyframes overlay-circle {
+    0% {
+        border-radius: 1.7em;
+        opacity: .4;
+    }
+    50% {
+        border-radius: 2.267em;
+        opacity: 1;
+    }
+    100% {
+        border-radius: 1.7em;
+        opacity: .4;
     }
 }
