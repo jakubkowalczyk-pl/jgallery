@@ -3,122 +3,31 @@
 <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" type="text/css" media="all" href="./css/font-awesome.min.css" />
-    <link rel="stylesheet" type="text/css" media="all" href="./css/jgallery-0.9.1.min.css" />
-    <script type="text/javascript" src="./js/jquery-1.8.3.min.js"></script>
-    <script type="text/javascript" src="./js/jgallery-0.9.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" media="all" href="./css/jgallery-0.9-beta.min.css" />
+    <script type="text/javascript" src="./js/jquery-1.8.3.js"></script>
+    <script type="text/javascript" src="./js/jgallery-0.9-beta.min.js"></script>
     <script type="text/javascript">
-    $( function() {
-        $( '#album' ).jGallery( {
-            'autostart': true,
-            'canClose': true,
-            'canResize': true,
-            'descriptions': false,
-            'thumbnails': true,
-            'thumbnailsFullScreen': true,
-            'thumbType': 'image', // [ image | square | number ]
-            'thumbnailsPosition': 'bottom', // [ top | bottom | left | right ]
-            'thumbWidth': 100, //px
-            'thumbHeight': 100, //px
-            'thumbWidthOnFullScreen': 100, //px
-            'thumbHeightOnFullScreen': 100, //px
-            'showEffect': 'rotate-room-right', // more > http://jgallery.jakubkowalczyk.pl/demo.php
-            'hideEffect': 'rotate-room-right', // more > http://jgallery.jakubkowalczyk.pl/demo.php
-            'showTimingFunction': 'linear', // [ linear | ease | ease-in | ease-out | ease-in-out | cubic-bezier(n,n,n,n) ]
-            'hideTimingFunction': 'linear', // [ linear | ease | ease-in | ease-out | ease-in-out | cubic-bezier(n,n,n,n) ]
-            'showDuration': '0.5s',
-            'hideDuration': '0.5s',
-            'zoomSize': '100%', // [ fitToWindow | 100% ]
-            'title': true,
-            'titleShowEffect': 'fade',
-            'titleHideEffect': 'fade',
-            'titleShowTimingFunction': 'ease', // [ linear | ease | ease-in | ease-out | ease-in-out | cubic-bezier(n,n,n,n) ]
-            'titleHideTimingFunction': 'ease', // [ linear | ease | ease-in | ease-out | ease-in-out | cubic-bezier(n,n,n,n) ]
-            'titleShowDuration': '0.5s',
-            'titleHideDuration': '0.5s',
-            'slideshow': true,
-            'slideshowAutostart': false,
-            'slideshowCanRandom': true,
-            'slideshowRandom': false,
-            'slideshowRandomAutostart': false,
-            'slideshowInterval': '8s',
-            'preloadAll': false,
-            'theme': 'black', // [ black | white ]
-            'disabledOnIE7AndOlder': true,
-            'initGallery': function() {},
-            'showPhoto': function() {},
-            'beforeLoadPhoto': function() {},
-            'afterLoadPhoto': function() {},
-            'showGallery': function() {},
-            'closeGallery': function() {}
+        //<![CDATA[
+        $( function() {
+            $( '#album' ).jGallery( {
+                autostart: true,
+                zoomSize: '100%'
+            } );
         } );
-    } );
+        //]]>
     </script>
 </head>
 <body style="padding: 40px; color: #fff; background: #000;">
     <div id="album">
         <div data-jgallery-album-title="Album 1" class="album">
             <h1>Album 1</h1>
-            <a href="http://jgallery.jakubkowalczyk.pl/images/large/1.jpg">
-                <img alt="" src="http://jgallery.jakubkowalczyk.pl/images/thumbs/1.jpg">
-            </a>
-            <a href="http://jgallery.jakubkowalczyk.pl/images/large/10.jpg">
-                <img alt="" src="http://jgallery.jakubkowalczyk.pl/images/thumbs/10.jpg">
-            </a>
-            <a href="http://jgallery.jakubkowalczyk.pl/images/large/11.jpg">
-                <img alt="" src="http://jgallery.jakubkowalczyk.pl/images/thumbs/11.jpg">
-            </a>
-            <a href="http://jgallery.jakubkowalczyk.pl/images/large/12.jpg">
-                <img alt="" src="http://jgallery.jakubkowalczyk.pl/images/thumbs/12.jpg">
-            </a>
-            <a href="http://jgallery.jakubkowalczyk.pl/images/large/13.jpg">
-                <img alt="" src="http://jgallery.jakubkowalczyk.pl/images/thumbs/13.jpg">
-            </a>
-        </div>
+            <a href="images/large/1.jpg"><img alt="" src="images/thumbs/1.jpg"></a><a href="images/large/10.jpg"><img alt="" src="images/thumbs/10.jpg"></a><a href="images/large/11.jpg"><img alt="" src="images/thumbs/11.jpg"></a><a href="images/large/12.jpg"><img alt="" src="images/thumbs/12.jpg"></a><a href="images/large/13.jpg"><img alt="" src="images/thumbs/13.jpg"></a><a href="images/large/14.jpg"><img alt="" src="images/thumbs/14.jpg"></a><a href="images/large/15.jpg"><img alt="" src="images/thumbs/15.jpg"></a><a href="images/large/16.jpg"><img alt="" src="images/thumbs/16.jpg"></a><a href="images/large/17.jpg"><img alt="" src="images/thumbs/17.jpg"></a><a href="images/large/2.jpg"><img alt="" src="images/thumbs/2.jpg"></a><a href="images/large/3.jpg"><img alt="" src="images/thumbs/3.jpg"></a><a href="images/large/4.jpg"><img alt="" src="images/thumbs/4.jpg"></a><a href="images/large/5.jpg"><img alt="" src="images/thumbs/5.jpg"></a><a href="images/large/6.jpg"><img alt="" src="images/thumbs/6.jpg"></a><a href="images/large/7.jpg"><img alt="" src="images/thumbs/7.jpg"></a><a href="images/large/8.jpg"><img alt="" src="images/thumbs/8.jpg"></a><a href="images/large/9.jpg"><img alt="" src="images/thumbs/9.jpg"></a>        </div>
         <div data-jgallery-album-title="Album 2" class="album">
             <h1>Album 2</h1>
-            <a href="http://jgallery.jakubkowalczyk.pl/images/large/14.jpg">
-                <img alt="" src="http://jgallery.jakubkowalczyk.pl/images/thumbs/14.jpg">
-            </a>
-            <a href="http://jgallery.jakubkowalczyk.pl/images/large/15.jpg">
-                <img alt="" src="http://jgallery.jakubkowalczyk.pl/images/thumbs/15.jpg">
-            </a>
-            <a href="http://jgallery.jakubkowalczyk.pl/images/large/16.jpg">
-                <img alt="" src="http://jgallery.jakubkowalczyk.pl/images/thumbs/16.jpg">
-            </a>
-            <a href="http://jgallery.jakubkowalczyk.pl/images/large/17.jpg">
-                <img alt="" src="http://jgallery.jakubkowalczyk.pl/images/thumbs/17.jpg">
-            </a>
-        </div>
+            <a href="images/large/10.jpg"><img alt="" src="images/thumbs/10.jpg"></a><a href="images/large/11.jpg"><img alt="" src="images/thumbs/11.jpg"></a><a href="images/large/12.jpg"><img alt="" src="images/thumbs/12.jpg"></a><a href="images/large/13.jpg"><img alt="" src="images/thumbs/13.jpg"></a><a href="images/large/14.jpg"><img alt="" src="images/thumbs/14.jpg"></a><a href="images/large/15.jpg"><img alt="" src="images/thumbs/15.jpg"></a><a href="images/large/16.jpg"><img alt="" src="images/thumbs/16.jpg"></a><a href="images/large/17.jpg"><img alt="" src="images/thumbs/17.jpg"></a><a href="images/large/2.jpg"><img alt="" src="images/thumbs/2.jpg"></a>        </div>
         <div data-jgallery-album-title="Album 3" class="album">
-            <h1>Album 1</h1>
-            <a href="http://jgallery.jakubkowalczyk.pl/images/large/1.jpg">
-                <img alt="" src="http://jgallery.jakubkowalczyk.pl/images/thumbs/1.jpg">
-            </a>
-            <a href="http://jgallery.jakubkowalczyk.pl/images/large/10.jpg">
-                <img alt="" src="http://jgallery.jakubkowalczyk.pl/images/thumbs/10.jpg">
-            </a>
-            <a href="http://jgallery.jakubkowalczyk.pl/images/large/11.jpg">
-                <img alt="" src="http://jgallery.jakubkowalczyk.pl/images/thumbs/11.jpg">
-            </a>
-            <a href="http://jgallery.jakubkowalczyk.pl/images/large/12.jpg">
-                <img alt="" src="http://jgallery.jakubkowalczyk.pl/images/thumbs/12.jpg">
-            </a>
-            <a href="http://jgallery.jakubkowalczyk.pl/images/large/13.jpg">
-                <img alt="" src="http://jgallery.jakubkowalczyk.pl/images/thumbs/13.jpg">
-            </a>
-            <a href="http://jgallery.jakubkowalczyk.pl/images/large/14.jpg">
-                <img alt="" src="http://jgallery.jakubkowalczyk.pl/images/thumbs/14.jpg">
-            </a>
-            <a href="http://jgallery.jakubkowalczyk.pl/images/large/15.jpg">
-                <img alt="" src="http://jgallery.jakubkowalczyk.pl/images/thumbs/15.jpg">
-            </a>
-            <a href="http://jgallery.jakubkowalczyk.pl/images/large/16.jpg">
-                <img alt="" src="http://jgallery.jakubkowalczyk.pl/images/thumbs/16.jpg">
-            </a>
-            <a href="http://jgallery.jakubkowalczyk.pl/images/large/17.jpg">
-                <img alt="" src="http://jgallery.jakubkowalczyk.pl/images/thumbs/17.jpg">
-            </a>
-        </div>
+            <h1>Album 3</h1>
+            <a href="images/large/3.jpg"><img alt="" src="images/thumbs/3.jpg"></a><a href="images/large/4.jpg"><img alt="" src="images/thumbs/4.jpg"></a><a href="images/large/5.jpg"><img alt="" src="images/thumbs/5.jpg"></a><a href="images/large/6.jpg"><img alt="" src="images/thumbs/6.jpg"></a><a href="images/large/7.jpg"><img alt="" src="images/thumbs/7.jpg"></a><a href="images/large/8.jpg"><img alt="" src="images/thumbs/8.jpg"></a><a href="images/large/9.jpg"><img alt="" src="images/thumbs/9.jpg"></a>        </div>
     </div>
 </body>
 </html>

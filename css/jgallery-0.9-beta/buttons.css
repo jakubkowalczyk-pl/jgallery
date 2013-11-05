@@ -1,0 +1,51 @@
+#jGallery .btn {
+    -webkit-box-shadow: 0 0 1px 3px rgba( 0, 0, 0, .1 );
+    box-shadow: 0 0 1px 3px rgba( 0, 0, 0, .1 );
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    -o-transition: all 0.2s;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+#jGallery .btn:hover {
+    -webkit-border-radius: 2px !important;
+    border-radius: 2px !important;
+    -webkit-box-shadow: 0 0 1px 3px rgba( 0, 0, 0, .3 );
+    box-shadow: 0 0 1px 3px rgba( 0, 0, 0, .3 );
+    text-shadow: 0 0 .15em #fff;
+}
+#jGallery .btn.inactive {
+    color: #666;
+}
+#jGallery .btn.inactive:hover {
+    text-shadow: 0 0 .15em #666;
+}
+#jGallery .btn.active {
+    color: #fff;
+}
+#jGallery .btn.active:hover {
+    text-shadow: 0 0 .15em #fff;
+}
+#jGallery .btn-large {
+    width: 70px;
+    height: 70px;
+    -webkit-border-radius: 40px;
+    border-radius: 40px;
+    line-height: 76px;
+    font-size: 36px;
+    text-align: center;
+    color: #fff;
+    background: #111;
+}
+#jGallery .btn-small {
+    width: 40px;
+    height: 40px;
+    margin: 0;
+    -webkit-border-radius: 25px;
+    border-radius: 25px;
+    line-height: 43px;
+    font-size: 18px;
+    text-align: center;
+    color: #fff;
+    background: #111;
+}

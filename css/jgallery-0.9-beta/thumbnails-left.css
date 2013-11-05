@@ -1,0 +1,9 @@
+#jGallery .thumbnails-left {
+    left: 0;
+}
+#jGallery .thumbnails-left .prev,
+#jGallery .thumbnails-left .next {
+}
+#jGallery .thumbnails-right {
+    right: 0;
+}
