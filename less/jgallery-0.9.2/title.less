@@ -1,0 +1,33 @@
+/* title
+--------------------------------------------------------------------------*/
+.jgallery .zoom-container .title {
+    padding: 4px 0;
+    bottom: -36px;
+    right: 18px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    -webkit-transition: top,left,right,bottom,opacity,text-shadow,color 0.5s;
+    -moz-transition: top,left,right,bottom,opacity,text-shadow,color 0.5s;
+    -o-transition: top,left,right,bottom,opacity,text-shadow,color 0.5s;
+    transition: top,left,right,bottom,opacity,text-shadow,color 0.5s;
+    opacity: 1;
+    position: absolute;
+    z-index: 10003;
+}
+.jgallery .zoom-container .title.hidden {
+    bottom: -50%;
+    right: -50%;
+    opacity: 0;
+}
+.jgallery.text-shadow .zoom-container .title.hidden,
+.jgallery.text-shadow .zoom-container .title.after,
+.jgallery.text-shadow .zoom-container .title.before {
+    text-shadow: 0 0 .25em #fff;
+    color: transparent;
+    opacity: .5;
+    -webkit-transition: top,left,right,bottom,opacity 0.5s;
+    -moz-transition: top,left,right,bottom,opacity 0.5s;
+    -o-transition: top,left,right,bottom,opacity 0.5s;
+    transition: top,left,right,bottom,opacity 0.5s;
+}

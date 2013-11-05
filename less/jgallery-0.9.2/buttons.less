@@ -1,0 +1,44 @@
+.jgallery {
+    .btn {
+        .transition( all 0.2s );
+        cursor: pointer;
+
+        &:hover {
+            text-shadow: 0 0 .15em #fff;
+        }
+
+        &.inactive {
+            opacity: .5;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+
+        &.active {
+            color: #fff;
+            opacity: 1;
+        }
+    }
+
+    .btn-large {
+        width: 60px;
+        height: 60px;
+        line-height: 64px;
+        font-size: 30px;
+        text-align: center;
+        color: #fff;
+        background: #111;
+    }
+
+    .btn-small {
+        width: 40px;
+        height: 40px;
+        margin: 0;
+        line-height: 43px;
+        font-size: 18px;
+        text-align: center;
+        color: #fff;
+        background: #111;
+    }
+}

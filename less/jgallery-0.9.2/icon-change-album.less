@@ -1,0 +1,58 @@
+.jgallery .change-album {
+    position: relative;
+
+    .menu {
+        left: 0;
+        bottom: 42px;
+        background: #111;
+        position: absolute;
+        display: none;
+
+        .item {
+            margin: 0;
+            padding: 10px 40px 10px 10px;
+            border-bottom: 1px solid rgba( 127, 127, 127, .5 );
+            font-family: @fontFamily;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: left;
+            .transition( all 0.3s );
+            line-height: normal;
+            white-space: pre;
+            color: #ddd;
+            text-shadow: none;
+            display: block;
+
+            &:hover {
+                color: #fff;
+                background: #222;
+            }
+
+            &.active {
+                color: #ddd;
+                background: #333;
+            }
+        }
+    }
+
+    .title {
+        padding: 0;
+        line-height: 40px;
+        left: 48px;
+        top: 0;
+        bottom: auto;
+        right: auto;
+        font-family: @fontFamily;
+        font-size: 14px;
+        position: absolute;
+        white-space: pre;
+    }
+
+    &.active {
+        border-radius: 2px;
+
+        .menu {
+            display: block;
+        }
+    }
+}
