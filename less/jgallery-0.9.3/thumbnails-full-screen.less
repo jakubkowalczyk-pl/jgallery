@@ -1,0 +1,74 @@
+.jgallery .thumbnails.full-screen {
+    width: auto;
+    height: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    .container {
+        text-align: left;
+        white-space: normal;
+    }
+
+    .container-inner {
+        padding: 60px 45px 45px;
+
+        &:after {
+            width: auto;
+            height: 45px;
+            content: "";
+            display: block;
+        }
+    }
+
+    .close {
+        right: 8px;
+        top: 8px;
+        opacity: 1;
+        position: absolute;
+        display: block;
+    }
+
+    .prev {
+        background: #000;
+
+        &:before {
+            #gradient > .vertical( ~"rgba(0,0,0,1)", ~"rgba(0,0,0,0)" );
+        }
+    }
+
+    .next {
+        background: #000;
+
+        &:before {
+            #gradient > .vertical( ~"rgba(0,0,0,0)", ~"rgba(0,0,0,1)" );
+        }
+    }
+
+    .change-album {
+        right: 56px;
+        top: 8px;
+        position: absolute;
+        display: block;
+
+        .title {
+            right: 48px;
+            top: 0;
+            left: auto;
+            bottom: auto;
+        }
+
+        .menu {
+            right: 0;
+            top: 42px;
+            left: auto;
+            bottom: auto;
+            position: absolute;
+        }
+    }
+
+    img {
+        display: inline-block;
+    }
+}

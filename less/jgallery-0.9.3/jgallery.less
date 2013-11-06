@@ -1,0 +1,50 @@
+/*!
+ * jGallery v0.9.2
+ * http://jgallery.jakubkowalczyk.pl/
+ *
+ * Released under the MIT license
+ *
+ * Date: 2013-XX-XX
+ */
+
+@fontFamily: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+
+@import 'mixins';
+
+@import 'buttons';
+@import 'icon-change-album';
+@import 'overlay';
+@import 'progress-bar';
+@import 'thumbnails';
+@import 'thumbnails-horizontal';
+@import 'thumbnails-vertical';
+@import 'thumbnails-bottom';
+@import 'thumbnails-top';
+@import 'thumbnails-left';
+@import 'thumbnails-right';
+@import 'thumbnails-images';
+@import 'thumbnails-full-screen';
+@import 'thumbnails-square';
+@import 'thumbnails-number';
+@import 'title';
+@import 'title-effects';
+@import 'zoom';
+@import 'zoom-effects';
+
+@import 'responsive';
+
+
+.jgallery {
+    font-family: @fontFamily;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    position: fixed;
+    z-index: 10002;
+
+    * {
+        outline: none;
+    }
+}
