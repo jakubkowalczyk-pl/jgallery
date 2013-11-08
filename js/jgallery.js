@@ -1,10 +1,10 @@
 /*!
- * jGallery v0.9.3
+ * jGallery v0.9.4
  * http://jgallery.jakubkowalczyk.pl/
  *
  * Released under the MIT license
  *
- * Date: 2013-11-06 
+ * Date: 2013-11-08 
  */
 ( function( $ ) {
     $.fn.jGallery = function( options ) {
@@ -979,7 +979,7 @@
             }
             
             function showNextThumb() {
-                var $nextThumb = $thumbnailsA.parent( '.album.active' ).children( '.hidden' ).eq( 0 );
+                var $nextThumb = $thumbnailsA.parent( '.active' ).children( '.hidden' ).eq( 0 );
                 setTimeout( function() {
                     $nextThumb.removeClass( 'hidden' );
                     if ( $nextThumb.length ) {
