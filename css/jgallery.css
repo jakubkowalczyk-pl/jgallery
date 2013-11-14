@@ -903,6 +903,9 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   right: -74px;
   opacity: 0;
 }
+.jgallery .zoom-container .overlay .imageLoaderPositionAbsolute {
+  top: 50% !important;
+}
 .jgallery .zoom .container.slide-down.before {
   bottom: 150%;
   opacity: 0;
