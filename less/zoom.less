@@ -9,6 +9,42 @@
     bottom: 0;
     position: absolute;
     z-index: 1;
+    
+    .pt-perspective.hide-overflow {
+        overflow: hidden;
+    }
+    
+    .container {
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+        position: absolute;
+        z-index: 1;
+        
+        &.pt-page-ontop {
+            z-index: 2;
+        }
+        
+        &.pt-page-current.pt-page-prev {
+            z-index: 1;
+        }
+        
+        &.pt-page-current:not(.pt-page-prev) {
+            z-index: 3;
+        }
+    }
+    
+    img {
+        top: 50%;
+        left: 50%;
+        position: absolute;
+        z-index: 1;
+    }
+}
+.jgallery .zoom-container {
+    position: relative;
 
     > .left {
         top: 0;
@@ -16,7 +52,12 @@
         left: 0;
         right: 50%;
         position: absolute;
-        z-index: 2;
+        cursor: pointer;
+        z-index: 4;
+        
+        &.hidden {
+            display: none;
+        }
     }
 
     > .right {
@@ -25,33 +66,13 @@
         left: 50%;
         right: 0;
         position: absolute;
-        z-index: 2;
+        cursor: pointer;
+        z-index: 4;
+        
+        &.hidden {
+            display: none;
+        }
     }
-}
-.jgallery .zoom-container {
-    position: relative;
-}
-.jgallery .zoom .container {
-     -webkit-transition: all 0.5s;
-    -moz-transition: all 0.5s;
-    -o-transition: all 0.5s;
-    transition: all 0.5s; 
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    overflow: hidden;
-    position: absolute;
-}
-.jgallery .zoom img {
-    top: 50%;
-    left: 50%;
-    position: absolute;
-    z-index: 1;
-    display: none !important;
-}
-.jgallery .zoom img.active {
-    display: inline-block !important;
 }
 
 
@@ -79,6 +100,7 @@
 .jgallery .zoom-container .nav-bottom {
     height: 40px;
     background: #111;
+    .transition( ~"all 0.2s" );
     left: 0;
     bottom: -40px;
     right: 0;
@@ -88,6 +110,7 @@
 }
 .jgallery .zoom-container .nav-bottom .btn {
     margin-right: 8px;
+    background: none;
     position: static;
     display: inline-block;
 }

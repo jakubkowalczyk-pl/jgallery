@@ -2,7 +2,7 @@
     "name": "jgallery",
     "title": "jGallery - FREE jQuery photo gallery with albums and preloader",
     "description": "FREE jQuery photo gallery with albums, preloader and 3D transitions effect. Unlimited scalability, compatible with all major browsers, retina friendly. Released under the MIT license.",
-    "version": "0.9.6",
+    "version": "1.0",
     "keywords": ["jgallery", "albums", "preloader", "free", "transitions", "slider", "lightbox", "zoom"],
     "author": {
         "name": "Jakub Kowalczyk",
