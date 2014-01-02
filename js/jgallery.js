@@ -1,10 +1,10 @@
 /*!
- * jGallery v1.0
+ * jGallery v1.0.1
  * http://jgallery.jakubkowalczyk.pl/
  *
  * Released under the MIT license
  *
- * Date: 2014-01-01
+ * Date: 2014-01-03
  */
 ( function( $ ) {
     "use strict";
@@ -898,9 +898,9 @@
                 this.jGallery.show();
             }
             this.thumbnails.changeViewToBar();
-            if ( this.booIsAlbums ) {
-                if ( this.iconChangeAlbum.getTitle() === '' ) {
-                    this.iconChangeAlbum.setTitle( $a.parents( '.album' ).eq( 0 ).attr( 'data-jgallery-album-title' ) );
+            if ( this.jGallery.booIsAlbums ) {
+                if ( this.jGallery.iconChangeAlbum.getTitle() === '' ) {
+                    this.jGallery.iconChangeAlbum.setTitle( $a.parents( '.album' ).eq( 0 ).attr( 'data-jgallery-album-title' ) );
                 }
             }
             this.thumbnails.setActiveThumb( $a );
@@ -1392,11 +1392,17 @@
                   text-shadow: 0 0 .15em rgba(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ',.75), 0 0 .45em rgba(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ',.5);\
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .change-album .menu {\
+                  background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
+                }\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .full-screen .change-album .menu {\
                   background: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .change-album .menu .item {\
                   border-color: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
                   color: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
+                }\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .full-screen .change-album .menu .item {\
+                  border-color: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .change-album .menu .item:hover {\
                   background: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
@@ -1418,17 +1424,17 @@
                   color: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails.full-screen .prev:before {\
-                  background-image: -webkit-gradient(linear,left 0%,left 100%,from(rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 1 )),to(rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 0)));\
-                  background-image: -webkit-linear-gradient(top,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 1 ),0%,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 0),100%);\
-                  background-image: -moz-linear-gradient(top,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 1 ) 0%,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 0) 100%);\
-                  background-image: linear-gradient(to bottom,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 1 ) 0%,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 0) 100%);\
+                  background-image: -webkit-gradient(linear,left 0%,left 100%,from(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 )),to(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0)));\
+                  background-image: -webkit-linear-gradient(top,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ),0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0),100%);\
+                  background-image: -moz-linear-gradient(top,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0) 100%);\
+                  background-image: linear-gradient(to bottom,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0) 100%);\
                   background-repeat: repeat-x;\
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails.full-screen .next:before {\
-                  background-image: -webkit-gradient(linear,left 0%,left 100%,from(rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 0)),to(rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 1)));\
-                  background-image: -webkit-linear-gradient(top,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 0),0%,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 1),100%);\
-                  background-image: -moz-linear-gradient(top,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 0) 0%,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 1) 100%);\
-                  background-image: linear-gradient(to bottom,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 0) 0%,rgba( ' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ', 1) 100%);\
+                  background-image: -webkit-gradient(linear,left 0%,left 100%,from(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0)),to(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1)));\
+                  background-image: -webkit-linear-gradient(top,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0),0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1),100%);\
+                  background-image: -moz-linear-gradient(top,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1) 100%);\
+                  background-image: linear-gradient(to bottom,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1) 100%);\
                   background-repeat: repeat-x;\
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails.images a:after {\
@@ -1436,7 +1442,7 @@
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails.full-screen .prev,\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails.full-screen .next {\
-                  background: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
+                  background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails.square a {\
                   background: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\

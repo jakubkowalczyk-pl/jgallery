@@ -203,8 +203,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 }
 .jgallery .thumbnails {
   background: #111;
-  -webkit-transition: all 0.2s;
-  transition: all 0.2s;
+  -webkit-transition: background 0.2s, background-color 0.2s;
+  transition: background 0.2s, background-color 0.2s;
   position: absolute;
   z-index: 3;
   font-size: 0;
@@ -516,8 +516,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   display: block;
 }
 .jgallery .thumbnails.full-screen .close {
-  right: 8px;
-  top: 8px;
+  right: 0;
+  top: 0;
   opacity: 1;
   position: absolute;
   display: block;
@@ -543,8 +543,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   background-repeat: repeat-x;
 }
 .jgallery .thumbnails.full-screen .change-album {
-  right: 56px;
-  top: 8px;
+  right: 40px;
+  top: 0;
   position: absolute;
   display: block;
 }
