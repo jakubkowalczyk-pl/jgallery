@@ -1,10 +1,10 @@
 /*!
- * jGallery v1.0.1
+ * jGallery v1.0.2
  * http://jgallery.jakubkowalczyk.pl/
  *
  * Released under the MIT license
  *
- * Date: 2014-01-03
+ * Date: 2014-01-06
  */
 ( function( $ ) {
     "use strict";
@@ -884,6 +884,7 @@
             var self = this;
             var $imgThumb = $a.children( 'img' );
             var booIsLoaded;
+            var albumTitle;
 
             if ( ! this.jGallery.initialized() ) {
                 this.showPhotoInit();
@@ -900,7 +901,9 @@
             this.thumbnails.changeViewToBar();
             if ( this.jGallery.booIsAlbums ) {
                 if ( this.jGallery.iconChangeAlbum.getTitle() === '' ) {
-                    this.jGallery.iconChangeAlbum.setTitle( $a.parents( '.album' ).eq( 0 ).attr( 'data-jgallery-album-title' ) );
+                    albumTitle = $a.parents( '.album' ).eq( 0 ).attr( 'data-jgallery-album-title' );
+                    this.jGallery.iconChangeAlbum.setTitle( albumTitle );
+                    this.jGallery.iconChangeAlbum.$element.find( '[data-jgallery-album-title="' + albumTitle + '"]' ).addClass( 'active' );
                 }
             }
             this.thumbnails.setActiveThumb( $a );
@@ -1138,7 +1141,7 @@
         },
 
         show: function() {
-            $window.on( 'scroll resize', { jGallery: this }, this.windowOnScrollOrResize );           
+            $window.on( 'resize', { jGallery: this }, this.windowOnResize );           
             $body.css( {
                 'overflow': 'hidden'
             } );
@@ -1170,7 +1173,7 @@
             this.thumbnails.hide();
             this.zoom.slideshowStop();
             $body.overlay( {'hide': true} );
-            $window.off( 'scroll resize', this.windowOnScrollOrResize );
+            $window.off( 'resize', this.windowOnResize );
             $.fn.jGalleryOptions[ this.intId ].closeGallery();
         },
         
@@ -1285,7 +1288,7 @@
             self.thumbnails.bindEvents(); 
         },
         
-        windowOnScrollOrResize: function( event ) {
+        windowOnResize: function( event ) {
             event.data.jGallery.zoom.refreshSize();
             event.data.jGallery.thumbnails.refreshNavigation();
         },
@@ -1404,6 +1407,7 @@
                 .jgallery[data-jgallery-id="' + this.intId + '"] .full-screen .change-album .menu .item {\
                   border-color: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
                 }\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .change-album .menu .item.active,\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .change-album .menu .item:hover {\
                   background: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
                   color: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
