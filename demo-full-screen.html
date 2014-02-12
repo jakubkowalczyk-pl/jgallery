@@ -11,33 +11,13 @@
     $( function() {
         $( '#gallery' ).jGallery( {
             'autostart': true,
-            'canClose': false,
-            'canResize': true,
-            'backgroundColor': '#000',
-            'textColor': '#fff',
-            'thumbnails': true,
-            'thumbnailsFullScreen': true,
-            'thumbType': 'image', // [ image | square | number ]
-            'thumbnailsPosition': 'bottom', // [ top | bottom | left | right ]
-            'thumbWidth': 100, //px
-            'thumbHeight': 100, //px
-            'thumbWidthOnFullScreen': 100, //px
-            'thumbHeightOnFullScreen': 100, //px
-            'zoomSize': 'fill',
-            'slideshow': true,
-            'slideshowAutostart': false,
-            'slideshowCanRandom': true,
-            'slideshowRandom': false,
-            'slideshowRandomAutostart': false,
-            'disabledOnIE7AndOlder': true,
-            'slideshowInterval': '5s',
-            'preloadAll': false
+            'canClose': false
         } );
     } );
     </script>
 </head>
 <body style="padding: 40px; color: #fff; background: #000;">
-    <div id="gallery">
+    <div id="gallery" style="visibility: hidden;">
      <div class="album" data-jgallery-album-title="Album 1">
             <h1>Album 1</h1>
             <a href="http://jgallery.jakubkowalczyk.pl/images/large/1.jpg"><img src="http://jgallery.jakubkowalczyk.pl/images/thumbs/1.jpg" alt="Source: Pixabay.com"  data-jgallery-bg-color="#3e3e3e" data-jgallery-text-color="#fff" /></a>

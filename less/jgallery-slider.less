@@ -1,0 +1,100 @@
+.jgallery.jgallery-slider {
+    margin-left: auto;
+    margin-right: auto;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    -webkit-perspective: 1200px;
+    perspective: 1200px;
+    position: relative;
+    z-index: 0;
+    background: transparent !important;
+    
+    .thumbnails {
+        background: none !important;
+        overflow: hidden;
+        
+        .container {
+            -webkit-box-shadow: none !important;
+            box-shadow: none !important;
+        }
+        
+        &.square,
+        &.square.number {
+            &:not(.full-screen) a {
+                .box-shadow( ~"0 0 0 2px rgba( 0, 0, 0, .6 ), 0 0 0 3px rgba( 255, 255, 255, .6 )" );
+                opacity: 1;
+
+                &.active {
+                    opacity: .6;
+                }
+            }
+        }
+    }
+    
+    .zoom-container {
+        .title {
+            display: none;
+        }
+        
+        .nav-bottom {
+            width: 240px;
+            height: 40px;
+            margin: -20px -120px;
+            -webkit-box-shadow: none !important;
+            box-shadow: none !important;
+            background: none !important;
+            text-align: center;
+            -webkit-transition: -webkit-transform 0.2s, opacity 0.2s;
+            transition: transform 0.2s, opacity 0.2s;
+            .transform( ~"scale( .8 )" );
+            opacity: 0;
+            left: 50%;
+            top: 70%;
+            right: auto;
+            bottom: auto;
+            
+            .btn {
+                margin-left: 4px;
+                margin-right: 4px;
+                border-radius: 27px;
+            }
+        }
+        
+        .progress {
+            bottom: -1px;
+        }
+    }
+    
+    .zoom .container {
+        background: none !important;
+    }
+    
+    .overlayContainer .overlay {
+        background: transparent !important;
+    }
+    
+    &:hover {    
+        .zoom-container {
+            .nav-bottom {
+                .transform( ~"scale( 1 )" );
+                opacity: 1;
+            }
+        }
+    }
+    
+    &:after {
+        margin-top: -15px;
+        left: 100px;
+        right: 100px;
+        top: 100%;
+        height: 30px;
+        background: rgba( 0, 0, 0, .5 );
+        .box-shadow( ~"0 0 40px 40px rgba( 0, 0, 0, .5 )" );
+        .transform( ~"rotateX( 75deg )" );
+        content: "";
+        position: absolute;
+        display: block;
+    }
+}

@@ -5,13 +5,17 @@
     z-index: 3;
     font-size: 0;
     line-height: 0;
-    overflow: hidden;
-
+  
+    &.hidden {
+        display: none;
+    }
+    
     .container {
         left: 0;
         top: 0;
         right: 0;
         bottom: 0;
+        .transition( ~"box-shadow 0.2s, -webkit-box-shadow 0.2s" );
         position: absolute;
         overflow: hidden;
     }
@@ -25,7 +29,7 @@
     }
 
     a {
-        border-radius: .6em;
+        border-radius: .7em;
         display: inline-block;
 
         &:hover:not( .active ) {
@@ -37,7 +41,7 @@
         }
 
         img {
-            border-radius: .6em;
+            border-radius: .7em;
             -webkit-transition: all 0.5s;
             -moz-transition: all 0.5s;
             -o-transition: all 0.5s;

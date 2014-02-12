@@ -1,50 +1,86 @@
 /*!
- * jGallery v1.0.2
+ * jGallery v1.1.0
  * http://jgallery.jakubkowalczyk.pl/
  *
  * Released under the MIT license
  *
- * Date: 2014-01-06
+ * Date: 2014-02-12
  */
 ( function( $ ) {
     "use strict";
     var defaults = {
-        'autostart': false,
-        'canClose': true,
-        'canResize': true,
-        'backgroundColor': '#000',
-        'textColor': '#fff',
-        'thumbnails': true,
-        'thumbnailsFullScreen': true,
-        'thumbType': 'image', // [ image | square | number ]
-        'thumbnailsPosition': 'bottom', // [ top | bottom | left | right ]
-        'thumbWidth': 100, //px
-        'thumbHeight': 100, //px
-        'thumbWidthOnFullScreen': 100, //px
-        'thumbHeightOnFullScreen': 100, //px
-        'transition': 'rotateCubeBottomOut_rotateCubeBottomIn', // http://jgallery.jakubkowalczyk.pl/demo.php
-        'transitionWaveDirection': 'forward', // [ forward | backward ]
-        'transitionCols': 1,
-        'transitionRows': 5,
-        'showTimingFunction': 'linear', // [ linear | ease | ease-in | ease-out | ease-in-out | cubic-bezier(n,n,n,n) ]
-        'hideTimingFunction': 'linear', // [ linear | ease | ease-in | ease-out | ease-in-out | cubic-bezier(n,n,n,n) ]
-        'transitionDuration': '0.7s',
-        'zoomSize': 'fit', // [ fit | original | fill ]
-        'title': true,
-        'slideshow': true,
-        'slideshowAutostart': false,
-        'slideshowCanRandom': true,
-        'slideshowRandom': false,
-        'slideshowRandomAutostart': false,
-        'slideshowInterval': '8s',
-        'preloadAll': false,
-        'disabledOnIE7AndOlder': true,
-        'initGallery': function() {},
-        'showPhoto': function() {},
-        'beforeLoadPhoto': function() {},
-        'afterLoadPhoto': function() {},
-        'showGallery': function() {},
-        'closeGallery': function() {}
+        mode: 'full-screen', // [ full-screen, standard, slider ]
+        width: '100%', // (only for standard or slider mode)
+        height: '600px', // (only for standard or slider mode)
+        autostart: false, // (only for full-screen mode)
+        canClose: true, // (only for full-screen mode)
+        canResize: true,
+        backgroundColor: '#000',
+        textColor: '#fff',
+        thumbnails: true,
+        thumbnailsFullScreen: true,
+        thumbType: 'image', // [ image | square | number ]
+        thumbnailsPosition: 'bottom', // [ top | bottom | left | right ]
+        thumbWidth: 100, //px
+        thumbHeight: 100, //px
+        thumbWidthOnFullScreen: 100, //px
+        thumbHeightOnFullScreen: 100, //px
+        canMinimalizeThumbnails: true,
+        transition: 'moveToRight_moveFromLeft', // http://jgallery.jakubkowalczyk.pl/customize
+        transitionWaveDirection: 'forward', // [ forward | backward ]
+        transitionCols: 1,
+        transitionRows: 5,
+        showTimingFunction: 'linear', // [ linear | ease | ease-in | ease-out | ease-in-out | cubic-bezier(n,n,n,n) ]
+        hideTimingFunction: 'linear', // [ linear | ease | ease-in | ease-out | ease-in-out | cubic-bezier(n,n,n,n) ]
+        transitionDuration: '0.7s',
+        zoomSize: 'fit', // [ fit | original | fill ] (only for full-screen or standard mode)
+        title: true,
+        slideshow: true,
+        slideshowAutostart: false,
+        slideshowCanRandom: true,
+        slideshowRandom: false,
+        slideshowRandomAutostart: false,
+        slideshowInterval: '8s',
+        preloadAll: false,
+        appendTo: 'body', // selector (only for full-screen mode)
+        disabledOnIE7AndOlder: true,
+        initGallery: function() {},
+        showPhoto: function() {},
+        beforeLoadPhoto: function() {},
+        afterLoadPhoto: function() {},
+        showGallery: function() {},
+        closeGallery: function() {}
+    };
+    
+    var defaultsStandardMode = {
+        thumbWidth: 75,
+        thumbHeight: 75
+    };
+    
+    var requiredStandardMode = {
+        autostart: true,
+        canClose: false
+    };
+    
+    var defaultsSliderMode = {
+        width: '940px',
+        height: '300px',
+        canResize: false,
+        thumbnailsFullScreen: false,
+        thumbType: 'square',
+        canMinimalizeThumbnails: false,
+        transition: 'rotateCubeRightOut_rotateCubeRightIn',
+        transitionCols: 6,
+        transitionRows: 1,
+        slideshow: true,
+        slideshowAutostart: true,
+        zoomSize: 'fill'
+    };
+    
+    var requiredSliderMode = {
+        autostart: true,
+        canClose: false,
+        zoomSize: 'fill'
     };
  
     $.fn.jGalleryTransitions = {
@@ -226,8 +262,9 @@
 
 
 
-    var ThumbnailsGenerator = function( $this, booIsAlbums ) {
-        this.$element = $this;
+    var ThumbnailsGenerator = function( element, booIsAlbums ) {
+        this.jGallery = element;
+        this.$element = element.$this;
         this.booIsAlbums = booIsAlbums;
         this.$tmp;
         this.intI = 1;
@@ -240,11 +277,12 @@
     ThumbnailsGenerator.prototype = {
         start: function() {
             var self = this;
+            var selector = this.jGallery.isSlider() ? '.album:has(img)' : '.album:has(a:has(img:first-child:last-child))';
 
             $( 'body' ).append( '<div id="jGalleryTmp" style="position: absolute; top: 0; left: 0; width: 0; height: 0; z-index: -1; overflow: hidden;">' + this.$element.html() + '</div>' );
             this.$tmp = $( '#jGalleryTmp' );
             if ( this.booIsAlbums ) {
-                this.$tmp.find( '.album:has(a:has(img:first-child:last-child))' ).each( function() {
+                this.$tmp.find( selector ).each( function() {
                     self.insertAlbum( $( this ) );
                 } );
             }
@@ -267,15 +305,21 @@
 
         insertImages: function( $images, $container ) {
             var self = this;
+            var selector = this.jGallery.isSlider() ? 'img' : 'a:has(img:first-child:last-child)';
 
             this.intNo = 1;
-            $images.find( 'a:has(img:first-child:last-child)' ).each( function() {
+            $images.find( selector ).each( function() {
                 self.insertImage( $( this ), $container );
             } );            
         },
 
-        insertImage: function( $image, $container ) {
-            $container.append( $image.addClass( 'hidden' ) );
+        insertImage: function( $this, $container ) {            
+            if ( $this.is( 'a' ) ) {
+                $container.append( $this.addClass( 'hidden' ) );
+            }
+            else if ( $this.is( 'img' ) ) {
+                $container.append( $( '<a href="' + $this.attr( 'src' ) + '"></a>' ).append( $this ) );                
+            }
             $container.children( ':last-child' ).attr( 'data-jgallery-photo-id', this.intI++ ).attr( 'data-jgallery-number', this.intNo++ );
         }
     };
@@ -345,8 +389,16 @@
             }
         },
         
-        hide: function() {
-            this.getElement().addClass( 'hidden' ).find( 'a' ).addClass( 'hidden' );
+        hide: function( options ) {
+            options = $.extend( { hideEachThumb: true }, options );
+            this.getElement().addClass( 'hidden' );
+            if ( options.hideEachThumb ) {
+                this.$a.addClass( 'hidden' );
+            }
+        },
+        
+        toggle: function() {                    
+            this.getElement().is( '.hidden' ) ? this.show() : this.hide( { hideEachThumb: false } );
         },
         
         refreshThumbsSize: function( self ) {
@@ -460,39 +512,38 @@
         },
 
         _initImages: function() {
-            this.getElement().addClass( 'images' );
-            $( 'head' ).append( '\
-                <style type="text/css">\n\
-                    .jgallery .thumbnails a {\n\
+            var $css = $head.find( 'style.thumbnails[data-jgallery-id="' + this.intJgalleryId + '"]' );
+            var strCss = '\
+                    .jgallery[data-jgallery-id="' + this.intJgalleryId + '"] .thumbnails a {\n\
                         width: ' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbWidth + 'px;\n\
                         height: ' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbHeight + 'px;\n\
                         font-size: ' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbHeight + 'px;\n\
                     }\n\
-                    .jgallery .thumbnails.full-screen a {\n\
+                    .jgallery[data-jgallery-id="' + this.intJgalleryId + '"] .thumbnails.full-screen a {\n\
                         width: ' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbWidthOnFullScreen + 'px;\n\
                         height: ' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbHeightOnFullScreen + 'px;\n\
                         font-size: ' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbHeightOnFullScreen + 'px;\n\
                     }\n\
-                    .jgallery .thumbnails-horizontal {\n\
+                    .jgallery[data-jgallery-id="' + this.intJgalleryId + '"] .thumbnails-horizontal {\n\
                         height: ' + parseInt( $.fn.jGalleryOptions[ this.intJgalleryId ].thumbHeight + 2 ) + 'px;\n\
                     }\n\
-                    .jgallery .thumbnails-vertical {\n\
+                    .jgallery[data-jgallery-id="' + this.intJgalleryId + '"] .thumbnails-vertical {\n\
                         width: ' + parseInt( $.fn.jGalleryOptions[ this.intJgalleryId ].thumbWidth + 2 ) + 'px;\n\
                     }\n\
-                    .jgallery .thumbnails-top.hidden {\n\
-                        top: -' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbHeight + 'px;\n\
-                    }\n\
-                    .jgallery .thumbnails-bottom.hidden {\n\
-                        bottom: -' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbHeight + 'px;\n\
-                    }\n\
-                    .jgallery .thumbnails-left.hidden {\n\
-                        left: -' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbWidth + 'px;\n\
-                    }\n\
-                    .jgallery .thumbnails-right.hidden {\n\
-                        right: -' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbWidth + 'px;\n\
-                    }\n\
-                </style>\n\
-            ' ); 
+            ';
+            
+            this.getElement().addClass( 'images' );
+            $css.length ? $css.html( strCss ) : $head.append( '\
+                <style type="text/css" class="thumbnails" data-jgallery-id="' + this.intJgalleryId + '">\
+                    ' + strCss + '\
+                </style>\
+            ');
+            if ( this.isHorizontal() ) {
+                this.jGallery.zoom.$container.find( '.minimalize-thumbnails' ).addClass( 'icon-ellipsis-horizontal' ).removeClass( 'icon-ellipsis-vertical' );
+            }
+            else {
+                this.jGallery.zoom.$container.find( '.minimalize-thumbnails' ).addClass( 'icon-ellipsis-vertical' ).removeClass( 'icon-ellipsis-horizontal' );                
+            }
             if ( this.isJgalleryInitialized ) {
                 return;
             }
@@ -640,14 +691,16 @@
         },
         
         refreshContainerSize: function () {
-            var intNavBottomHeight = this.$container.find( '.nav-bottom' ).outerHeight();
+            var intNavBottomHeight = this.jGallery.isSlider() ? 0 : this.$container.find( '.nav-bottom' ).outerHeight();
+            var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.hidden' );
+            var strThumbnailsPosition = isThumbnailsVisible ? $.fn.jGalleryOptions[ this.intJGalleryId ].thumbnailsPosition : '';
 
             this.$container.css( {
-                'width': this.thumbnails.isVertical() ? this.$jGallery.width() - this.thumbnails.getElement().outerWidth( true ) : 'auto',
-                'height': this.thumbnails.isHorizontal() ? this.$jGallery.height() - this.thumbnails.getElement().outerHeight( true ) - intNavBottomHeight : this.$jGallery.height() - intNavBottomHeight,
-                'margin-top': $.fn.jGalleryOptions[ this.intJGalleryId ].thumbnailsPosition === 'top' ? this.thumbnails.getElement().outerHeight( true ) : 0,
-                'margin-left': $.fn.jGalleryOptions[ this.intJGalleryId ].thumbnailsPosition === 'left' ? this.thumbnails.getElement().outerWidth( true ) : 0,
-                'margin-right': $.fn.jGalleryOptions[ this.intJGalleryId ].thumbnailsPosition === 'right' ? this.thumbnails.getElement().outerWidth( true ) : 0
+                'width': isThumbnailsVisible && this.thumbnails.isVertical() ? this.$jGallery.width() - this.thumbnails.getElement().outerWidth( true ) : 'auto',
+                'height': isThumbnailsVisible && this.thumbnails.isHorizontal() ? this.$jGallery.height() - this.thumbnails.getElement().outerHeight( true ) - intNavBottomHeight : this.$jGallery.height() - intNavBottomHeight,
+                'margin-top': strThumbnailsPosition === 'top' ? this.thumbnails.getElement().outerHeight( true ) : 0,
+                'margin-left': strThumbnailsPosition === 'left' ? this.thumbnails.getElement().outerWidth( true ) : 0,
+                'margin-right': strThumbnailsPosition === 'right' ? this.thumbnails.getElement().outerWidth( true ) : 0
             } );
         },
 
@@ -720,14 +773,35 @@
         
         setImgSizeForOriginal: function( $img ) {
             var intNavBottomHeight = this.$container.find( '.nav-bottom' ).outerHeight();
+            var isThumbnailsVisible = ! this.thumbnails.getElement().is( '.hidden' );
+            var maxWidth;
+            var maxHeight;
             
+            if ( this.jGallery.isSlider() ) {
+                maxWidth = this.$jGallery.width();
+            }
+            else if ( isThumbnailsVisible && this.thumbnails.isVertical() ) {
+                maxWidth = this.$jGallery.width() - this.thumbnails.getElement().outerWidth( true );
+            }
+            else {
+                maxWidth = this.$jGallery.width();
+            }
+            if ( this.jGallery.isSlider() ) {
+                maxHeight = this.$jGallery.height();
+            }
+            else if ( isThumbnailsVisible && this.thumbnails.isHorizontal() ) {
+                maxHeight = this.$jGallery.height() - this.thumbnails.getElement().outerHeight( true ) - intNavBottomHeight;
+            }
+            else {
+                maxHeight = this.$jGallery.height() - intNavBottomHeight;
+            }
             $img.css( {
                 'width': 'auto',
                 'height': 'auto',
                 'min-width': 0,
                 'min-height': 0,
-                'max-width': this.thumbnails.isVertical() ? this.$jGallery.width() - this.thumbnails.getElement().outerWidth( true ) : this.$jGallery.width(),
-                'max-height': this.thumbnails.isHorizontal() ? this.$jGallery.height() - this.thumbnails.getElement().outerHeight( true ) - intNavBottomHeight : this.$jGallery.height() - intNavBottomHeight
+                'max-width': maxWidth,
+                'max-height': maxHeight
             } );       
             $img.css( {
                 'margin-top': - $img.height() / 2,
@@ -736,23 +810,24 @@
         },
         
         setImgSizeForFit: function( $img ) {
-            var intNavBottomHeight = this.$container.find( '.nav-bottom' ).outerHeight();
+            var intNavBottomHeight = this.jGallery.isSlider() ? 0 : this.$container.find( '.nav-bottom' ).outerHeight();
+            var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.hidden' );
             
             $img.css( {
                 'min-width': 0,
                 'min-height': 0,
-                'max-width': this.thumbnails.isVertical() ? this.$jGallery.width() - this.thumbnails.getElement().outerWidth( true ) : this.$jGallery.width(),
-                'max-height': this.thumbnails.isHorizontal() ? this.$jGallery.height() - this.thumbnails.getElement().outerHeight( true ) - intNavBottomHeight : this.$jGallery.height() - intNavBottomHeight
+                'max-width': isThumbnailsVisible && this.thumbnails.isVertical() ? this.$jGallery.width() - this.thumbnails.getElement().outerWidth( true ) : this.$jGallery.width(),
+                'max-height': isThumbnailsVisible && this.thumbnails.isHorizontal() ? this.$jGallery.height() - this.thumbnails.getElement().outerHeight( true ) - intNavBottomHeight : this.$jGallery.height() - intNavBottomHeight
             } );   
             if ( $img.width() / $img.height() / this.jGallery.getCanvasRatioWidthToHeight() < 1 ) {
                 $img.css( {
                     'width': 'auto',
-                    'height': this.thumbnails.isHorizontal() ? this.$jGallery.height() - this.thumbnails.getElement().outerHeight( true ) - intNavBottomHeight : this.$jGallery.height() - intNavBottomHeight
+                    'height': isThumbnailsVisible && this.thumbnails.isHorizontal() ? this.$jGallery.height() - this.thumbnails.getElement().outerHeight( true ) - intNavBottomHeight : this.$jGallery.height() - intNavBottomHeight
                 } );                        
             }
             else {
                 $img.css( {
-                    'width': this.thumbnails.isVertical() ? this.$jGallery.width() - this.thumbnails.getElement().outerWidth( true ) : this.$jGallery.width(),
+                    'width': isThumbnailsVisible && this.thumbnails.isVertical() ? this.$jGallery.width() - this.thumbnails.getElement().outerWidth( true ) : this.$jGallery.width(),
                     'height': 'auto'
                 } );
             }             
@@ -763,7 +838,8 @@
         },
         
         setImgSizeForFill: function( $img ) {
-            var intNavBottomHeight = this.$container.find( '.nav-bottom' ).outerHeight();
+            var intNavBottomHeight = this.jGallery.isSlider() ? 0 : this.$container.find( '.nav-bottom' ).outerHeight();
+            var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.hidden' );
             
             $img.css( {
                 'width': 'auto',
@@ -776,18 +852,18 @@
             if ( $img.width() / $img.height() / this.jGallery.getCanvasRatioWidthToHeight() > 1 ) {
                 $img.css( {
                     'width': 'auto',
-                    'height': this.thumbnails.isHorizontal() ? this.$jGallery.height() - this.thumbnails.getElement().outerHeight( true ) - intNavBottomHeight : this.$jGallery.height() - intNavBottomHeight
+                    'height': isThumbnailsVisible && this.thumbnails.isHorizontal() ? this.$jGallery.height() - this.thumbnails.getElement().outerHeight( true ) - intNavBottomHeight : this.$jGallery.height() - intNavBottomHeight
                 } );                        
             }
             else {
                 $img.css( {
-                    'width': this.thumbnails.isVertical() ? this.$jGallery.width() - this.thumbnails.getElement().outerWidth( true ) : this.$jGallery.width(),
+                    'width': isThumbnailsVisible && this.thumbnails.isVertical() ? this.$jGallery.width() - this.thumbnails.getElement().outerWidth( true ) : this.$jGallery.width(),
                     'height': 'auto'
                 } );
             }
             $img.css( {                   
-                'min-width': this.thumbnails.isVertical() ? this.$jGallery.width() - this.thumbnails.getElement().outerWidth( true ) : this.$jGallery.width(),
-                'min-height': this.thumbnails.isHorizontal() ? this.$jGallery.height() - this.thumbnails.getElement().outerHeight( true ) - intNavBottomHeight : this.$jGallery.height() - intNavBottomHeight
+                'min-width': isThumbnailsVisible && this.thumbnails.isVertical() ? this.$jGallery.width() - this.thumbnails.getElement().outerWidth( true ) : this.$jGallery.width(),
+                'min-height': isThumbnailsVisible && this.thumbnails.isHorizontal() ? this.$jGallery.height() - this.thumbnails.getElement().outerHeight( true ) - intNavBottomHeight : this.$jGallery.height() - intNavBottomHeight
             } );
             $img.css( {
                 'margin-top': - $img.height() / 2,
@@ -875,7 +951,6 @@
         },
 
         showPhotoInit: function() {
-            $( 'body' ).overlay( {'imageLoaderPositionAbsolute': true, 'fadeIn': false, 'show': true} );
             this.jGallery.init();
         },
         
@@ -1044,22 +1119,6 @@
             this.advancedAnimation.setHideEffect( $.fn.jGalleryOptions[ this.jGallery.intId ].hideEffect );
             this.advancedAnimation.setShowEffect( $.fn.jGalleryOptions[ this.jGallery.intId ].showEffect );    
         },
-
-        loaderInit: function() {
-            this.$loader = $( 'body > .overlay > [class*="imageLoader"]' );           
-            if ( $.fn.jGalleryOptions[ this.jGallery.intId ].thumbnails ) {
-                if ( $.fn.jGalleryOptions[ this.jGallery.intId ].thumbnailsPosition === 'top' ) {
-                    this.$loader.css( {
-                        'margin-top': '+=' + this.thumbnails.getElement().outerHeight( true ) / 2
-                    } );
-                }
-                if ( $.fn.jGalleryOptions[ this.jGallery.intId ].thumbnailsPosition === 'bottom' ) {
-                    this.$loader.css( {
-                        'margin-top': '-=' + this.thumbnails.getElement().outerHeight( true ) / 2
-                    } );
-                }
-            }
-        },
         
         setRandomTransition: function() {
             var rand;
@@ -1083,13 +1142,13 @@
         this.booIsAlbums = $this.find( '.album:has(a:has(img:first-child:last-child))' ).length > 1;
         this.intId = parseInt( $( '.jgallery' ).length + 1 );
         this.$this = $this;
-        $.fn.jGalleryOptions[ this.intId ] = this.initialized() ? $.extend( $.fn.jGalleryOptions[ this.intId ], options ) : $.extend( {}, defaults, options );
+        $.fn.jGalleryOptions[ this.intId ] = this.initialized() ? $.extend( $.fn.jGalleryOptions[ this.intId ], options ) : options;
         if ( $.fn.jGalleryOptions[ this.intId ].disabledOnIE7AndOlder && isInternetExplorer7AndOlder() ) {
             return;
         }
         this.init();
         if ( $.fn.jGalleryOptions[ self.intId ].autostart ) {
-            self.zoom.showPhoto( $this.find( 'a:has(img:first-child:last-child)' ).eq( 0 ) );
+            this.thumbnails.$a.eq( 0 ).trigger( 'click' );
         }
         $( 'html' ).on( {
             keydown: function( event ) {
@@ -1141,17 +1200,15 @@
         },
 
         show: function() {
-            $window.on( 'resize', { jGallery: this }, this.windowOnResize );           
-            $body.css( {
-                'overflow': 'hidden'
-            } );
-            if ( typeof this.$loader === 'undefined' ) {
-                this.zoom.loaderInit();
+            $window.on( 'resize', { jGallery: this }, this.windowOnResize );
+            if ( $.fn.jGalleryOptions[ this.intId ].mode === 'full-screen' ) {
+                $body.css( {
+                    'overflow': 'hidden'
+                } );
             }
             this.$element.not( ':visible' ).removeClass( 'hidden' ).stop( false, true ).fadeIn( 500 );
             this.thumbnails.show();
             this.zoom.refreshContainerSize();
-            $body.overlay( {'show': true, 'showLoader': false} );
             this.zoom.$title.removeClass( 'hidden' );  
             $.fn.jGalleryOptions[ this.intId ].showGallery();
         },
@@ -1160,10 +1217,12 @@
             if ( ! $.fn.jGalleryOptions[ this.intId ].canClose ) {
                 return;
             }
-            this.$element.filter( ':visible' ).stop( false, true ).addClass( 'hidden' ).fadeOut( 500, function() {   
-                $body.css( {
-                    'overflow': 'visible'
-                } );
+            this.$element.filter( ':visible' ).stop( false, true ).addClass( 'hidden' ).fadeOut( 500, function() {
+                if ( $.fn.jGalleryOptions[ this.intId ].mode === 'full-screen' ) {   
+                    $body.css( {
+                        'overflow': 'visible'
+                    } );
+                }
             } );
             this.zoom.booLoadingInProgress = false;
             clearTimeout( this.zoom.showPhotoTimeout );
@@ -1172,7 +1231,6 @@
             this.zoom.$btnNext.addClass( 'hidden' );
             this.thumbnails.hide();
             this.zoom.slideshowStop();
-            $body.overlay( {'hide': true} );
             $window.off( 'resize', this.windowOnResize );
             $.fn.jGalleryOptions[ this.intId ].closeGallery();
         },
@@ -1180,11 +1238,11 @@
         init: function() {
             var self = this;
             
-            $head.append( '<style type="text/css" data-jgallery-id="' + this.intId + '"></style>' );
+            $head.append( '<style type="text/css" class="colours" data-jgallery-id="' + this.intId + '"></style>' );
             $.fn.jGalleryOptions[ this.intId ].initGallery();
             this.$this.attr( 'data-jgallery-id', this.intId );
             this.generateHtml();
-            new ThumbnailsGenerator( this.$this, this.booIsAlbums );
+            new ThumbnailsGenerator( this, this.booIsAlbums );
             this.setVariables();
             this.thumbnails.init();
             this.thumbnails.getElement().append( '<span class="icon- icon-remove btn close btn-small"></span>' );
@@ -1285,7 +1343,20 @@
                     self.zoom.slideshowPlayStop();
                 }
             } );   
+
+            self.zoom.$container.find( '.minimalize-thumbnails' ).on( {
+                click: function() {
+                    self.thumbnails.toggle();
+                    $( this ).toggleClass( 'inactive' );
+                    self.zoom.refreshSize();
+                }
+            } );  
+           
             self.thumbnails.bindEvents(); 
+        },
+        
+        isSlider: function() {
+            return $.fn.jGalleryOptions[ this.intId ].mode === 'slider';
         },
         
         windowOnResize: function( event ) {
@@ -1316,11 +1387,13 @@
             $.fn.jGalleryOptions[ this.intId ].canResize ? this.zoom.$resize.show() : this.zoom.$resize.hide();
             $.fn.jGalleryOptions[ this.intId ].canClose ? this.zoom.$container.find( '.close' ).show() : this.zoom.$container.find( '.close' ).hide();
             if ( ! $.fn.jGalleryOptions[ this.intId ].thumbnails ) {
-                this.thumbnails.getElement().hide();
+                this.thumbnails.hide();
+                this.thumbnails.getElement().addClass( 'inactive' );
                 $.fn.jGalleryOptions[ this.intId ].thumbnailsPosition = '';
             }
             else {
-                this.thumbnails.getElement().show();
+                this.thumbnails.show();
+                this.thumbnails.getElement().removeClass( 'inactive' );
                 if ( $.fn.jGalleryOptions[ this.intId ].thumbnailsPosition === '' ) {
                     $.fn.jGalleryOptions[ this.intId ].thumbnailsPosition = defaults.thumbnailsPosition;
                 }                    
@@ -1329,8 +1402,9 @@
             $.fn.jGalleryOptions[ this.intId ].slideshow && $.fn.jGalleryOptions[ this.intId ].slideshowCanRandom ? this.zoom.$random.show(): this.zoom.$random.hide();
             $.fn.jGalleryOptions[ this.intId ].slideshow && $.fn.jGalleryOptions[ this.intId ].slideshowCanRandom && $.fn.jGalleryOptions[ this.intId ].slideshowRandom ? this.zoom.$random.addClass( 'active' ) : this.zoom.$random.removeClass( 'active' );
 
-            $.fn.jGalleryOptions[ this.intId ].thumbnailsFullScreen ? this.zoom.$element.find( '.full-screen' ).add( this.thumbnails.getElement().find( '.close' ) ).show() : this.zoom.$element.find( '.full-screen' ).add( this.thumbnails.getElement().find( '.close' ) ).hide();
-            $.fn.jGalleryOptions[ this.intId ].thumbnailsFullScreen ? this.zoom.$container.find( '.change-album' ).show() : this.zoom.$container.find( '.change-album' ).hide();
+            $.fn.jGalleryOptions[ this.intId ].thumbnailsFullScreen && $.fn.jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.full-screen' ).add( this.thumbnails.getElement().find( '.close' ) ).show() : this.zoom.$container.find( '.full-screen' ).add( this.thumbnails.getElement().find( '.close' ) ).hide();
+            $.fn.jGalleryOptions[ this.intId ].thumbnailsFullScreen && $.fn.jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.change-album' ).show() : this.zoom.$container.find( '.change-album' ).hide();
+            $.fn.jGalleryOptions[ this.intId ].canMinimalizeThumbnails && $.fn.jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.minimalize-thumbnails' ).show() : this.zoom.$container.find( '.minimalize-thumbnails' ).hide();
 
             this.setColours( {
                 strBg: $.fn.jGalleryOptions[ this.intId ].backgroundColor,
@@ -1339,12 +1413,15 @@
         },
         
         setColours: function( options ) {
-            $head.find( 'style[data-jgallery-id="' + this.intId + '"]' ).html( this.getCssForColours( options ) );
+            $head.find( 'style[data-jgallery-id="' + this.intId + '"].colours' ).html( this.getCssForColours( options ) );
         },
         
-        generateHtml: function() {  
-            $( 'body' ).append( '\
-                <div class="jgallery" style="display: none;" data-jgallery-id="' + this.intId + '">\
+        generateHtml: function() {
+            var mode = $.fn.jGalleryOptions[ this.intId ].mode;
+            var width = mode === 'full-screen' ? 'auto' : $.fn.jGalleryOptions[ this.intId ].width;
+            var height = mode === 'full-screen' ? 'auto' : $.fn.jGalleryOptions[ this.intId ].height;
+            var html = '\
+                <div class="jgallery jgallery-' + mode + '" style="width: ' + width + '; height: ' + height + '; display: none;" data-jgallery-id="' + this.intId + '">\
                     <div class="thumbnails hidden">\
                         <div class="container"><div class="container-inner"></div></div>\
                         <span class="prev btn hidden"><span class="icon-chevron-left ico"></span></span>\
@@ -1363,10 +1440,18 @@
                             <span class="icon- resize btn btn-small"></span><span class="icon-remove close btn btn-small"></span>\
                         </div>\
                         <div class="nav-bottom">\
-                            <span class="icon- icon-play slideshow btn btn-small"></span><span class="icon- icon-random random btn btn-small inactive"></span><span class="icon- icon-th full-screen btn btn-small"></span>\
+                            <span class="icon- icon-play slideshow btn btn-small"></span><span class="icon- icon-random random btn btn-small inactive"></span><span class="icon- icon-th full-screen btn btn-small"></span><span class="icon- icon-ellipsis-horizontal minimalize-thumbnails btn btn-small"></span>\
                         </div>\
                     </div>\
-                </div>' );
+                </div>';
+            
+            if ( mode === 'full-screen' ) { 
+                $( $.fn.jGalleryOptions[ this.intId ].appendTo ).append( html );             
+            }
+            else {
+                this.$this.hide().after( html );
+            }
+            
         },
         
         getCssForColours: function( objOptions ) {
@@ -1385,7 +1470,7 @@
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .btn {\
                   color: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
-                  background: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
+                  text-shadow: 0 0 1px rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .btn.active {\
                   color: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
@@ -1420,12 +1505,18 @@
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .zoom-container .nav-bottom {\
                   background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
+                  -webkit-box-shadow: 0 -3px rgba(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', .5);\
+                  box-shadow: 0 -3px rgba(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', .5);\
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails {\
                   background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails .ico {\
                   color: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
+                }\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails .container {\
+                  -webkit-box-shadow: 0 0 0 3px rgba(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', .5);\
+                  box-shadow: 0 0 0 3px rgba(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', .5);\
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails.full-screen .prev:before {\
                   background-image: -webkit-gradient(linear,left 0%,left 100%,from(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 )),to(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0)));\
@@ -1499,16 +1590,33 @@
                   background-image: linear-gradient(to bottom,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 100%);\
                   background-repeat: repeat-x;\
                 }\
+                .jgallery.jgallery-slider[data-jgallery-id="' + this.intId + '"] .zoom-container .nav-bottom .btn {\
+                  background: rgba(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ',.8);\
+                  color: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
+                }\
             ';
         }
     };    
         
-    $.fn.jGallery = function( options ) {
-        options = $.extend( defaults, options );
-        
+    $.fn.jGallery = function( userOptions ) {
         return this.each( function() {
             var $this = $( this );
-            
+            var modeIsDefined = typeof userOptions !== 'undefined' && typeof userOptions.mode !== 'undefined';
+            var options = defaults;
+           
+            if ( $this.is( '[data-jgallery-id]' ) && modeIsDefined ) {
+                delete userOptions.mode;
+                modeIsDefined = false;
+            }
+            if ( modeIsDefined && userOptions.mode === 'standard' ) {
+                options = $.extend( options, defaultsStandardMode, userOptions, requiredStandardMode );
+            }
+            else if ( modeIsDefined && userOptions.mode === 'slider' ) {
+                options = $.extend( options, defaultsSliderMode, userOptions, requiredSliderMode );
+            }
+            else {
+                options = $.extend( options, userOptions );
+            }            
             if ( ! $this.is( '[data-jgallery-id]' ) ) {
                 $.fn.jGalleryCollection[ ++jGalleryId ] = new jGallery( $this, options );
             }
@@ -1569,11 +1677,11 @@
             this.generateHtml();
         },
 
-        setDuration: function() {
+        setDuration: function( duration ) {
             var intId = this.$element.attr( 'data-advanced-animation-id' );
-            var strDuration = this.duration * ( this.$element.find( '.pt-part' ).length > 1 ? 0.75 : 1 ) / 1000 + 's';
             var $stylesheet = $head.find( 'style[data-advanced-animation-id="' + intId + '"]' );
-
+            
+            this.duration = duration;
             if ( isInternetExplorer8AndOlder() ) {
                 return;
             }
@@ -1582,16 +1690,16 @@
             }
             $stylesheet.html('\
                 [data-advanced-animation-id="' + intId + '"] .pt-page {\
-                    -webkit-animation-duration: ' + strDuration + ';\
-                    -moz-animation-duration: ' + strDuration + ';\
-                    animation-duration: ' + strDuration + ';\
+                    -webkit-animation-duration: ' + duration + ';\
+                    -moz-animation-duration: ' + duration + ';\
+                    animation-duration: ' + duration + ';\
                 }\
             ');
         },
 
         setHideEffect: function( hideEffect ) {
             this.hideEffect = hideEffect;
-            if ( /moveTo/.test( hideEffect ) || /rotateRoom/.test( hideEffect ) ) {
+            if ( /moveTo|rotateRoom|rotateCarousel|rotateSlideOut/.test( hideEffect ) ) {
                 this.$element.find( '.pt-part' ).addClass( 'hide-overflow' );
             }
             else {
@@ -1633,7 +1741,7 @@
             clearTimeout( this.showPartsTimeout );
             this.showPartsTimeout = setTimeout( function() {
                 self._showNextPart( intPtPageNumber );
-            }, this.duration * 0.25 / Math.max( 1, this.$element.find( '.pt-part' ).length - 1 ) );
+            }, parseFloat( this.duration ) * 1000 * 0.25 / Math.max( 1, this.$element.find( '.pt-part' ).length - 1 ) );
         },
 
         _showParts: function( $this, intPtPageNumber ) {
