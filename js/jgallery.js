@@ -13,6 +13,8 @@
         width: '100%', // (only for standard or slider mode)
         height: '600px', // (only for standard or slider mode)
         autostart: false, // (only for full-screen mode)
+        autostartAtImage: 1,
+        autostartAtAlbum: 1,
         canClose: true, // (only for full-screen mode)
         canResize: true,
         backgroundColor: '#000',
@@ -262,15 +264,15 @@
 
 
 
-    var ThumbnailsGenerator = function( element, booIsAlbums ) {
-        this.jGallery = element;
-        this.$element = element.$this;
+    var ThumbnailsGenerator = function( jGallery, booIsAlbums ) {
+        this.jGallery = jGallery;
+        this.$element = jGallery.$this;
         this.booIsAlbums = booIsAlbums;
         this.$tmp;
         this.intI = 1;
         this.intJ = 1;
         this.intNo;
-        this.$thumbnailsContainerInner = $( '.jgallery' ).eq( -1 ).find( '.thumbnails .container-inner' );
+        this.$thumbnailsContainerInner = this.jGallery.$jgallery.find( '.thumbnails .container-inner' );
         this.start();
     };
 
@@ -979,6 +981,7 @@
                     albumTitle = $a.parents( '.album' ).eq( 0 ).attr( 'data-jgallery-album-title' );
                     this.jGallery.iconChangeAlbum.setTitle( albumTitle );
                     this.jGallery.iconChangeAlbum.$element.find( '[data-jgallery-album-title="' + albumTitle + '"]' ).addClass( 'active' );
+                    $a.parents( '.album' ).addClass( 'active' ).siblings( '.album' ).removeClass( 'active' );
                 }
             }
             this.thumbnails.setActiveThumb( $a );
@@ -1136,19 +1139,18 @@
     
     
         
-    var jGallery = function( $this, options ) {
+    var jGallery = function( $this ) {
         var self = this;
         
         this.booIsAlbums = $this.find( '.album:has(a:has(img:first-child:last-child))' ).length > 1;
-        this.intId = parseInt( $( '.jgallery' ).length + 1 );
+        this.intId = jGalleryId;
         this.$this = $this;
-        $.fn.jGalleryOptions[ this.intId ] = this.initialized() ? $.extend( $.fn.jGalleryOptions[ this.intId ], options ) : options;
         if ( $.fn.jGalleryOptions[ this.intId ].disabledOnIE7AndOlder && isInternetExplorer7AndOlder() ) {
             return;
         }
         this.init();
-        if ( $.fn.jGalleryOptions[ self.intId ].autostart ) {
-            this.thumbnails.$a.eq( 0 ).trigger( 'click' );
+        if ( $.fn.jGalleryOptions[ this.intId ].autostart ) {
+            this.autostart();
         }
         $( 'html' ).on( {
             keydown: function( event ) {
@@ -1233,6 +1235,26 @@
             this.zoom.slideshowStop();
             $window.off( 'resize', this.windowOnResize );
             $.fn.jGalleryOptions[ this.intId ].closeGallery();
+        },
+        
+        autostart: function() {
+            var $album;
+            var $thumb;
+            
+            if ( this.booIsAlbums ) {
+                $album = this.thumbnails.getElement().find( '.album' ).eq( $.fn.jGalleryOptions[ this.intId ].autostartAtAlbum - 1 );
+                if ( $album.length === 0 ) {
+                    $album = this.thumbnails.getElement().find( '.album' ).eq( 0 );
+                }
+            }
+            else {
+                $album = this.thumbnails.getElement();
+            }
+            $thumb = $album.find( 'a' ).eq( $.fn.jGalleryOptions[ this.intId ].autostartAtImage - 1 );
+            if ( $thumb.length === 0 ) {
+                $thumb = $album.find( 'a' ).eq( 0 );
+            }
+            $thumb.trigger( 'click' );
         },
         
         init: function() {
@@ -1446,10 +1468,10 @@
                 </div>';
             
             if ( mode === 'full-screen' ) { 
-                $( $.fn.jGalleryOptions[ this.intId ].appendTo ).append( html );             
+                this.$jgallery = $( $.fn.jGalleryOptions[ this.intId ].appendTo ).append( html ).children( ':last-child' );
             }
             else {
-                this.$this.hide().after( html );
+                this.$jgallery = this.$this.hide().after( html ).next();
             }
             
         },
@@ -1608,20 +1630,25 @@
                 delete userOptions.mode;
                 modeIsDefined = false;
             }
+            if ( $this.is( '[data-jgallery-id]' ) ) {
+                options = $.fn.jGalleryOptions[ $this.attr( 'data-jgallery-id' ) ];
+            }
             if ( modeIsDefined && userOptions.mode === 'standard' ) {
-                options = $.extend( options, defaultsStandardMode, userOptions, requiredStandardMode );
+                options = $.extend( {}, options, defaultsStandardMode, userOptions, requiredStandardMode );
             }
             else if ( modeIsDefined && userOptions.mode === 'slider' ) {
-                options = $.extend( options, defaultsSliderMode, userOptions, requiredSliderMode );
+                options = $.extend( {}, options, defaultsSliderMode, userOptions, requiredSliderMode );
             }
             else {
-                options = $.extend( options, userOptions );
+                options = $.extend( {}, options, userOptions );
             }            
             if ( ! $this.is( '[data-jgallery-id]' ) ) {
-                $.fn.jGalleryCollection[ ++jGalleryId ] = new jGallery( $this, options );
+                $.fn.jGalleryOptions[ ++jGalleryId ] = options;
+                $.fn.jGalleryCollection[ jGalleryId ] = new jGallery( $this );
             }
             else {
                 $.fn.jGalleryCollection[ $this.attr( 'data-jgallery-id' ) ].update( options );
+                $.fn.jGalleryOptions[ $this.attr( 'data-jgallery-id' ) ] = options;
             }
         } );
     };
