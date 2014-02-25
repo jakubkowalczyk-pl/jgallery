@@ -1,4 +1,4 @@
-.jgallery .thumbnails {
+.jgallery .jgallery-thumbnails {
     background: #111;
     .transition( ~"background 0.2s, background-color 0.2s" );
     position: absolute;
@@ -10,7 +10,7 @@
         display: none;
     }
     
-    .container {
+    .jgallery-container {
         left: 0;
         top: 0;
         right: 0;
@@ -30,9 +30,10 @@
 
     a {
         border-radius: .7em;
+        white-space: normal;
         display: inline-block;
 
-        &:hover:not( .active ) {
+        &:hover:not(.active) {
             border-radius: 2px !important;
 
             img {
@@ -72,7 +73,7 @@
         position: absolute;
     }
 
-    .close {
+    .jgallery-close {
         opacity: 0;
         display: none;
     }

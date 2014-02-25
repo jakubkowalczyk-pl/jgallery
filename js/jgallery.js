@@ -1,10 +1,10 @@
 /*!
- * jGallery v1.1.1
+ * jGallery v1.1.2
  * http://jgallery.jakubkowalczyk.pl/
  *
  * Released under the MIT license
  *
- * Date: 2014-02-17
+ * Date: 2014-02-25
  */
 ( function( $ ) {
     "use strict";
@@ -272,7 +272,7 @@
         this.intI = 1;
         this.intJ = 1;
         this.intNo;
-        this.$thumbnailsContainerInner = this.jGallery.$jgallery.find( '.thumbnails .container-inner' );
+        this.$thumbnailsContainerInner = this.jGallery.$jgallery.find( '.jgallery-thumbnails .jgallery-container-inner' );
         this.start();
     };
 
@@ -329,11 +329,11 @@
 
 
     var Thumbnails = function( jGallery ) {
-        this.$element = jGallery.$element.find( '.thumbnails' );
+        this.$element = jGallery.$element.find( '.jgallery-thumbnails' );
         this.$a = this.getElement().find( 'a' );
         this.$img = this.getElement().find( 'img' );
-        this.$container = this.getElement().find( '.container' );
-        this.$albums = this.getElement().find( '.album' ).length ? this.getElement().find( '.album' ) : this.getElement().find( '.container-inner' ).addClass( 'active' );
+        this.$container = this.getElement().find( '.jgallery-container' );
+        this.$albums = this.getElement().find( '.album' ).length ? this.getElement().find( '.album' ) : this.getElement().find( '.jgallery-container-inner' ).addClass( 'active' );
         this.$btnNext = this.getElement().children( '.next' );
         this.$btnPrev = this.getElement().children( '.prev' );
         this.intJgalleryId = jGallery.$element.attr( 'data-jgallery-id' );
@@ -348,13 +348,13 @@
         },
         
         init: function() {
-            this.getElement().removeClass( 'square number images thumbnails-left thumbnails-right thumbnails-top thumbnails-bottom thumbnails-horizontal thumbnails-vertical' );
-            this.getElement().addClass( 'thumbnails-' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbnailsPosition );
+            this.getElement().removeClass( 'square number images jgallery-thumbnails-left jgallery-thumbnails-right jgallery-thumbnails-top jgallery-thumbnails-bottom jgallery-thumbnails-horizontal jgallery-thumbnails-vertical' );
+            this.getElement().addClass( 'jgallery-thumbnails-' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbnailsPosition );
             if ( this.isVertical() ) {
-                this.getElement().addClass( 'thumbnails-vertical' );                    
+                this.getElement().addClass( 'jgallery-thumbnails-vertical' );                    
             }
             if ( this.isHorizontal() ) {
-                this.getElement().addClass( 'thumbnails-horizontal' );                    
+                this.getElement().addClass( 'jgallery-thumbnails-horizontal' );                    
             }   
             if ( $.fn.jGalleryOptions[ this.intJgalleryId ].thumbType === 'image' ) {
                 this._initImages();
@@ -406,7 +406,7 @@
         refreshThumbsSize: function( self ) {
             self.$img.each( function() {
                 var $image = $( this );
-
+                
                 isHorizontal( $image ) ? $image.css( { 'max-height': '100%', 'max-width': 'none' } ) : $image.css( { 'max-width': '100%', 'max-height': 'none' } );
             } );  
         },
@@ -465,7 +465,7 @@
                     self.changeViewToFullScreen();
                 }
             } );
-            this.getElement().find( '.close' ).on( {
+            this.getElement().find( '.jgallery-close' ).on( {
                 click: function() {
                     self.changeViewToBar();
                     self.zoom.refreshSize();
@@ -476,7 +476,7 @@
         changeViewToBar: function() {
             this.getElement().removeClass( 'full-screen' );
             if ( this.isHorizontal() ) {
-                this.getElement().addClass( 'thumbnails-horizontal' ).removeClass( 'thumbnails-vertical' );                    
+                this.getElement().addClass( 'jgallery-thumbnails-horizontal' ).removeClass( 'jgallery-thumbnails-vertical' );                    
             }
             this.refreshNavigation();
         },
@@ -484,7 +484,7 @@
         changeViewToFullScreen: function() {
             this.getElement().addClass( 'full-screen' );
             if ( this.isHorizontal() ) {
-                this.getElement().addClass( 'thumbnails-vertical' ).removeClass( 'thumbnails-horizontal' );                    
+                this.getElement().addClass( 'jgallery-thumbnails-vertical' ).removeClass( 'jgallery-thumbnails-horizontal' );                    
             }
             this._refreshVerticalNavigation();
         },
@@ -514,29 +514,29 @@
         },
 
         _initImages: function() {
-            var $css = $head.find( 'style.thumbnails[data-jgallery-id="' + this.intJgalleryId + '"]' );
+            var $css = $head.find( 'style.jgallery-thumbnails[data-jgallery-id="' + this.intJgalleryId + '"]' );
             var strCss = '\
-                    .jgallery[data-jgallery-id="' + this.intJgalleryId + '"] .thumbnails a {\n\
+                    .jgallery[data-jgallery-id="' + this.intJgalleryId + '"] .jgallery-thumbnails a {\n\
                         width: ' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbWidth + 'px;\n\
                         height: ' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbHeight + 'px;\n\
                         font-size: ' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbHeight + 'px;\n\
                     }\n\
-                    .jgallery[data-jgallery-id="' + this.intJgalleryId + '"] .thumbnails.full-screen a {\n\
+                    .jgallery[data-jgallery-id="' + this.intJgalleryId + '"] .jgallery-thumbnails.full-screen a {\n\
                         width: ' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbWidthOnFullScreen + 'px;\n\
                         height: ' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbHeightOnFullScreen + 'px;\n\
                         font-size: ' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbHeightOnFullScreen + 'px;\n\
                     }\n\
-                    .jgallery[data-jgallery-id="' + this.intJgalleryId + '"] .thumbnails-horizontal {\n\
+                    .jgallery[data-jgallery-id="' + this.intJgalleryId + '"] .jgallery-thumbnails-horizontal {\n\
                         height: ' + parseInt( $.fn.jGalleryOptions[ this.intJgalleryId ].thumbHeight + 2 ) + 'px;\n\
                     }\n\
-                    .jgallery[data-jgallery-id="' + this.intJgalleryId + '"] .thumbnails-vertical {\n\
+                    .jgallery[data-jgallery-id="' + this.intJgalleryId + '"] .jgallery-thumbnails-vertical {\n\
                         width: ' + parseInt( $.fn.jGalleryOptions[ this.intJgalleryId ].thumbWidth + 2 ) + 'px;\n\
                     }\n\
             ';
             
             this.getElement().addClass( 'images' );
             $css.length ? $css.html( strCss ) : $head.append( '\
-                <style type="text/css" class="thumbnails" data-jgallery-id="' + this.intJgalleryId + '">\
+                <style type="text/css" class="jgallery-thumbnails" data-jgallery-id="' + this.intJgalleryId + '">\
                     ' + strCss + '\
                 </style>\
             ');
@@ -560,6 +560,9 @@
                 $nextThumb.removeClass( 'hidden' );
                 if ( $nextThumb.length ) {
                     self._showNextThumb();
+                }
+                else {
+                    self.refreshThumbsSize( self );
                 }
             }, 70 );
         },
@@ -600,7 +603,7 @@
 
         _refreshVerticalNavigation: function() {
             this.$container.scrollTop() > 0 ? this.$btnPrev.addClass( 'visible' ) : this.$btnPrev.removeClass( 'visible' );
-            this.$container.find( '.container-inner' ).height() > this.$container.height() + this.$container.scrollTop() ? this.$btnNext.addClass( 'visible' ) : this.$btnNext.removeClass( 'visible' );
+            this.$container.find( '.jgallery-container-inner' ).height() > this.$container.height() + this.$container.scrollTop() ? this.$btnNext.addClass( 'visible' ) : this.$btnNext.removeClass( 'visible' );
         },
 
         _scrollToPrev: function() {
@@ -1024,10 +1027,10 @@
         },
         
         appendPhoto: function ( $a ) {
-            if ( this.$element.find( '.container' ).length === 0 ) {
+            if ( this.$element.find( '.jgallery-container' ).length === 0 ) {
                 this.appendInitPhoto( this.thumbnails.$a.not( '[href="' + $a.attr( 'href' ) + '"]' ).eq( 0 ) );
             }
-            this.$element.find( '.pt-part' ).append( '<div class="container pt-page"><div class="pt-item"><img src="' + $a.attr( 'href' ) + '" /></div></div>' );  
+            this.$element.find( '.pt-part' ).append( '<div class="jgallery-container pt-page"><div class="pt-item"><img src="' + $a.attr( 'href' ) + '" /></div></div>' );  
         },
 
         appendAllPhotos: function() {       
@@ -1039,7 +1042,7 @@
             this.thumbnails.$a.each( function() {
                 var $a = $( this );
                 if ( ! self.isLoaded( $a ) ) {
-                    self.$element.find( '.pt-part' ).append( '<div class="container pt-page"><div class="pt-item"><img src="' + $a.attr( 'href' ) + '" /></div></div>' );
+                    self.$element.find( '.pt-part' ).append( '<div class="jgallery-container pt-page"><div class="pt-item"><img src="' + $a.attr( 'href' ) + '" /></div></div>' );
                 }
             } );
             this.appendInitPhoto( this.thumbnails.$a.eq( -1 ) );
@@ -1047,7 +1050,7 @@
         
         appendInitPhoto: function( $a ) {
             this.$element.find( '.pt-part' ).append( '\
-                <div class="container pt-page pt-page-current pt-page-ontop init" style="visibility: hidden;">\
+                <div class="jgallery-container pt-page pt-page-current pt-page-ontop init" style="visibility: hidden;">\
                     <div class="pt-item"><img src="' + $a.attr( 'href' ) + '" class="active loaded" /></div>\
                 </div>' );
         },
@@ -1216,11 +1219,13 @@
         },
 
         hide: function() {
+            var self = this;
+            
             if ( ! $.fn.jGalleryOptions[ this.intId ].canClose ) {
                 return;
             }
             this.$element.filter( ':visible' ).stop( false, true ).addClass( 'hidden' ).fadeOut( 500, function() {
-                if ( $.fn.jGalleryOptions[ this.intId ].mode === 'full-screen' ) {   
+                if ( $.fn.jGalleryOptions[ self.intId ].mode === 'full-screen' ) {   
                     $body.css( {
                         'overflow': 'visible'
                     } );
@@ -1267,13 +1272,13 @@
             new ThumbnailsGenerator( this, this.booIsAlbums );
             this.setVariables();
             this.thumbnails.init();
-            this.thumbnails.getElement().append( '<span class="icon- icon-remove btn close btn-small"></span>' );
+            this.thumbnails.getElement().append( '<span class="icon- icon-remove jgallery-btn jgallery-close jgallery-btn-small"></span>' );
 
             ( function() {                    
                 if ( self.booIsAlbums ) {
                     self.zoom.$container.find( '.nav-bottom' ).append( '\
-                        <span class="icon- icon-list-ul change-album btn btn-small">\
-                            <span class="menu btn"></span>\
+                        <span class="icon- icon-list-ul change-album jgallery-btn jgallery-btn-small">\
+                            <span class="menu jgallery-btn"></span>\
                             <span class="title"></span>\
                         </span>\
                     ' );
@@ -1342,7 +1347,7 @@
                 }
             } );
 
-            self.zoom.$container.find( '.close' ).on( {
+            self.zoom.$container.find( '.jgallery-close' ).on( {
                 click: function() {
                     self.hide();
                 }
@@ -1407,7 +1412,7 @@
 
         setUserOptions: function() {
             $.fn.jGalleryOptions[ this.intId ].canResize ? this.zoom.$resize.show() : this.zoom.$resize.hide();
-            $.fn.jGalleryOptions[ this.intId ].canClose ? this.zoom.$container.find( '.close' ).show() : this.zoom.$container.find( '.close' ).hide();
+            $.fn.jGalleryOptions[ this.intId ].canClose ? this.zoom.$container.find( '.jgallery-close' ).show() : this.zoom.$container.find( '.jgallery-close' ).hide();
             if ( ! $.fn.jGalleryOptions[ this.intId ].thumbnails ) {
                 this.thumbnails.hide();
                 this.thumbnails.getElement().addClass( 'inactive' );
@@ -1424,7 +1429,7 @@
             $.fn.jGalleryOptions[ this.intId ].slideshow && $.fn.jGalleryOptions[ this.intId ].slideshowCanRandom ? this.zoom.$random.show(): this.zoom.$random.hide();
             $.fn.jGalleryOptions[ this.intId ].slideshow && $.fn.jGalleryOptions[ this.intId ].slideshowCanRandom && $.fn.jGalleryOptions[ this.intId ].slideshowRandom ? this.zoom.$random.addClass( 'active' ) : this.zoom.$random.removeClass( 'active' );
 
-            $.fn.jGalleryOptions[ this.intId ].thumbnailsFullScreen && $.fn.jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.full-screen' ).add( this.thumbnails.getElement().find( '.close' ) ).show() : this.zoom.$container.find( '.full-screen' ).add( this.thumbnails.getElement().find( '.close' ) ).hide();
+            $.fn.jGalleryOptions[ this.intId ].thumbnailsFullScreen && $.fn.jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.full-screen' ).add( this.thumbnails.getElement().find( '.jgallery-close' ) ).show() : this.zoom.$container.find( '.full-screen' ).add( this.thumbnails.getElement().find( '.jgallery-close' ) ).hide();
             $.fn.jGalleryOptions[ this.intId ].thumbnailsFullScreen && $.fn.jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.change-album' ).show() : this.zoom.$container.find( '.change-album' ).hide();
             $.fn.jGalleryOptions[ this.intId ].canMinimalizeThumbnails && $.fn.jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.minimalize-thumbnails' ).show() : this.zoom.$container.find( '.minimalize-thumbnails' ).hide();
 
@@ -1444,10 +1449,10 @@
             var height = mode === 'full-screen' ? 'auto' : $.fn.jGalleryOptions[ this.intId ].height;
             var html = '\
                 <div class="jgallery jgallery-' + mode + '" style="width: ' + width + '; height: ' + height + '; display: none;" data-jgallery-id="' + this.intId + '">\
-                    <div class="thumbnails hidden">\
-                        <div class="container"><div class="container-inner"></div></div>\
-                        <span class="prev btn hidden"><span class="icon-chevron-left ico"></span></span>\
-                        <span class="next btn hidden"><span class="icon-chevron-right ico"></span></span>\
+                    <div class="jgallery-thumbnails hidden">\
+                        <div class="jgallery-container"><div class="jgallery-container-inner"></div></div>\
+                        <span class="prev jgallery-btn hidden"><span class="icon-chevron-left ico"></span></span>\
+                        <span class="next jgallery-btn hidden"><span class="icon-chevron-right ico"></span></span>\
                     </div>\
                     <div class="zoom-container">\
                         <div class="title before"></div>\
@@ -1455,14 +1460,14 @@
                         </div>\
                         <div class="left"></div>\
                         <div class="right"></div>\
-                        <span class="icon-chevron-left prev btn btn-large"></span>\
-                        <span class="icon-chevron-right next btn btn-large"></span>\
+                        <span class="icon-chevron-left prev jgallery-btn jgallery-btn-large"></span>\
+                        <span class="icon-chevron-right next jgallery-btn jgallery-btn-large"></span>\
                         <span class="progress"></span>\
                         <div class="nav">\
-                            <span class="icon- resize btn btn-small"></span><span class="icon-remove close btn btn-small"></span>\
+                            <span class="icon- resize jgallery-btn jgallery-btn-small"></span><span class="icon-remove jgallery-close jgallery-btn jgallery-btn-small"></span>\
                         </div>\
                         <div class="nav-bottom">\
-                            <span class="icon- icon-play slideshow btn btn-small"></span><span class="icon- icon-random random btn btn-small inactive"></span><span class="icon- icon-th full-screen btn btn-small"></span><span class="icon- icon-ellipsis-horizontal minimalize-thumbnails btn btn-small"></span>\
+                            <span class="icon- icon-play slideshow jgallery-btn jgallery-btn-small"></span><span class="icon- icon-random random jgallery-btn jgallery-btn-small inactive"></span><span class="icon- icon-th full-screen jgallery-btn jgallery-btn-small"></span><span class="icon- icon-ellipsis-horizontal minimalize-thumbnails jgallery-btn jgallery-btn-small"></span>\
                         </div>\
                     </div>\
                 </div>';
@@ -1490,14 +1495,14 @@
                 .jgallery[data-jgallery-id="' + this.intId + '"] {\
                   background: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .btn {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-btn {\
                   color: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
                   text-shadow: 0 0 1px rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .btn.active {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-btn.active {\
                   color: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .btn:hover {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-btn:hover {\
                   text-shadow: none;\
                   text-shadow: 0 0 .15em rgba(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ',.75), 0 0 .45em rgba(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ',.5);\
                 }\
@@ -1519,7 +1524,7 @@
                   background: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
                   color: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .zoom .container {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .zoom .jgallery-container {\
                   background: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .zoom-container .title {\
@@ -1530,38 +1535,38 @@
                   -webkit-box-shadow: 0 -3px rgba(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', .5);\
                   box-shadow: 0 -3px rgba(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', .5);\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails {\
                   background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails .ico {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails .ico {\
                   color: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails .container {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails .jgallery-container {\
                   -webkit-box-shadow: 0 0 0 3px rgba(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', .5);\
                   box-shadow: 0 0 0 3px rgba(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', .5);\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails.full-screen .prev:before {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails.full-screen .prev:before {\
                   background-image: -webkit-gradient(linear,left 0%,left 100%,from(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 )),to(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0)));\
                   background-image: -webkit-linear-gradient(top,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ),0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0),100%);\
                   background-image: -moz-linear-gradient(top,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0) 100%);\
                   background-image: linear-gradient(to bottom,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0) 100%);\
                   background-repeat: repeat-x;\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails.full-screen .next:before {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails.full-screen .next:before {\
                   background-image: -webkit-gradient(linear,left 0%,left 100%,from(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0)),to(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1)));\
                   background-image: -webkit-linear-gradient(top,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0),0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1),100%);\
                   background-image: -moz-linear-gradient(top,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1) 100%);\
                   background-image: linear-gradient(to bottom,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1) 100%);\
                   background-repeat: repeat-x;\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails.images a:after {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails.images a:after {\
                   background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails.full-screen .prev,\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails.full-screen .next {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails.full-screen .prev,\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails.full-screen .next {\
                   background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails.square a {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails.square a {\
                   background: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
                   color: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
                 }\
@@ -1572,47 +1577,47 @@
                 .jgallery[data-jgallery-id="' + this.intId + '"] .overlayContainer .imageLoaderPositionAbsolute:after {\
                   border-color: rgba(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ', .5 );\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails-horizontal .prev {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails-horizontal .prev {\
                   background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails-horizontal .prev:before {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails-horizontal .prev:before {\
                   background-image: -webkit-gradient(linear,0% top,100% top,from(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 )),to(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 )));\
                   background-image: -webkit-linear-gradient(left,color-stop(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 0%),color-stop(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 100%));\
                   background-image: -moz-linear-gradient(left,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 100%);\
                   background-image: linear-gradient(to right,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 100%);\
                   background-repeat: repeat-x;\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails-horizontal .next {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails-horizontal .next {\
                   background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails-horizontal .next:before {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails-horizontal .next:before {\
                   background-image: -webkit-gradient(linear,0% top,100% top,from(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 )),to(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 )));\
                   background-image: -webkit-linear-gradient(left,color-stop(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 0%),color-stop(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 100%));\
                   background-image: -moz-linear-gradient(left,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 100%);\
                   background-image: linear-gradient(to right,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 100%);\
                   background-repeat: repeat-x;\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails-vertical .prev {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails-vertical .prev {\
                   background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails-vertical .prev:before {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails-vertical .prev:before {\
                   background-image: -webkit-gradient(linear,left 0%,left 100%,from(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 )),to(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 )));\
                   background-image: -webkit-linear-gradient(top,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ),0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ),100%);\
                   background-image: -moz-linear-gradient(top,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 100%);\
                   background-image: linear-gradient(to bottom,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 100%);\
                   background-repeat: repeat-x;\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails-vertical .next {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails-vertical .next {\
                   background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .thumbnails-vertical .next:before {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails-vertical .next:before {\
                   background-image: -webkit-gradient(linear,left 0%,left 100%,from(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 )),to(rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 )));\
                   background-image: -webkit-linear-gradient(top,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ),0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ),100%);\
                   background-image: -moz-linear-gradient(top,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 100%);\
                   background-image: linear-gradient(to bottom,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 100%);\
                   background-repeat: repeat-x;\
                 }\
-                .jgallery.jgallery-slider[data-jgallery-id="' + this.intId + '"] .zoom-container .nav-bottom .btn {\
+                .jgallery.jgallery-slider[data-jgallery-id="' + this.intId + '"] .zoom-container .nav-bottom .jgallery-btn {\
                   background: rgba(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ',.8);\
                   color: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
                 }\
