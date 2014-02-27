@@ -18,17 +18,24 @@ html, body {
     }
 
     .imageLoaderPositionAbsolute {
-        width: 3em;
-        height: 3em;
-        line-height: 2.9em;
-        margin: -1.5em 0 0 -1.5em;
-        font-size: 60px;
+        @size: 60px;
+        width: @size;
+        height: @size;
+        line-height: @size;
+        margin: -@size/2 0 0 -@size/2;
+        font-size: @size;
         font-weight: bold;
         letter-spacing: -0.02em;
         text-align: center;
         position: absolute;
         z-index: 10001;
 
+        [class*="icon-"] {
+            width: @size;
+            height: @size;
+            line-height: @size;           
+        }
+            
         &.preloadAll:after {
             border-radius: 1.7em;
             left: 0;
@@ -48,8 +55,14 @@ html, body {
         }
 
         .progress-value {
+            width: 200px;
+            height: 200px;
+            line-height: 200px;
+            margin: -100px;
             padding-left: .25em;
-            position: relative;
+            left: 50%;
+            top: 50%;
+            position: absolute;
             z-index: 1;
 
             &:after {

@@ -1,10 +1,10 @@
 /*!
- * jGallery v1.1.2
+ * jGallery v1.1.3
  * http://jgallery.jakubkowalczyk.pl/
  *
  * Released under the MIT license
  *
- * Date: 2014-02-25
+ * Date: 2014-02-27
  */
 ( function( $ ) {
     "use strict";
@@ -670,6 +670,7 @@
         update: function() {
             var transition = $.fn.jGalleryTransitions[ $.fn.jGalleryOptions[ this.jGallery.intId ].transition ];
             
+            this.$container.attr( 'data-size', $.fn.jGalleryOptions[ this.jGallery.intId ].zoomSize );
             this.$element.find( '.pt-page' )
                 .removeClass( $.fn.jGalleryOptions[ this.jGallery.intId ].hideEffect )
                 .removeClass( $.fn.jGalleryOptions[ this.jGallery.intId ].showEffect );
@@ -727,6 +728,7 @@
         },
 
         toggleSize: function() {
+            this.$container.attr( 'data-size', $.fn.jGalleryOptions[ this.jGallery.intId ].zoomSize );
             if ( $.fn.jGalleryOptions[ this.jGallery.intId ].zoomSize === 'fit' ) {
                 $.fn.jGalleryOptions[ this.jGallery.intId ].zoomSize = 'fill';
                 this.fill();
@@ -1524,7 +1526,7 @@
                   background: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
                   color: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .zoom .jgallery-container {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .zoom-container:not([data-size="fill"]) .jgallery-container {\
                   background: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .zoom-container .title {\
@@ -1730,6 +1732,7 @@
         },
 
         setHideEffect: function( hideEffect ) {
+            this.prevHideEffect = this.hideEffect;
             this.hideEffect = hideEffect;
             if ( /moveTo|rotateRoom|rotateCarousel|rotateSlideOut/.test( hideEffect ) ) {
                 this.$element.find( '.pt-part' ).addClass( 'hide-overflow' );
@@ -1740,6 +1743,7 @@
         },
 
         setShowEffect: function( showEffect ) {
+            this.prevShowEffect = this.showEffect;
             this.showEffect = showEffect;
         },
 
@@ -1781,6 +1785,12 @@
             $this.find( '.pt-page-current' ).addClass( 'pt-page-prev' );
             $this.find( '.pt-page:nth-child(' + intPtPageNumber + ')' ).addClass( 'pt-page-current' );
             $this.find( '.pt-page' ).removeClass( this.hideEffect ).removeClass( this.showEffect );
+            if ( typeof this.prevHideEffect !== 'undefined' ) {
+                $this.find( '.pt-page' ).removeClass( this.prevHideEffect );
+            }
+            if ( typeof this.prevShowEffect !== 'undefined' ) {
+                $this.find( '.pt-page' ).removeClass( this.prevShowEffect );
+            }
             $this.find( '.pt-page-prev' ).addClass( this.hideEffect );
             $this.find( '.pt-page-current:not(.pt-page-prev)' ).addClass( this.showEffect );
         },
