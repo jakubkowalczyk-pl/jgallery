@@ -1,10 +1,10 @@
 /*!
- * jGallery v1.1.3
+ * jGallery v1.1.4
  * http://jgallery.jakubkowalczyk.pl/
  *
  * Released under the MIT license
  *
- * Date: 2014-02-27
+ * Date: 2014-03-16
  */
 ( function( $ ) {
     "use strict";
@@ -85,7 +85,7 @@
         zoomSize: 'fill'
     };
  
-    $.fn.jGalleryTransitions = {
+    var jGalleryTransitions = {
         moveToLeft_moveFromRight: ["pt-page-moveToLeft","pt-page-moveFromRight"],
         moveToRight_moveFromLeft: ["pt-page-moveToRight","pt-page-moveFromLeft"],
         moveToTop_moveFromBottom: ["pt-page-moveToTop","pt-page-moveFromBottom"],
@@ -155,12 +155,14 @@
         rotateSlideOut_rotateSlideIn: ["pt-page-rotateSlideOut","pt-page-rotateSlideIn"]
     };
     
-    $.fn.jGalleryArrayTransitions = [];
+    var jGalleryOptions = [];
+    var jGalleryCollection = [ '' ];
     
-    $.each( $.fn.jGalleryTransitions, function( index, value ) {
-        $.fn.jGalleryArrayTransitions.push( value );
-    } );
+    var jGalleryArrayTransitions = [];
     
+    $.each( jGalleryTransitions, function( index, value ) {
+        jGalleryArrayTransitions.push( value );
+    } );    
     
     var $head;
     var $body;
@@ -187,7 +189,7 @@
         start: function( intWidth, success ) {            
             this.$element.animate( {
                 width: intWidth
-            }, parseInt( $.fn.jGalleryOptions[ this.intJgalleryId ].slideshowInterval ) * 1000, 'linear', success );
+            }, parseInt( jGalleryOptions[ this.intJgalleryId ].slideshowInterval ) * 1000, 'linear', success );
             return this;    
         },
         
@@ -349,20 +351,20 @@
         
         init: function() {
             this.getElement().removeClass( 'square number images jgallery-thumbnails-left jgallery-thumbnails-right jgallery-thumbnails-top jgallery-thumbnails-bottom jgallery-thumbnails-horizontal jgallery-thumbnails-vertical' );
-            this.getElement().addClass( 'jgallery-thumbnails-' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbnailsPosition );
+            this.getElement().addClass( 'jgallery-thumbnails-' + jGalleryOptions[ this.intJgalleryId ].thumbnailsPosition );
             if ( this.isVertical() ) {
                 this.getElement().addClass( 'jgallery-thumbnails-vertical' );                    
             }
             if ( this.isHorizontal() ) {
                 this.getElement().addClass( 'jgallery-thumbnails-horizontal' );                    
             }   
-            if ( $.fn.jGalleryOptions[ this.intJgalleryId ].thumbType === 'image' ) {
+            if ( jGalleryOptions[ this.intJgalleryId ].thumbType === 'image' ) {
                 this._initImages();
             }
-            if ( $.fn.jGalleryOptions[ this.intJgalleryId ].thumbType === 'square' ) {
+            if ( jGalleryOptions[ this.intJgalleryId ].thumbType === 'square' ) {
                 this._initSquare();
             }
-            if ( $.fn.jGalleryOptions[ this.intJgalleryId ].thumbType === 'number' ) {
+            if ( jGalleryOptions[ this.intJgalleryId ].thumbType === 'number' ) {
                 this._initNumber();
             }
         },
@@ -389,6 +391,11 @@
                 this._showNextThumb();
                 this.$a.parent( '.album:not(.active)' ).children( '.hidden' ).removeClass( 'hidden' );
             }
+        },
+        
+        showThumbsForActiveAlbum: function() {
+            this.$a.addClass( 'hidden' );
+            this._showNextThumb();
         },
         
         hide: function( options ) {
@@ -425,11 +432,11 @@
         },
 
         isHorizontal: function() {
-            return $.fn.jGalleryOptions[ this.intJgalleryId ].thumbnailsPosition === 'top' || $.fn.jGalleryOptions[ this.intJgalleryId ].thumbnailsPosition === 'bottom';
+            return jGalleryOptions[ this.intJgalleryId ].thumbnailsPosition === 'top' || jGalleryOptions[ this.intJgalleryId ].thumbnailsPosition === 'bottom';
         },
 
         isVertical: function() {
-            return $.fn.jGalleryOptions[ this.intJgalleryId ].thumbnailsPosition === 'left' || $.fn.jGalleryOptions[ this.intJgalleryId ].thumbnailsPosition === 'right';
+            return jGalleryOptions[ this.intJgalleryId ].thumbnailsPosition === 'left' || jGalleryOptions[ this.intJgalleryId ].thumbnailsPosition === 'right';
         },
 
         isFullScreen: function() {
@@ -490,7 +497,7 @@
         },
 
         setActiveAlbum: function( $album ) {
-            if ( ! this.jGallery.booIsAlbums ) {
+            if ( ! this.jGallery.booIsAlbums || $album.is( '.active' ) ) {
                 return;
             }
             this.$albums.not( $album.get( 0 ) ).removeClass( 'active' );
@@ -502,6 +509,7 @@
                 this.zoom.showPhoto( $album.find( 'a' ).eq( 0 ) );
             }
             this.refreshThumbsSize( this );
+            this.showThumbsForActiveAlbum();
         },
 
         _initSquare: function() {
@@ -517,20 +525,20 @@
             var $css = $head.find( 'style.jgallery-thumbnails[data-jgallery-id="' + this.intJgalleryId + '"]' );
             var strCss = '\
                     .jgallery[data-jgallery-id="' + this.intJgalleryId + '"] .jgallery-thumbnails a {\n\
-                        width: ' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbWidth + 'px;\n\
-                        height: ' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbHeight + 'px;\n\
-                        font-size: ' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbHeight + 'px;\n\
+                        width: ' + jGalleryOptions[ this.intJgalleryId ].thumbWidth + 'px;\n\
+                        height: ' + jGalleryOptions[ this.intJgalleryId ].thumbHeight + 'px;\n\
+                        font-size: ' + jGalleryOptions[ this.intJgalleryId ].thumbHeight + 'px;\n\
                     }\n\
                     .jgallery[data-jgallery-id="' + this.intJgalleryId + '"] .jgallery-thumbnails.full-screen a {\n\
-                        width: ' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbWidthOnFullScreen + 'px;\n\
-                        height: ' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbHeightOnFullScreen + 'px;\n\
-                        font-size: ' + $.fn.jGalleryOptions[ this.intJgalleryId ].thumbHeightOnFullScreen + 'px;\n\
+                        width: ' + jGalleryOptions[ this.intJgalleryId ].thumbWidthOnFullScreen + 'px;\n\
+                        height: ' + jGalleryOptions[ this.intJgalleryId ].thumbHeightOnFullScreen + 'px;\n\
+                        font-size: ' + jGalleryOptions[ this.intJgalleryId ].thumbHeightOnFullScreen + 'px;\n\
                     }\n\
                     .jgallery[data-jgallery-id="' + this.intJgalleryId + '"] .jgallery-thumbnails-horizontal {\n\
-                        height: ' + parseInt( $.fn.jGalleryOptions[ this.intJgalleryId ].thumbHeight + 2 ) + 'px;\n\
+                        height: ' + parseInt( jGalleryOptions[ this.intJgalleryId ].thumbHeight + 2 ) + 'px;\n\
                     }\n\
                     .jgallery[data-jgallery-id="' + this.intJgalleryId + '"] .jgallery-thumbnails-vertical {\n\
-                        width: ' + parseInt( $.fn.jGalleryOptions[ this.intJgalleryId ].thumbWidth + 2 ) + 'px;\n\
+                        width: ' + parseInt( jGalleryOptions[ this.intJgalleryId ].thumbWidth + 2 ) + 'px;\n\
                     }\n\
             ';
             
@@ -595,7 +603,7 @@
 
         _refreshHorizontalNavigation: function() {
             var $album = this.getElement().find( 'div.active' );
-            var intThumbsWidth = $.fn.jGalleryOptions[ this.intJgalleryId ].thumbType === 'image' ? this.$a.outerWidth( true ) * $album.find( 'img' ).length : this.$a.outerWidth( true ) * $album.find( 'a' ).length;
+            var intThumbsWidth = jGalleryOptions[ this.intJgalleryId ].thumbType === 'image' ? this.$a.outerWidth( true ) * $album.find( 'img' ).length : this.$a.outerWidth( true ) * $album.find( 'a' ).length;
 
             this.$container.scrollLeft() > 0 ? this.$btnPrev.addClass( 'visible' ) : this.$btnPrev.removeClass( 'visible' );
             intThumbsWidth > this.$container.width() + this.$container.scrollLeft() ? this.$btnNext.addClass( 'visible' ) : this.$btnNext.removeClass( 'visible' );
@@ -668,15 +676,15 @@
     
     Zoom.prototype = {
         update: function() {
-            var transition = $.fn.jGalleryTransitions[ $.fn.jGalleryOptions[ this.jGallery.intId ].transition ];
+            var transition = jGalleryTransitions[ jGalleryOptions[ this.jGallery.intId ].transition ];
             
-            this.$container.attr( 'data-size', $.fn.jGalleryOptions[ this.jGallery.intId ].zoomSize );
+            this.$container.attr( 'data-size', jGalleryOptions[ this.jGallery.intId ].zoomSize );
             this.$element.find( '.pt-page' )
-                .removeClass( $.fn.jGalleryOptions[ this.jGallery.intId ].hideEffect )
-                .removeClass( $.fn.jGalleryOptions[ this.jGallery.intId ].showEffect );
+                .removeClass( jGalleryOptions[ this.jGallery.intId ].hideEffect )
+                .removeClass( jGalleryOptions[ this.jGallery.intId ].showEffect );
             if ( typeof transition !== 'undefined' ) {
-                $.fn.jGalleryOptions[ this.jGallery.intId ].hideEffect = $.fn.jGalleryTransitions[ $.fn.jGalleryOptions[ this.jGallery.intId ].transition ][ 0 ];
-                $.fn.jGalleryOptions[ this.jGallery.intId ].showEffect = $.fn.jGalleryTransitions[ $.fn.jGalleryOptions[ this.jGallery.intId ].transition ][ 1 ];
+                jGalleryOptions[ this.jGallery.intId ].hideEffect = jGalleryTransitions[ jGalleryOptions[ this.jGallery.intId ].transition ][ 0 ];
+                jGalleryOptions[ this.jGallery.intId ].showEffect = jGalleryTransitions[ jGalleryOptions[ this.jGallery.intId ].transition ][ 1 ];
             }
             this.initAdvancedAnimation();  
         },
@@ -685,11 +693,11 @@
             if ( typeof this.advancedAnimation === 'undefined' ) {
                 this.advancedAnimation = new AdvancedAnimation( this.$element );
             }
-            this.advancedAnimation.setDuration( $.fn.jGalleryOptions[ this.jGallery.intId ].transitionDuration );
-            this.advancedAnimation.setDirection( $.fn.jGalleryOptions[ this.jGallery.intId ].transitionWaveDirection );
-            this.advancedAnimation.setQuantityParts( $.fn.jGalleryOptions[ this.jGallery.intId ].transitionCols, $.fn.jGalleryOptions[ this.jGallery.intId ].transitionRows );
-            this.advancedAnimation.setHideEffect( $.fn.jGalleryOptions[ this.jGallery.intId ].hideEffect );
-            this.advancedAnimation.setShowEffect( $.fn.jGalleryOptions[ this.jGallery.intId ].showEffect );  
+            this.advancedAnimation.setDuration( jGalleryOptions[ this.jGallery.intId ].transitionDuration );
+            this.advancedAnimation.setDirection( jGalleryOptions[ this.jGallery.intId ].transitionWaveDirection );
+            this.advancedAnimation.setQuantityParts( jGalleryOptions[ this.jGallery.intId ].transitionCols, jGalleryOptions[ this.jGallery.intId ].transitionRows );
+            this.advancedAnimation.setHideEffect( jGalleryOptions[ this.jGallery.intId ].hideEffect );
+            this.advancedAnimation.setShowEffect( jGalleryOptions[ this.jGallery.intId ].showEffect );  
         },
         
         setThumbnails: function( thumbnails ) {
@@ -699,7 +707,7 @@
         refreshContainerSize: function () {
             var intNavBottomHeight = this.jGallery.isSlider() ? 0 : this.$container.find( '.nav-bottom' ).outerHeight();
             var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.hidden' );
-            var strThumbnailsPosition = isThumbnailsVisible ? $.fn.jGalleryOptions[ this.intJGalleryId ].thumbnailsPosition : '';
+            var strThumbnailsPosition = isThumbnailsVisible ? jGalleryOptions[ this.intJGalleryId ].thumbnailsPosition : '';
 
             this.$container.css( {
                 'width': isThumbnailsVisible && this.thumbnails.isVertical() ? this.$jGallery.width() - this.thumbnails.getElement().outerWidth( true ) : 'auto',
@@ -715,10 +723,10 @@
                 return;
             }
             this.refreshContainerSize();
-            if ( $.fn.jGalleryOptions[ this.intJGalleryId ].zoomSize === 'original' ) {
+            if ( jGalleryOptions[ this.intJGalleryId ].zoomSize === 'original' ) {
                 this.original();
             }
-            else if ( $.fn.jGalleryOptions[ this.intJGalleryId ].zoomSize === 'fill' ) {
+            else if ( jGalleryOptions[ this.intJGalleryId ].zoomSize === 'fill' ) {
                 this.fill();
             }
             else {
@@ -728,27 +736,27 @@
         },
 
         toggleSize: function() {
-            this.$container.attr( 'data-size', $.fn.jGalleryOptions[ this.jGallery.intId ].zoomSize );
-            if ( $.fn.jGalleryOptions[ this.jGallery.intId ].zoomSize === 'fit' ) {
-                $.fn.jGalleryOptions[ this.jGallery.intId ].zoomSize = 'fill';
+            if ( jGalleryOptions[ this.jGallery.intId ].zoomSize === 'fit' ) {
+                jGalleryOptions[ this.jGallery.intId ].zoomSize = 'fill';
                 this.fill();
             }
-            else if ( $.fn.jGalleryOptions[ this.jGallery.intId ].zoomSize === 'fill' ) {
-                $.fn.jGalleryOptions[ this.jGallery.intId ].zoomSize = 'original';
+            else if ( jGalleryOptions[ this.jGallery.intId ].zoomSize === 'fill' ) {
+                jGalleryOptions[ this.jGallery.intId ].zoomSize = 'original';
                 this.original();
             }
-            else if ( $.fn.jGalleryOptions[ this.jGallery.intId ].zoomSize === 'original' ) {
+            else if ( jGalleryOptions[ this.jGallery.intId ].zoomSize === 'original' ) {
                 var $img = this.$element.find( 'img.active' ).eq( 0 );
                 
                 if ( this.$element.outerWidth() > $img.outerWidth() && this.$element.outerHeight() > $img.outerHeight() ) {
-                    $.fn.jGalleryOptions[ this.jGallery.intId ].zoomSize = 'fit';
+                    jGalleryOptions[ this.jGallery.intId ].zoomSize = 'fit';
                     this.fit();
                 }
                 else {
-                    $.fn.jGalleryOptions[ this.jGallery.intId ].zoomSize = 'fill';
+                    jGalleryOptions[ this.jGallery.intId ].zoomSize = 'fill';
                     this.fill();                    
                 }
             }
+            this.$container.attr( 'data-size', jGalleryOptions[ this.jGallery.intId ].zoomSize );
         },
    
         original: function() {
@@ -913,18 +921,18 @@
             
             this.jGallery.progress.clear().start( this.$container.width(), function() {
                 self.jGallery.progress.clear();
-                $.fn.jGalleryOptions[ self.jGallery.intId ].slideshowRandom ? self.showRandomPhoto() : self.showNextPhotoLoop();
+                jGalleryOptions[ self.jGallery.intId ].slideshowRandom ? self.showRandomPhoto() : self.showNextPhotoLoop();
             } );
         },
 
         slideshowRandomToggle: function() {
-            if ( $.fn.jGalleryOptions[ this.jGallery.intId ].slideshowRandom ) {
+            if ( jGalleryOptions[ this.jGallery.intId ].slideshowRandom ) {
                 this.$random.removeClass( 'active' );
-                $.fn.jGalleryOptions[ this.jGallery.intId ].slideshowRandom = false;
+                jGalleryOptions[ this.jGallery.intId ].slideshowRandom = false;
             }
             else {
                 this.$random.addClass( 'active' );
-                $.fn.jGalleryOptions[ this.jGallery.intId ].slideshowRandom = true;                    
+                jGalleryOptions[ this.jGallery.intId ].slideshowRandom = true;                    
             }
         },
 
@@ -976,7 +984,7 @@
             }
             this.booLoadingInProgress = true;
             this.$element.find( '.pt-page.init' ).remove();
-            $.fn.jGalleryOptions[ this.jGallery.intId ].showPhoto();
+            jGalleryOptions[ this.jGallery.intId ].showPhoto();
             if ( this.jGallery.$element.is( ':not(:visible)' ) ) {
                 this.jGallery.show();
             }
@@ -989,6 +997,7 @@
                     $a.parents( '.album' ).addClass( 'active' ).siblings( '.album' ).removeClass( 'active' );
                 }
             }
+            this.thumbnails.setActiveAlbum( this.thumbnails.$albums.filter( '[data-jgallery-album-title="' + $a.parents( '[data-jgallery-album-title]' ).attr( 'data-jgallery-album-title' ) + '"]' ) );
             this.thumbnails.setActiveThumb( $a );
             if ( this.$element.find( 'img.active' ).attr( 'src' ) === $a.attr( 'href' ) ) {
                 this.booLoadingInProgress = false;
@@ -996,15 +1005,15 @@
             }
             this.refreshNav();
             clearTimeout( this.jGallery.loaderTimeout );
-            if ( $.fn.jGalleryOptions[ this.jGallery.intId ].transition === 'random' ) {
+            if ( jGalleryOptions[ this.jGallery.intId ].transition === 'random' ) {
                 this.setRandomTransition();
             }
-            if ( $.fn.jGalleryOptions[ this.jGallery.intId ].title ) {
+            if ( jGalleryOptions[ this.jGallery.intId ].title ) {
                 this.$title.addClass( 'after fade' );
             }
             booIsLoaded = self.isLoaded( $a );
             if ( ! booIsLoaded ) {
-                if ( $.fn.jGalleryOptions[ self.jGallery.intId ].preloadAll && ! self.booLoadedAll ) {
+                if ( jGalleryOptions[ self.jGallery.intId ].preloadAll && ! self.booLoadedAll ) {
                     this.appendAllPhotos();
                 }
                 else {
@@ -1014,13 +1023,13 @@
             this.$element.find( 'img.active' ).addClass( 'prev-img' );
             self.$container.find( 'img.active' ).removeClass( 'active' );
             self.$container.find( '[src="' + $a.attr( 'href' ) + '"]' ).addClass( 'active' );
-            if ( $.fn.jGalleryOptions[ self.jGallery.intId ].title && $imgThumb.is( '[alt]' ) ) {
+            if ( jGalleryOptions[ self.jGallery.intId ].title && $imgThumb.is( '[alt]' ) ) {
                 self.$title.removeClass( 'after' ).addClass( 'before' );
             }
-            if ( ! booIsLoaded || ( $.fn.jGalleryOptions[ self.jGallery.intId ].preloadAll && ! self.booLoadedAll ) ) {
+            if ( ! booIsLoaded || ( jGalleryOptions[ self.jGallery.intId ].preloadAll && ! self.booLoadedAll ) ) {
                 self.booLoadedAll = true;
                 self.$container.overlay( {'show': true, 'showLoader': true} );
-                $.fn.jGalleryOptions[ self.jGallery.intId ].beforeLoadPhoto();
+                jGalleryOptions[ self.jGallery.intId ].beforeLoadPhoto();
                 self.loadPhoto( self.$element, $a );
             }
             else {
@@ -1038,7 +1047,7 @@
         appendAllPhotos: function() {       
             var self = this;
             
-            if ( ! $.fn.jGalleryOptions[ this.jGallery.intId ].preloadAll ) {
+            if ( ! jGalleryOptions[ this.jGallery.intId ].preloadAll ) {
                 return;
             }                
             this.thumbnails.$a.each( function() {
@@ -1061,13 +1070,13 @@
             var self = this;
             var $imgThumb = $a.children( 'img' );
             var intPercent = 0;
-            var $toLoading = $.fn.jGalleryOptions[ this.jGallery.intId ].preloadAll ? $zoom : $zoom.find( 'img.active' );
+            var $toLoading = jGalleryOptions[ this.jGallery.intId ].preloadAll ? $zoom : $zoom.find( 'img.active' );
 
             $toLoading.jLoader( {
                 interval: 500,
                 skip: '.loaded',
                 start: function() {   
-                    if ( $.fn.jGalleryOptions[ self.jGallery.intId ].preloadAll ) {
+                    if ( jGalleryOptions[ self.jGallery.intId ].preloadAll ) {
                         self.$container.find( '.overlay .imageLoaderPositionAbsolute:not(:has(.progress-value))' ).addClass( 'preloadAll' )
                             .append( '<span class="progress-value"></span>' );
                         self.$container.find( '.progress-value' ).html( '0' );
@@ -1086,7 +1095,7 @@
                     }, 500 );
                 },
                 progress: function( data ) {
-                    if ( ! $.fn.jGalleryOptions[ self.jGallery.intId ].preloadAll ) {
+                    if ( ! jGalleryOptions[ self.jGallery.intId ].preloadAll ) {
                         return;
                     }
                     intPercent = data.percent;
@@ -1096,12 +1105,12 @@
         },
 
         showPhotoSuccess: function( $imgThumb ) {
-            if ( $.fn.jGalleryOptions[ this.jGallery.intId ].title && $imgThumb.is( '[alt]' ) ) {
+            if ( jGalleryOptions[ this.jGallery.intId ].title && $imgThumb.is( '[alt]' ) ) {
                 this.$title.html( $imgThumb.attr( 'alt' ) ).removeClass( 'before' ).removeClass( 'after' );
             }
             this.jGallery.setColours( {
-                strBg: $imgThumb.is( '[data-jgallery-bg-color]' ) ? $imgThumb.attr( 'data-jgallery-bg-color' ) : $.fn.jGalleryOptions[ this.jGallery.intId ].backgroundColor,
-                strText: $imgThumb.is( '[data-jgallery-bg-color]' ) ? $imgThumb.attr( 'data-jgallery-text-color' ) : $.fn.jGalleryOptions[ this.jGallery.intId ].textColor
+                strBg: $imgThumb.is( '[data-jgallery-bg-color]' ) ? $imgThumb.attr( 'data-jgallery-bg-color' ) : jGalleryOptions[ this.jGallery.intId ].backgroundColor,
+                strText: $imgThumb.is( '[data-jgallery-bg-color]' ) ? $imgThumb.attr( 'data-jgallery-text-color' ) : jGalleryOptions[ this.jGallery.intId ].textColor
             } );
             this.$element.find( '.pt-page.init' ).css( {
                 visibility: 'visible'
@@ -1113,32 +1122,32 @@
             if ( this.booSlideshowPlayed ) {
                 this.slideshowSetTimeout();
             }
-            $.fn.jGalleryOptions[ this.jGallery.intId ].afterLoadPhoto();
+            jGalleryOptions[ this.jGallery.intId ].afterLoadPhoto();
             this.booLoadingInProgress = false;
-            if ( $.fn.jGalleryOptions[ this.jGallery.intId ].autostart && $.fn.jGalleryOptions[ this.jGallery.intId ].slideshowAutostart && $.fn.jGalleryOptions[ this.jGallery.intId ].slideshow ) {
-                $.fn.jGalleryOptions[ this.jGallery.intId ].slideshowAutostart = false;
+            if ( jGalleryOptions[ this.jGallery.intId ].autostart && jGalleryOptions[ this.jGallery.intId ].slideshowAutostart && jGalleryOptions[ this.jGallery.intId ].slideshow ) {
+                jGalleryOptions[ this.jGallery.intId ].slideshowAutostart = false;
                 this.slideshowPlay();
             }
         },
         
         setTransition: function( transition ) {
-            $.fn.jGalleryOptions[ this.jGallery.intId ].hideEffect = $.fn.jGalleryTransitions[ transition ][ 0 ];
-            $.fn.jGalleryOptions[ this.jGallery.intId ].showEffect = $.fn.jGalleryTransitions[ transition ][ 1 ];
-            this.advancedAnimation.setHideEffect( $.fn.jGalleryOptions[ this.jGallery.intId ].hideEffect );
-            this.advancedAnimation.setShowEffect( $.fn.jGalleryOptions[ this.jGallery.intId ].showEffect );    
+            jGalleryOptions[ this.jGallery.intId ].hideEffect = jGalleryTransitions[ transition ][ 0 ];
+            jGalleryOptions[ this.jGallery.intId ].showEffect = jGalleryTransitions[ transition ][ 1 ];
+            this.advancedAnimation.setHideEffect( jGalleryOptions[ this.jGallery.intId ].hideEffect );
+            this.advancedAnimation.setShowEffect( jGalleryOptions[ this.jGallery.intId ].showEffect );    
         },
         
         setRandomTransition: function() {
             var rand;
             
             this.$element.find( '.pt-page' )
-                .removeClass( $.fn.jGalleryOptions[ this.jGallery.intId ].hideEffect )
-                .removeClass( $.fn.jGalleryOptions[ this.jGallery.intId ].showEffect );
-            rand = Math.floor( ( Math.random() * $.fn.jGalleryArrayTransitions.length ) );
-            $.fn.jGalleryOptions[ this.jGallery.intId ].hideEffect = $.fn.jGalleryArrayTransitions[ rand ][ 0 ];
-            $.fn.jGalleryOptions[ this.jGallery.intId ].showEffect = $.fn.jGalleryArrayTransitions[ rand ][ 1 ];
-            this.advancedAnimation.setHideEffect( $.fn.jGalleryOptions[ this.jGallery.intId ].hideEffect );
-            this.advancedAnimation.setShowEffect( $.fn.jGalleryOptions[ this.jGallery.intId ].showEffect ); 
+                .removeClass( jGalleryOptions[ this.jGallery.intId ].hideEffect )
+                .removeClass( jGalleryOptions[ this.jGallery.intId ].showEffect );
+            rand = Math.floor( ( Math.random() * jGalleryArrayTransitions.length ) );
+            jGalleryOptions[ this.jGallery.intId ].hideEffect = jGalleryArrayTransitions[ rand ][ 0 ];
+            jGalleryOptions[ this.jGallery.intId ].showEffect = jGalleryArrayTransitions[ rand ][ 1 ];
+            this.advancedAnimation.setHideEffect( jGalleryOptions[ this.jGallery.intId ].hideEffect );
+            this.advancedAnimation.setShowEffect( jGalleryOptions[ this.jGallery.intId ].showEffect ); 
         }
     };
     
@@ -1150,11 +1159,11 @@
         this.booIsAlbums = $this.find( '.album:has(a:has(img:first-child:last-child))' ).length > 1;
         this.intId = jGalleryId;
         this.$this = $this;
-        if ( $.fn.jGalleryOptions[ this.intId ].disabledOnIE7AndOlder && isInternetExplorer7AndOlder() ) {
+        if ( jGalleryOptions[ this.intId ].disabledOnIE7AndOlder && isInternetExplorer7AndOlder() ) {
             return;
         }
         this.init();
-        if ( $.fn.jGalleryOptions[ this.intId ].autostart ) {
+        if ( jGalleryOptions[ this.intId ].autostart ) {
             this.autostart();
         }
         $( 'html' ).on( {
@@ -1188,8 +1197,8 @@
         },
         
         update: function( options ) {
-            $.fn.jGalleryOptions[ this.intId ] = this.initialized() ? $.extend( $.fn.jGalleryOptions[ this.intId ], options ) : $.extend( {}, defaults, options );
-            if ( $.fn.jGalleryOptions[ this.intId ].disabledOnIE7AndOlder && isInternetExplorer7AndOlder() ) {
+            jGalleryOptions[ this.intId ] = this.initialized() ? $.extend( jGalleryOptions[ this.intId ], options ) : $.extend( {}, defaults, options );
+            if ( jGalleryOptions[ this.intId ].disabledOnIE7AndOlder && isInternetExplorer7AndOlder() ) {
                 return;
             }
             this.booIsAlbums = this.$this.find( '.album:has(a:has(img:first-child:last-child))' ).length > 1;
@@ -1208,7 +1217,7 @@
 
         show: function() {
             $window.on( 'resize', { jGallery: this }, this.windowOnResize );
-            if ( $.fn.jGalleryOptions[ this.intId ].mode === 'full-screen' ) {
+            if ( jGalleryOptions[ this.intId ].mode === 'full-screen' ) {
                 $body.css( {
                     'overflow': 'hidden'
                 } );
@@ -1217,31 +1226,31 @@
             this.thumbnails.show();
             this.zoom.refreshContainerSize();
             this.zoom.$title.removeClass( 'hidden' );  
-            $.fn.jGalleryOptions[ this.intId ].showGallery();
+            jGalleryOptions[ this.intId ].showGallery();
         },
 
         hide: function() {
             var self = this;
             
-            if ( ! $.fn.jGalleryOptions[ this.intId ].canClose ) {
+            if ( ! jGalleryOptions[ this.intId ].canClose ) {
                 return;
             }
             this.$element.filter( ':visible' ).stop( false, true ).addClass( 'hidden' ).fadeOut( 500, function() {
-                if ( $.fn.jGalleryOptions[ self.intId ].mode === 'full-screen' ) {   
+                if ( jGalleryOptions[ self.intId ].mode === 'full-screen' ) {   
                     $body.css( {
                         'overflow': 'visible'
                     } );
                 }
+                self.thumbnails.hide();
             } );
             this.zoom.booLoadingInProgress = false;
             clearTimeout( this.zoom.showPhotoTimeout );
             this.zoom.$title.addClass( 'hidden' );
             this.zoom.$btnPrev.addClass( 'hidden' );
             this.zoom.$btnNext.addClass( 'hidden' );
-            this.thumbnails.hide();
             this.zoom.slideshowStop();
             $window.off( 'resize', this.windowOnResize );
-            $.fn.jGalleryOptions[ this.intId ].closeGallery();
+            jGalleryOptions[ this.intId ].closeGallery();
         },
         
         autostart: function() {
@@ -1249,7 +1258,7 @@
             var $thumb;
             
             if ( this.booIsAlbums ) {
-                $album = this.thumbnails.getElement().find( '.album' ).eq( $.fn.jGalleryOptions[ this.intId ].autostartAtAlbum - 1 );
+                $album = this.thumbnails.getElement().find( '.album' ).eq( jGalleryOptions[ this.intId ].autostartAtAlbum - 1 );
                 if ( $album.length === 0 ) {
                     $album = this.thumbnails.getElement().find( '.album' ).eq( 0 );
                 }
@@ -1257,7 +1266,7 @@
             else {
                 $album = this.thumbnails.getElement();
             }
-            $thumb = $album.find( 'a' ).eq( $.fn.jGalleryOptions[ this.intId ].autostartAtImage - 1 );
+            $thumb = $album.find( 'a' ).eq( jGalleryOptions[ this.intId ].autostartAtImage - 1 );
             if ( $thumb.length === 0 ) {
                 $thumb = $album.find( 'a' ).eq( 0 );
             }
@@ -1268,7 +1277,7 @@
             var self = this;
             
             $head.append( '<style type="text/css" class="colours" data-jgallery-id="' + this.intId + '"></style>' );
-            $.fn.jGalleryOptions[ this.intId ].initGallery();
+            jGalleryOptions[ this.intId ].initGallery();
             this.$this.attr( 'data-jgallery-id', this.intId );
             this.generateHtml();
             new ThumbnailsGenerator( this, this.booIsAlbums );
@@ -1297,10 +1306,10 @@
             } )();
 
             self.setUserOptions();
-            if ( $.fn.jGalleryOptions[ self.intId ].zoomSize === 'fit' || $.fn.jGalleryOptions[ self.intId ].zoomSize === 'original' ) {
+            if ( jGalleryOptions[ self.intId ].zoomSize === 'fit' || jGalleryOptions[ self.intId ].zoomSize === 'original' ) {
                 self.zoom.$resize.addClass( 'icon-resize-full' );
             }
-            if ( $.fn.jGalleryOptions[ self.intId ].zoomSize === 'fill' ) {
+            if ( jGalleryOptions[ self.intId ].zoomSize === 'fill' ) {
                 self.zoom.$resize.addClass( 'icon-resize-small' );
             }
             if ( ! isInternetExplorer() ) {
@@ -1314,7 +1323,6 @@
                     var $this = $( this );
 
                     event.preventDefault();
-                    self.thumbnails.setActiveAlbum( self.thumbnails.$albums.filter( '[data-jgallery-album-title="' + $this.parents( '[data-jgallery-album-title]' ).attr( 'data-jgallery-album-title' ) + '"]' ) );
                     self.zoom.showPhoto( $this );
                 }
             } );
@@ -1385,7 +1393,7 @@
         },
         
         isSlider: function() {
-            return $.fn.jGalleryOptions[ this.intId ].mode === 'slider';
+            return jGalleryOptions[ this.intId ].mode === 'slider';
         },
         
         windowOnResize: function( event ) {
@@ -1413,31 +1421,29 @@
         },
 
         setUserOptions: function() {
-            $.fn.jGalleryOptions[ this.intId ].canResize ? this.zoom.$resize.show() : this.zoom.$resize.hide();
-            $.fn.jGalleryOptions[ this.intId ].canClose ? this.zoom.$container.find( '.jgallery-close' ).show() : this.zoom.$container.find( '.jgallery-close' ).hide();
-            if ( ! $.fn.jGalleryOptions[ this.intId ].thumbnails ) {
-                this.thumbnails.hide();
+            jGalleryOptions[ this.intId ].canResize ? this.zoom.$resize.show() : this.zoom.$resize.hide();
+            jGalleryOptions[ this.intId ].canClose ? this.zoom.$container.find( '.jgallery-close' ).show() : this.zoom.$container.find( '.jgallery-close' ).hide();
+            if ( ! jGalleryOptions[ this.intId ].thumbnails ) {
                 this.thumbnails.getElement().addClass( 'inactive' );
-                $.fn.jGalleryOptions[ this.intId ].thumbnailsPosition = '';
+                jGalleryOptions[ this.intId ].thumbnailsPosition = '';
             }
             else {
-                this.thumbnails.show();
                 this.thumbnails.getElement().removeClass( 'inactive' );
-                if ( $.fn.jGalleryOptions[ this.intId ].thumbnailsPosition === '' ) {
-                    $.fn.jGalleryOptions[ this.intId ].thumbnailsPosition = defaults.thumbnailsPosition;
+                if ( jGalleryOptions[ this.intId ].thumbnailsPosition === '' ) {
+                    jGalleryOptions[ this.intId ].thumbnailsPosition = defaults.thumbnailsPosition;
                 }                    
             }
-            $.fn.jGalleryOptions[ this.intId ].slideshow ? this.zoom.$slideshow.show() : this.zoom.$slideshow.hide();
-            $.fn.jGalleryOptions[ this.intId ].slideshow && $.fn.jGalleryOptions[ this.intId ].slideshowCanRandom ? this.zoom.$random.show(): this.zoom.$random.hide();
-            $.fn.jGalleryOptions[ this.intId ].slideshow && $.fn.jGalleryOptions[ this.intId ].slideshowCanRandom && $.fn.jGalleryOptions[ this.intId ].slideshowRandom ? this.zoom.$random.addClass( 'active' ) : this.zoom.$random.removeClass( 'active' );
+            jGalleryOptions[ this.intId ].slideshow ? this.zoom.$slideshow.show() : this.zoom.$slideshow.hide();
+            jGalleryOptions[ this.intId ].slideshow && jGalleryOptions[ this.intId ].slideshowCanRandom ? this.zoom.$random.show(): this.zoom.$random.hide();
+            jGalleryOptions[ this.intId ].slideshow && jGalleryOptions[ this.intId ].slideshowCanRandom && jGalleryOptions[ this.intId ].slideshowRandom ? this.zoom.$random.addClass( 'active' ) : this.zoom.$random.removeClass( 'active' );
 
-            $.fn.jGalleryOptions[ this.intId ].thumbnailsFullScreen && $.fn.jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.full-screen' ).add( this.thumbnails.getElement().find( '.jgallery-close' ) ).show() : this.zoom.$container.find( '.full-screen' ).add( this.thumbnails.getElement().find( '.jgallery-close' ) ).hide();
-            $.fn.jGalleryOptions[ this.intId ].thumbnailsFullScreen && $.fn.jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.change-album' ).show() : this.zoom.$container.find( '.change-album' ).hide();
-            $.fn.jGalleryOptions[ this.intId ].canMinimalizeThumbnails && $.fn.jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.minimalize-thumbnails' ).show() : this.zoom.$container.find( '.minimalize-thumbnails' ).hide();
+            jGalleryOptions[ this.intId ].thumbnailsFullScreen && jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.full-screen' ).add( this.thumbnails.getElement().find( '.jgallery-close' ) ).show() : this.zoom.$container.find( '.full-screen' ).add( this.thumbnails.getElement().find( '.jgallery-close' ) ).hide();
+            jGalleryOptions[ this.intId ].thumbnailsFullScreen && jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.change-album' ).show() : this.zoom.$container.find( '.change-album' ).hide();
+            jGalleryOptions[ this.intId ].canMinimalizeThumbnails && jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.minimalize-thumbnails' ).show() : this.zoom.$container.find( '.minimalize-thumbnails' ).hide();
 
             this.setColours( {
-                strBg: $.fn.jGalleryOptions[ this.intId ].backgroundColor,
-                strText: $.fn.jGalleryOptions[ this.intId ].textColor
+                strBg: jGalleryOptions[ this.intId ].backgroundColor,
+                strText: jGalleryOptions[ this.intId ].textColor
             } );
         },
         
@@ -1446,9 +1452,9 @@
         },
         
         generateHtml: function() {
-            var mode = $.fn.jGalleryOptions[ this.intId ].mode;
-            var width = mode === 'full-screen' ? 'auto' : $.fn.jGalleryOptions[ this.intId ].width;
-            var height = mode === 'full-screen' ? 'auto' : $.fn.jGalleryOptions[ this.intId ].height;
+            var mode = jGalleryOptions[ this.intId ].mode;
+            var width = mode === 'full-screen' ? 'auto' : jGalleryOptions[ this.intId ].width;
+            var height = mode === 'full-screen' ? 'auto' : jGalleryOptions[ this.intId ].height;
             var html = '\
                 <div class="jgallery jgallery-' + mode + '" style="width: ' + width + '; height: ' + height + '; display: none;" data-jgallery-id="' + this.intId + '">\
                     <div class="jgallery-thumbnails hidden">\
@@ -1475,7 +1481,7 @@
                 </div>';
             
             if ( mode === 'full-screen' ) { 
-                this.$jgallery = $( $.fn.jGalleryOptions[ this.intId ].appendTo ).append( html ).children( ':last-child' );
+                this.$jgallery = $( jGalleryOptions[ this.intId ].appendTo ).append( html ).children( ':last-child' );
             }
             else {
                 this.$jgallery = this.$this.hide().after( html ).next();
@@ -1517,9 +1523,11 @@
                 .jgallery[data-jgallery-id="' + this.intId + '"] .change-album .menu .item {\
                   border-color: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
                   color: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
+                  background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .full-screen .change-album .menu .item {\
                   border-color: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
+                  background: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .change-album .menu .item.active,\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .change-album .menu .item:hover {\
@@ -1638,7 +1646,7 @@
                 modeIsDefined = false;
             }
             if ( $this.is( '[data-jgallery-id]' ) ) {
-                options = $.fn.jGalleryOptions[ $this.attr( 'data-jgallery-id' ) ];
+                options = jGalleryOptions[ $this.attr( 'data-jgallery-id' ) ];
             }
             if ( modeIsDefined && userOptions.mode === 'standard' ) {
                 options = $.extend( {}, options, defaultsStandardMode, userOptions, requiredStandardMode );
@@ -1650,19 +1658,24 @@
                 options = $.extend( {}, options, userOptions );
             }            
             if ( ! $this.is( '[data-jgallery-id]' ) ) {
-                $.fn.jGalleryOptions[ ++jGalleryId ] = options;
-                $.fn.jGalleryCollection[ jGalleryId ] = new jGallery( $this );
+                jGalleryOptions[ ++jGalleryId ] = options;
+                jGalleryCollection[ jGalleryId ] = new jGallery( $this );
             }
             else {
-                $.fn.jGalleryCollection[ $this.attr( 'data-jgallery-id' ) ].update( options );
-                $.fn.jGalleryOptions[ $this.attr( 'data-jgallery-id' ) ] = options;
+                jGalleryCollection[ $this.attr( 'data-jgallery-id' ) ].update( options );
+                jGalleryOptions[ $this.attr( 'data-jgallery-id' ) ] = options;
             }
         } );
     };
     
-    $.fn.jGalleryOptions = [];
-    $.fn.jGalleryCollection = [ '' ];
+    $.jGalleryOptions = function() {
+        return jGalleryOptions;
+    };
     
+    $.jGalleryTransitions = function() {
+        return jGalleryTransitions;
+    };
+        
     
     
     var intAdvancedAnimationLastId = 0;
