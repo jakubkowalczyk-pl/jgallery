@@ -289,6 +289,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   width: 0;
   height: 4px;
   margin: 0;
+  padding: 0;
+  border: 0;
   line-height: 4px;
   background: #fff;
   background: rgba(255,255,255,0.5);
@@ -599,8 +601,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 }
 .jgallery .jgallery-thumbnails.images.jgallery-thumbnails-horizontal .prev,
 .jgallery .jgallery-thumbnails.images.jgallery-thumbnails-horizontal .next {
-  top: 8px;
-  bottom: 16px;
+  top: 0px;
+  bottom: 8px;
 }
 .jgallery .jgallery-thumbnails.images.jgallery-thumbnails-horizontal:hover .prev.visible {
   left: 0;
@@ -4011,9 +4013,13 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   right: 0;
   bottom: 0;
   text-align: center;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
   position: fixed;
   z-index: 10002;
 }
 .jgallery * {
   outline: none;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
 }

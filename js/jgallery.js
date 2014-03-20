@@ -1,10 +1,10 @@
 /*!
- * jGallery v1.1.4
+ * jGallery v1.1.5
  * http://jgallery.jakubkowalczyk.pl/
  *
  * Released under the MIT license
  *
- * Date: 2014-03-16
+ * Date: 2014-03-20
  */
 ( function( $ ) {
     "use strict";
@@ -23,6 +23,7 @@
         thumbnailsFullScreen: true,
         thumbType: 'image', // [ image | square | number ]
         thumbnailsPosition: 'bottom', // [ top | bottom | left | right ]
+        reloadThumbnails: true, //Reload thumbnails when function jGallery() is called again for the same item
         thumbWidth: 100, //px
         thumbHeight: 100, //px
         thumbWidthOnFullScreen: 100, //px
@@ -202,8 +203,7 @@
     
 
 
-    var IconChangeAlbum = function( $this ) {
-        
+    var IconChangeAlbum = function( $this ) {  
         this.$element = $this;
         this.$title = this.$element.find( '.title' );
     };
@@ -261,15 +261,22 @@
 
         menuHide: function() {
             this.getElement().removeClass( 'active' );
-        } 
+        },
+        
+        clearMenu: function() {
+            this.getListOfAlbums().html( '' );
+        }
     };
 
 
 
-    var ThumbnailsGenerator = function( jGallery, booIsAlbums ) {
+    var ThumbnailsGenerator = function( jGallery, options ) {
+        this.options = $.extend( {}, {
+            thumbsHidden: true
+        }, options );
         this.jGallery = jGallery;
         this.$element = jGallery.$this;
-        this.booIsAlbums = booIsAlbums;
+        this.booIsAlbums = jGallery.booIsAlbums;
         this.$tmp;
         this.intI = 1;
         this.intJ = 1;
@@ -281,10 +288,11 @@
     ThumbnailsGenerator.prototype = {
         start: function() {
             var self = this;
-            var selector = this.jGallery.isSlider() ? '.album:has(img)' : '.album:has(a:has(img:first-child:last-child))';
+            var selector = this.jGallery.isSlider() ? '.album:has(img)' : '.album:has(a:has(img))';
 
             $( 'body' ).append( '<div id="jGalleryTmp" style="position: absolute; top: 0; left: 0; width: 0; height: 0; z-index: -1; overflow: hidden;">' + this.$element.html() + '</div>' );
             this.$tmp = $( '#jGalleryTmp' );
+            this.$thumbnailsContainerInner.html( '' );
             if ( this.booIsAlbums ) {
                 this.$tmp.find( selector ).each( function() {
                     self.insertAlbum( $( this ) );
@@ -309,7 +317,7 @@
 
         insertImages: function( $images, $container ) {
             var self = this;
-            var selector = this.jGallery.isSlider() ? 'img' : 'a:has(img:first-child:last-child)';
+            var selector = this.jGallery.isSlider() ? 'img' : 'a:has(img)';
 
             this.intNo = 1;
             $images.find( selector ).each( function() {
@@ -319,12 +327,31 @@
 
         insertImage: function( $this, $container ) {            
             if ( $this.is( 'a' ) ) {
-                $container.append( $this.addClass( 'hidden' ) );
+                $container.append( '<a href="' + $this.attr( 'href' ) + '">' + this.generateImgTag( $this.find( 'img' ).eq( 0 ) ).outerHtml() + '</a>' );
+                if ( this.options.thumbsHidden ) {
+                    $container.children( ':last-child' ).addClass( 'hidden' );
+                }
             }
             else if ( $this.is( 'img' ) ) {
-                $container.append( $( '<a href="' + $this.attr( 'src' ) + '"></a>' ).append( $this ) );                
+                $container.append( $( '<a href="' + $this.attr( 'src' ) + '">' + this.generateImgTag( $this ).outerHtml() + '</a>' ) );                
             }
             $container.children( ':last-child' ).attr( 'data-jgallery-photo-id', this.intI++ ).attr( 'data-jgallery-number', this.intNo++ );
+        },
+        
+        generateImgTag: function( $img ) {
+            var $newImg = $( '<img src="' + $img.attr( 'src' ) + '" />' );
+            
+            if ( $img.is( '[alt]' ) ) {
+                $newImg.attr( 'alt', $img.attr( 'alt' ) );
+            }
+            if ( $img.is( '[data-jgallery-bg-color]' ) ) {
+                $newImg.attr( 'data-jgallery-bg-color', $img.attr( 'data-jgallery-bg-color' ) );
+            }
+            if ( $img.is( '[data-jgallery-text-color]' ) ) {
+                $newImg.attr( 'data-jgallery-text-color', $img.attr( 'data-jgallery-text-color' ) );
+            }
+            
+            return $newImg;
         }
     };
     
@@ -411,6 +438,7 @@
         },
         
         refreshThumbsSize: function( self ) {
+            self = self ? self : this;
             self.$img.each( function() {
                 var $image = $( this );
                 
@@ -459,6 +487,12 @@
             if ( this.isVertical() ) {
                 this._verticalCenter( $a );
             }
+        },
+        
+        reload: function() {
+            this.$a = this.getElement().find( 'a' );
+            this.$img = this.getElement().find( 'img' );
+            this.$albums = this.getElement().find( '.album' ).length ? this.getElement().find( '.album' ) : this.getElement().find( '.jgallery-container-inner' ).addClass( 'active' );
         },
 
         bindEvents: function() {
@@ -1156,7 +1190,7 @@
     var jGallery = function( $this ) {
         var self = this;
         
-        this.booIsAlbums = $this.find( '.album:has(a:has(img:first-child:last-child))' ).length > 1;
+        this.booIsAlbums = $this.find( '.album:has(a:has(img))' ).length > 1;
         this.intId = jGalleryId;
         this.$this = $this;
         if ( jGalleryOptions[ this.intId ].disabledOnIE7AndOlder && isInternetExplorer7AndOlder() ) {
@@ -1191,7 +1225,7 @@
         } );
     };
     
-    jGallery.prototype = {        
+    jGallery.prototype = {         
         initialized: function() {
             return this.$this.is( '[data-jgallery-id]' );
         },
@@ -1201,10 +1235,22 @@
             if ( jGalleryOptions[ this.intId ].disabledOnIE7AndOlder && isInternetExplorer7AndOlder() ) {
                 return;
             }
-            this.booIsAlbums = this.$this.find( '.album:has(a:has(img:first-child:last-child))' ).length > 1;
+            this.booIsAlbums = this.$this.find( '.album:has(a:has(img))' ).length > 1;
+            if ( jGalleryOptions[ this.intId ].reloadThumbnails ) {
+                this.reloadThumbnails();
+            }
             this.zoom.update();
             this.thumbnails.init();
             this.setUserOptions();
+        },
+        
+        reloadThumbnails: function() {
+            new ThumbnailsGenerator( this, {
+                thumbsHidden: false
+            } );
+            this.thumbnails.reload();
+            this.thumbnails.refreshThumbsSize();
+            this.generateAlbumsDropdown();
         },
 
         setVariables: function() {
@@ -1273,6 +1319,31 @@
             $thumb.trigger( 'click' );
         },
         
+        generateAlbumsDropdown: function() {
+            var self = this;
+            
+            this.$element.find( '.change-album' ).remove();
+            if ( ! this.booIsAlbums ) {
+                return;
+            }
+            this.zoom.$container.find( '.nav-bottom' ).append( '\
+                <span class="icon- icon-list-ul change-album jgallery-btn jgallery-btn-small">\
+                    <span class="menu jgallery-btn"></span>\
+                    <span class="title"></span>\
+                </span>\
+            ' );
+            this.iconChangeAlbum = new IconChangeAlbum( self.zoom.$container.find( '.change-album' ) );
+            this.iconChangeAlbum.clearMenu();
+            this.thumbnails.$albums.each( function() {
+                var strTitle = $( this ).attr( 'data-jgallery-album-title' );
+
+                self.iconChangeAlbum.appendToMenu( '<span class="item" data-jgallery-album-title="' + strTitle + '">' + strTitle + '</span>' );
+            } );
+            this.thumbnails.getElement().append( this.iconChangeAlbum.getElement().outerHtml() );
+            this.iconChangeAlbum = new IconChangeAlbum( this.iconChangeAlbum.getElement().add( this.thumbnails.getElement().children( ':last-child' ) ) );
+            this.iconChangeAlbum.bindEvents( this );
+        },
+        
         init: function() {
             var self = this;
             
@@ -1280,31 +1351,11 @@
             jGalleryOptions[ this.intId ].initGallery();
             this.$this.attr( 'data-jgallery-id', this.intId );
             this.generateHtml();
-            new ThumbnailsGenerator( this, this.booIsAlbums );
+            new ThumbnailsGenerator( this );
             this.setVariables();
             this.thumbnails.init();
             this.thumbnails.getElement().append( '<span class="icon- icon-remove jgallery-btn jgallery-close jgallery-btn-small"></span>' );
-
-            ( function() {                    
-                if ( self.booIsAlbums ) {
-                    self.zoom.$container.find( '.nav-bottom' ).append( '\
-                        <span class="icon- icon-list-ul change-album jgallery-btn jgallery-btn-small">\
-                            <span class="menu jgallery-btn"></span>\
-                            <span class="title"></span>\
-                        </span>\
-                    ' );
-                    self.iconChangeAlbum = new IconChangeAlbum( self.zoom.$container.find( '.change-album' ) );
-                    self.thumbnails.$albums.each( function() {
-                        var strTitle = $( this ).attr( 'data-jgallery-album-title' );
-
-                        self.iconChangeAlbum.appendToMenu( '<span class="item" data-jgallery-album-title="' + strTitle + '">' + strTitle + '</span>' );
-                    } );
-                    self.thumbnails.getElement().append( self.iconChangeAlbum.getElement().outerHtml() );
-                    self.iconChangeAlbum = new IconChangeAlbum( self.iconChangeAlbum.getElement().add( self.thumbnails.getElement().children( ':last-child' ) ) );
-                    self.iconChangeAlbum.bindEvents( self );
-                }
-            } )();
-
+            this.generateAlbumsDropdown();
             self.setUserOptions();
             if ( jGalleryOptions[ self.intId ].zoomSize === 'fit' || jGalleryOptions[ self.intId ].zoomSize === 'original' ) {
                 self.zoom.$resize.addClass( 'icon-resize-full' );
@@ -1327,19 +1378,17 @@
                 }
             } );
 
-            self.thumbnails.$a.on( {
-                click: function( event ) {
-                    var $this = $( this );
+            self.thumbnails.$element.on( 'click', 'a', function( event ) {
+                var $this = $( this );
 
-                    event.preventDefault();
-                    if ( $this.is( ':not(.active)' ) ) {
-                        self.zoom.slideshowStop();
-                        self.zoom.showPhoto( $this );
-                    }
-                    else if ( self.thumbnails.isFullScreen() ) {
-                        self.thumbnails.changeViewToBar();
-                        self.zoom.refreshSize();
-                    }
+                event.preventDefault();
+                if ( $this.is( ':not(.active)' ) ) {
+                    self.zoom.slideshowStop();
+                    self.zoom.showPhoto( $this );
+                }
+                else if ( self.thumbnails.isFullScreen() ) {
+                    self.thumbnails.changeViewToBar();
+                    self.zoom.refreshSize();
                 }
             } ); 
 
