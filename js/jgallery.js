@@ -1,10 +1,10 @@
 /*!
- * jGallery v1.1.5
+ * jGallery v1.1.6
  * http://jgallery.jakubkowalczyk.pl/
  *
  * Released under the MIT license
  *
- * Date: 2014-03-20
+ * Date: 2014-03-27
  */
 ( function( $ ) {
     "use strict";
@@ -17,6 +17,7 @@
         autostartAtAlbum: 1,
         canClose: true, // (only for full-screen mode)
         canResize: true,
+        canChangeMode: false,
         backgroundColor: '#000',
         textColor: '#fff',
         thumbnails: true,
@@ -46,7 +47,7 @@
         slideshowInterval: '8s',
         preloadAll: false,
         appendTo: 'body', // selector (only for full-screen mode)
-        disabledOnIE7AndOlder: true,
+        disabledOnIE8AndOlder: true,
         initGallery: function() {},
         showPhoto: function() {},
         beforeLoadPhoto: function() {},
@@ -57,12 +58,13 @@
     
     var defaultsStandardMode = {
         thumbWidth: 75,
-        thumbHeight: 75
+        thumbHeight: 75,
+        autostart: true,
+        canClose: false,
+        canChangeMode: true
     };
     
     var requiredStandardMode = {
-        autostart: true,
-        canClose: false
     };
     
     var defaultsSliderMode = {
@@ -83,7 +85,8 @@
     var requiredSliderMode = {
         autostart: true,
         canClose: false,
-        zoomSize: 'fill'
+        zoomSize: 'fill',
+        canChangeMode: false
     };
  
     var jGalleryTransitions = {
@@ -699,6 +702,7 @@
         this.$jGallery = jGallery.$element;
         this.jGallery = jGallery;
         this.$resize = this.$container.find( '.resize' );
+        this.$changeMode = this.$container.find( '[class*="icon-"].change-mode' );
         this.$random = this.$container.find( '.random' );
         this.$slideshow = this.$container.find( '.slideshow' );
         this.intJGalleryId = this.$jGallery.attr( 'data-jgallery-id' );
@@ -799,7 +803,7 @@
             this.advancedAnimation.setPositionParts();
             this.setImgSizeForOriginal( $img.filter( '.active' ) );
             this.setImgSizeForOriginal( $img.filter( ':not( .active )' ) );
-            this.$resize.addClass( 'icon-resize-full' ).removeClass( 'icon-resize-small' );
+            this.$resize.addClass( 'icon-zoom-in' ).removeClass( 'icon-zoom-out' );
         },
    
         fit: function() {
@@ -808,7 +812,7 @@
             this.advancedAnimation.setPositionParts();
             this.setImgSizeForFit( $img.filter( '.active' ) );
             this.setImgSizeForFit( $img.filter( ':not( .active )' ) );
-            this.$resize.addClass( 'icon-resize-full' ).removeClass( 'icon-resize-small' );
+            this.$resize.addClass( 'icon-zoom-in' ).removeClass( 'icon-zoom-out' );
         },
         
         fill: function() {
@@ -817,7 +821,7 @@
             this.setImgSizeForFill( $img.filter( '.active' ) );
             this.setImgSizeForFill( $img.filter( ':not( .active )' ) );
             this.advancedAnimation.setPositionParts();
-            this.$resize.addClass( 'icon-resize-small' ).removeClass( 'icon-resize-full' );
+            this.$resize.addClass( 'icon-zoom-out' ).removeClass( 'icon-zoom-in' );
         },
         
         setImgSizeForOriginal: function( $img ) {
@@ -1094,6 +1098,9 @@
         },
         
         appendInitPhoto: function( $a ) {
+            if ( $a.length !== 1 ) {
+                return;
+            }
             this.$element.find( '.pt-part' ).append( '\
                 <div class="jgallery-container pt-page pt-page-current pt-page-ontop init" style="visibility: hidden;">\
                     <div class="pt-item"><img src="' + $a.attr( 'href' ) + '" class="active loaded" /></div>\
@@ -1182,6 +1189,48 @@
             jGalleryOptions[ this.jGallery.intId ].showEffect = jGalleryArrayTransitions[ rand ][ 1 ];
             this.advancedAnimation.setHideEffect( jGalleryOptions[ this.jGallery.intId ].hideEffect );
             this.advancedAnimation.setShowEffect( jGalleryOptions[ this.jGallery.intId ].showEffect ); 
+        },
+        
+        changeMode: function() {
+            var currentMode = jGalleryOptions[ this.jGallery.intId ].mode;
+            
+            if ( currentMode === 'slider' ) {
+                return;
+            }
+            if ( currentMode === 'standard' ) {
+                this.goToFullScreenMode();
+            }
+            else if ( currentMode === 'full-screen' ) {
+                this.goToStandardMode();
+            }
+        },
+        
+        goToFullScreenMode: function() {
+            $body.css( {
+                overflow: 'hidden'
+            } );
+            this.jGallery.$this.show();
+            this.jGallery.$element.removeClass( 'jgallery-standard' ).addClass( 'jgallery-full-screen' ).css( {
+                width: 'auto',
+                height: 'auto'
+            } );
+            this.$changeMode.removeClass( 'icon-resize-full' ).addClass( 'icon-resize-small' );
+            jGalleryOptions[ this.jGallery.intId ].mode = 'full-screen';
+            this.jGallery.refreshDimensions();
+        },
+        
+        goToStandardMode: function() {
+            $body.css( {
+                overflow: 'visible'
+            } );
+            this.jGallery.$this.hide();
+            this.jGallery.$element.removeClass( 'jgallery-full-screen' ).addClass( 'jgallery-standard' ).css( {
+                width: jGalleryOptions[ this.jGallery.intId ].width,
+                height: jGalleryOptions[ this.jGallery.intId ].height
+            } );
+            this.$changeMode.removeClass( 'icon-resize-small' ).addClass( 'icon-resize-full' );
+            jGalleryOptions[ this.jGallery.intId ].mode = 'standard';
+            this.jGallery.refreshDimensions();
         }
     };
     
@@ -1193,7 +1242,7 @@
         this.booIsAlbums = $this.find( '.album:has(a:has(img))' ).length > 1;
         this.intId = jGalleryId;
         this.$this = $this;
-        if ( jGalleryOptions[ this.intId ].disabledOnIE7AndOlder && isInternetExplorer7AndOlder() ) {
+        if ( jGalleryOptions[ this.intId ].disabledOnIE8AndOlder && isInternetExplorer8AndOlder() ) {
             return;
         }
         this.init();
@@ -1232,7 +1281,7 @@
         
         update: function( options ) {
             jGalleryOptions[ this.intId ] = this.initialized() ? $.extend( jGalleryOptions[ this.intId ], options ) : $.extend( {}, defaults, options );
-            if ( jGalleryOptions[ this.intId ].disabledOnIE7AndOlder && isInternetExplorer7AndOlder() ) {
+            if ( jGalleryOptions[ this.intId ].disabledOnIE8AndOlder && isInternetExplorer7AndOlder() ) {
                 return;
             }
             this.booIsAlbums = this.$this.find( '.album:has(a:has(img))' ).length > 1;
@@ -1262,6 +1311,7 @@
         },
 
         show: function() {
+            this.$this.hide();
             $window.on( 'resize', { jGallery: this }, this.windowOnResize );
             if ( jGalleryOptions[ this.intId ].mode === 'full-screen' ) {
                 $body.css( {
@@ -1296,6 +1346,7 @@
             this.zoom.$btnNext.addClass( 'hidden' );
             this.zoom.slideshowStop();
             $window.off( 'resize', this.windowOnResize );
+            this.$this.show();
             jGalleryOptions[ this.intId ].closeGallery();
         },
         
@@ -1358,10 +1409,10 @@
             this.generateAlbumsDropdown();
             self.setUserOptions();
             if ( jGalleryOptions[ self.intId ].zoomSize === 'fit' || jGalleryOptions[ self.intId ].zoomSize === 'original' ) {
-                self.zoom.$resize.addClass( 'icon-resize-full' );
+                self.zoom.$resize.addClass( 'icon-zoom-in' );
             }
             if ( jGalleryOptions[ self.intId ].zoomSize === 'fill' ) {
-                self.zoom.$resize.addClass( 'icon-resize-small' );
+                self.zoom.$resize.addClass( 'icon-zoom-out' );
             }
             if ( ! isInternetExplorer() ) {
                 self.$element.addClass( 'text-shadow' );
@@ -1369,13 +1420,11 @@
             self.thumbnails.refreshNavigation();
             self.zoom.refreshNav();
             self.zoom.refreshSize();
-            this.$this.find( 'a' ).on( {
-                click: function( event ) {
-                    var $this = $( this );
+            this.$this.on( 'click', 'a', function( event ) {
+                var $this = $( this );
 
-                    event.preventDefault();
-                    self.zoom.showPhoto( $this );
-                }
+                event.preventDefault();
+                self.zoom.showPhoto( $this );
             } );
 
             self.thumbnails.$element.on( 'click', 'a', function( event ) {
@@ -1424,6 +1473,12 @@
                 }
             } ); 
 
+            self.zoom.$changeMode.on( {
+                click: function() {
+                    self.zoom.changeMode();
+                }
+            } ); 
+
             self.zoom.$slideshow.on( {
                 click: function() {
                     self.zoom.slideshowPlayStop();
@@ -1446,8 +1501,12 @@
         },
         
         windowOnResize: function( event ) {
-            event.data.jGallery.zoom.refreshSize();
-            event.data.jGallery.thumbnails.refreshNavigation();
+            event.data.jGallery.refreshDimensions();
+        },
+        
+        refreshDimensions: function() {
+            this.zoom.refreshSize();
+            this.thumbnails.refreshNavigation();
         },
         
         getCanvasRatioWidthToHeight: function() {
@@ -1471,6 +1530,8 @@
 
         setUserOptions: function() {
             jGalleryOptions[ this.intId ].canResize ? this.zoom.$resize.show() : this.zoom.$resize.hide();
+            jGalleryOptions[ this.intId ].canChangeMode ? this.zoom.$changeMode.show() : this.zoom.$changeMode.hide();
+            jGalleryOptions[ this.intId ].mode === 'standard' ? this.zoom.$changeMode.removeClass( 'icon-resize-small' ).addClass( 'icon-resize-full' ) : this.zoom.$changeMode.removeClass( 'icon-resize-full' ).addClass( 'icon-resize-small' );
             jGalleryOptions[ this.intId ].canClose ? this.zoom.$container.find( '.jgallery-close' ).show() : this.zoom.$container.find( '.jgallery-close' ).hide();
             if ( ! jGalleryOptions[ this.intId ].thumbnails ) {
                 this.thumbnails.getElement().addClass( 'inactive' );
@@ -1521,7 +1582,9 @@
                         <span class="icon-chevron-right next jgallery-btn jgallery-btn-large"></span>\
                         <span class="progress"></span>\
                         <div class="nav">\
-                            <span class="icon- resize jgallery-btn jgallery-btn-small"></span><span class="icon-remove jgallery-close jgallery-btn jgallery-btn-small"></span>\
+                            <span class="icon- resize jgallery-btn jgallery-btn-small"></span>\
+                            <span class="icon- change-mode jgallery-btn jgallery-btn-small"></span>\
+                            <span class="icon-remove jgallery-close jgallery-btn jgallery-btn-small"></span>\
                         </div>\
                         <div class="nav-bottom">\
                             <span class="icon- icon-play slideshow jgallery-btn jgallery-btn-small"></span><span class="icon- icon-random random jgallery-btn jgallery-btn-small inactive"></span><span class="icon- icon-th full-screen jgallery-btn jgallery-btn-small"></span><span class="icon- icon-ellipsis-horizontal minimalize-thumbnails jgallery-btn jgallery-btn-small"></span>\
@@ -1533,7 +1596,10 @@
                 this.$jgallery = $( jGalleryOptions[ this.intId ].appendTo ).append( html ).children( ':last-child' );
             }
             else {
-                this.$jgallery = this.$this.hide().after( html ).next();
+                if ( jGalleryOptions[ this.intId ].autostart ) {
+                    this.$this.hide();
+                }
+                this.$jgallery = this.$this.after( html ).next();
             }
             
         },
@@ -1687,33 +1753,36 @@
     $.fn.jGallery = function( userOptions ) {
         return this.each( function() {
             var $this = $( this );
-            var modeIsDefined = typeof userOptions !== 'undefined' && typeof userOptions.mode !== 'undefined';
-            var options = defaults;
-           
-            if ( $this.is( '[data-jgallery-id]' ) && modeIsDefined ) {
-                delete userOptions.mode;
-                modeIsDefined = false;
-            }
-            if ( $this.is( '[data-jgallery-id]' ) ) {
-                options = jGalleryOptions[ $this.attr( 'data-jgallery-id' ) ];
-            }
-            if ( modeIsDefined && userOptions.mode === 'standard' ) {
-                options = $.extend( {}, options, defaultsStandardMode, userOptions, requiredStandardMode );
-            }
-            else if ( modeIsDefined && userOptions.mode === 'slider' ) {
-                options = $.extend( {}, options, defaultsSliderMode, userOptions, requiredSliderMode );
-            }
-            else {
-                options = $.extend( {}, options, userOptions );
-            }            
-            if ( ! $this.is( '[data-jgallery-id]' ) ) {
-                jGalleryOptions[ ++jGalleryId ] = options;
-                jGalleryCollection[ jGalleryId ] = new jGallery( $this );
-            }
-            else {
-                jGalleryCollection[ $this.attr( 'data-jgallery-id' ) ].update( options );
-                jGalleryOptions[ $this.attr( 'data-jgallery-id' ) ] = options;
-            }
+            
+            $( function() {
+                var modeIsDefined = typeof userOptions !== 'undefined' && typeof userOptions.mode !== 'undefined';
+                var options = defaults;
+
+                if ( $this.is( '[data-jgallery-id]' ) && modeIsDefined ) {
+                    delete userOptions.mode;
+                    modeIsDefined = false;
+                }
+                if ( $this.is( '[data-jgallery-id]' ) ) {
+                    options = jGalleryOptions[ $this.attr( 'data-jgallery-id' ) ];
+                }
+                if ( modeIsDefined && userOptions.mode === 'standard' ) {
+                    options = $.extend( {}, options, defaultsStandardMode, userOptions, requiredStandardMode );
+                }
+                else if ( modeIsDefined && userOptions.mode === 'slider' ) {
+                    options = $.extend( {}, options, defaultsSliderMode, userOptions, requiredSliderMode );
+                }
+                else {
+                    options = $.extend( {}, options, userOptions );
+                }            
+                if ( ! $this.is( '[data-jgallery-id]' ) ) {
+                    jGalleryOptions[ ++jGalleryId ] = options;
+                    jGalleryCollection[ jGalleryId ] = new jGallery( $this );
+                }
+                else {
+                    jGalleryCollection[ $this.attr( 'data-jgallery-id' ) ].update( options );
+                    jGalleryOptions[ $this.attr( 'data-jgallery-id' ) ] = options;
+                }
+            } );
         } );
     };
     

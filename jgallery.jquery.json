@@ -2,7 +2,7 @@
     "name": "jgallery",
     "title": "jGallery - FREE jQuery photo gallery and slider with albums and preloader",
     "description": "FREE jQuery photo gallery and slider with albums, preloader and 3D transitions effect. Unlimited scalability, compatible with all major browsers, retina friendly. Released under the MIT license.",
-    "version": "1.1.5",
+    "version": "1.1.6",
     "keywords": ["jgallery", "albums", "gallery", "preloader", "free", "transitions", "slider", "lightbox", "zoom"],
     "author": {
         "name": "Jakub Kowalczyk",
@@ -18,7 +18,7 @@
     "bugs": "https://github.com/jakubkowalczyk-pl/jgallery/issues",
     "homepage": "http://jgallery.jakubkowalczyk.pl/",
     "docs": "http://jgallery.jakubkowalczyk.pl/#usage",
-    "demo": "http://jgallery.jakubkowalczyk.pl/demo",
+    "demo": "http://jgallery.jakubkowalczyk.pl/customize-full-screen",
     "dependencies": {
         "jquery": ">=1.7.0",
         "font-awesome": "=3.x",
