@@ -1,10 +1,10 @@
 /*!
- * jGallery v1.1.6
+ * jGallery v1.2.0
  * http://jgallery.jakubkowalczyk.pl/
  *
  * Released under the MIT license
  *
- * Date: 2014-03-27
+ * Date: 2014-04-28
  */
 ( function( $ ) {
     "use strict";
@@ -17,6 +17,7 @@
         autostartAtAlbum: 1,
         canClose: true, // (only for full-screen mode)
         canResize: true,
+        draggableZoom: true,
         canChangeMode: false,
         backgroundColor: '#000',
         textColor: '#fff',
@@ -71,6 +72,7 @@
         width: '940px',
         height: '300px',
         canResize: false,
+        draggableZoom: false,
         thumbnailsFullScreen: false,
         thumbType: 'square',
         canMinimalizeThumbnails: false,
@@ -206,8 +208,9 @@
     
 
 
-    var IconChangeAlbum = function( $this ) {  
+    var IconChangeAlbum = function( $this, jGallery ) {        
         this.$element = $this;
+        this.jGallery = jGallery;
         this.$title = this.$element.find( '.title' );
     };
 
@@ -268,6 +271,10 @@
         
         clearMenu: function() {
             this.getListOfAlbums().html( '' );
+        },
+        
+        refreshMenuHeight: function() {
+            this.getListOfAlbums().css( 'max-height', this.jGallery.zoom.$container.outerHeight() - 8 );
         }
     };
 
@@ -691,17 +698,22 @@
     };
     
     
-        
+    
     var Zoom = function( jGallery ) {
         this.$container = jGallery.$element.children( '.zoom-container' );
         this.$element = this.$container.children( '.zoom' );
         this.$title = this.$container.children( '.title' );
         this.$btnPrev = this.$container.children( '.prev' );
         this.$btnNext = this.$container.children( '.next' );
+        this.$left = this.$container.find( '.left' );
+        this.$right = this.$container.find( '.right' );
         this.thumbnails = jGallery.thumbnails;
         this.$jGallery = jGallery.$element;
         this.jGallery = jGallery;
         this.$resize = this.$container.find( '.resize' );
+        this.$dragNav = this.$container.find( '.drag-nav' );
+        this.$dragNavCrop = $();
+        this.$dragNavCropImg = $();
         this.$changeMode = this.$container.find( '[class*="icon-"].change-mode' );
         this.$random = this.$container.find( '.random' );
         this.$slideshow = this.$container.find( '.slideshow' );
@@ -742,6 +754,98 @@
             this.thumbnails = thumbnails;
         },
         
+        enableDrag: function() {
+            if ( ! jGalleryOptions[ this.jGallery.intId ].draggableZoom ) {
+                return;
+            }
+            var self = this;
+            var startMarginLeft;
+            var startMarginTop;
+            
+            var startDrag = function( event ) {
+                var startX = event.pageX;
+                var startY = event.pageY;
+                var $img = self.$element.find( 'img.active' );
+                
+                startMarginLeft = $img.css( 'margin-left' );
+                startMarginTop = $img.css( 'margin-top' );
+                self.$element.on( {
+                    mousemove: function( event ) { 
+                        drag( event.pageX - startX, event.pageY - startY );
+                    },
+                    mouseleave: function() {
+                        stopDrag();
+                    }
+                } );
+                if ( jGalleryOptions[ self.jGallery.intId ].zoomSize === 'fill' ) {
+                    self.$dragNav.removeClass( 'hide' ).addClass( 'show' );
+                }
+                drag( 0, 0 );
+            };
+            
+            var stopDrag = function() {
+                self.$element.off( 'mousemove' );
+                if ( jGalleryOptions[ self.jGallery.intId ].zoomSize === 'fill' ) {
+                    self.$dragNav.removeClass( 'show' ).addClass( 'hide' );
+                }
+            };
+            
+            var drag = function( x, y ) {
+                var marginLeft = parseFloat( parseFloat( startMarginLeft ) + x );
+                var marginTop = parseFloat( parseFloat( startMarginTop ) + y );
+                var $img = self.$element.find( 'img.active' );
+                var $first = $img.eq( 0 );
+                var $last = $img.eq( -1 );
+                var $lastParent = $last.parent();
+                
+                if ( $first.position().left + marginLeft < 0 && $last.position().left + $last.width() + marginLeft > $lastParent.outerWidth() ) {
+                    $img.css( {
+                        'margin-left': marginLeft
+                    } );
+                    self.$dragNavCrop.css( {
+                        left: - ( $first.position().left + marginLeft ) / $img.width() * 100 + '%'
+                    } );
+                }
+                if ( $first.position().top + marginTop < 0 && $last.position().top + $last.height() + marginTop > $lastParent.outerHeight() ) {
+                    $img.css( {
+                        'margin-top': marginTop
+                    } );
+                    self.$dragNavCrop.css( {
+                        top: - ( $first.position().top + marginTop ) / $img.height() * 100 + '%'
+                    } );
+                }
+                self.$dragNavCropImg.css( {
+                    'margin-left': - self.$dragNavCrop.position().left,
+                    'margin-top': - self.$dragNavCrop.position().top
+                } );
+            };
+            
+            if ( jGalleryOptions[ self.jGallery.intId ].zoomSize === 'original' ) {
+                self.$dragNav.removeClass( 'hide' ).addClass( 'show' );
+            }
+            this.refreshDragNavCropSize();
+            this.$element.css( 'cursor', 'move' ).on( {
+                mousedown: function( event ) {
+                    event.preventDefault();
+                    startDrag( event );
+                },
+                mouseup: function() {
+                    stopDrag();
+                }
+            } );
+            this.$left.add( this.$right ).hide();
+        },
+        
+        disableDrag: function() {
+            if ( ! jGalleryOptions[ this.jGallery.intId ].draggableZoom ) {
+                return;
+            }
+            this.$dragNav.removeClass( 'show' ).addClass( 'hide' );
+            this.$element.css( 'cursor', 'default' );
+            this.$element.off();
+            this.$left.add( this.$right ).show(); 
+        },
+        
         refreshContainerSize: function () {
             var intNavBottomHeight = this.jGallery.isSlider() ? 0 : this.$container.find( '.nav-bottom' ).outerHeight();
             var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.hidden' );
@@ -754,6 +858,9 @@
                 'margin-left': strThumbnailsPosition === 'left' ? this.thumbnails.getElement().outerWidth( true ) : 0,
                 'margin-right': strThumbnailsPosition === 'right' ? this.thumbnails.getElement().outerWidth( true ) : 0
             } );
+            if ( jGalleryOptions[ this.jGallery.intId ].draggableZoom ) {
+                this.refreshDragNavCropSize();
+            }
         },
 
         refreshSize: function() {
@@ -772,38 +879,68 @@
             }
             this.$element.addClass( 'visible' );
         },
+        
+        refreshDragNavCropSize: function() { 
+            var $img = this.$element.find( 'img.active' );
+            var cropPositionLeft;
+            var cropPositionTop;
+            
+            this.$dragNavCrop.css( {
+                width: this.$element.width() / $img.width() * 100 + '%',
+                height: this.$element.height() / $img.height() * 100 + '%'
+            } );
+            cropPositionLeft = ( this.$dragNav.width() - this.$dragNavCrop.width() ) / 2;
+            cropPositionTop = ( this.$dragNav.height() - this.$dragNavCrop.height() ) / 2;
+            this.$dragNavCrop.css( {
+                left: cropPositionLeft,
+                top: cropPositionTop
+            } );
+            if ( this.$dragNavCropImg.length ) {
+                this.$dragNavCropImg.css( {
+                    'margin-left': - cropPositionLeft,
+                    'margin-top':  - cropPositionTop
+                } );
+            }
+        },
 
-        toggleSize: function() {
+        changeSize: function() {
             if ( jGalleryOptions[ this.jGallery.intId ].zoomSize === 'fit' ) {
                 jGalleryOptions[ this.jGallery.intId ].zoomSize = 'fill';
                 this.fill();
             }
             else if ( jGalleryOptions[ this.jGallery.intId ].zoomSize === 'fill' ) {
-                jGalleryOptions[ this.jGallery.intId ].zoomSize = 'original';
-                this.original();
-            }
-            else if ( jGalleryOptions[ this.jGallery.intId ].zoomSize === 'original' ) {
                 var $img = this.$element.find( 'img.active' ).eq( 0 );
                 
-                if ( this.$element.outerWidth() > $img.outerWidth() && this.$element.outerHeight() > $img.outerHeight() ) {
+                if ( this.$element.outerWidth().toString() === $img.attr( 'data-width' ) ) {
                     jGalleryOptions[ this.jGallery.intId ].zoomSize = 'fit';
-                    this.fit();
+                    this.fit(); 
                 }
-                else {
-                    jGalleryOptions[ this.jGallery.intId ].zoomSize = 'fill';
-                    this.fill();                    
+                else {        
+                    jGalleryOptions[ this.jGallery.intId ].zoomSize = 'original';
+                    this.original();         
                 }
+            }
+            else if ( jGalleryOptions[ this.jGallery.intId ].zoomSize === 'original' ) {
+                jGalleryOptions[ this.jGallery.intId ].zoomSize = 'fit';
+                this.fit();
             }
             this.$container.attr( 'data-size', jGalleryOptions[ this.jGallery.intId ].zoomSize );
         },
    
         original: function() {
-            var $img = this.$element.find( 'img.active' ).add( this.$element.find( '.pt-page.init img' ) );
+            var $img = this.$element.find( 'img.active' );
            
             this.advancedAnimation.setPositionParts();
-            this.setImgSizeForOriginal( $img.filter( '.active' ) );
-            this.setImgSizeForOriginal( $img.filter( ':not( .active )' ) );
-            this.$resize.addClass( 'icon-zoom-in' ).removeClass( 'icon-zoom-out' );
+            this.setImgSizeForOriginal( $img );
+            this.setImgSizeForOriginal( this.$element.find( '.pt-page.init img' ) );
+            if ( $img.attr( 'data-width' ) <= this.$element.outerWidth() && $img.attr( 'data-height' ) <= this.$element.outerHeight() ) {
+                this.$resize.addClass( 'icon-zoom-in' ).removeClass( 'icon-zoom-out' );  
+                this.disableDrag();
+            }
+            else {
+                this.$resize.addClass( 'icon-zoom-out' ).removeClass( 'icon-zoom-in' );
+                this.enableDrag();
+            }
         },
    
         fit: function() {
@@ -813,48 +950,32 @@
             this.setImgSizeForFit( $img.filter( '.active' ) );
             this.setImgSizeForFit( $img.filter( ':not( .active )' ) );
             this.$resize.addClass( 'icon-zoom-in' ).removeClass( 'icon-zoom-out' );
+            this.disableDrag();
         },
         
         fill: function() {
-            var $img = this.$element.find( 'img.active' ).add( this.$element.find( '.pt-page.init img' ) );
+            var $img = this.$element.find( 'img.active' );
 
-            this.setImgSizeForFill( $img.filter( '.active' ) );
-            this.setImgSizeForFill( $img.filter( ':not( .active )' ) );
+            this.setImgSizeForFill( $img );
+            this.setImgSizeForFill( this.$element.find( '.pt-page.init img' ) );
             this.advancedAnimation.setPositionParts();
-            this.$resize.addClass( 'icon-zoom-out' ).removeClass( 'icon-zoom-in' );
+            if ( $img.attr( 'data-width' ) > $img.width() && $img.attr( 'data-height' ) > $img.height() ) {
+                this.$resize.addClass( 'icon-zoom-in' ).removeClass( 'icon-zoom-out' );                
+            }
+            else {
+                this.$resize.addClass( 'icon-zoom-out' ).removeClass( 'icon-zoom-in' );
+            }
+            this.enableDrag();
         },
         
         setImgSizeForOriginal: function( $img ) {
-            var intNavBottomHeight = this.$container.find( '.nav-bottom' ).outerHeight();
-            var isThumbnailsVisible = ! this.thumbnails.getElement().is( '.hidden' );
-            var maxWidth;
-            var maxHeight;
-            
-            if ( this.jGallery.isSlider() ) {
-                maxWidth = this.$jGallery.width();
-            }
-            else if ( isThumbnailsVisible && this.thumbnails.isVertical() ) {
-                maxWidth = this.$jGallery.width() - this.thumbnails.getElement().outerWidth( true );
-            }
-            else {
-                maxWidth = this.$jGallery.width();
-            }
-            if ( this.jGallery.isSlider() ) {
-                maxHeight = this.$jGallery.height();
-            }
-            else if ( isThumbnailsVisible && this.thumbnails.isHorizontal() ) {
-                maxHeight = this.$jGallery.height() - this.thumbnails.getElement().outerHeight( true ) - intNavBottomHeight;
-            }
-            else {
-                maxHeight = this.$jGallery.height() - intNavBottomHeight;
-            }
             $img.css( {
-                'width': 'auto',
-                'height': 'auto',
+                'width': $img.attr( 'data-width' ),
+                'height': $img.attr( 'data-height' ),
                 'min-width': 0,
                 'min-height': 0,
-                'max-width': maxWidth,
-                'max-height': maxHeight
+                'max-width': 'none',
+                'max-height': 'none'
             } );       
             $img.css( {
                 'margin-top': - $img.height() / 2,
@@ -867,6 +988,8 @@
             var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.hidden' );
             
             $img.css( {
+                'width': 'auto',
+                'height': 'auto',
                 'min-width': 0,
                 'min-height': 0,
                 'max-width': isThumbnailsVisible && this.thumbnails.isVertical() ? this.$jGallery.width() - this.thumbnails.getElement().outerWidth( true ) : this.$jGallery.width(),
@@ -1079,7 +1202,10 @@
             if ( this.$element.find( '.jgallery-container' ).length === 0 ) {
                 this.appendInitPhoto( this.thumbnails.$a.not( '[href="' + $a.attr( 'href' ) + '"]' ).eq( 0 ) );
             }
-            this.$element.find( '.pt-part' ).append( '<div class="jgallery-container pt-page"><div class="pt-item"><img src="' + $a.attr( 'href' ) + '" /></div></div>' );  
+            this.$element.find( '.pt-part' ).append( '\
+                <div class="jgallery-container pt-page">\
+                    <div class="pt-item"><img src="' + $a.attr( 'href' ) + '" /></div>\
+                </div>' );
         },
 
         appendAllPhotos: function() {       
@@ -1146,6 +1272,15 @@
         },
 
         showPhotoSuccess: function( $imgThumb ) {
+            var image;
+            var $active = this.$element.find( 'img.active' );
+            
+            if ( $active.is( ':not([data-width])' ) ) {
+                image = new Image();
+                image.src = $active.attr( 'src' );
+                $active.attr( 'data-width', image.width );
+                $active.attr( 'data-height', image.height );
+            }
             if ( jGalleryOptions[ this.jGallery.intId ].title && $imgThumb.is( '[alt]' ) ) {
                 this.$title.html( $imgThumb.attr( 'alt' ) ).removeClass( 'before' ).removeClass( 'after' );
             }
@@ -1157,7 +1292,7 @@
                 visibility: 'visible'
             } );
             this.$element.find( 'img.prev-img' ).removeClass( 'prev-img' );
-            this.advancedAnimation.show( this.$element.find( 'img.active' ).eq( 0 ).parent().parent() );
+            this.advancedAnimation.show( $active.eq( 0 ).parent().parent() );
             this.refreshSize();
             this.thumbnails.refreshNavigation();
             if ( this.booSlideshowPlayed ) {
@@ -1168,6 +1303,13 @@
             if ( jGalleryOptions[ this.jGallery.intId ].autostart && jGalleryOptions[ this.jGallery.intId ].slideshowAutostart && jGalleryOptions[ this.jGallery.intId ].slideshow ) {
                 jGalleryOptions[ this.jGallery.intId ].slideshowAutostart = false;
                 this.slideshowPlay();
+            }
+            if ( jGalleryOptions[ this.jGallery.intId ].draggableZoom ) {
+                this.$dragNav.html( '<img src="' + $active.attr( 'src' ) + '" class="bg">\
+                    <div class="crop"><img src="' + $active.attr( 'src' ) + '"></div>' );
+                this.$dragNavCrop = this.$dragNav.find( '.crop' );
+                this.$dragNavCropImg = this.$dragNavCrop.find( 'img' );   
+                this.refreshDragNavCropSize();
             }
         },
         
@@ -1202,6 +1344,9 @@
             }
             else if ( currentMode === 'full-screen' ) {
                 this.goToStandardMode();
+            }
+            if ( this.jGallery.iconChangeAlbum instanceof IconChangeAlbum ) {
+                this.jGallery.iconChangeAlbum.refreshMenuHeight();
             }
         },
         
@@ -1323,6 +1468,9 @@
             this.zoom.refreshContainerSize();
             this.zoom.$title.removeClass( 'hidden' );  
             jGalleryOptions[ this.intId ].showGallery();
+            if ( this.iconChangeAlbum instanceof IconChangeAlbum ) {
+                this.iconChangeAlbum.refreshMenuHeight();
+            }
         },
 
         hide: function() {
@@ -1383,7 +1531,7 @@
                     <span class="title"></span>\
                 </span>\
             ' );
-            this.iconChangeAlbum = new IconChangeAlbum( self.zoom.$container.find( '.change-album' ) );
+            this.iconChangeAlbum = new IconChangeAlbum( self.zoom.$container.find( '.change-album' ), this );
             this.iconChangeAlbum.clearMenu();
             this.thumbnails.$albums.each( function() {
                 var strTitle = $( this ).attr( 'data-jgallery-album-title' );
@@ -1391,7 +1539,7 @@
                 self.iconChangeAlbum.appendToMenu( '<span class="item" data-jgallery-album-title="' + strTitle + '">' + strTitle + '</span>' );
             } );
             this.thumbnails.getElement().append( this.iconChangeAlbum.getElement().outerHtml() );
-            this.iconChangeAlbum = new IconChangeAlbum( this.iconChangeAlbum.getElement().add( this.thumbnails.getElement().children( ':last-child' ) ) );
+            this.iconChangeAlbum = new IconChangeAlbum( this.iconChangeAlbum.getElement().add( this.thumbnails.getElement().children( ':last-child' ) ), this );
             this.iconChangeAlbum.bindEvents( this );
         },
         
@@ -1420,7 +1568,7 @@
             self.thumbnails.refreshNavigation();
             self.zoom.refreshNav();
             self.zoom.refreshSize();
-            this.$this.on( 'click', 'a', function( event ) {
+            this.$this.on( 'click', 'a:has(img)', function( event ) {
                 var $this = $( this );
 
                 event.preventDefault();
@@ -1469,7 +1617,7 @@
 
             self.zoom.$resize.on( {
                 click: function() {
-                    self.zoom.toggleSize();
+                    self.zoom.changeSize();
                 }
             } ); 
 
@@ -1506,6 +1654,9 @@
         
         refreshDimensions: function() {
             this.zoom.refreshSize();
+            if ( this.iconChangeAlbum instanceof IconChangeAlbum ) {
+                this.iconChangeAlbum.refreshMenuHeight();
+            }
             this.thumbnails.refreshNavigation();
         },
         
@@ -1574,8 +1725,8 @@
                     </div>\
                     <div class="zoom-container">\
                         <div class="title before"></div>\
-                        <div class="zoom before pt-perspective">\
-                        </div>\
+                        <div class="zoom before pt-perspective"></div>\
+                        <div class="drag-nav hide"></div>\
                         <div class="left"></div>\
                         <div class="right"></div>\
                         <span class="icon-chevron-left prev jgallery-btn jgallery-btn-large"></span>\
@@ -1659,6 +1810,15 @@
                   background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
                   -webkit-box-shadow: 0 -3px rgba(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', .5);\
                   box-shadow: 0 -3px rgba(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', .5);\
+                }\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .zoom-container .drag-nav {\
+                  background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
+                  -webkit-box-shadow: 0 0 0 3px rgba(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', .5);\
+                  box-shadow: 0 0 0 3px rgba(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', .5);\
+                }\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .zoom-container .drag-nav .crop {\
+                  -webkit-box-shadow: 0 0 0 3px rgba(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ', .5);\
+                  box-shadow: 0 0 0 3px rgba(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ', .5);\
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails {\
                   background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\

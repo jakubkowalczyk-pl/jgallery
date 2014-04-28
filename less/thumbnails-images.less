@@ -14,13 +14,40 @@
     -webkit-border-radius: 0;
     border-radius: 0;
     -webkit-transition: opacity 0.5s;
-    -moz-transition: opacity 0.5s;
-    -o-transition: opacity 0.5s;
     transition: opacity 0.5s;
     font-size: 0;
+    
+    img {
+        -webkit-transition: -webkit-filter 0.2s, filter 0.2s;
+        transition: -webkit-filter 0.2s, filter 0.2s;
+        -webkit-filter: saturate( .4 );
+        filter: saturate( .4 );
+    }
+    
+    &:hover {
+        img {
+            -webkit-filter: saturate( 1 );
+            filter: saturate( 1 );
+        }
+        
+        &:after {
+            opacity: 0;
+        }
+    }
+    
+    &.active {
+        img {
+            -webkit-filter: saturate( 1 );
+            filter: saturate( 1 );
+        }
+        
+        &:after {
+            opacity: .25;    
+        }
+    }
 }
 .jgallery .jgallery-thumbnails.images a:after {
-    opacity: .8;
+    opacity: .5;
     background: #111;
     -webkit-transition: all 0.5s;
     -moz-transition: all 0.5s;
@@ -34,14 +61,8 @@
     position: absolute;
 }
 .jgallery .jgallery-thumbnails.images:hover a:after {
-    opacity: .25; 
+    opacity: 0; 
 }
-.jgallery .jgallery-thumbnails.images a:hover:after {
-    opacity: 0;
-}
-.jgallery .jgallery-thumbnails.images a.active:after {
-    opacity: .5;    
-} 
 .jgallery .jgallery-thumbnails.images img {
     padding: 1px;
     border: 0;
