@@ -1,10 +1,10 @@
 /*!
- * jGallery v1.2.0
+ * jGallery v1.3.0
  * http://jgallery.jakubkowalczyk.pl/
  *
  * Released under the MIT license
  *
- * Date: 2014-04-28
+ * Date: 2014-05-18
  */
 ( function( $ ) {
     "use strict";
@@ -21,17 +21,20 @@
         canChangeMode: false,
         backgroundColor: '#000',
         textColor: '#fff',
+        browserHistory: true,
         thumbnails: true,
         thumbnailsFullScreen: true,
         thumbType: 'image', // [ image | square | number ]
         thumbnailsPosition: 'bottom', // [ top | bottom | left | right ]
         reloadThumbnails: true, //Reload thumbnails when function jGallery() is called again for the same item
-        thumbWidth: 100, //px
-        thumbHeight: 100, //px
+        thumbWidth: 75, //px
+        thumbHeight: 75, //px
         thumbWidthOnFullScreen: 100, //px
         thumbHeightOnFullScreen: 100, //px
         canMinimalizeThumbnails: true,
+        hideThumbnailsOnInit: false,
         transition: 'moveToRight_moveFromLeft', // http://jgallery.jakubkowalczyk.pl/customize
+        transitionBackward: 'moveToLeft_moveFromRight', // http://jgallery.jakubkowalczyk.pl/customize
         transitionWaveDirection: 'forward', // [ forward | backward ]
         transitionCols: 1,
         transitionRows: 5,
@@ -44,7 +47,6 @@
         slideshowAutostart: false,
         slideshowCanRandom: true,
         slideshowRandom: false,
-        slideshowRandomAutostart: false,
         slideshowInterval: '8s',
         preloadAll: false,
         appendTo: 'body', // selector (only for full-screen mode)
@@ -58,11 +60,10 @@
     };
     
     var defaultsStandardMode = {
-        thumbWidth: 75,
-        thumbHeight: 75,
         autostart: true,
         canClose: false,
-        canChangeMode: true
+        canChangeMode: true,
+        browserHistory: false
     };
     
     var requiredStandardMode = {
@@ -73,6 +74,7 @@
         height: '300px',
         canResize: false,
         draggableZoom: false,
+        browserHistory: false,
         thumbnailsFullScreen: false,
         thumbType: 'square',
         canMinimalizeThumbnails: false,
@@ -171,9 +173,11 @@
     } );    
     
     var $head;
+    var $title;
     var $body;
     $( function() {
         $head = $( 'head' );
+        $title = $( 'title' );
         $body = $( 'body' );
     } );
     var $window = $( window );
@@ -312,6 +316,7 @@
                 this.insertImages( this.$tmp, this.$thumbnailsContainerInner );                    
             }
             this.$tmp.remove();
+            this.refreshThumbsSize();
         },
         
         insertAlbum: function( $this ) {
@@ -362,6 +367,16 @@
             }
             
             return $newImg;
+        },
+        
+        refreshThumbsSize: function() {
+            this.$thumbnailsContainerInner.find( 'img' ).each( function() {
+                var $image = $( this );
+                var image = new Image();
+                
+                image.src = $image.attr( 'src' );
+                image.width > image.height ? $image.css( { 'max-height': '100%', 'max-width': 'none' } ) : $image.css( { 'max-width': '100%', 'max-height': 'none' } );
+            } );  
         }
     };
     
@@ -378,6 +393,7 @@
         this.intJgalleryId = jGallery.$element.attr( 'data-jgallery-id' );
         this.isJgalleryInitialized = jGallery.$element.is( '[data-jgallery-id]' );
         this.zoom = jGallery.zoom;
+        this.$iconToggleThumbsVisibility = this.zoom.$container.find( '.minimalize-thumbnails' );
         this.jGallery = jGallery;
     };
     
@@ -420,7 +436,6 @@
                         self._showNextThumb();
                         self.$a.parent( '.album:not(.active)' ).children( '.hidden' ).removeClass( 'hidden' );
                         self.getElement().addClass( 'loaded' );
-                        self.refreshThumbsSize( self );
                     }
                 } );
             }
@@ -428,6 +443,7 @@
                 this._showNextThumb();
                 this.$a.parent( '.album:not(.active)' ).children( '.hidden' ).removeClass( 'hidden' );
             }
+            this.$iconToggleThumbsVisibility.removeClass( 'inactive' );
         },
         
         showThumbsForActiveAlbum: function() {
@@ -441,19 +457,11 @@
             if ( options.hideEachThumb ) {
                 this.$a.addClass( 'hidden' );
             }
+            this.$iconToggleThumbsVisibility.addClass( 'inactive' );
         },
         
         toggle: function() {                    
             this.getElement().is( '.hidden' ) ? this.show() : this.hide( { hideEachThumb: false } );
-        },
-        
-        refreshThumbsSize: function( self ) {
-            self = self ? self : this;
-            self.$img.each( function() {
-                var $image = $( this );
-                
-                isHorizontal( $image ) ? $image.css( { 'max-height': '100%', 'max-width': 'none' } ) : $image.css( { 'max-width': '100%', 'max-height': 'none' } );
-            } );  
         },
 
         setActiveThumb: function( $a ) {
@@ -552,7 +560,6 @@
             if ( ! this.getElement().is( '.full-screen' ) && this.jGallery.$element.is( ':visible' ) ) {
                 this.zoom.showPhoto( $album.find( 'a' ).eq( 0 ) );
             }
-            this.refreshThumbsSize( this );
             this.showThumbsForActiveAlbum();
         },
 
@@ -612,9 +619,6 @@
                 $nextThumb.removeClass( 'hidden' );
                 if ( $nextThumb.length ) {
                     self._showNextThumb();
-                }
-                else {
-                    self.refreshThumbsSize( self );
                 }
             }, 70 );
         },
@@ -733,8 +737,8 @@
                 .removeClass( jGalleryOptions[ this.jGallery.intId ].hideEffect )
                 .removeClass( jGalleryOptions[ this.jGallery.intId ].showEffect );
             if ( typeof transition !== 'undefined' ) {
-                jGalleryOptions[ this.jGallery.intId ].hideEffect = jGalleryTransitions[ jGalleryOptions[ this.jGallery.intId ].transition ][ 0 ];
-                jGalleryOptions[ this.jGallery.intId ].showEffect = jGalleryTransitions[ jGalleryOptions[ this.jGallery.intId ].transition ][ 1 ];
+                jGalleryOptions[ this.jGallery.intId ].hideEffect = transition[ 0 ];
+                jGalleryOptions[ this.jGallery.intId ].showEffect = transition[ 1 ];
             }
             this.initAdvancedAnimation();  
         },
@@ -1062,6 +1066,9 @@
             this.jGallery.progress.pause();
             this.$slideshow.removeClass( 'icon-stop' ).addClass( 'icon-play' );
             this.booSlideshowPlayed = false;
+            if ( jGalleryOptions[ this.jGallery.intId ].slideshowCanRandom ) {
+                this.$random.hide();
+            }
         },
 
         slideshowPlay: function() {
@@ -1071,6 +1078,9 @@
             this.booSlideshowPlayed = true;
             this.$slideshow.removeClass( 'icon-play' ).addClass( 'icon-stop' );
             this.slideshowSetTimeout();
+            if ( jGalleryOptions[ this.jGallery.intId ].slideshowCanRandom ) {
+                this.$random.show();
+            }
         },
 
         slideshowPlayStop: function() {
@@ -1116,7 +1126,7 @@
             var $prev = this.thumbnails.$a.filter( '.active' ).prev( 'a' );
             if ( $prev.length === 1 ) {
                 this.showPhoto( $prev );
-            }
+            } 
         },
 
         showNextPhoto: function() {
@@ -1131,11 +1141,12 @@
         },
         
         
-        showPhoto: function( $a ) {
+        showPhoto: function( $a, options ) {
             var self = this;
             var $imgThumb = $a.children( 'img' );
             var booIsLoaded;
             var albumTitle;
+            var transition;
 
             if ( ! this.jGallery.initialized() ) {
                 this.showPhotoInit();
@@ -1144,6 +1155,9 @@
                 return;
             }
             this.booLoadingInProgress = true;
+            transition = jGalleryTransitions[ jGalleryOptions[ this.jGallery.intId ][ $a.nextAll( '.active' ).length > 0 ? 'transitionBackward' : 'transition' ] ];
+            this.advancedAnimation.setHideEffect( transition[0] );
+            this.advancedAnimation.setShowEffect( transition[1] );
             this.$element.find( '.pt-page.init' ).remove();
             jGalleryOptions[ this.jGallery.intId ].showPhoto();
             if ( this.jGallery.$element.is( ':not(:visible)' ) ) {
@@ -1191,17 +1205,14 @@
                 self.booLoadedAll = true;
                 self.$container.overlay( {'show': true, 'showLoader': true} );
                 jGalleryOptions[ self.jGallery.intId ].beforeLoadPhoto();
-                self.loadPhoto( self.$element, $a );
+                self.loadPhoto( self.$element, $a, options );
             }
             else {
-                self.showPhotoSuccess( $imgThumb );
+                self.showPhotoSuccess( $imgThumb, options );
             }
         },
         
         appendPhoto: function ( $a ) {
-            if ( this.$element.find( '.jgallery-container' ).length === 0 ) {
-                this.appendInitPhoto( this.thumbnails.$a.not( '[href="' + $a.attr( 'href' ) + '"]' ).eq( 0 ) );
-            }
             this.$element.find( '.pt-part' ).append( '\
                 <div class="jgallery-container pt-page">\
                     <div class="pt-item"><img src="' + $a.attr( 'href' ) + '" /></div>\
@@ -1233,7 +1244,7 @@
                 </div>' );
         },
        
-        loadPhoto: function( $zoom, $a ) {
+        loadPhoto: function( $zoom, $a, options ) {
             var self = this;
             var $imgThumb = $a.children( 'img' );
             var intPercent = 0;
@@ -1258,7 +1269,7 @@
                     self.$container.overlay( {'hide': true, 'hideLoader': true} );
                     clearInterval( self.jGallery.loaderTimeout );                                                  
                     self.jGallery.loaderTimeout = setTimeout( function() {
-                        self.showPhotoSuccess( $imgThumb );
+                        self.showPhotoSuccess( $imgThumb, options );
                     }, 500 );
                 },
                 progress: function( data ) {
@@ -1271,10 +1282,13 @@
             } );
         },
 
-        showPhotoSuccess: function( $imgThumb ) {
+        showPhotoSuccess: function( $imgThumb, options ) {
             var image;
             var $active = this.$element.find( 'img.active' );
             
+            options = $.extend( {}, {
+                historyPushState: true
+            }, options );            
             if ( $active.is( ':not([data-width])' ) ) {
                 image = new Image();
                 image.src = $active.attr( 'src' );
@@ -1292,7 +1306,9 @@
                 visibility: 'visible'
             } );
             this.$element.find( 'img.prev-img' ).removeClass( 'prev-img' );
-            this.advancedAnimation.show( $active.eq( 0 ).parent().parent() );
+            this.advancedAnimation.show( $active.eq( 0 ).parent().parent(), {
+                animation: this.$element.find( '.pt-part' ).eq( 0 ).find( '.pt-page-current:not(.pt-page-prev)' ).length === 1
+            } );
             this.refreshSize();
             this.thumbnails.refreshNavigation();
             if ( this.booSlideshowPlayed ) {
@@ -1311,6 +1327,25 @@
                 this.$dragNavCropImg = this.$dragNavCrop.find( 'img' );   
                 this.refreshDragNavCropSize();
             }
+            if ( options.historyPushState && jGalleryOptions[ this.jGallery.intId ].browserHistory ) {
+                historyPushState( {
+                    path: $active.attr( 'src' )
+                } );
+            }
+        },
+        
+        showPhotoByPath: function( path ) {
+            var $a = this.thumbnails.$albums.filter( '.active' ).find( 'a[href="' + path + '"]' );
+            
+            if ( $a.length === 0 ) {
+                $a = this.thumbnails.$a.filter( 'a[href="' + path + '"]' ).eq( 0 );
+            }
+            if ( $a.length === 0 ) {
+                return;
+            }
+            this.showPhoto( $a, {
+                historyPushState: false
+            } );
         },
         
         setTransition: function( transition ) {
@@ -1331,6 +1366,10 @@
             jGalleryOptions[ this.jGallery.intId ].showEffect = jGalleryArrayTransitions[ rand ][ 1 ];
             this.advancedAnimation.setHideEffect( jGalleryOptions[ this.jGallery.intId ].hideEffect );
             this.advancedAnimation.setShowEffect( jGalleryOptions[ this.jGallery.intId ].showEffect ); 
+        },
+        
+        unmarkActive: function() {
+            this.$element.find( 'img.active' ).removeClass( 'active' );
         },
         
         changeMode: function() {
@@ -1394,6 +1433,9 @@
         if ( jGalleryOptions[ this.intId ].autostart ) {
             this.autostart();
         }
+        if ( jGalleryOptions[ this.intId ].browserHistory ) {
+            this.browserHistory();
+        }
         $( 'html' ).on( {
             keydown: function( event ) {
                 if ( self.$element.is( ':visible' ) ) {
@@ -1443,7 +1485,6 @@
                 thumbsHidden: false
             } );
             this.thumbnails.reload();
-            this.thumbnails.refreshThumbsSize();
             this.generateAlbumsDropdown();
         },
 
@@ -1464,7 +1505,6 @@
                 } );
             }
             this.$element.not( ':visible' ).removeClass( 'hidden' ).stop( false, true ).fadeIn( 500 );
-            this.thumbnails.show();
             this.zoom.refreshContainerSize();
             this.zoom.$title.removeClass( 'hidden' );  
             jGalleryOptions[ this.intId ].showGallery();
@@ -1473,19 +1513,21 @@
             }
         },
 
-        hide: function() {
+        hide: function( options ) {
             var self = this;
             
             if ( ! jGalleryOptions[ this.intId ].canClose ) {
                 return;
             }
+            options = $.extend( {}, {
+                historyPushState: true
+            }, options );  
             this.$element.filter( ':visible' ).stop( false, true ).addClass( 'hidden' ).fadeOut( 500, function() {
                 if ( jGalleryOptions[ self.intId ].mode === 'full-screen' ) {   
                     $body.css( {
                         'overflow': 'visible'
                     } );
                 }
-                self.thumbnails.hide();
             } );
             this.zoom.booLoadingInProgress = false;
             clearTimeout( this.zoom.showPhotoTimeout );
@@ -1493,8 +1535,13 @@
             this.zoom.$btnPrev.addClass( 'hidden' );
             this.zoom.$btnNext.addClass( 'hidden' );
             this.zoom.slideshowStop();
+            this.zoom.advancedAnimation.hideActive();
+            this.zoom.unmarkActive();
             $window.off( 'resize', this.windowOnResize );
             this.$this.show();
+            if ( options.historyPushState && jGalleryOptions[ this.intId ].browserHistory ) {
+                historyPushState();
+            }
             jGalleryOptions[ this.intId ].closeGallery();
         },
         
@@ -1516,6 +1563,38 @@
                 $thumb = $album.find( 'a' ).eq( 0 );
             }
             $thumb.trigger( 'click' );
+        },
+        
+        browserHistory: function() {
+            var self = this;
+            var windowOnPopState = window.onpopstate;
+
+            function callActionByUrl() {
+                var hash;
+
+                if ( ! location.hash ) { 
+                    return;
+                }
+                hash = location.hash.replace( '#', '' );
+                switch ( hash ) {
+                    case '':
+                        self.hide( {
+                            historyPushState: false
+                        } );
+                        break;
+                    default:
+                        self.zoom.showPhotoByPath( hash );
+                }
+            }
+
+            window.onpopstate = function() {
+                if ( typeof windowOnPopState === 'function' ) {
+                    windowOnPopState();
+                }
+                callActionByUrl();
+            };
+
+            callActionByUrl();
         },
         
         generateAlbumsDropdown: function() {
@@ -1636,7 +1715,6 @@
             self.zoom.$container.find( '.minimalize-thumbnails' ).on( {
                 click: function() {
                     self.thumbnails.toggle();
-                    $( this ).toggleClass( 'inactive' );
                     self.zoom.refreshSize();
                 }
             } );  
@@ -1701,6 +1779,7 @@
             jGalleryOptions[ this.intId ].thumbnailsFullScreen && jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.full-screen' ).add( this.thumbnails.getElement().find( '.jgallery-close' ) ).show() : this.zoom.$container.find( '.full-screen' ).add( this.thumbnails.getElement().find( '.jgallery-close' ) ).hide();
             jGalleryOptions[ this.intId ].thumbnailsFullScreen && jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.change-album' ).show() : this.zoom.$container.find( '.change-album' ).hide();
             jGalleryOptions[ this.intId ].canMinimalizeThumbnails && jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.minimalize-thumbnails' ).show() : this.zoom.$container.find( '.minimalize-thumbnails' ).hide();
+            jGalleryOptions[ this.intId ].hideThumbnailsOnInit && jGalleryOptions[ this.intId ].thumbnails ? this.thumbnails.hide() : this.thumbnails.show();
 
             this.setColours( {
                 strBg: jGalleryOptions[ this.intId ].backgroundColor,
@@ -1738,12 +1817,15 @@
                             <span class="icon-remove jgallery-close jgallery-btn jgallery-btn-small"></span>\
                         </div>\
                         <div class="nav-bottom">\
-                            <span class="icon- icon-play slideshow jgallery-btn jgallery-btn-small"></span><span class="icon- icon-random random jgallery-btn jgallery-btn-small inactive"></span><span class="icon- icon-th full-screen jgallery-btn jgallery-btn-small"></span><span class="icon- icon-ellipsis-horizontal minimalize-thumbnails jgallery-btn jgallery-btn-small"></span>\
+                            <span class="icon- icon-play slideshow jgallery-btn jgallery-btn-small"></span>\
+                            <span class="icon- icon-random random jgallery-btn jgallery-btn-small inactive" style="display: none;"></span>\
+                            <span class="icon- icon-th full-screen jgallery-btn jgallery-btn-small"></span>\
+                            <span class="icon- icon-ellipsis-horizontal minimalize-thumbnails jgallery-btn jgallery-btn-small inactive"></span>\
                         </div>\
                     </div>\
                 </div>';
             
-            if ( mode === 'full-screen' ) { 
+            if ( mode === 'full-screen' ) {
                 this.$jgallery = $( jGalleryOptions[ this.intId ].appendTo ).append( html ).children( ':last-child' );
             }
             else {
@@ -1953,7 +2035,7 @@
     $.jGalleryTransitions = function() {
         return jGalleryTransitions;
     };
-        
+            
     
     
     var intAdvancedAnimationLastId = 0;
@@ -1965,6 +2047,7 @@
         this.cols = 1;
         this.rows = 1;
         this.direction = 'forward';
+        this.animation = true;
         this.$element = $this;
         this.$element.filter( ':not( [data-advanced-animation-id] )' ).attr( 'data-advanced-animation-id', ++intAdvancedAnimationLastId );
         this.$element.find( '.pt-item' ).wrap( '<div class="pt-page" />' );
@@ -1985,14 +2068,22 @@
             }
         },
 
-        show: function( $new ) {
+        show: function( $new, options ) {
             var intPtPageNumber = $new.prevAll().length + 1;
-
+            
             if ( $new.is( '.pt-page-current:not(.pt-page-prev)' ) ) {
                 return;
             }
+            options = $.extend( {}, {
+                animation: true
+            }, options );
+            this.animation = options.animation;
             this._waveJumpToEnd();
-            this._runWave( intPtPageNumber );
+            if ( this.animation ) {
+                this._runWave( intPtPageNumber );
+            } else {
+                this._showParts( this.$element.find( '.pt-part' ), intPtPageNumber );
+            }
             this.intPrevPtPageNumber = intPtPageNumber;
         },
 
@@ -2082,8 +2173,14 @@
             if ( typeof this.prevShowEffect !== 'undefined' ) {
                 $this.find( '.pt-page' ).removeClass( this.prevShowEffect );
             }
-            $this.find( '.pt-page-prev' ).addClass( this.hideEffect );
-            $this.find( '.pt-page-current:not(.pt-page-prev)' ).addClass( this.showEffect );
+            if ( this.animation ) {
+                $this.find( '.pt-page-prev' ).addClass( this.hideEffect );
+                $this.find( '.pt-page-current:not(.pt-page-prev)' ).addClass( this.showEffect );
+            }
+        },
+        
+        hideActive: function() {
+            this.$element.find( '.pt-page-current' ).addClass( 'pt-page-prev' ).addClass( this.hideEffect );
         },
 
         generateHtml: function() {
@@ -2334,6 +2431,15 @@
               return contents;
         })(this[0]));
     };
+            
+    function historyPushState( options ) {
+        options = $.extend( {}, {
+            stateObj: {},
+            title: $title.html(),
+            path: ''
+        }, options );
+        window.history.pushState( options.stateObj, options.title, window.location.href.split('#')[0] + '#' + options.path );
+    }
     
     function isInternetExplorer() {
         var rv = false;
@@ -2374,9 +2480,5 @@
             }
         }
         return rv;
-    }
-
-    function isHorizontal( $image ) {
-        return $image.width() > $image.height();
     }
 } ) ( jQuery );
