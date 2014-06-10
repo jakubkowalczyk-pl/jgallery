@@ -1,10 +1,10 @@
 /*!
- * jGallery v1.3.0
+ * jGallery v1.3.1
  * http://jgallery.jakubkowalczyk.pl/
  *
  * Released under the MIT license
  *
- * Date: 2014-05-18
+ * Date: 2014-06-11
  */
 ( function( $ ) {
     "use strict";
@@ -79,6 +79,7 @@
         thumbType: 'square',
         canMinimalizeThumbnails: false,
         transition: 'rotateCubeRightOut_rotateCubeRightIn',
+        transitionBackward: 'rotateCubeRightOut_rotateCubeRightIn',
         transitionCols: 6,
         transitionRows: 1,
         slideshow: true,
@@ -600,10 +601,10 @@
                 </style>\
             ');
             if ( this.isHorizontal() ) {
-                this.jGallery.zoom.$container.find( '.minimalize-thumbnails' ).addClass( 'icon-ellipsis-horizontal' ).removeClass( 'icon-ellipsis-vertical' );
+                this.jGallery.zoom.$container.find( '.minimalize-thumbnails' ).addClass( 'fa-ellipsis-h' ).removeClass( 'fa-ellipsis-v' );
             }
             else {
-                this.jGallery.zoom.$container.find( '.minimalize-thumbnails' ).addClass( 'icon-ellipsis-vertical' ).removeClass( 'icon-ellipsis-horizontal' );                
+                this.jGallery.zoom.$container.find( '.minimalize-thumbnails' ).addClass( 'fa-ellipsis-v' ).removeClass( 'fa-ellipsis-h' );                
             }
             if ( this.isJgalleryInitialized ) {
                 return;
@@ -718,7 +719,7 @@
         this.$dragNav = this.$container.find( '.drag-nav' );
         this.$dragNavCrop = $();
         this.$dragNavCropImg = $();
-        this.$changeMode = this.$container.find( '[class*="icon-"].change-mode' );
+        this.$changeMode = this.$container.find( '.fa.change-mode' );
         this.$random = this.$container.find( '.random' );
         this.$slideshow = this.$container.find( '.slideshow' );
         this.intJGalleryId = this.$jGallery.attr( 'data-jgallery-id' );
@@ -938,11 +939,11 @@
             this.setImgSizeForOriginal( $img );
             this.setImgSizeForOriginal( this.$element.find( '.pt-page.init img' ) );
             if ( $img.attr( 'data-width' ) <= this.$element.outerWidth() && $img.attr( 'data-height' ) <= this.$element.outerHeight() ) {
-                this.$resize.addClass( 'icon-zoom-in' ).removeClass( 'icon-zoom-out' );  
+                this.$resize.addClass( 'fa-search-plus' ).removeClass( 'fa-search-minus' );  
                 this.disableDrag();
             }
             else {
-                this.$resize.addClass( 'icon-zoom-out' ).removeClass( 'icon-zoom-in' );
+                this.$resize.addClass( 'fa-search-minus' ).removeClass( 'fa-search-plus' );
                 this.enableDrag();
             }
         },
@@ -953,7 +954,7 @@
             this.advancedAnimation.setPositionParts();
             this.setImgSizeForFit( $img.filter( '.active' ) );
             this.setImgSizeForFit( $img.filter( ':not( .active )' ) );
-            this.$resize.addClass( 'icon-zoom-in' ).removeClass( 'icon-zoom-out' );
+            this.$resize.addClass( 'fa-search-plus' ).removeClass( 'fa-search-minus' );
             this.disableDrag();
         },
         
@@ -964,10 +965,10 @@
             this.setImgSizeForFill( this.$element.find( '.pt-page.init img' ) );
             this.advancedAnimation.setPositionParts();
             if ( $img.attr( 'data-width' ) > $img.width() && $img.attr( 'data-height' ) > $img.height() ) {
-                this.$resize.addClass( 'icon-zoom-in' ).removeClass( 'icon-zoom-out' );                
+                this.$resize.addClass( 'fa-search-plus' ).removeClass( 'fa-search-minus' );                
             }
             else {
-                this.$resize.addClass( 'icon-zoom-out' ).removeClass( 'icon-zoom-in' );
+                this.$resize.addClass( 'fa-search-minus' ).removeClass( 'fa-search-plus' );
             }
             this.enableDrag();
         },
@@ -1064,7 +1065,7 @@
 
         slideshowStop: function () {
             this.jGallery.progress.pause();
-            this.$slideshow.removeClass( 'icon-stop' ).addClass( 'icon-play' );
+            this.$slideshow.removeClass( 'fa-stop' ).addClass( 'fa-play' );
             this.booSlideshowPlayed = false;
             if ( jGalleryOptions[ this.jGallery.intId ].slideshowCanRandom ) {
                 this.$random.hide();
@@ -1076,7 +1077,7 @@
                 return;
             }
             this.booSlideshowPlayed = true;
-            this.$slideshow.removeClass( 'icon-play' ).addClass( 'icon-stop' );
+            this.$slideshow.removeClass( 'fa-play' ).addClass( 'fa-stop' );
             this.slideshowSetTimeout();
             if ( jGalleryOptions[ this.jGallery.intId ].slideshowCanRandom ) {
                 this.$random.show();
@@ -1084,7 +1085,7 @@
         },
 
         slideshowPlayStop: function() {
-            this.$slideshow.is( '.icon-play' ) ? this.slideshowPlay() : this.slideshowStop();
+            this.$slideshow.is( '.fa-play' ) ? this.slideshowPlay() : this.slideshowStop();
         },
 
         slideshowSetTimeout: function() {
@@ -1179,7 +1180,6 @@
                 return;
             }
             this.refreshNav();
-            clearTimeout( this.jGallery.loaderTimeout );
             if ( jGalleryOptions[ this.jGallery.intId ].transition === 'random' ) {
                 this.setRandomTransition();
             }
@@ -1260,17 +1260,14 @@
                         self.$container.find( '.progress-value' ).html( '0' );
                     }
                     else {
-                        self.$container.find( '.overlay .imageLoaderPositionAbsolute:not(:has(.icon-spin))' )
-                            .append( '<span class="icon-spin icon-spinner"></span>' );                            
+                        self.$container.find( '.overlay .imageLoaderPositionAbsolute:not(:has(.fa-spin))' )
+                            .append( '<span class="fa fa-spin fa-spinner"></span>' );                            
                     }
                 },
                 success: function() {
                     $zoom.find( 'img' ).addClass( 'loaded' );
                     self.$container.overlay( {'hide': true, 'hideLoader': true} );
-                    clearInterval( self.jGallery.loaderTimeout );                                                  
-                    self.jGallery.loaderTimeout = setTimeout( function() {
-                        self.showPhotoSuccess( $imgThumb, options );
-                    }, 500 );
+                    self.showPhotoSuccess( $imgThumb, options );
                 },
                 progress: function( data ) {
                     if ( ! jGalleryOptions[ self.jGallery.intId ].preloadAll ) {
@@ -1398,7 +1395,7 @@
                 width: 'auto',
                 height: 'auto'
             } );
-            this.$changeMode.removeClass( 'icon-resize-full' ).addClass( 'icon-resize-small' );
+            this.$changeMode.removeClass( 'fa-expand' ).addClass( 'fa-compress' );
             jGalleryOptions[ this.jGallery.intId ].mode = 'full-screen';
             this.jGallery.refreshDimensions();
         },
@@ -1412,7 +1409,7 @@
                 width: jGalleryOptions[ this.jGallery.intId ].width,
                 height: jGalleryOptions[ this.jGallery.intId ].height
             } );
-            this.$changeMode.removeClass( 'icon-resize-small' ).addClass( 'icon-resize-full' );
+            this.$changeMode.removeClass( 'fa-compress' ).addClass( 'fa-expand' );
             jGalleryOptions[ this.jGallery.intId ].mode = 'standard';
             this.jGallery.refreshDimensions();
         }
@@ -1430,11 +1427,11 @@
             return;
         }
         this.init();
-        if ( jGalleryOptions[ this.intId ].autostart ) {
-            this.autostart();
-        }
         if ( jGalleryOptions[ this.intId ].browserHistory ) {
             this.browserHistory();
+        }
+        if ( jGalleryOptions[ this.intId ].autostart ) {
+            this.autostart();
         }
         $( 'html' ).on( {
             keydown: function( event ) {
@@ -1549,6 +1546,9 @@
             var $album;
             var $thumb;
             
+            if ( this.$element.is( ':visible' ) ) {
+                return;
+            }
             if ( this.booIsAlbums ) {
                 $album = this.thumbnails.getElement().find( '.album' ).eq( jGalleryOptions[ this.intId ].autostartAtAlbum - 1 );
                 if ( $album.length === 0 ) {
@@ -1605,7 +1605,7 @@
                 return;
             }
             this.zoom.$container.find( '.nav-bottom' ).append( '\
-                <span class="icon- icon-list-ul change-album jgallery-btn jgallery-btn-small">\
+                <span class="fa fa-list-ul change-album jgallery-btn jgallery-btn-small">\
                     <span class="menu jgallery-btn"></span>\
                     <span class="title"></span>\
                 </span>\
@@ -1632,14 +1632,14 @@
             new ThumbnailsGenerator( this );
             this.setVariables();
             this.thumbnails.init();
-            this.thumbnails.getElement().append( '<span class="icon- icon-remove jgallery-btn jgallery-close jgallery-btn-small"></span>' );
+            this.thumbnails.getElement().append( '<span class="fa fa-times jgallery-btn jgallery-close jgallery-btn-small"></span>' );
             this.generateAlbumsDropdown();
             self.setUserOptions();
             if ( jGalleryOptions[ self.intId ].zoomSize === 'fit' || jGalleryOptions[ self.intId ].zoomSize === 'original' ) {
-                self.zoom.$resize.addClass( 'icon-zoom-in' );
+                self.zoom.$resize.addClass( 'fa-search-plus' );
             }
             if ( jGalleryOptions[ self.intId ].zoomSize === 'fill' ) {
-                self.zoom.$resize.addClass( 'icon-zoom-out' );
+                self.zoom.$resize.addClass( 'fa-search-minus' );
             }
             if ( ! isInternetExplorer() ) {
                 self.$element.addClass( 'text-shadow' );
@@ -1760,7 +1760,7 @@
         setUserOptions: function() {
             jGalleryOptions[ this.intId ].canResize ? this.zoom.$resize.show() : this.zoom.$resize.hide();
             jGalleryOptions[ this.intId ].canChangeMode ? this.zoom.$changeMode.show() : this.zoom.$changeMode.hide();
-            jGalleryOptions[ this.intId ].mode === 'standard' ? this.zoom.$changeMode.removeClass( 'icon-resize-small' ).addClass( 'icon-resize-full' ) : this.zoom.$changeMode.removeClass( 'icon-resize-full' ).addClass( 'icon-resize-small' );
+            jGalleryOptions[ this.intId ].mode === 'standard' ? this.zoom.$changeMode.removeClass( 'fa-compress' ).addClass( 'fa-expand' ) : this.zoom.$changeMode.removeClass( 'fa-expand' ).addClass( 'fa-compress' );
             jGalleryOptions[ this.intId ].canClose ? this.zoom.$container.find( '.jgallery-close' ).show() : this.zoom.$container.find( '.jgallery-close' ).hide();
             if ( ! jGalleryOptions[ this.intId ].thumbnails ) {
                 this.thumbnails.getElement().addClass( 'inactive' );
@@ -1776,7 +1776,7 @@
             jGalleryOptions[ this.intId ].slideshow && jGalleryOptions[ this.intId ].slideshowCanRandom ? this.zoom.$random.show(): this.zoom.$random.hide();
             jGalleryOptions[ this.intId ].slideshow && jGalleryOptions[ this.intId ].slideshowCanRandom && jGalleryOptions[ this.intId ].slideshowRandom ? this.zoom.$random.addClass( 'active' ) : this.zoom.$random.removeClass( 'active' );
 
-            jGalleryOptions[ this.intId ].thumbnailsFullScreen && jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.full-screen' ).add( this.thumbnails.getElement().find( '.jgallery-close' ) ).show() : this.zoom.$container.find( '.full-screen' ).add( this.thumbnails.getElement().find( '.jgallery-close' ) ).hide();
+            jGalleryOptions[ this.intId ].thumbnailsFullScreen && jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.full-screen' ).show() : this.zoom.$container.find( '.full-screen' ).hide();
             jGalleryOptions[ this.intId ].thumbnailsFullScreen && jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.change-album' ).show() : this.zoom.$container.find( '.change-album' ).hide();
             jGalleryOptions[ this.intId ].canMinimalizeThumbnails && jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.minimalize-thumbnails' ).show() : this.zoom.$container.find( '.minimalize-thumbnails' ).hide();
             jGalleryOptions[ this.intId ].hideThumbnailsOnInit && jGalleryOptions[ this.intId ].thumbnails ? this.thumbnails.hide() : this.thumbnails.show();
@@ -1799,8 +1799,8 @@
                 <div class="jgallery jgallery-' + mode + '" style="width: ' + width + '; height: ' + height + '; display: none;" data-jgallery-id="' + this.intId + '">\
                     <div class="jgallery-thumbnails hidden">\
                         <div class="jgallery-container"><div class="jgallery-container-inner"></div></div>\
-                        <span class="prev jgallery-btn hidden"><span class="icon-chevron-left ico"></span></span>\
-                        <span class="next jgallery-btn hidden"><span class="icon-chevron-right ico"></span></span>\
+                        <span class="prev jgallery-btn hidden"><span class="fa fa-chevron-left ico"></span></span>\
+                        <span class="next jgallery-btn hidden"><span class="fa fa-chevron-right ico"></span></span>\
                     </div>\
                     <div class="zoom-container">\
                         <div class="title before"></div>\
@@ -1808,19 +1808,19 @@
                         <div class="drag-nav hide"></div>\
                         <div class="left"></div>\
                         <div class="right"></div>\
-                        <span class="icon-chevron-left prev jgallery-btn jgallery-btn-large"></span>\
-                        <span class="icon-chevron-right next jgallery-btn jgallery-btn-large"></span>\
+                        <span class="fa fa-chevron-left prev jgallery-btn jgallery-btn-large"></span>\
+                        <span class="fa fa-chevron-right next jgallery-btn jgallery-btn-large"></span>\
                         <span class="progress"></span>\
                         <div class="nav">\
-                            <span class="icon- resize jgallery-btn jgallery-btn-small"></span>\
-                            <span class="icon- change-mode jgallery-btn jgallery-btn-small"></span>\
-                            <span class="icon-remove jgallery-close jgallery-btn jgallery-btn-small"></span>\
+                            <span class="fa resize jgallery-btn jgallery-btn-small"></span>\
+                            <span class="fa change-mode jgallery-btn jgallery-btn-small"></span>\
+                            <span class="fa fa-times jgallery-close jgallery-btn jgallery-btn-small"></span>\
                         </div>\
                         <div class="nav-bottom">\
-                            <span class="icon- icon-play slideshow jgallery-btn jgallery-btn-small"></span>\
-                            <span class="icon- icon-random random jgallery-btn jgallery-btn-small inactive" style="display: none;"></span>\
-                            <span class="icon- icon-th full-screen jgallery-btn jgallery-btn-small"></span>\
-                            <span class="icon- icon-ellipsis-horizontal minimalize-thumbnails jgallery-btn jgallery-btn-small inactive"></span>\
+                            <span class="fa fa-play slideshow jgallery-btn jgallery-btn-small"></span>\
+                            <span class="fa fa-random random jgallery-btn jgallery-btn-small inactive" style="display: none;"></span>\
+                            <span class="fa fa-th full-screen jgallery-btn jgallery-btn-small"></span>\
+                            <span class="fa fa-ellipsis-h minimalize-thumbnails jgallery-btn jgallery-btn-small inactive"></span>\
                         </div>\
                     </div>\
                 </div>';
