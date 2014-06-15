@@ -1,10 +1,10 @@
 /*!
- * jGallery v1.3.1
+ * jGallery v1.3.2
  * http://jgallery.jakubkowalczyk.pl/
  *
  * Released under the MIT license
  *
- * Date: 2014-06-11
+ * Date: 2014-06-16
  */
 ( function( $ ) {
     "use strict";
@@ -1148,6 +1148,7 @@
             var booIsLoaded;
             var albumTitle;
             var transition;
+            var transitionName;
 
             if ( ! this.jGallery.initialized() ) {
                 this.showPhotoInit();
@@ -1156,9 +1157,15 @@
                 return;
             }
             this.booLoadingInProgress = true;
-            transition = jGalleryTransitions[ jGalleryOptions[ this.jGallery.intId ][ $a.nextAll( '.active' ).length > 0 ? 'transitionBackward' : 'transition' ] ];
-            this.advancedAnimation.setHideEffect( transition[0] );
-            this.advancedAnimation.setShowEffect( transition[1] );
+            transitionName = jGalleryOptions[ this.jGallery.intId ][ $a.nextAll( '.active' ).length > 0 ? 'transitionBackward' : 'transition' ];
+            if ( transitionName === 'random' ) {
+                this.setRandomTransition();
+            }
+            else {
+                transition = jGalleryTransitions[ transitionName ];
+                this.advancedAnimation.setHideEffect( transition[0] );
+                this.advancedAnimation.setShowEffect( transition[1] );
+            }
             this.$element.find( '.pt-page.init' ).remove();
             jGalleryOptions[ this.jGallery.intId ].showPhoto();
             if ( this.jGallery.$element.is( ':not(:visible)' ) ) {
@@ -1180,9 +1187,6 @@
                 return;
             }
             this.refreshNav();
-            if ( jGalleryOptions[ this.jGallery.intId ].transition === 'random' ) {
-                this.setRandomTransition();
-            }
             if ( jGalleryOptions[ this.jGallery.intId ].title ) {
                 this.$title.addClass( 'after fade' );
             }
@@ -1248,7 +1252,8 @@
             var self = this;
             var $imgThumb = $a.children( 'img' );
             var intPercent = 0;
-            var $toLoading = jGalleryOptions[ this.jGallery.intId ].preloadAll ? $zoom : $zoom.find( 'img.active' );
+            var $ptPart = $zoom.find( '.pt-part' ).eq( 0 );
+            var $toLoading = jGalleryOptions[ this.jGallery.intId ].preloadAll ? $ptPart : $ptPart.find( 'img.active' );
 
             $toLoading.jLoader( {
                 interval: 500,
@@ -1572,10 +1577,10 @@
             function callActionByUrl() {
                 var hash;
 
-                if ( ! location.hash ) { 
+                if ( ! document.location.hash ) { 
                     return;
                 }
-                hash = location.hash.replace( '#', '' );
+                hash = document.location.hash.replace( '#', '' );
                 switch ( hash ) {
                     case '':
                         self.hide( {
@@ -2438,7 +2443,8 @@
             title: $title.html(),
             path: ''
         }, options );
-        window.history.pushState( options.stateObj, options.title, window.location.href.split('#')[0] + '#' + options.path );
+        console.log( document.location.href.split('#')[0] + '#' + options.path );
+        window.history.pushState( options.stateObj, options.title, document.location.href.split('#')[0] + '#' + options.path );
     }
     
     function isInternetExplorer() {
