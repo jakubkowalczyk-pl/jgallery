@@ -141,6 +141,19 @@
             z-index: 10002;
             position: absolute;
 
+            .icons {
+                background: #111;
+                .transition( ~"all 0.2s" );
+                float: left;
+                position: relative;
+                z-index: 1;
+                
+                [class*="fa-"] {
+                    background: #111;
+                    .transition( ~"all 0.2s" );
+                }
+            }
+
             .jgallery-btn {
                 margin-right: 8px;
                 background: none;
@@ -157,9 +170,10 @@
                 }
                 .title {
                     margin-left: -5px;
-                    padding: 8px 9px 6px 0;
-                    border-radius: 17px;
+                    padding: 8px 29px 6px 0;
                     font-size: 14px;
+                    background: #111;
+                    .transition( ~"all 0.2s" );
                     right: auto;
                     top: 4px;
                     line-height: normal;

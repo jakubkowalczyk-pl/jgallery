@@ -1,10 +1,10 @@
 /*!
- * jGallery v1.3.2
+ * jGallery v1.3.3
  * http://jgallery.jakubkowalczyk.pl/
  *
  * Released under the MIT license
  *
- * Date: 2014-06-16
+ * Date: 2014-08-19
  */
 ( function( $ ) {
     "use strict";
@@ -43,6 +43,7 @@
         transitionDuration: '0.7s',
         zoomSize: 'fit', // [ fit | original | fill ] (only for full-screen or standard mode)
         title: true,
+        titleExpanded: false,
         slideshow: true,
         slideshowAutostart: false,
         slideshowCanRandom: true,
@@ -198,18 +199,20 @@
         },
         
         start: function( intWidth, success ) {            
-            this.$element.animate( {
+            var interval = parseInt( jGalleryOptions[ this.intJgalleryId ].slideshowInterval ) * 1000;
+            var $element = this.$element;
+            
+            $element.animate( {
                 width: intWidth
-            }, parseInt( jGalleryOptions[ this.intJgalleryId ].slideshowInterval ) * 1000, 'linear', success );
+            }, interval - interval * ( $element.width() / $element.parent().width() ), 'linear', success );
             return this;    
         },
         
         pause: function() {
-            this.$element.stop( true );
-            this.clear();
+            this.$element.stop();
             return this;
-        }         
-    }; 
+        }        
+    };
     
 
 
@@ -521,7 +524,7 @@
             this.$btnPrev.on( 'click', function() { self._scrollToPrev(); } );
             this.zoom.$container.find( '.full-screen' ).on( {
                 click: function() {
-                    self.zoom.slideshowStop();
+                    self.zoom.slideshowPause();
                     self.changeViewToFullScreen();
                 }
             } );
@@ -707,7 +710,7 @@
     var Zoom = function( jGallery ) {
         this.$container = jGallery.$element.children( '.zoom-container' );
         this.$element = this.$container.children( '.zoom' );
-        this.$title = this.$container.children( '.title' );
+        this.$title = this.$container.find( '.nav-bottom > .title' );
         this.$btnPrev = this.$container.children( '.prev' );
         this.$btnNext = this.$container.children( '.next' );
         this.$left = this.$container.find( '.left' );
@@ -726,6 +729,9 @@
         this.booSlideshowPlayed = false;
         this.booLoadingInProgress = false;
         this.booLoadedAll = false;
+        this.$title.on( 'click', function() {
+            $( this ).toggleClass( 'expanded' );
+        } );
         this.update();
     };
     
@@ -833,6 +839,7 @@
                 mousedown: function( event ) {
                     event.preventDefault();
                     startDrag( event );
+                    self.slideshowPause();
                 },
                 mouseup: function() {
                     stopDrag();
@@ -1064,8 +1071,13 @@
         },
 
         slideshowStop: function () {
+            this.slideshowPause();
+            this.jGallery.progress.clear();
+        },
+
+        slideshowPause: function () {
             this.jGallery.progress.pause();
-            this.$slideshow.removeClass( 'fa-stop' ).addClass( 'fa-play' );
+            this.$slideshow.removeClass( 'fa-pause' ).addClass( 'fa-play' );
             this.booSlideshowPlayed = false;
             if ( jGalleryOptions[ this.jGallery.intId ].slideshowCanRandom ) {
                 this.$random.hide();
@@ -1077,21 +1089,21 @@
                 return;
             }
             this.booSlideshowPlayed = true;
-            this.$slideshow.removeClass( 'fa-play' ).addClass( 'fa-stop' );
+            this.$slideshow.removeClass( 'fa-play' ).addClass( 'fa-pause' );
             this.slideshowSetTimeout();
             if ( jGalleryOptions[ this.jGallery.intId ].slideshowCanRandom ) {
                 this.$random.show();
             }
         },
 
-        slideshowPlayStop: function() {
-            this.$slideshow.is( '.fa-play' ) ? this.slideshowPlay() : this.slideshowStop();
+        slideshowPlayPause: function() {
+            this.$slideshow.is( '.fa-play' ) ? this.slideshowPlay() : this.slideshowPause();
         },
 
         slideshowSetTimeout: function() {
             var self = this;
             
-            this.jGallery.progress.clear().start( this.$container.width(), function() {
+            this.jGallery.progress.start( this.$container.width(), function() {
                 self.jGallery.progress.clear();
                 jGalleryOptions[ self.jGallery.intId ].slideshowRandom ? self.showRandomPhoto() : self.showNextPhotoLoop();
             } );
@@ -1536,7 +1548,7 @@
             this.zoom.$title.addClass( 'hidden' );
             this.zoom.$btnPrev.addClass( 'hidden' );
             this.zoom.$btnNext.addClass( 'hidden' );
-            this.zoom.slideshowStop();
+            this.zoom.slideshowPause();
             this.zoom.advancedAnimation.hideActive();
             this.zoom.unmarkActive();
             $window.off( 'resize', this.windowOnResize );
@@ -1609,7 +1621,7 @@
             if ( ! this.booIsAlbums ) {
                 return;
             }
-            this.zoom.$container.find( '.nav-bottom' ).append( '\
+            this.zoom.$container.find( '.nav-bottom > .icons' ).append( '\
                 <span class="fa fa-list-ul change-album jgallery-btn jgallery-btn-small">\
                     <span class="menu jgallery-btn"></span>\
                     <span class="title"></span>\
@@ -1702,6 +1714,7 @@
             self.zoom.$resize.on( {
                 click: function() {
                     self.zoom.changeSize();
+                    self.zoom.slideshowPause();
                 }
             } ); 
 
@@ -1713,7 +1726,7 @@
 
             self.zoom.$slideshow.on( {
                 click: function() {
-                    self.zoom.slideshowPlayStop();
+                    self.zoom.slideshowPlayPause();
                 }
             } );   
 
@@ -1778,14 +1791,14 @@
                 }                    
             }
             jGalleryOptions[ this.intId ].slideshow ? this.zoom.$slideshow.show() : this.zoom.$slideshow.hide();
-            jGalleryOptions[ this.intId ].slideshow && jGalleryOptions[ this.intId ].slideshowCanRandom ? this.zoom.$random.show(): this.zoom.$random.hide();
+            jGalleryOptions[ this.intId ].slideshow && jGalleryOptions[ this.intId ].slideshowCanRandom && jGalleryOptions[ this.intId ].slideshowAutostart ? this.zoom.$random.show(): this.zoom.$random.hide();
             jGalleryOptions[ this.intId ].slideshow && jGalleryOptions[ this.intId ].slideshowCanRandom && jGalleryOptions[ this.intId ].slideshowRandom ? this.zoom.$random.addClass( 'active' ) : this.zoom.$random.removeClass( 'active' );
 
             jGalleryOptions[ this.intId ].thumbnailsFullScreen && jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.full-screen' ).show() : this.zoom.$container.find( '.full-screen' ).hide();
             jGalleryOptions[ this.intId ].thumbnailsFullScreen && jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.change-album' ).show() : this.zoom.$container.find( '.change-album' ).hide();
             jGalleryOptions[ this.intId ].canMinimalizeThumbnails && jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.minimalize-thumbnails' ).show() : this.zoom.$container.find( '.minimalize-thumbnails' ).hide();
             jGalleryOptions[ this.intId ].hideThumbnailsOnInit && jGalleryOptions[ this.intId ].thumbnails ? this.thumbnails.hide() : this.thumbnails.show();
-
+            jGalleryOptions[ this.intId ].titleExpanded ? this.zoom.$title.addClass( 'expanded' ) : this.zoom.$title.removeClass( 'expanded' );
             this.setColours( {
                 strBg: jGalleryOptions[ this.intId ].backgroundColor,
                 strText: jGalleryOptions[ this.intId ].textColor
@@ -1808,7 +1821,6 @@
                         <span class="next jgallery-btn hidden"><span class="fa fa-chevron-right ico"></span></span>\
                     </div>\
                     <div class="zoom-container">\
-                        <div class="title before"></div>\
                         <div class="zoom before pt-perspective"></div>\
                         <div class="drag-nav hide"></div>\
                         <div class="left"></div>\
@@ -1822,10 +1834,13 @@
                             <span class="fa fa-times jgallery-close jgallery-btn jgallery-btn-small"></span>\
                         </div>\
                         <div class="nav-bottom">\
-                            <span class="fa fa-play slideshow jgallery-btn jgallery-btn-small"></span>\
-                            <span class="fa fa-random random jgallery-btn jgallery-btn-small inactive" style="display: none;"></span>\
-                            <span class="fa fa-th full-screen jgallery-btn jgallery-btn-small"></span>\
-                            <span class="fa fa-ellipsis-h minimalize-thumbnails jgallery-btn jgallery-btn-small inactive"></span>\
+                            <div class="icons">\
+                                <span class="fa fa-play slideshow jgallery-btn jgallery-btn-small"></span>\
+                                <span class="fa fa-random random jgallery-btn jgallery-btn-small inactive" style="display: none;"></span>\
+                                <span class="fa fa-th full-screen jgallery-btn jgallery-btn-small"></span>\
+                                <span class="fa fa-ellipsis-h minimalize-thumbnails jgallery-btn jgallery-btn-small inactive"></span>\
+                            </div>\
+                            <div class="title before"></div>\
                         </div>\
                     </div>\
                 </div>';
@@ -1870,6 +1885,10 @@
                 .jgallery[data-jgallery-id="' + this.intId + '"] .change-album .menu {\
                   background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
                 }\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .zoom-container .nav-bottom .change-album > .title {\
+                  background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
+                  box-shadow: 4px 0 4px rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ')\
+                }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .full-screen .change-album .menu {\
                   background: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
                 }\
@@ -1890,13 +1909,20 @@
                 .jgallery[data-jgallery-id="' + this.intId + '"] .zoom-container:not([data-size="fill"]) .jgallery-container {\
                   background: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .zoom-container .title {\
-                  color: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
-                }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .zoom-container .nav-bottom {\
                   background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
                   -webkit-box-shadow: 0 -3px rgba(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', .5);\
                   box-shadow: 0 -3px rgba(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', .5);\
+                }\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .zoom-container .nav-bottom .icons,\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .zoom-container .nav-bottom .icons .fa {\
+                  background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
+                }\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .zoom-container .nav-bottom > .title {\
+                  color: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
+                }\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .zoom-container .nav-bottom > .title.expanded {\
+                  background: rgba(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ',.7);\
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .zoom-container .drag-nav {\
                   background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\

@@ -1,33 +1,62 @@
 /* title
 --------------------------------------------------------------------------*/
-.jgallery .zoom-container .title {
+.jgallery .zoom-container .nav-bottom > .title {
+    @bottom: 5px;
     padding: 4px 0;
-    bottom: -36px;
+    bottom: @bottom;
     right: 18px;
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 14px;
     color: #fff;
     -webkit-transition: top,left,right,bottom,opacity,text-shadow,color 0.5s;
     -moz-transition: top,left,right,bottom,opacity,text-shadow,color 0.5s;
     -o-transition: top,left,right,bottom,opacity,text-shadow,color 0.5s;
     transition: top,left,right,bottom,opacity,text-shadow,color 0.5s;
+    cursor: pointer;
+    text-overflow: ellipsis;
+    white-space: pre;
+    overflow: hidden;
     opacity: 1;
     position: absolute;
-    z-index: 10003;
-}
-.jgallery .zoom-container .title.hidden {
-    bottom: -50%;
-    right: -50%;
-    opacity: 0;
-}
-.jgallery.text-shadow .zoom-container .title.hidden,
-.jgallery.text-shadow .zoom-container .title.after,
-.jgallery.text-shadow .zoom-container .title.before {
-    text-shadow: 0 0 .25em #fff;
-    color: transparent;
-    opacity: .5;
-    -webkit-transition: top,left,right,bottom,opacity 0.5s;
-    -moz-transition: top,left,right,bottom,opacity 0.5s;
-    -o-transition: top,left,right,bottom,opacity 0.5s;
-    transition: top,left,right,bottom,opacity 0.5s;
+    z-index: 0;
+
+    &.hidden {
+        bottom: -50%;
+        right: -50%;
+        opacity: 0;
+    }
+
+    &.hidden,
+    &.after,
+    &.before {
+        text-shadow: 0 0 .25em #fff;
+        color: transparent;
+        opacity: .5;
+        -webkit-transition: top,left,right,bottom,opacity 0.5s;
+        -moz-transition: top,left,right,bottom,opacity 0.5s;
+        -o-transition: top,left,right,bottom,opacity 0.5s;
+        transition: top,left,right,bottom,opacity 0.5s;
+    }
+
+    &.fade {
+        bottom: @bottom;
+        right: 10px;
+
+        &.expanded {
+            padding-right: 10px;
+            padding-bottom: 8px;
+            padding-left: 10px;
+            left: 0;
+            right: 0;
+            bottom: 40px;
+            white-space: normal;
+        }
+
+        &.before {
+            opacity: 0;
+        }
+
+        &.after {
+            opacity: 0;
+        }
+    }
 }
