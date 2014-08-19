@@ -1,5 +1,5 @@
 /*!
- * jGallery v1.3.3
+ * jGallery v1.3.4
  * http://jgallery.jakubkowalczyk.pl/
  *
  * Released under the MIT license
@@ -72,12 +72,14 @@
     
     var defaultsSliderMode = {
         width: '940px',
-        height: '300px',
+        height: '360px',
         canResize: false,
         draggableZoom: false,
         browserHistory: false,
         thumbnailsFullScreen: false,
         thumbType: 'square',
+        thumbWidth: 20, //px
+        thumbHeight: 20, //px
         canMinimalizeThumbnails: false,
         transition: 'rotateCubeRightOut_rotateCubeRightIn',
         transitionBackward: 'rotateCubeRightOut_rotateCubeRightIn',
@@ -1309,8 +1311,12 @@
                 $active.attr( 'data-width', image.width );
                 $active.attr( 'data-height', image.height );
             }
-            if ( jGalleryOptions[ this.jGallery.intId ].title && $imgThumb.is( '[alt]' ) ) {
+            if ( jGalleryOptions[ this.jGallery.intId ].title && $imgThumb.attr( 'alt' ) ) {
                 this.$title.html( $imgThumb.attr( 'alt' ) ).removeClass( 'before' ).removeClass( 'after' );
+                this.jGallery.$element.addClass( 'has-title' );
+            }
+            else {
+                this.jGallery.$element.removeClass( 'has-title' );
             }
             this.jGallery.setColours( {
                 strBg: $imgThumb.is( '[data-jgallery-bg-color]' ) ? $imgThumb.attr( 'data-jgallery-bg-color' ) : jGalleryOptions[ this.jGallery.intId ].backgroundColor,
@@ -2014,6 +2020,11 @@
                   background-image: -moz-linear-gradient(top,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 100%);\
                   background-image: linear-gradient(to bottom,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 0 ) 0%,rgba( ' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ', 1 ) 100%);\
                   background-repeat: repeat-x;\
+                }\
+                .jgallery.has-title.jgallery-slider[data-jgallery-id="' + this.intId + '"] .zoom-container .nav-bottom,\
+                .jgallery.has-title.jgallery-slider[data-jgallery-id="' + this.intId + '"] .zoom-container .nav-bottom > .title.expanded {\
+                  background: rgba(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ',.7);\
+                  color: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
                 }\
                 .jgallery.jgallery-slider[data-jgallery-id="' + this.intId + '"] .zoom-container .nav-bottom .jgallery-btn {\
                   background: rgba(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ',.8);\
