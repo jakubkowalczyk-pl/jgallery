@@ -80,14 +80,6 @@
   position: absolute;
   white-space: pre;
 }
-.jgallery .change-album .title:after {
-  width: 20px;
-  top: 0;
-  bottom: 0;
-  right: -20px;
-  content: "";
-  position: absolute;
-}
 .jgallery .change-album.active {
   border-radius: 2px;
 }
@@ -155,6 +147,11 @@
   top: 70%;
   right: auto;
   bottom: auto;
+}
+.jgallery.jgallery-slider .zoom-container .nav-bottom .icons {
+  background: none;
+  float: none;
+  display: inline-block;
 }
 .jgallery.jgallery-slider .zoom-container .nav-bottom .jgallery-btn {
   margin-left: 4px;
@@ -307,7 +304,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   bottom: 0;
   overflow: hidden;
   position: absolute;
-  z-index: 2;
+  z-index: 10003;
 }
 .jgallery .zoom-container .progress:after {
   width: 4px;
@@ -3490,9 +3487,17 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   position: absolute;
 }
 .jgallery .zoom-container .nav-bottom .icons {
+  background: #111;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
   float: left;
   position: relative;
   z-index: 1;
+}
+.jgallery .zoom-container .nav-bottom .icons [class*="fa-"] {
+  background: #111;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
 }
 .jgallery .zoom-container .nav-bottom .jgallery-btn {
   margin-right: 8px;
@@ -3509,8 +3514,11 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 }
 .jgallery .zoom-container .nav-bottom .change-album .title {
   margin-left: -5px;
-  padding: 8px 9px 6px 0;
+  padding: 8px 29px 6px 0;
   font-size: 14px;
+  background: #111;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
   right: auto;
   top: 4px;
   line-height: normal;
