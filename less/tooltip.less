@@ -1,0 +1,31 @@
+.jgallery.jgallery-tooltips [tooltip] {
+    position: relative;
+    
+    &:after {
+        padding: .5em;
+        font-size: .8em;
+        line-height: 1em;
+        font-family: @fontFamily;
+        white-space: pre;
+        bottom: 100%;
+        left: 0;
+        content: attr(tooltip);
+        text-shadow: none;
+        display: none;
+        position: absolute;
+    }
+    
+    &[tooltip-position*="bottom"]:after {
+        bottom: auto;
+        top: 100%;
+    }
+    
+    &[tooltip-position*="right"]:after {
+        left: auto;
+        right: 0;
+    }
+    
+    &:hover:after {
+        display: block;
+    }
+}

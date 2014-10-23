@@ -1,79 +1,82 @@
 /*!
- * jGallery v1.3.4
+ * jGallery v1.4.0
  * http://jgallery.jakubkowalczyk.pl/
  *
  * Released under the MIT license
  *
- * Date: 2014-08-19
+ * Date: 2014-10-23
  */
 ( function( $ ) {
     "use strict";
     var defaults = {
-        mode: 'full-screen', // [ full-screen, standard, slider ]
-        width: '100%', // (only for standard or slider mode)
-        height: '600px', // (only for standard or slider mode)
-        autostart: false, // (only for full-screen mode)
-        autostartAtImage: 1,
-        autostartAtAlbum: 1,
-        canClose: true, // (only for full-screen mode)
-        canResize: true,
-        draggableZoom: true,
-        canChangeMode: false,
-        backgroundColor: '#000',
-        textColor: '#fff',
-        browserHistory: true,
-        thumbnails: true,
-        thumbnailsFullScreen: true,
-        thumbType: 'image', // [ image | square | number ]
-        thumbnailsPosition: 'bottom', // [ top | bottom | left | right ]
-        reloadThumbnails: true, //Reload thumbnails when function jGallery() is called again for the same item
-        thumbWidth: 75, //px
-        thumbHeight: 75, //px
-        thumbWidthOnFullScreen: 100, //px
-        thumbHeightOnFullScreen: 100, //px
-        canMinimalizeThumbnails: true,
-        hideThumbnailsOnInit: false,
-        transition: 'moveToRight_moveFromLeft', // http://jgallery.jakubkowalczyk.pl/customize
-        transitionBackward: 'moveToLeft_moveFromRight', // http://jgallery.jakubkowalczyk.pl/customize
-        transitionWaveDirection: 'forward', // [ forward | backward ]
-        transitionCols: 1,
-        transitionRows: 5,
-        showTimingFunction: 'linear', // [ linear | ease | ease-in | ease-out | ease-in-out | cubic-bezier(n,n,n,n) ]
-        hideTimingFunction: 'linear', // [ linear | ease | ease-in | ease-out | ease-in-out | cubic-bezier(n,n,n,n) ]
-        transitionDuration: '0.7s',
-        zoomSize: 'fit', // [ fit | original | fill ] (only for full-screen or standard mode)
-        title: true,
-        titleExpanded: false,
-        slideshow: true,
-        slideshowAutostart: false,
-        slideshowCanRandom: true,
-        slideshowRandom: false,
-        slideshowInterval: '8s',
-        preloadAll: false,
-        appendTo: 'body', // selector (only for full-screen mode)
-        disabledOnIE8AndOlder: true,
-        initGallery: function() {},
-        showPhoto: function() {},
-        beforeLoadPhoto: function() {},
-        afterLoadPhoto: function() {},
-        showGallery: function() {},
-        closeGallery: function() {}
+        autostart: true, // Boolean; If set as 'true' jGallery will be started automatically after loading the document(only for full-screen or standard mode).; [ true, false ]
+        autostartAtImage: 1, // Number; Number of image which will be loaded by autostart(only when 'autostart' parameter set as 'true').; ; [ 1, 2, 3 ]
+        autostartAtAlbum: 1, // Number; Number of album which will be loaded by autostart(only when 'autostart' parameter set as 'true').; ; [ 1, 2, 3 ]
+        backgroundColor: '#fff', // String; Background color for jGallery container.; ; [ '#ffffff', 'silver' ]
+        browserHistory: true, // Boolean; If set as 'true', changes of active image will be saved in browser history.; [ true, false ]
+        canChangeMode: true, // Boolean; If set as 'true' you can change display mode(only for full-screen or standard mode).; [ true, false ]
+        canClose: false, // Boolean; If set as 'true' you can close jGallery(only for full-screen or standard mode).; [ true, false ]
+        canMinimalizeThumbnails: true, // Boolean; If set as 'true', you can minimalize thumbnails(only when 'thumbnails' parameter set as 'true').; [ true, false ]
+        canZoom: true, // Boolean; If set as 'true' you can zoom photos.; [ true, false ]
+        disabledOnIE8AndOlder: true, // Boolean; If set as 'true', jGallery will be blocked for Internet Explorer 8 and older.; [ true, false ]
+        draggableZoom: true, // Boolean; If set as 'true' you can drag active image.; [ true, false ]
+        height: '600px', // String; Height of jGallery container(only for standard or slider mode).
+        hideThumbnailsOnInit: false, // Boolean; If set as 'true', thumbnails will be minimized by default, when jGallery will be started(only when 'thumbnails' parameter set as 'true').; [ true, false ]
+        mode: 'standard', // String; Display mode.; [ 'full-screen', 'standard', 'slider' ]
+        preloadAll: false, // Boolean; If set as 'true', all photos will be loaded before first shown photo.; [ true, false ]
+        reloadThumbnails: true, // Boolean; Thumbnails will be reloaded when function jGallery() will be called again for the same element.; [ true, false ]
+        slideshow: true, // Boolean; If set as 'true', option slideshow is enabled.; [ true, false ]
+        slideshowAutostart: false, // Boolean; If set as 'true', slideshow will be started immediately after initializing jGallery(only when 'slideshow' has been set as true).; [ true, false ]
+        slideshowCanRandom: true, // Boolean; If set as 'true', you can enable random change photos for slideshow(only when 'slideshow' has been set as true).; [ true, false ]
+        slideshowInterval: '8s', // String; Time between change of photos for slideshow(only when 'slideshow' has been set as true).; [ '3s', '6s', '10s' ] 
+        slideshowRandom: false, // Boolean; If set as 'true', photos in slideshow will be changing random(only when 'slideshow' has been set as true and 'slideshowCanRandom' has been set as true).; [ true, false ]
+        textColor: '#000', // String; Color of text and icons.; ; [ '#000000', 'rgb(0,153,221)' ]
+        thumbnails: true, // Boolean; If set as 'true', thumbnails will be displayed.; [ true, false ]
+        thumbHeight: 75, // Number; Height(pixels) of thumbnails.; ; [ 50, 75, 125 ]
+        thumbHeightOnFullScreen: 100, // Number; Height(pixels) of thumbnails for thumbnails displayed in full-screen.; ; [ 125, 160, 200 ]
+        thumbnailsFullScreen: true, // Boolean; If set as 'true', thumbnails will be displayed in full-screen.; [ true, false ]
+        thumbnailsPosition: 'bottom', // String; Thumbnails position(only when 'thumbnails' parameter set as 'true').; [ 'top',  'bottom', 'left', 'right' ]
+        thumbType: 'image', // String; Thumbnails type(only when 'thumbnails' parameter set as 'true').; [ 'image', 'square', 'number' ]
+        thumbWidth: 75, // Number; Width(pixels) of thumbnails.; ; [ 50, 75, 125 ]
+        thumbWidthOnFullScreen: 100, // Number; Width(pixels) of thumbnails for thumbnails displayed in full-screen.; ; [ 125, 160, 200 ]
+        title: true, // Boolean; If set as 'true', near photo will be shown title from alt attribute of img.; [ true, false ]
+        titleExpanded: false, // Boolean; If set as 'true', in bottom area of zoomed photo will be shown title from alt attribute of img(only when 'title' has been set as true).; [ true, false ]
+        tooltipClose: 'Close', // String; Text of tooltip which will be displayed next to icon for close jgallery(if you set canClose parameter as true).; ;
+        tooltipFullScreen: 'Full screen', // String; Text of tooltip which will be displayed next to icon for change display mode.; ; [ 'Full screen', 'Tryb pełnoekranowy' ]
+        tooltipRandom: 'Random', // String; Text of tooltip which will be displayed next to icon for random slideshow toggling.; ; [ 'Random', 'Kolejność losowa' ]
+        tooltips: true, // Boolean; If set as 'true', tooltips will be displayed next to icons.; [ true, false ]
+        tooltipSeeAllPhotos: 'See all photos', // String; Text of tooltip which will be displayed next to icon for change thumbnails view.; ; [ 'See all photos', 'Zobacz wszystkie zdjęcia' ]
+        tooltipSeeOtherAlbums: 'See other albums', // String; Text of tooltip which will be displayed next to icon for change album(if your jGallery has more than one album).; ; [ 'See other albums', 'Zobacz pozostałe albumy' ]
+        tooltipSlideshow: 'Slideshow', // String; Text of tooltip which will be displayed next to icon for play/pause slideshow.; ; [ 'Slideshow', 'Pokaz slajdów' ]
+        tooltipToggleThumbnails: 'Toggle thumbnails', // String; Text of tooltip which will be displayed next to icon for toggle thumbnails.; ; [ 'Toggle thumbnails', 'Pokaż/ukryj miniatury' ]
+        tooltipZoom: 'Zoom', // String; Text of tooltip which will be displayed next to icon for zoom photo.; ; [ 'Zoom', 'Powiększenie' ]
+        transition: 'moveToRight_moveFromLeft', // String; Transition effect for change active image.; [ 'moveToLeft_moveFromRight', 'moveToRight_moveFromLeft', 'moveToTop_moveFromBottom', 'moveToBottom_moveFromTop', 'fade_moveFromRight', 'fade_moveFromLeft', 'fade_moveFromBottom', 'fade_moveFromTop', 'moveToLeftFade_moveFromRightFade', 'moveToRightFade_moveFromLeftFade', 'moveToTopFade_moveFromBottomFade', 'moveToBottomFade_moveFromTopFade', 'moveToLeftEasing_moveFromRight', 'moveToRightEasing_moveFromLeft', 'moveToTopEasing_moveFromBottom', 'moveToBottomEasing_moveFromTop', 'scaleDown_moveFromRight', 'scaleDown_moveFromLeft', 'scaleDown_moveFromBottom', 'scaleDown_moveFromTop', 'scaleDown_scaleUpDown', 'scaleDownUp_scaleUp', 'moveToLeft_scaleUp', 'moveToRight_scaleUp', 'moveToTop_scaleUp', 'moveToBottom_scaleUp', 'scaleDownCenter_scaleUpCenter', 'rotateRightSideFirst_moveFromRight', 'rotateLeftSideFirst_moveFromLeft', 'rotateTopSideFirst_moveFromTop', 'rotateBottomSideFirst_moveFromBottom', 'flipOutRight_flipInLeft', 'flipOutLeft_flipInRight', 'flipOutTop_flipInBottom', 'flipOutBottom_flipInTop', 'rotateFall_scaleUp', 'rotateOutNewspaper_rotateInNewspaper', 'rotatePushLeft_moveFromRight', 'rotatePushRight_moveFromLeft', 'rotatePushTop_moveFromBottom', 'rotatePushBottom_moveFromTop', 'rotatePushLeft_rotatePullRight', 'rotatePushRight_rotatePullLeft', 'rotatePushTop_rotatePullBottom', 'rotatePushBottom_page', 'rotateFoldLeft_moveFromRightFade', 'rotateFoldRight_moveFromLeftFade', 'rotateFoldTop_moveFromBottomFade', 'rotateFoldBottom_moveFromTopFade', 'moveToRightFade_rotateUnfoldLeft', 'moveToLeftFade_rotateUnfoldRight', 'moveToBottomFade_rotateUnfoldTop', 'moveToTopFade_rotateUnfoldBottom', 'rotateRoomLeftOut_rotateRoomLeftIn', 'rotateRoomRightOut_rotateRoomRightIn', 'rotateRoomTopOut_rotateRoomTopIn', 'rotateRoomBottomOut_rotateRoomBottomIn', 'rotateCubeLeftOut_rotateCubeLeftIn', 'rotateCubeRightOut_rotateCubeRightIn', 'rotateCubeTopOut_rotateCubeTopIn', 'rotateCubeBottomOut_rotateCubeBottomIn', 'rotateCarouselLeftOut_rotateCarouselLeftIn', 'rotateCarouselRightOut_rotateCarouselRightIn', 'rotateCarouselTopOut_rotateCarouselTopIn', 'rotateCarouselBottomOut_rotateCarouselBottomIn', 'rotateSidesOut_rotateSidesInDelay', 'rotateSlideOut_rotateSlideIn', 'random' ]
+        transitionBackward: 'auto', // String; Transition effect for change active image(when user selected one of previous images).; [ 'auto', 'moveToLeft_moveFromRight', 'moveToRight_moveFromLeft', 'moveToTop_moveFromBottom', 'moveToBottom_moveFromTop', 'fade_moveFromRight', 'fade_moveFromLeft', 'fade_moveFromBottom', 'fade_moveFromTop', 'moveToLeftFade_moveFromRightFade', 'moveToRightFade_moveFromLeftFade', 'moveToTopFade_moveFromBottomFade', 'moveToBottomFade_moveFromTopFade', 'moveToLeftEasing_moveFromRight', 'moveToRightEasing_moveFromLeft', 'moveToTopEasing_moveFromBottom', 'moveToBottomEasing_moveFromTop', 'scaleDown_moveFromRight', 'scaleDown_moveFromLeft', 'scaleDown_moveFromBottom', 'scaleDown_moveFromTop', 'scaleDown_scaleUpDown', 'scaleDownUp_scaleUp', 'moveToLeft_scaleUp', 'moveToRight_scaleUp', 'moveToTop_scaleUp', 'moveToBottom_scaleUp', 'scaleDownCenter_scaleUpCenter', 'rotateRightSideFirst_moveFromRight', 'rotateLeftSideFirst_moveFromLeft', 'rotateTopSideFirst_moveFromTop', 'rotateBottomSideFirst_moveFromBottom', 'flipOutRight_flipInLeft', 'flipOutLeft_flipInRight', 'flipOutTop_flipInBottom', 'flipOutBottom_flipInTop', 'rotateFall_scaleUp', 'rotateOutNewspaper_rotateInNewspaper', 'rotatePushLeft_moveFromRight', 'rotatePushRight_moveFromLeft', 'rotatePushTop_moveFromBottom', 'rotatePushBottom_moveFromTop', 'rotatePushLeft_rotatePullRight', 'rotatePushRight_rotatePullLeft', 'rotatePushTop_rotatePullBottom', 'rotatePushBottom_page', 'rotateFoldLeft_moveFromRightFade', 'rotateFoldRight_moveFromLeftFade', 'rotateFoldTop_moveFromBottomFade', 'rotateFoldBottom_moveFromTopFade', 'moveToRightFade_rotateUnfoldLeft', 'moveToLeftFade_rotateUnfoldRight', 'moveToBottomFade_rotateUnfoldTop', 'moveToTopFade_rotateUnfoldBottom', 'rotateRoomLeftOut_rotateRoomLeftIn', 'rotateRoomRightOut_rotateRoomRightIn', 'rotateRoomTopOut_rotateRoomTopIn', 'rotateRoomBottomOut_rotateRoomBottomIn', 'rotateCubeLeftOut_rotateCubeLeftIn', 'rotateCubeRightOut_rotateCubeRightIn', 'rotateCubeTopOut_rotateCubeTopIn', 'rotateCubeBottomOut_rotateCubeBottomIn', 'rotateCarouselLeftOut_rotateCarouselLeftIn', 'rotateCarouselRightOut_rotateCarouselRightIn', 'rotateCarouselTopOut_rotateCarouselTopIn', 'rotateCarouselBottomOut_rotateCarouselBottomIn', 'rotateSidesOut_rotateSidesInDelay', 'rotateSlideOut_rotateSlideIn', 'random' ]
+        transitionCols: 1, // Number; Number of columns in the image divided into columns.; ; [ 1, 2, 3, 4, 5, 6 ]
+        transitionDuration: '0.7s', // String; Duration of transition between photos.; [ '0.2s', '0.5s', '1s' ] 
+        transitionRows: 1, // Number; Number of columns in the image divided into rows.; ; [ 1, 2, 3, 4, 5, 6 ]
+        transitionTimingFunction: 'cubic-bezier(0,1,1,1)', // String; Timig function for showing photo.; [ 'linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out', 'cubic-bezier(0.5,-0.5,0.5,1.5)', 'cubic-bezier(0,1,1,1)' ]
+        transitionWaveDirection: 'forward', // String; Direction of animation(only when 'transitionCols' > 1 or 'transitionRows' > 1).; [ 'forward', 'backward' ]
+        width: '100%', // String; Width of jGallery container(only for standard or slider mode).
+        zoomSize: 'fit', // String; Size of zoomed photo(only for full-screen or standard mode).; [ 'fit', 'original', 'fill' ]
+        afterLoadPhoto: function() {}, // Function; Custom function that will be called after loading photo.; ; [ function() { alert( 'afterLoadPhoto' ) } ]
+        beforeLoadPhoto: function() {}, // Function; Custom function that will be called before loading photo.; ; [ function() { alert( 'beforeLoadPhoto' ) } ]
+        closeGallery: function() {}, // Function; Custom function that will be called after hiding jGallery.; ; [ function() { alert( 'closeGallery' ) } ]
+        initGallery: function() {}, // Function; Custom function that will be called before initialization of jGallery.; ; [ function() { alert( 'initGallery' ) } ]
+        showGallery: function() {}, // Function; Custom function that will be called after showing jGallery.; ; [ function() { alert( 'showGallery' ) } ]
+        showPhoto: function() {} // Function; Custom function that will be called before showing photo.; ; [ function() { alert( 'showPhoto' ) } ]
     };
     
-    var defaultsStandardMode = {
-        autostart: true,
-        canClose: false,
-        canChangeMode: true,
-        browserHistory: false
+    var defaultsFullScreenMode = {
     };
     
-    var requiredStandardMode = {
+    var requiredFullScreenMode = {
     };
     
     var defaultsSliderMode = {
         width: '940px',
         height: '360px',
-        canResize: false,
+        canZoom: false,
         draggableZoom: false,
         browserHistory: false,
         thumbnailsFullScreen: false,
@@ -166,6 +169,76 @@
         rotateSidesOut_rotateSidesInDelay: ["pt-page-rotateSidesOut","pt-page-rotateSidesIn pt-page-delay200"],
         rotateSlideOut_rotateSlideIn: ["pt-page-rotateSlideOut","pt-page-rotateSlideIn"]
     };
+ 
+    var jGalleryBackwardTransitions = {
+        moveToLeft_moveFromRight: 'moveToRight_moveFromLeft',
+        moveToRight_moveFromLeft: 'moveToLeft_moveFromRight',
+        moveToTop_moveFromBottom: 'moveToBottom_moveFromTop',
+        moveToBottom_moveFromTop: 'moveToTop_moveFromBottom',
+        fade_moveFromRight: 'fade_moveFromLeft',
+        fade_moveFromLeft: 'fade_moveFromRight',
+        fade_moveFromBottom: 'fade_moveFromTop',
+        fade_moveFromTop: 'fade_moveFromBottom',
+        moveToLeftFade_moveFromRightFade: 'moveToRightFade_moveFromLeftFade',
+        moveToRightFade_moveFromLeftFade: 'moveToLeftFade_moveFromRightFade',
+        moveToTopFade_moveFromBottomFade: 'moveToBottomFade_moveFromTopFade',
+        moveToBottomFade_moveFromTopFade: 'moveToTopFade_moveFromBottomFade',
+        moveToLeftEasing_moveFromRight: 'moveToRightEasing_moveFromLeft',
+        moveToRightEasing_moveFromLeft: 'moveToLeftEasing_moveFromRight',
+        moveToTopEasing_moveFromBottom: 'moveToBottomEasing_moveFromTop',
+        moveToBottomEasing_moveFromTop: 'moveToTopEasing_moveFromBottom',
+        scaleDown_moveFromRight: 'scaleDown_moveFromLeft',
+        scaleDown_moveFromLeft: 'scaleDown_moveFromRight',
+        scaleDown_moveFromBottom: 'scaleDown_moveFromTop',
+        scaleDown_moveFromTop: 'scaleDown_moveFromBottom',
+        scaleDown_scaleUpDown: 'scaleDownUp_scaleUp',
+        scaleDownUp_scaleUp: 'scaleDown_scaleUpDown',
+        moveToLeft_scaleUp: 'moveToRight_scaleUp',
+        moveToRight_scaleUp: 'moveToLeft_scaleUp',
+        moveToTop_scaleUp: 'moveToBottom_scaleUp',
+        moveToBottom_scaleUp: 'moveToTop_scaleUp',
+        scaleDownCenter_scaleUpCenter: 'scaleDownCenter_scaleUpCenter',
+        rotateRightSideFirst_moveFromRight: 'rotateLeftSideFirst_moveFromLeft',
+        rotateLeftSideFirst_moveFromLeft: 'rotateRightSideFirst_moveFromRight',
+        rotateTopSideFirst_moveFromTop: 'rotateBottomSideFirst_moveFromBottom',
+        rotateBottomSideFirst_moveFromBottom: 'rotateTopSideFirst_moveFromTop',
+        flipOutRight_flipInLeft: 'flipOutLeft_flipInRight',
+        flipOutLeft_flipInRight: 'flipOutRight_flipInLeft',
+        flipOutTop_flipInBottom: 'flipOutBottom_flipInTop',
+        flipOutBottom_flipInTop: 'flipOutTop_flipInBottom',
+        rotateFall_scaleUp: 'rotateFall_scaleUp',
+        rotateOutNewspaper_rotateInNewspaper: 'rotateOutNewspaper_rotateInNewspaper',
+        rotatePushLeft_moveFromRight: 'rotatePushRight_moveFromLeft',
+        rotatePushRight_moveFromLeft: 'rotatePushLeft_moveFromRight',
+        rotatePushTop_moveFromBottom: 'rotatePushBottom_moveFromTop',
+        rotatePushBottom_moveFromTop: 'rotatePushTop_moveFromBottom',
+        rotatePushLeft_rotatePullRight: 'rotatePushRight_rotatePullLeft',
+        rotatePushRight_rotatePullLeft: 'rotatePushLeft_rotatePullRight',
+        rotatePushTop_rotatePullBottom: 'rotatePushTop_rotatePullBottom',
+        rotatePushBottom_page: 'rotatePushBottom_page',
+        rotateFoldLeft_moveFromRightFade: 'rotateFoldRight_moveFromLeftFade',
+        rotateFoldRight_moveFromLeftFade: 'rotateFoldLeft_moveFromRightFade',
+        rotateFoldTop_moveFromBottomFade: 'rotateFoldBottom_moveFromTopFade',
+        rotateFoldBottom_moveFromTopFade: 'rotateFoldTop_moveFromBottomFade',
+        moveToRightFade_rotateUnfoldLeft: 'moveToLeftFade_rotateUnfoldRight',
+        moveToLeftFade_rotateUnfoldRight: 'moveToRightFade_rotateUnfoldLeft',
+        moveToBottomFade_rotateUnfoldTop: 'moveToTopFade_rotateUnfoldBottom',
+        moveToTopFade_rotateUnfoldBottom: 'moveToBottomFade_rotateUnfoldTop',
+        rotateRoomLeftOut_rotateRoomLeftIn: 'rotateRoomRightOut_rotateRoomRightIn',
+        rotateRoomRightOut_rotateRoomRightIn: 'rotateRoomLeftOut_rotateRoomLeftIn',
+        rotateRoomTopOut_rotateRoomTopIn: 'rotateRoomBottomOut_rotateRoomBottomIn',
+        rotateRoomBottomOut_rotateRoomBottomIn: 'rotateRoomTopOut_rotateRoomTopIn',
+        rotateCubeLeftOut_rotateCubeLeftIn: 'rotateCubeRightOut_rotateCubeRightIn',
+        rotateCubeRightOut_rotateCubeRightIn: 'rotateCubeLeftOut_rotateCubeLeftIn',
+        rotateCubeTopOut_rotateCubeTopIn: 'rotateCubeBottomOut_rotateCubeBottomIn',
+        rotateCubeBottomOut_rotateCubeBottomIn: 'rotateCubeTopOut_rotateCubeTopIn',
+        rotateCarouselLeftOut_rotateCarouselLeftIn: 'rotateCarouselRightOut_rotateCarouselRightIn',
+        rotateCarouselRightOut_rotateCarouselRightIn: 'rotateCarouselLeftOut_rotateCarouselLeftIn',
+        rotateCarouselTopOut_rotateCarouselTopIn: 'rotateCarouselBottomOut_rotateCarouselBottomIn',
+        rotateCarouselBottomOut_rotateCarouselBottomIn: 'rotateCarouselTopOut_rotateCarouselTopIn',
+        rotateSidesOut_rotateSidesInDelay: 'rotateSidesOut_rotateSidesInDelay',
+        rotateSlideOut_rotateSlideIn: 'rotateSlideOut_rotateSlideIn'
+    };
     
     var jGalleryOptions = [];
     var jGalleryCollection = [ '' ];
@@ -178,6 +251,7 @@
     
     var $head;
     var $title;
+    var $html = $( 'html' );
     var $body;
     $( function() {
         $head = $( 'head' );
@@ -244,7 +318,7 @@
                     jGallery.thumbnails.setActiveAlbum( jGallery.thumbnails.$albums.filter( '[data-jgallery-album-title="' + $this.attr( 'data-jgallery-album-title' ) + '"]' ) );
                 }
             } );
-            $( 'html' ).on( 'click', function(){ self.menuHide(); } );  
+            $html.on( 'click', function(){ self.menuHide(); } );  
         },
         
         setTitle: function( strTitle ) {
@@ -322,7 +396,6 @@
                 this.insertImages( this.$tmp, this.$thumbnailsContainerInner );                    
             }
             this.$tmp.remove();
-            this.refreshThumbsSize();
         },
         
         insertAlbum: function( $this ) {
@@ -373,16 +446,6 @@
             }
             
             return $newImg;
-        },
-        
-        refreshThumbsSize: function() {
-            this.$thumbnailsContainerInner.find( 'img' ).each( function() {
-                var $image = $( this );
-                var image = new Image();
-                
-                image.src = $image.attr( 'src' );
-                image.width > image.height ? $image.css( { 'max-height': '100%', 'max-width': 'none' } ) : $image.css( { 'max-width': '100%', 'max-height': 'none' } );
-            } );  
         }
     };
     
@@ -474,7 +537,7 @@
             var $img = $a.find( 'img' );
             var $album = this.$albums.filter( '.active' );
             var $a = $album.find( 'img[src="' + $img.attr( 'src' ) + '"]' ).parent( 'a' ).eq( 0 );
-
+            
             this.getElement().find( 'a' ).removeClass( 'active' );
             $a.addClass( 'active' );
             if ( $album.find( 'a.active' ).length === 0 ) {
@@ -516,7 +579,8 @@
         reload: function() {
             this.$a = this.getElement().find( 'a' );
             this.$img = this.getElement().find( 'img' );
-            this.$albums = this.getElement().find( '.album' ).length ? this.getElement().find( '.album' ) : this.getElement().find( '.jgallery-container-inner' ).addClass( 'active' );
+            this.$albums = this.getElement().find( '.album' ).length ? this.getElement().find( '.album' ) : this.getElement().find( '.jgallery-container-inner' );
+            this.zoom.showPhoto( this.$albums.find( 'a' ).eq( 0 ) );
         },
 
         bindEvents: function() {
@@ -756,11 +820,14 @@
             if ( typeof this.advancedAnimation === 'undefined' ) {
                 this.advancedAnimation = new AdvancedAnimation( this.$element );
             }
-            this.advancedAnimation.setDuration( jGalleryOptions[ this.jGallery.intId ].transitionDuration );
+            this.advancedAnimation.setAnimationProperties( { 
+                duration: jGalleryOptions[ this.jGallery.intId ].transitionDuration,
+                transitionTimingFunction: jGalleryOptions[ this.jGallery.intId ].transitionTimingFunction
+            } );
             this.advancedAnimation.setDirection( jGalleryOptions[ this.jGallery.intId ].transitionWaveDirection );
             this.advancedAnimation.setQuantityParts( jGalleryOptions[ this.jGallery.intId ].transitionCols, jGalleryOptions[ this.jGallery.intId ].transitionRows );
             this.advancedAnimation.setHideEffect( jGalleryOptions[ this.jGallery.intId ].hideEffect );
-            this.advancedAnimation.setShowEffect( jGalleryOptions[ this.jGallery.intId ].showEffect );  
+            this.advancedAnimation.setShowEffect( jGalleryOptions[ this.jGallery.intId ].showEffect );
         },
         
         setThumbnails: function( thumbnails ) {
@@ -1175,6 +1242,11 @@
             if ( transitionName === 'random' ) {
                 this.setRandomTransition();
             }
+            else if ( transitionName === 'auto' ) {
+                transition = jGalleryTransitions[ jGalleryBackwardTransitions[ jGalleryOptions[ this.jGallery.intId ][ 'transition' ] ] ];
+                this.advancedAnimation.setHideEffect( transition[0] );
+                this.advancedAnimation.setShowEffect( transition[1] );
+            }
             else {
                 transition = jGalleryTransitions[ transitionName ];
                 this.advancedAnimation.setHideEffect( transition[0] );
@@ -1198,6 +1270,7 @@
             this.thumbnails.setActiveThumb( $a );
             if ( this.$element.find( 'img.active' ).attr( 'src' ) === $a.attr( 'href' ) ) {
                 this.booLoadingInProgress = false;
+                this.setJGalleryColoursForActiveThumb();
                 return;
             }
             this.refreshNav();
@@ -1318,10 +1391,7 @@
             else {
                 this.jGallery.$element.removeClass( 'has-title' );
             }
-            this.jGallery.setColours( {
-                strBg: $imgThumb.is( '[data-jgallery-bg-color]' ) ? $imgThumb.attr( 'data-jgallery-bg-color' ) : jGalleryOptions[ this.jGallery.intId ].backgroundColor,
-                strText: $imgThumb.is( '[data-jgallery-bg-color]' ) ? $imgThumb.attr( 'data-jgallery-text-color' ) : jGalleryOptions[ this.jGallery.intId ].textColor
-            } );
+            this.setJGalleryColoursForActiveThumb();
             this.$element.find( '.pt-page.init' ).css( {
                 visibility: 'visible'
             } );
@@ -1365,6 +1435,15 @@
             }
             this.showPhoto( $a, {
                 historyPushState: false
+            } );
+        },
+        
+        setJGalleryColoursForActiveThumb: function() {
+            var $imgThumb = this.thumbnails.$a.filter( '.active' ).find( 'img' );
+            
+            this.jGallery.setColours( {
+                strBg: $imgThumb.is( '[data-jgallery-bg-color]' ) ? $imgThumb.attr( 'data-jgallery-bg-color' ) : jGalleryOptions[ this.jGallery.intId ].backgroundColor,
+                strText: $imgThumb.is( '[data-jgallery-bg-color]' ) ? $imgThumb.attr( 'data-jgallery-text-color' ) : jGalleryOptions[ this.jGallery.intId ].textColor
             } );
         },
         
@@ -1456,7 +1535,8 @@
         if ( jGalleryOptions[ this.intId ].autostart ) {
             this.autostart();
         }
-        $( 'html' ).on( {
+        refreshHTMLClasses();
+        $html.on( {
             keydown: function( event ) {
                 if ( self.$element.is( ':visible' ) ) {
                     if ( event.which === 27 ) {
@@ -1488,24 +1568,25 @@
         
         update: function( options ) {
             jGalleryOptions[ this.intId ] = this.initialized() ? $.extend( jGalleryOptions[ this.intId ], options ) : $.extend( {}, defaults, options );
-            if ( jGalleryOptions[ this.intId ].disabledOnIE8AndOlder && isInternetExplorer7AndOlder() ) {
+            if ( jGalleryOptions[ this.intId ].disabledOnIE8AndOlder && isInternetExplorer8AndOlder() ) {
                 return;
             }
             this.booIsAlbums = this.$this.find( '.album:has(a:has(img))' ).length > 1;
-            if ( jGalleryOptions[ this.intId ].reloadThumbnails ) {
-                this.reloadThumbnails();
-            }
             this.zoom.update();
             this.thumbnails.init();
             this.setUserOptions();
+            if ( jGalleryOptions[ this.intId ].reloadThumbnails ) {
+                this.reloadThumbnails();
+            }
+            this.refreshDimensions();
         },
         
         reloadThumbnails: function() {
             new ThumbnailsGenerator( this, {
                 thumbsHidden: false
             } );
-            this.thumbnails.reload();
             this.generateAlbumsDropdown();
+            this.thumbnails.reload();
         },
 
         setVariables: function() {
@@ -1520,6 +1601,7 @@
             this.$this.hide();
             $window.on( 'resize', { jGallery: this }, this.windowOnResize );
             if ( jGalleryOptions[ this.intId ].mode === 'full-screen' ) {
+                this.bodyOverflowBeforeShow = $body.css( 'overflow' );
                 $body.css( {
                     'overflow': 'hidden'
                 } );
@@ -1531,6 +1613,7 @@
             if ( this.iconChangeAlbum instanceof IconChangeAlbum ) {
                 this.iconChangeAlbum.refreshMenuHeight();
             }
+            refreshHTMLClasses();
         },
 
         hide: function( options ) {
@@ -1545,9 +1628,10 @@
             this.$element.filter( ':visible' ).stop( false, true ).addClass( 'hidden' ).fadeOut( 500, function() {
                 if ( jGalleryOptions[ self.intId ].mode === 'full-screen' ) {   
                     $body.css( {
-                        'overflow': 'visible'
+                        'overflow': self.bodyOverflowBeforeShow
                     } );
                 }
+                refreshHTMLClasses();
             } );
             this.zoom.booLoadingInProgress = false;
             clearTimeout( this.zoom.showPhotoTimeout );
@@ -1616,8 +1700,9 @@
                 }
                 callActionByUrl();
             };
-
-            callActionByUrl();
+            if ( jGalleryOptions[ this.intId ].autostart ) {
+                callActionByUrl();
+            }
         },
         
         generateAlbumsDropdown: function() {
@@ -1628,7 +1713,7 @@
                 return;
             }
             this.zoom.$container.find( '.nav-bottom > .icons' ).append( '\
-                <span class="fa fa-list-ul change-album jgallery-btn jgallery-btn-small">\
+                <span class="fa fa-list-ul change-album jgallery-btn jgallery-btn-small" tooltip="' + jGalleryOptions[ self.intId ].tooltipSeeOtherAlbums + '">\
                     <span class="menu jgallery-btn"></span>\
                     <span class="title"></span>\
                 </span>\
@@ -1782,7 +1867,8 @@
         },
 
         setUserOptions: function() {
-            jGalleryOptions[ this.intId ].canResize ? this.zoom.$resize.show() : this.zoom.$resize.hide();
+            this.refreshAttrClasses();
+            jGalleryOptions[ this.intId ].canZoom ? this.zoom.$resize.show() : this.zoom.$resize.hide();
             jGalleryOptions[ this.intId ].canChangeMode ? this.zoom.$changeMode.show() : this.zoom.$changeMode.hide();
             jGalleryOptions[ this.intId ].mode === 'standard' ? this.zoom.$changeMode.removeClass( 'fa-compress' ).addClass( 'fa-expand' ) : this.zoom.$changeMode.removeClass( 'fa-expand' ).addClass( 'fa-compress' );
             jGalleryOptions[ this.intId ].canClose ? this.zoom.$container.find( '.jgallery-close' ).show() : this.zoom.$container.find( '.jgallery-close' ).hide();
@@ -1801,7 +1887,6 @@
             jGalleryOptions[ this.intId ].slideshow && jGalleryOptions[ this.intId ].slideshowCanRandom && jGalleryOptions[ this.intId ].slideshowRandom ? this.zoom.$random.addClass( 'active' ) : this.zoom.$random.removeClass( 'active' );
 
             jGalleryOptions[ this.intId ].thumbnailsFullScreen && jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.full-screen' ).show() : this.zoom.$container.find( '.full-screen' ).hide();
-            jGalleryOptions[ this.intId ].thumbnailsFullScreen && jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.change-album' ).show() : this.zoom.$container.find( '.change-album' ).hide();
             jGalleryOptions[ this.intId ].canMinimalizeThumbnails && jGalleryOptions[ this.intId ].thumbnails ? this.zoom.$container.find( '.minimalize-thumbnails' ).show() : this.zoom.$container.find( '.minimalize-thumbnails' ).hide();
             jGalleryOptions[ this.intId ].hideThumbnailsOnInit && jGalleryOptions[ this.intId ].thumbnails ? this.thumbnails.hide() : this.thumbnails.show();
             jGalleryOptions[ this.intId ].titleExpanded ? this.zoom.$title.addClass( 'expanded' ) : this.zoom.$title.removeClass( 'expanded' );
@@ -1809,6 +1894,29 @@
                 strBg: jGalleryOptions[ this.intId ].backgroundColor,
                 strText: jGalleryOptions[ this.intId ].textColor
             } );
+            if ( jGalleryOptions[ this.intId ].thumbWidth < jGalleryOptions[ this.intId ].thumbHeight ) {
+                this.thumbnails.getElement().addClass( 'thumb-vertical' ).removeClass( 'thumb-horizontal' );
+            }
+            else {
+                this.thumbnails.getElement().addClass( 'thumb-horizontal' ).removeClass( 'thumb-vertical' );                
+            }
+            if ( jGalleryOptions[ this.intId ].thumbWidthOnFullScreen < jGalleryOptions[ this.intId ].thumbHeightOnFullScreen ) {
+                this.thumbnails.getElement().addClass( 'thumb-on-full-screen-vertical' ).removeClass( 'thumb-on-full-screen-horizontal' );
+            }
+            else {
+                this.thumbnails.getElement().addClass( 'thumb-on-full-screen-horizontal' ).removeClass( 'thumb-on-full-screen-vertical' );                
+            }
+            jGalleryOptions[ this.intId ].tooltips ? this.$jgallery.addClass( 'jgallery-tooltips' ) : this.$jgallery.removeClass( 'jgallery-tooltips' );
+        },
+        
+        refreshAttrClasses: function() {
+            var self = this;
+            var modes = [ 'standard', 'full-screen', 'slider' ];
+            
+            $.each( modes, function( key, value ) {
+                self.$jgallery.removeClass( 'jgallery-' + value );
+            } );
+            this.$jgallery.addClass( 'jgallery-' + jGalleryOptions[ this.intId ].mode );
         },
         
         setColours: function( options ) {
@@ -1816,9 +1924,10 @@
         },
         
         generateHtml: function() {
-            var mode = jGalleryOptions[ this.intId ].mode;
-            var width = mode === 'full-screen' ? 'auto' : jGalleryOptions[ this.intId ].width;
-            var height = mode === 'full-screen' ? 'auto' : jGalleryOptions[ this.intId ].height;
+            var options = jGalleryOptions[ this.intId ];
+            var mode = options.mode;
+            var width = mode === 'full-screen' ? 'auto' : options.width;
+            var height = mode === 'full-screen' ? 'auto' : options.height;
             var html = '\
                 <div class="jgallery jgallery-' + mode + '" style="width: ' + width + '; height: ' + height + '; display: none;" data-jgallery-id="' + this.intId + '">\
                     <div class="jgallery-thumbnails hidden">\
@@ -1835,16 +1944,16 @@
                         <span class="fa fa-chevron-right next jgallery-btn jgallery-btn-large"></span>\
                         <span class="progress"></span>\
                         <div class="nav">\
-                            <span class="fa resize jgallery-btn jgallery-btn-small"></span>\
-                            <span class="fa change-mode jgallery-btn jgallery-btn-small"></span>\
-                            <span class="fa fa-times jgallery-close jgallery-btn jgallery-btn-small"></span>\
+                            <span class="fa resize jgallery-btn jgallery-btn-small" tooltip="' + options.tooltipZoom + '" tooltip-position="bottom right"></span>\
+                            <span class="fa change-mode jgallery-btn jgallery-btn-small" tooltip="' + options.tooltipFullScreen + '" tooltip-position="bottom right"></span>\
+                            <span class="fa fa-times jgallery-close jgallery-btn jgallery-btn-small" tooltip="' + options.tooltipClose + '" tooltip-position="bottom right"></span>\
                         </div>\
                         <div class="nav-bottom">\
                             <div class="icons">\
-                                <span class="fa fa-play slideshow jgallery-btn jgallery-btn-small"></span>\
-                                <span class="fa fa-random random jgallery-btn jgallery-btn-small inactive" style="display: none;"></span>\
-                                <span class="fa fa-th full-screen jgallery-btn jgallery-btn-small"></span>\
-                                <span class="fa fa-ellipsis-h minimalize-thumbnails jgallery-btn jgallery-btn-small inactive"></span>\
+                                <span class="fa fa-play slideshow jgallery-btn jgallery-btn-small" tooltip="' + options.tooltipSlideshow + '"></span>\
+                                <span class="fa fa-random random jgallery-btn jgallery-btn-small inactive" tooltip="' + options.tooltipRandom + '"></span>\
+                                <span class="fa fa-th full-screen jgallery-btn jgallery-btn-small" tooltip="' + options.tooltipSeeAllPhotos + '"></span>\
+                                <span class="fa fa-ellipsis-h minimalize-thumbnails jgallery-btn jgallery-btn-small inactive" tooltip="' + options.tooltipToggleThumbnails + '"></span>\
                             </div>\
                             <div class="title before"></div>\
                         </div>\
@@ -1852,10 +1961,10 @@
                 </div>';
             
             if ( mode === 'full-screen' ) {
-                this.$jgallery = $( jGalleryOptions[ this.intId ].appendTo ).append( html ).children( ':last-child' );
+                this.$jgallery = this.$this.after( html ).next();
             }
             else {
-                if ( jGalleryOptions[ this.intId ].autostart ) {
+                if ( options.autostart ) {
                     this.$this.hide();
                 }
                 this.$jgallery = this.$this.after( html ).next();
@@ -1868,14 +1977,48 @@
                 strBg: 'rgb( 0, 0, 0 )',
                 strText: 'rgb( 255, 255, 255 )'
             }, objOptions );
-
-            var arrBg = tinycolor( objOptions.strBg ).toRgb();
-            var arrBgAlt = arrBg.r + arrBg.g + arrBg.b > 375 ? tinycolor.darken( objOptions.strBg ).toRgb() : tinycolor.lighten( objOptions.strBg ).toRgb();
-            var arrText = tinycolor( objOptions.strText ).toRgb();
+            
+            var arrText;
+            var arrBg;
+            var arrBgAlt;
+            
+            if ( typeof tinycolor === 'function' ) {
+                arrText = tinycolor( objOptions.strText ).toRgb();
+                arrBg = tinycolor( objOptions.strBg ).toRgb();
+                if ( arrBg.r + arrBg.g + arrBg.b > 375 ) {
+                    arrBg = tinycolor.darken( objOptions.strBg ).toRgb();
+                    arrBgAlt = tinycolor( objOptions.strBg ).toRgb();
+                }
+                else {
+                    arrBg = tinycolor( objOptions.strBg ).toRgb();
+                    arrBgAlt = tinycolor.lighten( objOptions.strBg ).toRgb();                
+                }
+            }
+            else {
+                arrBg = {
+                    r: 230,
+                    g: 230,
+                    b: 230
+                };
+                arrBgAlt = {
+                    r: 255,
+                    g: 255,
+                    b: 255
+                };
+                arrText = {
+                    r: 0,
+                    g: 0,
+                    b: 0
+                };
+            }
 
             return '\
                 .jgallery[data-jgallery-id="' + this.intId + '"] {\
                   background: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
+                }\
+                .jgallery[data-jgallery-id="' + this.intId + '"] [tooltip]:after {\
+                  background: rgba(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ', .9);\
+                  color: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-btn {\
                   color: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
@@ -1970,7 +2113,7 @@
                 .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails.full-screen .next {\
                   background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
                 }\
-                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails.square a {\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails.square:not(.full-screen) a {\
                   background: rgb(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ');\
                   color: rgb(' + arrBg.r + ',' + arrBg.g + ', ' + arrBg.b + ');\
                 }\
@@ -2035,22 +2178,20 @@
     };    
         
     $.fn.jGallery = function( userOptions ) {
-        return this.each( function() {
+        var self = this;
+        
+        this.each( function() {
             var $this = $( this );
             
             $( function() {
                 var modeIsDefined = typeof userOptions !== 'undefined' && typeof userOptions.mode !== 'undefined';
                 var options = defaults;
 
-                if ( $this.is( '[data-jgallery-id]' ) && modeIsDefined ) {
-                    delete userOptions.mode;
-                    modeIsDefined = false;
-                }
                 if ( $this.is( '[data-jgallery-id]' ) ) {
                     options = jGalleryOptions[ $this.attr( 'data-jgallery-id' ) ];
                 }
-                if ( modeIsDefined && userOptions.mode === 'standard' ) {
-                    options = $.extend( {}, options, defaultsStandardMode, userOptions, requiredStandardMode );
+                if ( modeIsDefined && userOptions.mode === 'full-screen' ) {
+                    options = $.extend( {}, options, defaultsFullScreenMode, userOptions, requiredFullScreenMode );
                 }
                 else if ( modeIsDefined && userOptions.mode === 'slider' ) {
                     options = $.extend( {}, options, defaultsSliderMode, userOptions, requiredSliderMode );
@@ -2062,12 +2203,45 @@
                     jGalleryOptions[ ++jGalleryId ] = options;
                     jGalleryCollection[ jGalleryId ] = new jGallery( $this );
                 }
-                else {
+                else if( $.isPlainObject( userOptions ) ) {
                     jGalleryCollection[ $this.attr( 'data-jgallery-id' ) ].update( options );
                     jGalleryOptions[ $this.attr( 'data-jgallery-id' ) ] = options;
                 }
             } );
+        } );   
+        
+        $( function() {
+            $.extend( self, {
+                getDefaults: function() {
+                    return defaults;
+                },
+
+                restoreDefaults: function() {
+                    return self.each( function() {
+                        $( this ).jGallery( defaults );
+                    } );
+                },
+
+                getOptions: function() {
+                    return jGalleryOptions[$( self ).attr( 'data-jgallery-id' )];
+                },
+                
+                destroy: function() {
+                    return self.each( function() {
+                        var $this = $( this );
+                        var id = $this.attr( 'data-jgallery-id' );
+                        
+                        jGalleryCollection[ id ] = '';
+                        jGalleryOptions[ id ] = '';
+                        $this.removeAttr( 'data-jgallery-id' ).show();
+                        $html.find( '.jgallery[data-jgallery-id="' + id + '"]' ).remove();
+                        refreshHTMLClasses();
+                    } );                    
+                }
+            } );
         } );
+        
+        return this;
     };
     
     $.jGalleryOptions = function() {
@@ -2135,11 +2309,11 @@
             this.generateHtml();
         },
 
-        setDuration: function( duration ) {
+        setAnimationProperties: function( options ) {
             var intId = this.$element.attr( 'data-advanced-animation-id' );
             var $stylesheet = $head.find( 'style[data-advanced-animation-id="' + intId + '"]' );
             
-            this.duration = duration;
+            this.duration = options.duration;
             if ( isInternetExplorer8AndOlder() ) {
                 return;
             }
@@ -2148,9 +2322,12 @@
             }
             $stylesheet.html('\
                 [data-advanced-animation-id="' + intId + '"] .pt-page {\
-                    -webkit-animation-duration: ' + duration + ';\
-                    -moz-animation-duration: ' + duration + ';\
-                    animation-duration: ' + duration + ';\
+                    -webkit-animation-duration: ' + options.duration + ';\
+                    -moz-animation-duration: ' + options.duration + ';\
+                    animation-duration: ' + options.duration + ';\
+                    -webkit-animation-timing-function: ' + options.transitionTimingFunction + ';\
+                    -moz-animation-timing-function: ' + options.transitionTimingFunction + ';\
+                    animation-timing-function: ' + options.transitionTimingFunction + ';\
                 }\
             ');
         },
@@ -2309,7 +2486,7 @@
                 setOverlayWidthAndHeight = function() {
                     $this.children( '.overlay' ).css( {
                         width: $this.outerWidth(),
-                        height: $this.is( 'body' ) ? $( 'html' ).outerHeight() : $this.outerHeight()
+                        height: $this.is( 'body' ) ? $html.outerHeight() : $this.outerHeight()
                     } );
                 },
                 showOverlay = function() {
@@ -2473,6 +2650,12 @@
               return contents;
         })(this[0]));
     };
+    
+    function refreshHTMLClasses() {
+        $html.find( '.jgallery' ).length === 0 ? $html.removeClass( 'has-jgallery' ) : $html.addClass( 'has-jgallery' );
+        $html.find( '.jgallery.hidden' ).length === 0 ? $html.removeClass( 'has-hidden-jgallery' ) : $html.addClass( 'has-hidden-jgallery' );
+        $html.find( '.jgallery:not(.hidden)' ).length === 0 ? $html.removeClass( 'has-visible-jgallery' ) : $html.addClass( 'has-visible-jgallery' );
+    }
             
     function historyPushState( options ) {
         options = $.extend( {}, {
@@ -2480,7 +2663,6 @@
             title: $title.html(),
             path: ''
         }, options );
-        console.log( document.location.href.split('#')[0] + '#' + options.path );
         window.history.pushState( options.stateObj, options.title, document.location.href.split('#')[0] + '#' + options.path );
     }
     
@@ -2492,20 +2674,6 @@
             var re  = new RegExp( "MSIE ([0-9]{1,}[\.0-9]{0,})" );
             if ( re.exec(ua) !== null ) {
                 rv = true;
-            }
-        }
-        return rv;
-    }
-    
-    function isInternetExplorer7AndOlder() {
-        var rv = false;
-        
-        if ( navigator.appName === 'Microsoft Internet Explorer' ) {
-            var ua = navigator.userAgent;
-            var re  = new RegExp( "MSIE ([0-9]{1,}[\.0-9]{0,})" );
-            if ( re.exec(ua) !== null ) {
-                rv = parseFloat( RegExp.$1 );
-                rv = rv < 8;
             }
         }
         return rv;

@@ -86,6 +86,9 @@
 .jgallery .change-album.active .menu {
   display: block;
 }
+.jgallery .change-album.active[tooltip]:after {
+  display: none !important;
+}
 .jgallery.jgallery-standard {
   top: auto;
   left: auto;
@@ -359,6 +362,17 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 }
 .jgallery .jgallery-thumbnails.hidden {
   display: none;
+}
+.jgallery .jgallery-thumbnails.inactive {
+  display: none;
+}
+.jgallery .jgallery-thumbnails.thumb-horizontal img {
+  max-width: 100%;
+  max-height: none;
+}
+.jgallery .jgallery-thumbnails.thumb-vertical img {
+  max-width: none;
+  max-height: 100%;
 }
 .jgallery .jgallery-thumbnails .jgallery-container {
   left: 0;
@@ -667,6 +681,14 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   bottom: 0;
   display: block;
 }
+.jgallery .jgallery-thumbnails.full-screen.thumb-on-full-screen-horizontal img {
+  max-width: 100%;
+  max-height: none;
+}
+.jgallery .jgallery-thumbnails.full-screen.thumb-on-full-screen-vertical img {
+  max-width: none;
+  max-height: 100%;
+}
 .jgallery .jgallery-thumbnails.full-screen .jgallery-container {
   text-align: left;
   white-space: normal;
@@ -882,6 +904,33 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 }
 .jgallery .zoom-container .nav-bottom > .title.fade.after {
   opacity: 0;
+}
+.jgallery.jgallery-tooltips [tooltip] {
+  position: relative;
+}
+.jgallery.jgallery-tooltips [tooltip]:after {
+  padding: .5em;
+  font-size: .8em;
+  line-height: 1em;
+  font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+  white-space: pre;
+  bottom: 100%;
+  left: 0;
+  content: attr(tooltip);
+  text-shadow: none;
+  display: none;
+  position: absolute;
+}
+.jgallery.jgallery-tooltips [tooltip][tooltip-position*="bottom"]:after {
+  bottom: auto;
+  top: 100%;
+}
+.jgallery.jgallery-tooltips [tooltip][tooltip-position*="right"]:after {
+  left: auto;
+  right: 0;
+}
+.jgallery.jgallery-tooltips [tooltip]:hover:after {
+  display: block;
 }
 .pt-perspective {
   position: relative;
@@ -3501,7 +3550,6 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   position: absolute;
 }
 .jgallery .zoom-container .nav .jgallery-btn {
-  position: static;
   display: inline-block;
 }
 .jgallery .zoom-container .nav-bottom {
@@ -3532,7 +3580,6 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 .jgallery .zoom-container .nav-bottom .jgallery-btn {
   margin-right: 8px;
   background: none;
-  position: static;
   display: inline-block;
 }
 .jgallery .zoom-container .nav-bottom .change-album {

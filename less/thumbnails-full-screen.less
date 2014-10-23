@@ -6,6 +6,16 @@
     right: 0;
     bottom: 0;
     display: block;
+    
+    &.thumb-on-full-screen-horizontal img {
+        max-width: 100%;
+        max-height: none;        
+    }
+    
+    &.thumb-on-full-screen-vertical img {
+        max-width: none;
+        max-height: 100%;
+    }
 
     .jgallery-container {
         text-align: left;
