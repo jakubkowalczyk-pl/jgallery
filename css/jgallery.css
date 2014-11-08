@@ -366,13 +366,13 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 .jgallery .jgallery-thumbnails.inactive {
   display: none;
 }
-.jgallery .jgallery-thumbnails.thumb-horizontal img {
-  max-width: 100%;
-  max-height: none;
-}
-.jgallery .jgallery-thumbnails.thumb-vertical img {
-  max-width: none;
+.jgallery .jgallery-thumbnails img.thumb-horizontal {
   max-height: 100%;
+  max-width: none;
+}
+.jgallery .jgallery-thumbnails img.thumb-vertical {
+  max-height: none;
+  max-width: 100%;
 }
 .jgallery .jgallery-thumbnails .jgallery-container {
   left: 0;
@@ -681,13 +681,13 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   bottom: 0;
   display: block;
 }
-.jgallery .jgallery-thumbnails.full-screen.thumb-on-full-screen-horizontal img {
-  max-width: 100%;
-  max-height: none;
-}
-.jgallery .jgallery-thumbnails.full-screen.thumb-on-full-screen-vertical img {
-  max-width: none;
+.jgallery .jgallery-thumbnails.full-screen img.thumb-on-full-screen-horizontal {
   max-height: 100%;
+  max-width: none;
+}
+.jgallery .jgallery-thumbnails.full-screen img.thumb-on-full-screen-vertical {
+  max-height: none;
+  max-width: 100%;
 }
 .jgallery .jgallery-thumbnails.full-screen .jgallery-container {
   text-align: left;

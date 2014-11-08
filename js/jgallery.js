@@ -1,10 +1,10 @@
 /*!
- * jGallery v1.4.0
+ * jGallery unreleased
  * http://jgallery.jakubkowalczyk.pl/
  *
  * Released under the MIT license
  *
- * Date: 2014-10-23
+ * Date: 2014-11-08
  */
 ( function( $ ) {
     "use strict";
@@ -24,7 +24,6 @@
         hideThumbnailsOnInit: false, // Boolean; If set as 'true', thumbnails will be minimized by default, when jGallery will be started(only when 'thumbnails' parameter set as 'true').; [ true, false ]
         mode: 'standard', // String; Display mode.; [ 'full-screen', 'standard', 'slider' ]
         preloadAll: false, // Boolean; If set as 'true', all photos will be loaded before first shown photo.; [ true, false ]
-        reloadThumbnails: true, // Boolean; Thumbnails will be reloaded when function jGallery() will be called again for the same element.; [ true, false ]
         slideshow: true, // Boolean; If set as 'true', option slideshow is enabled.; [ true, false ]
         slideshowAutostart: false, // Boolean; If set as 'true', slideshow will be started immediately after initializing jGallery(only when 'slideshow' has been set as true).; [ true, false ]
         slideshowCanRandom: true, // Boolean; If set as 'true', you can enable random change photos for slideshow(only when 'slideshow' has been set as true).; [ true, false ]
@@ -396,6 +395,7 @@
                 this.insertImages( this.$tmp, this.$thumbnailsContainerInner );                    
             }
             this.$tmp.remove();
+            this.refreshThumbsSize();
         },
         
         insertAlbum: function( $this ) {
@@ -446,6 +446,29 @@
             }
             
             return $newImg;
+        },
+        
+        refreshThumbsSize: function() {
+            var options = jGalleryOptions[ this.jGallery.intId ];
+            
+            this.$thumbnailsContainerInner.find( 'img' ).each( function() {
+                var $image = $( this );
+                var image = new Image();
+                
+                image.src = $image.attr( 'src' );          
+                if ( ( image.width / image.height ) < ( options.thumbWidth / options.thumbHeight ) ) {
+                    $image.addClass( 'thumb-vertical' ).removeClass( 'thumb-horizontal' );
+                }
+                else {
+                    $image.addClass( 'thumb-horizontal' ).removeClass( 'thumb-vertical' );                
+                }
+                if ( ( image.width / image.height ) < ( options.thumbWidthOnFullScreen / options.thumbHeightOnFullScreen ) ) {
+                    $image.addClass( 'thumb-on-full-screen-vertical' ).removeClass( 'thumb-on-full-screen-horizontal' );
+                }
+                else {
+                    $image.addClass( 'thumb-on-full-screen-horizontal' ).removeClass( 'thumb-on-full-screen-vertical' );                
+                }
+            } );
         }
     };
     
@@ -970,8 +993,18 @@
                 width: this.$element.width() / $img.width() * 100 + '%',
                 height: this.$element.height() / $img.height() * 100 + '%'
             } );
-            cropPositionLeft = ( this.$dragNav.width() - this.$dragNavCrop.width() ) / 2;
-            cropPositionTop = ( this.$dragNav.height() - this.$dragNavCrop.height() ) / 2;
+            if ( $img.attr( 'data-width' ) < this.$container.outerWidth() ) {
+                cropPositionLeft = 0;
+            }
+            else {
+                cropPositionLeft = ( this.$dragNav.width() - this.$dragNavCrop.width() ) / 2;                
+            }
+            if ( $img.attr( 'data-height' ) < this.$container.outerHeight() ) {
+                cropPositionTop = 0;
+            }
+            else {
+                cropPositionTop = ( this.$dragNav.height() - this.$dragNavCrop.height() ) / 2;              
+            }
             this.$dragNavCrop.css( {
                 left: cropPositionLeft,
                 top: cropPositionTop
@@ -1575,9 +1608,7 @@
             this.zoom.update();
             this.thumbnails.init();
             this.setUserOptions();
-            if ( jGalleryOptions[ this.intId ].reloadThumbnails ) {
-                this.reloadThumbnails();
-            }
+            this.reloadThumbnails();
             this.refreshDimensions();
         },
         
@@ -1894,18 +1925,6 @@
                 strBg: jGalleryOptions[ this.intId ].backgroundColor,
                 strText: jGalleryOptions[ this.intId ].textColor
             } );
-            if ( jGalleryOptions[ this.intId ].thumbWidth < jGalleryOptions[ this.intId ].thumbHeight ) {
-                this.thumbnails.getElement().addClass( 'thumb-vertical' ).removeClass( 'thumb-horizontal' );
-            }
-            else {
-                this.thumbnails.getElement().addClass( 'thumb-horizontal' ).removeClass( 'thumb-vertical' );                
-            }
-            if ( jGalleryOptions[ this.intId ].thumbWidthOnFullScreen < jGalleryOptions[ this.intId ].thumbHeightOnFullScreen ) {
-                this.thumbnails.getElement().addClass( 'thumb-on-full-screen-vertical' ).removeClass( 'thumb-on-full-screen-horizontal' );
-            }
-            else {
-                this.thumbnails.getElement().addClass( 'thumb-on-full-screen-horizontal' ).removeClass( 'thumb-on-full-screen-vertical' );                
-            }
             jGalleryOptions[ this.intId ].tooltips ? this.$jgallery.addClass( 'jgallery-tooltips' ) : this.$jgallery.removeClass( 'jgallery-tooltips' );
         },
         
