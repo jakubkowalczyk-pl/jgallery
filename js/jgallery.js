@@ -248,10 +248,10 @@
         jGalleryArrayTransitions.push( value );
     } );    
     
-    var $head;
-    var $title;
+    var $head = $( 'head' );
+    var $title = $( 'title' );
     var $html = $( 'html' );
-    var $body;
+    var $body = $( 'body' );
     $( function() {
         $head = $( 'head' );
         $title = $( 'title' );
@@ -1898,6 +1898,11 @@
         },
 
         setUserOptions: function() {
+            var options = jGalleryOptions[ this.intId ];
+            var mode = options.mode;
+            var width = mode === 'full-screen' ? 'auto' : options.width;
+            var height = mode === 'full-screen' ? 'auto' : options.height;
+            
             this.refreshAttrClasses();
             jGalleryOptions[ this.intId ].canZoom ? this.zoom.$resize.show() : this.zoom.$resize.hide();
             jGalleryOptions[ this.intId ].canChangeMode ? this.zoom.$changeMode.show() : this.zoom.$changeMode.hide();
@@ -1926,6 +1931,10 @@
                 strText: jGalleryOptions[ this.intId ].textColor
             } );
             jGalleryOptions[ this.intId ].tooltips ? this.$jgallery.addClass( 'jgallery-tooltips' ) : this.$jgallery.removeClass( 'jgallery-tooltips' );
+            this.$jgallery.css( {
+                width: width,
+                height: height
+            } );
         },
         
         refreshAttrClasses: function() {
@@ -1945,10 +1954,8 @@
         generateHtml: function() {
             var options = jGalleryOptions[ this.intId ];
             var mode = options.mode;
-            var width = mode === 'full-screen' ? 'auto' : options.width;
-            var height = mode === 'full-screen' ? 'auto' : options.height;
             var html = '\
-                <div class="jgallery jgallery-' + mode + '" style="width: ' + width + '; height: ' + height + '; display: none;" data-jgallery-id="' + this.intId + '">\
+                <div class="jgallery jgallery-' + mode + '" style="display: none;" data-jgallery-id="' + this.intId + '">\
                     <div class="jgallery-thumbnails hidden">\
                         <div class="jgallery-container"><div class="jgallery-container-inner"></div></div>\
                         <span class="prev jgallery-btn hidden"><span class="fa fa-chevron-left ico"></span></span>\
@@ -2202,62 +2209,57 @@
         this.each( function() {
             var $this = $( this );
             
-            $( function() {
-                var modeIsDefined = typeof userOptions !== 'undefined' && typeof userOptions.mode !== 'undefined';
-                var options = defaults;
+            var modeIsDefined = typeof userOptions !== 'undefined' && typeof userOptions.mode !== 'undefined';
+            var options = defaults;
 
                 if ( $this.is( '[data-jgallery-id]' ) ) {
                     options = jGalleryOptions[ $this.attr( 'data-jgallery-id' ) ];
                 }
-                if ( modeIsDefined && userOptions.mode === 'full-screen' ) {
-                    options = $.extend( {}, options, defaultsFullScreenMode, userOptions, requiredFullScreenMode );
-                }
-                else if ( modeIsDefined && userOptions.mode === 'slider' ) {
-                    options = $.extend( {}, options, defaultsSliderMode, userOptions, requiredSliderMode );
-                }
-                else {
-                    options = $.extend( {}, options, userOptions );
-                }            
-                if ( ! $this.is( '[data-jgallery-id]' ) ) {
-                    jGalleryOptions[ ++jGalleryId ] = options;
-                    jGalleryCollection[ jGalleryId ] = new jGallery( $this );
-                }
-                else if( $.isPlainObject( userOptions ) ) {
-                    jGalleryCollection[ $this.attr( 'data-jgallery-id' ) ].update( options );
-                    jGalleryOptions[ $this.attr( 'data-jgallery-id' ) ] = options;
-                }
-            } );
+            if ( modeIsDefined && userOptions.mode === 'full-screen' ) {
+                options = $.extend( {}, options, defaultsFullScreenMode, userOptions, requiredFullScreenMode );
+            }
+            else if ( modeIsDefined && userOptions.mode === 'slider' ) {
+                options = $.extend( {}, options, defaultsSliderMode, userOptions, requiredSliderMode );
+            }
+            else {
+                options = $.extend( {}, options, userOptions );
+            }   
+            if ( ! $this.is( '[data-jgallery-id]' ) ) {
+                jGalleryOptions[ ++jGalleryId ] = options;
+                jGalleryCollection[ jGalleryId ] = new jGallery( $this );
+            }
+            else if( $.isPlainObject( userOptions ) ) {
+                jGalleryCollection[ $this.attr( 'data-jgallery-id' ) ].update( options );
+                jGalleryOptions[ $this.attr( 'data-jgallery-id' ) ] = options;
+            }
         } );   
-        
-        $( function() {
-            $.extend( self, {
-                getDefaults: function() {
-                    return defaults;
-                },
+        $.extend( self, {
+            getDefaults: function() {
+                return defaults;
+            },
 
-                restoreDefaults: function() {
-                    return self.each( function() {
-                        $( this ).jGallery( defaults );
-                    } );
-                },
+            restoreDefaults: function() {
+                return self.each( function() {
+                    $( this ).jGallery( defaults );
+                } );
+            },
 
-                getOptions: function() {
-                    return jGalleryOptions[$( self ).attr( 'data-jgallery-id' )];
-                },
-                
-                destroy: function() {
-                    return self.each( function() {
-                        var $this = $( this );
-                        var id = $this.attr( 'data-jgallery-id' );
-                        
-                        jGalleryCollection[ id ] = '';
-                        jGalleryOptions[ id ] = '';
-                        $this.removeAttr( 'data-jgallery-id' ).show();
-                        $html.find( '.jgallery[data-jgallery-id="' + id + '"]' ).remove();
-                        refreshHTMLClasses();
-                    } );                    
-                }
-            } );
+            getOptions: function() {
+                return jGalleryOptions[$( self ).attr( 'data-jgallery-id' )];
+            },
+
+            destroy: function() {
+                return self.each( function() {
+                    var $this = $( this );
+                    var id = $this.attr( 'data-jgallery-id' );
+
+                    jGalleryCollection[ id ] = '';
+                    jGalleryOptions[ id ] = '';
+                    $this.removeAttr( 'data-jgallery-id' ).show();
+                    $html.find( '.jgallery[data-jgallery-id="' + id + '"]' ).remove();
+                    refreshHTMLClasses();
+                } );                    
+            }
         } );
         
         return this;
