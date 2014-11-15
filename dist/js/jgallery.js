@@ -3189,6 +3189,10 @@ require( [
                 return defaults;
             },
 
+            getTransitions: function() {
+                return jGalleryTransitions;
+            },
+
             restoreDefaults: function() {
                 return self.each( function() {
                     $( this ).jGallery( defaults );
@@ -3196,7 +3200,7 @@ require( [
             },
 
             getOptions: function() {
-                return $( self ).eq( 0 ).getOptions;
+                return $( self ).eq( 0 ).jGallery().getOptions();
             },
 
             destroy: function() {
@@ -3214,11 +3218,8 @@ require( [
 
         return this;
     };
-
-    $.jGalleryTransitions = function() {
-        return jGalleryTransitions;
-    };
 } );
+
 define("jgallery", function(){});
 
 } )();
