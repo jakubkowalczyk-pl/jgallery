@@ -38,7 +38,7 @@ require( [
             },
 
             getOptions: function() {
-                return $( self ).eq( 0 ).jGallery().getOptions();
+                return jGalleryCollection[$( self ).eq( 0 ).attr( 'data-jgallery-id' )].options;
             },
 
             destroy: function() {
