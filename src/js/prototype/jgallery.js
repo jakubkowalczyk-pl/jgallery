@@ -26,65 +26,110 @@ define( [
     var JGallery = function( $this, jGalleryId, options ) {
         var self = this;
         
-        if ( ! jGalleryId ) {
+        if ( ! jGalleryId || $this.is( '[data-jgallery-id]' ) ) {
             return;
-        }        
+        }     
+        this.$this = $this;   
+        this.intId = jGalleryId;
+        this.$this.attr( 'data-jgallery-id', this.intId );
         this.overrideOptions( options ); 
         this.booIsAlbums = $this.find( '.album:has(a:has(img))' ).length > 1;
-        this.intId = jGalleryId;
-        this.$this = $this;
         if ( this.options.disabledOnIE8AndOlder && isInternetExplorer8AndOlder() ) {
             return;
         }
-        this.init();
-        if ( this.options.browserHistory ) {
-            this.browserHistory();
-        }
-        if ( this.options.autostart ) {
-            this.autostart();
-        }
-        refreshHTMLClasses();
-        $html.on( {
-            keydown: function( event ) {
-                if ( self.$element.is( ':visible' ) ) {
-                    if ( event.which === 27 ) {
-                        event.preventDefault();
-                        if ( self.thumbnails.getElement().is( '.full-screen' ) ) {
-                            self.thumbnails.changeViewToBar();
-                            self.zoom.refreshSize();
-                            return;
-                        }
-                        self.hide();
-                    }
-                    if ( event.which === 37 ) {
-                        event.preventDefault();
-                        self.zoom.showPrevPhoto();
-                    }
-                    if ( event.which === 39 ) {
-                        event.preventDefault();
-                        self.zoom.showNextPhoto();
-                    }
+        this.init( {
+            success: function() {
+                if ( self.options.browserHistory ) {
+                    self.browserHistory();
                 }
+                if ( self.options.autostart ) {
+                    self.autostart();
+                }
+                refreshHTMLClasses();
+                $html.on( {
+                    keydown: function( event ) {
+                        if ( self.$element.is( ':visible' ) ) {
+                            if ( event.which === 27 ) {
+                                event.preventDefault();
+                                if ( self.thumbnails.getElement().is( '.full-screen' ) ) {
+                                    self.thumbnails.changeViewToBar();
+                                    self.zoom.refreshSize();
+                                    return;
+                                }
+                                self.hide();
+                            }
+                            if ( event.which === 37 ) {
+                                event.preventDefault();
+                                self.zoom.showPrevPhoto();
+                            }
+                            if ( event.which === 39 ) {
+                                event.preventDefault();
+                                self.zoom.showNextPhoto();
+                            }
+                        }
+                    }
+                } );
             }
         } );
     };
 
-    JGallery.prototype = {         
+    JGallery.prototype = {
+        template: {
+            html: '<div class="jgallery" style="display: none;">\
+                        <div class="jgallery-thumbnails hidden">\
+                            <div class="jgallery-container"><div class="jgallery-container-inner"></div></div>\
+                            <span class="prev jgallery-btn hidden"><span class="fa fa-chevron-left ico"></span></span>\
+                            <span class="next jgallery-btn hidden"><span class="fa fa-chevron-right ico"></span></span>\
+                        </div>\
+                        <div class="zoom-container">\
+                            <div class="zoom before pt-perspective"></div>\
+                            <div class="drag-nav hide"></div>\
+                            <div class="left"></div>\
+                            <div class="right"></div>\
+                            <span class="fa fa-chevron-left prev jgallery-btn jgallery-btn-large"></span>\
+                            <span class="fa fa-chevron-right next jgallery-btn jgallery-btn-large"></span>\
+                            <span class="progress"></span>\
+                            <div class="nav">\
+                                <span class="fa resize jgallery-btn jgallery-btn-small" tooltip-position="bottom right"></span>\
+                                <span class="fa change-mode jgallery-btn jgallery-btn-small" tooltip-position="bottom right"></span>\
+                                <span class="fa fa-times jgallery-close jgallery-btn jgallery-btn-small" tooltip-position="bottom right"></span>\
+                            </div>\
+                            <div class="nav-bottom">\
+                                <div class="icons">\
+                                    <span class="fa fa-play slideshow jgallery-btn jgallery-btn-small"></span>\
+                                    <span class="fa fa-random random jgallery-btn jgallery-btn-small inactive"></span>\
+                                    <span class="fa fa-th full-screen jgallery-btn jgallery-btn-small"></span>\
+                                    <span class="fa fa-ellipsis-h minimalize-thumbnails jgallery-btn jgallery-btn-small inactive"></span>\
+                                </div>\
+                                <div class="title before"></div>\
+                            </div>\
+                        </div>\
+                    </div>',
+            
+            done: function( fn ) {
+                fn( this.html );
+            }
+        },
+        
         initialized: function() {
             return this.$this.is( '[data-jgallery-id]' );
         },
 
         update: function( options ) {
-            this.overrideOptions( options ); 
-            if ( this.options.disabledOnIE8AndOlder && isInternetExplorer8AndOlder() ) {
-                return;
-            }
-            this.booIsAlbums = this.$this.find( '.album:has(a:has(img))' ).length > 1;
-            this.zoom.update();
-            this.thumbnails.init();
-            this.setUserOptions();
-            this.reloadThumbnails();
-            this.refreshDimensions();
+            var self = this;
+            
+            this.template.done( function() {
+                self.overrideOptions( options ); 
+                if ( self.options.disabledOnIE8AndOlder && isInternetExplorer8AndOlder() ) {
+                    return;
+                }
+                self.booIsAlbums = self.$this.find( '.album:has(a:has(img))' ).length > 1;
+                self.zoom.update();
+                self.thumbnails.init();
+                self.setUserOptions();
+                self.reloadThumbnails();
+                self.refreshDimensions();
+            } );
         },
         
         overrideOptions: function( options ) {
@@ -251,105 +296,111 @@ define( [
             this.iconChangeAlbum.bindEvents( this );
         },
 
-        init: function() {
+        init: function( options ) {
             var self = this;
-
+            
+            options = $.extend( {
+                success: function(){}
+            }, options );
             $head.append( '<style type="text/css" class="colours" data-jgallery-id="' + this.intId + '"></style>' );
             this.options.initGallery();
-            this.$this.attr( 'data-jgallery-id', this.intId );
-            this.generateHtml();
-            new ThumbnailsGenerator( this );
-            this.setVariables();
-            this.thumbnails.init();
-            this.thumbnails.getElement().append( '<span class="fa fa-times jgallery-btn jgallery-close jgallery-btn-small"></span>' );
-            this.generateAlbumsDropdown();
-            self.setUserOptions();
-            if ( self.options.zoomSize === 'fit' || self.options.zoomSize === 'original' ) {
-                self.zoom.$resize.addClass( 'fa-search-plus' );
-            }
-            if ( self.options.zoomSize === 'fill' ) {
-                self.zoom.$resize.addClass( 'fa-search-minus' );
-            }
-            if ( ! isInternetExplorer() ) {
-                self.$element.addClass( 'text-shadow' );
-            }
-            self.thumbnails.refreshNavigation();
-            self.zoom.refreshNav();
-            self.zoom.refreshSize();
-            this.$this.on( 'click', 'a:has(img)', function( event ) {
-                var $this = $( this );
-
-                event.preventDefault();
-                self.zoom.showPhoto( $this );
-            } );
-
-            self.thumbnails.$element.on( 'click', 'a', function( event ) {
-                var $this = $( this );
-
-                event.preventDefault();
-                if ( $this.is( ':not(.active)' ) ) {
-                    self.zoom.slideshowStop();
-                    self.zoom.showPhoto( $this );
-                }
-                else if ( self.thumbnails.isFullScreen() ) {
-                    self.thumbnails.changeViewToBar();
+            this.generateHtml( {
+                success: function() { 
+                    new ThumbnailsGenerator( self );
+                    self.setVariables();
+                    self.thumbnails.init();
+                    self.thumbnails.getElement().append( '<span class="fa fa-times jgallery-btn jgallery-close jgallery-btn-small"></span>' );
+                    self.generateAlbumsDropdown();
+                    self.setUserOptions();
+                    if ( self.options.zoomSize === 'fit' || self.options.zoomSize === 'original' ) {
+                        self.zoom.$resize.addClass( 'fa-search-plus' );
+                    }
+                    if ( self.options.zoomSize === 'fill' ) {
+                        self.zoom.$resize.addClass( 'fa-search-minus' );
+                    }
+                    if ( ! isInternetExplorer() ) {
+                        self.$element.addClass( 'text-shadow' );
+                    }
+                    self.thumbnails.refreshNavigation();
+                    self.zoom.refreshNav();
                     self.zoom.refreshSize();
-                }
-            } ); 
+                    self.$this.on( 'click', 'a:has(img)', function( event ) {
+                        var $this = $( this );
 
-            self.zoom.$btnPrev.add( self.zoom.$container.find( '.left' ) ).on( {
-                click: function() {
-                    self.zoom.slideshowStop();
-                    self.zoom.showPrevPhoto();
+                        event.preventDefault();
+                        self.zoom.showPhoto( $this );
+                    } );
+
+                    self.thumbnails.$element.on( 'click', 'a', function( event ) {
+                        var $this = $( this );
+
+                        event.preventDefault();
+                        if ( $this.is( ':not(.active)' ) ) {
+                            self.zoom.slideshowStop();
+                            self.zoom.showPhoto( $this );
+                        }
+                        else if ( self.thumbnails.isFullScreen() ) {
+                            self.thumbnails.changeViewToBar();
+                            self.zoom.refreshSize();
+                        }
+                    } ); 
+
+                    self.zoom.$btnPrev.add( self.zoom.$container.find( '.left' ) ).on( {
+                        click: function() {
+                            self.zoom.slideshowStop();
+                            self.zoom.showPrevPhoto();
+                        }
+                    } );
+
+                    self.zoom.$btnNext.add( self.zoom.$container.find( '.right' ) ).on( {
+                        click: function() {
+                            self.zoom.slideshowStop();
+                            self.zoom.showNextPhoto();
+                        }
+                    } );
+
+                    self.zoom.$container.find( '.jgallery-close' ).on( {
+                        click: function() {
+                            self.hide();
+                        }
+                    } );
+
+                    self.zoom.$random.on( {
+                        click: function() {
+                            self.zoom.slideshowRandomToggle();
+                        }
+                    } );
+
+                    self.zoom.$resize.on( {
+                        click: function() {
+                            self.zoom.changeSize();
+                            self.zoom.slideshowPause();
+                        }
+                    } ); 
+
+                    self.zoom.$changeMode.on( {
+                        click: function() {
+                            self.zoom.changeMode();
+                        }
+                    } ); 
+
+                    self.zoom.$slideshow.on( {
+                        click: function() {
+                            self.zoom.slideshowPlayPause();
+                        }
+                    } );   
+
+                    self.zoom.$container.find( '.minimalize-thumbnails' ).on( {
+                        click: function() {
+                            self.thumbnails.toggle();
+                            self.zoom.refreshSize();
+                        }
+                    } );  
+
+                    self.thumbnails.bindEvents();      
+                    options.success();
                 }
             } );
-
-            self.zoom.$btnNext.add( self.zoom.$container.find( '.right' ) ).on( {
-                click: function() {
-                    self.zoom.slideshowStop();
-                    self.zoom.showNextPhoto();
-                }
-            } );
-
-            self.zoom.$container.find( '.jgallery-close' ).on( {
-                click: function() {
-                    self.hide();
-                }
-            } );
-
-            self.zoom.$random.on( {
-                click: function() {
-                    self.zoom.slideshowRandomToggle();
-                }
-            } );
-
-            self.zoom.$resize.on( {
-                click: function() {
-                    self.zoom.changeSize();
-                    self.zoom.slideshowPause();
-                }
-            } ); 
-
-            self.zoom.$changeMode.on( {
-                click: function() {
-                    self.zoom.changeMode();
-                }
-            } ); 
-
-            self.zoom.$slideshow.on( {
-                click: function() {
-                    self.zoom.slideshowPlayPause();
-                }
-            } );   
-
-            self.zoom.$container.find( '.minimalize-thumbnails' ).on( {
-                click: function() {
-                    self.thumbnails.toggle();
-                    self.zoom.refreshSize();
-                }
-            } );  
-
-            self.thumbnails.bindEvents(); 
         },
 
         isSlider: function() {
@@ -441,51 +492,37 @@ define( [
             $head.find( 'style[data-jgallery-id="' + this.intId + '"].colours' ).html( this.getCssForColours( options ) );
         },
 
-        generateHtml: function() {
-            var options = this.options;
-            var mode = options.mode;
-            var html = '\
-                <div class="jgallery jgallery-' + mode + '" style="display: none;" data-jgallery-id="' + this.intId + '">\
-                    <div class="jgallery-thumbnails hidden">\
-                        <div class="jgallery-container"><div class="jgallery-container-inner"></div></div>\
-                        <span class="prev jgallery-btn hidden"><span class="fa fa-chevron-left ico"></span></span>\
-                        <span class="next jgallery-btn hidden"><span class="fa fa-chevron-right ico"></span></span>\
-                    </div>\
-                    <div class="zoom-container">\
-                        <div class="zoom before pt-perspective"></div>\
-                        <div class="drag-nav hide"></div>\
-                        <div class="left"></div>\
-                        <div class="right"></div>\
-                        <span class="fa fa-chevron-left prev jgallery-btn jgallery-btn-large"></span>\
-                        <span class="fa fa-chevron-right next jgallery-btn jgallery-btn-large"></span>\
-                        <span class="progress"></span>\
-                        <div class="nav">\
-                            <span class="fa resize jgallery-btn jgallery-btn-small" tooltip="' + options.tooltipZoom + '" tooltip-position="bottom right"></span>\
-                            <span class="fa change-mode jgallery-btn jgallery-btn-small" tooltip="' + options.tooltipFullScreen + '" tooltip-position="bottom right"></span>\
-                            <span class="fa fa-times jgallery-close jgallery-btn jgallery-btn-small" tooltip="' + options.tooltipClose + '" tooltip-position="bottom right"></span>\
-                        </div>\
-                        <div class="nav-bottom">\
-                            <div class="icons">\
-                                <span class="fa fa-play slideshow jgallery-btn jgallery-btn-small" tooltip="' + options.tooltipSlideshow + '"></span>\
-                                <span class="fa fa-random random jgallery-btn jgallery-btn-small inactive" tooltip="' + options.tooltipRandom + '"></span>\
-                                <span class="fa fa-th full-screen jgallery-btn jgallery-btn-small" tooltip="' + options.tooltipSeeAllPhotos + '"></span>\
-                                <span class="fa fa-ellipsis-h minimalize-thumbnails jgallery-btn jgallery-btn-small inactive" tooltip="' + options.tooltipToggleThumbnails + '"></span>\
-                            </div>\
-                            <div class="title before"></div>\
-                        </div>\
-                    </div>\
-                </div>';
+        generateHtml: function( options ) {
+            var self = this;
+            
+            options = $.extend( {}, {
+                success: function(){}
+            }, options );
+            this.template.done( function( html ) {   
+                ( function() {
+                    var options = self.options; 
+                    var mode = options.mode;     
 
-            if ( mode === 'full-screen' ) {
-                this.$jgallery = this.$this.after( html ).next();
-            }
-            else {
-                if ( options.autostart ) {
-                    this.$this.hide();
-                }
-                this.$jgallery = this.$this.after( html ).next();
-            }
-
+                    if ( mode === 'full-screen' ) {
+                        self.$jgallery = self.$this.after( html ).next();
+                    }
+                    else {
+                        if ( options.autostart ) {
+                            self.$this.hide();
+                        }
+                        self.$jgallery = self.$this.after( html ).next();
+                    }
+                    self.$jgallery.addClass( 'jgallery-' + mode ).attr( 'data-jgallery-id', self.intId );
+                    self.$jgallery.find( '.fa.slideshow' ).attr( 'tooltip', options.tooltipSlideshow );
+                    self.$jgallery.find( '.fa.resize' ).attr( 'tooltip', options.tooltipZoom );
+                    self.$jgallery.find( '.fa.change-mode' ).attr( 'tooltip', options.tooltipFullScreen );
+                    self.$jgallery.find( '.fa.jgallery-close' ).attr( 'tooltip', options.tooltipClose );
+                    self.$jgallery.find( '.fa.random' ).attr( 'tooltip', options.tooltipRandom );
+                    self.$jgallery.find( '.fa.full-screen' ).attr( 'tooltip', options.tooltipSeeAllPhotos );
+                    self.$jgallery.find( '.fa.minimalize-thumbnails' ).attr( 'tooltip', options.tooltipToggleThumbnails );
+                } )();
+                options.success();
+            } );
         },
 
         getCssForColours: function( objOptions ) {
