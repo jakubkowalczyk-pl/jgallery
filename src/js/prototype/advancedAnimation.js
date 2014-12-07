@@ -1,6 +1,4 @@
-define( [
-        '../functions/isIE8AndOlder.js'
-], function( isInternetExplorer8AndOlder ) {
+var AdvancedAnimation = ( function( isInternetExplorer8AndOlder ) {
     var $ = jQuery;
     var $head = $( 'head' );
     var intAdvancedAnimationLastId = 0;
@@ -203,4 +201,4 @@ define( [
     };
     
     return AdvancedAnimation;
-} );
+} )( isInternetExplorer8AndOlder );

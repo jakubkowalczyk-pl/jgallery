@@ -1,4 +1,4 @@
-define( function() {
+var refreshHTMLClasses = function() {
     var $ = jQuery;
     var $html = $( 'html' );
     
@@ -7,4 +7,4 @@ define( function() {
         $html.find( '.jgallery.hidden' ).length === 0 ? $html.removeClass( 'has-hidden-jgallery' ) : $html.addClass( 'has-hidden-jgallery' );
         $html.find( '.jgallery:not(.hidden)' ).length === 0 ? $html.removeClass( 'has-visible-jgallery' ) : $html.addClass( 'has-visible-jgallery' );
     };
-} );
+};

@@ -1,765 +1,256 @@
 /*!
- * jGallery unreleased
- * http://jgallery.jakubkowalczyk.pl/
- *
- * Released under the MIT license
- *
- * Date: 2014-11-27
- */
-( function() {/**
- * @license almond 0.3.0 Copyright (c) 2011-2014, The Dojo Foundation All Rights Reserved.
- * Available via the MIT or new BSD license.
- * see: http://github.com/jrburke/almond for details
- */
-//Going sloppy to avoid 'use strict' string cost, but strict practices should
-//be followed.
-/*jslint sloppy: true */
-/*global setTimeout: false */
-
-var requirejs, require, define;
-(function (undef) {
-    var main, req, makeMap, handlers,
-        defined = {},
-        waiting = {},
-        config = {},
-        defining = {},
-        hasOwn = Object.prototype.hasOwnProperty,
-        aps = [].slice,
-        jsSuffixRegExp = /\.js$/;
-
-    function hasProp(obj, prop) {
-        return hasOwn.call(obj, prop);
-    }
-
-    /**
-     * Given a relative module name, like ./something, normalize it to
-     * a real name that can be mapped to a path.
-     * @param {String} name the relative name
-     * @param {String} baseName a real name that the name arg is relative
-     * to.
-     * @returns {String} normalized name
-     */
-    function normalize(name, baseName) {
-        var nameParts, nameSegment, mapValue, foundMap, lastIndex,
-            foundI, foundStarMap, starI, i, j, part,
-            baseParts = baseName && baseName.split("/"),
-            map = config.map,
-            starMap = (map && map['*']) || {};
-
-        //Adjust any relative paths.
-        if (name && name.charAt(0) === ".") {
-            //If have a base name, try to normalize against it,
-            //otherwise, assume it is a top-level require that will
-            //be relative to baseUrl in the end.
-            if (baseName) {
-                //Convert baseName to array, and lop off the last part,
-                //so that . matches that "directory" and not name of the baseName's
-                //module. For instance, baseName of "one/two/three", maps to
-                //"one/two/three.js", but we want the directory, "one/two" for
-                //this normalization.
-                baseParts = baseParts.slice(0, baseParts.length - 1);
-                name = name.split('/');
-                lastIndex = name.length - 1;
-
-                // Node .js allowance:
-                if (config.nodeIdCompat && jsSuffixRegExp.test(name[lastIndex])) {
-                    name[lastIndex] = name[lastIndex].replace(jsSuffixRegExp, '');
-                }
-
-                name = baseParts.concat(name);
-
-                //start trimDots
-                for (i = 0; i < name.length; i += 1) {
-                    part = name[i];
-                    if (part === ".") {
-                        name.splice(i, 1);
-                        i -= 1;
-                    } else if (part === "..") {
-                        if (i === 1 && (name[2] === '..' || name[0] === '..')) {
-                            //End of the line. Keep at least one non-dot
-                            //path segment at the front so it can be mapped
-                            //correctly to disk. Otherwise, there is likely
-                            //no path mapping for a path starting with '..'.
-                            //This can still fail, but catches the most reasonable
-                            //uses of ..
-                            break;
-                        } else if (i > 0) {
-                            name.splice(i - 1, 2);
-                            i -= 2;
-                        }
-                    }
-                }
-                //end trimDots
-
-                name = name.join("/");
-            } else if (name.indexOf('./') === 0) {
-                // No baseName, so this is ID is resolved relative
-                // to baseUrl, pull off the leading dot.
-                name = name.substring(2);
-            }
-        }
-
-        //Apply map config if available.
-        if ((baseParts || starMap) && map) {
-            nameParts = name.split('/');
-
-            for (i = nameParts.length; i > 0; i -= 1) {
-                nameSegment = nameParts.slice(0, i).join("/");
-
-                if (baseParts) {
-                    //Find the longest baseName segment match in the config.
-                    //So, do joins on the biggest to smallest lengths of baseParts.
-                    for (j = baseParts.length; j > 0; j -= 1) {
-                        mapValue = map[baseParts.slice(0, j).join('/')];
-
-                        //baseName segment has  config, find if it has one for
-                        //this name.
-                        if (mapValue) {
-                            mapValue = mapValue[nameSegment];
-                            if (mapValue) {
-                                //Match, update name to the new value.
-                                foundMap = mapValue;
-                                foundI = i;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (foundMap) {
-                    break;
-                }
-
-                //Check for a star map match, but just hold on to it,
-                //if there is a shorter segment match later in a matching
-                //config, then favor over this star map.
-                if (!foundStarMap && starMap && starMap[nameSegment]) {
-                    foundStarMap = starMap[nameSegment];
-                    starI = i;
-                }
-            }
-
-            if (!foundMap && foundStarMap) {
-                foundMap = foundStarMap;
-                foundI = starI;
-            }
-
-            if (foundMap) {
-                nameParts.splice(0, foundI, foundMap);
-                name = nameParts.join('/');
-            }
-        }
-
-        return name;
-    }
-
-    function makeRequire(relName, forceSync) {
-        return function () {
-            //A version of a require function that passes a moduleName
-            //value for items that may need to
-            //look up paths relative to the moduleName
-            var args = aps.call(arguments, 0);
-
-            //If first arg is not require('string'), and there is only
-            //one arg, it is the array form without a callback. Insert
-            //a null so that the following concat is correct.
-            if (typeof args[0] !== 'string' && args.length === 1) {
-                args.push(null);
-            }
-            return req.apply(undef, args.concat([relName, forceSync]));
-        };
-    }
-
-    function makeNormalize(relName) {
-        return function (name) {
-            return normalize(name, relName);
-        };
-    }
-
-    function makeLoad(depName) {
-        return function (value) {
-            defined[depName] = value;
-        };
-    }
-
-    function callDep(name) {
-        if (hasProp(waiting, name)) {
-            var args = waiting[name];
-            delete waiting[name];
-            defining[name] = true;
-            main.apply(undef, args);
-        }
-
-        if (!hasProp(defined, name) && !hasProp(defining, name)) {
-            throw new Error('No ' + name);
-        }
-        return defined[name];
-    }
-
-    //Turns a plugin!resource to [plugin, resource]
-    //with the plugin being undefined if the name
-    //did not have a plugin prefix.
-    function splitPrefix(name) {
-        var prefix,
-            index = name ? name.indexOf('!') : -1;
-        if (index > -1) {
-            prefix = name.substring(0, index);
-            name = name.substring(index + 1, name.length);
-        }
-        return [prefix, name];
-    }
-
-    /**
-     * Makes a name map, normalizing the name, and using a plugin
-     * for normalization if necessary. Grabs a ref to plugin
-     * too, as an optimization.
-     */
-    makeMap = function (name, relName) {
-        var plugin,
-            parts = splitPrefix(name),
-            prefix = parts[0];
-
-        name = parts[1];
-
-        if (prefix) {
-            prefix = normalize(prefix, relName);
-            plugin = callDep(prefix);
-        }
-
-        //Normalize according
-        if (prefix) {
-            if (plugin && plugin.normalize) {
-                name = plugin.normalize(name, makeNormalize(relName));
-            } else {
-                name = normalize(name, relName);
-            }
-        } else {
-            name = normalize(name, relName);
-            parts = splitPrefix(name);
-            prefix = parts[0];
-            name = parts[1];
-            if (prefix) {
-                plugin = callDep(prefix);
-            }
-        }
-
-        //Using ridiculous property names for space reasons
-        return {
-            f: prefix ? prefix + '!' + name : name, //fullName
-            n: name,
-            pr: prefix,
-            p: plugin
-        };
-    };
-
-    function makeConfig(name) {
-        return function () {
-            return (config && config.config && config.config[name]) || {};
-        };
-    }
-
-    handlers = {
-        require: function (name) {
-            return makeRequire(name);
-        },
-        exports: function (name) {
-            var e = defined[name];
-            if (typeof e !== 'undefined') {
-                return e;
-            } else {
-                return (defined[name] = {});
-            }
-        },
-        module: function (name) {
-            return {
-                id: name,
-                uri: '',
-                exports: defined[name],
-                config: makeConfig(name)
-            };
-        }
-    };
-
-    main = function (name, deps, callback, relName) {
-        var cjsModule, depName, ret, map, i,
-            args = [],
-            callbackType = typeof callback,
-            usingExports;
-
-        //Use name if no relName
-        relName = relName || name;
-
-        //Call the callback to define the module, if necessary.
-        if (callbackType === 'undefined' || callbackType === 'function') {
-            //Pull out the defined dependencies and pass the ordered
-            //values to the callback.
-            //Default to [require, exports, module] if no deps
-            deps = !deps.length && callback.length ? ['require', 'exports', 'module'] : deps;
-            for (i = 0; i < deps.length; i += 1) {
-                map = makeMap(deps[i], relName);
-                depName = map.f;
-
-                //Fast path CommonJS standard dependencies.
-                if (depName === "require") {
-                    args[i] = handlers.require(name);
-                } else if (depName === "exports") {
-                    //CommonJS module spec 1.1
-                    args[i] = handlers.exports(name);
-                    usingExports = true;
-                } else if (depName === "module") {
-                    //CommonJS module spec 1.1
-                    cjsModule = args[i] = handlers.module(name);
-                } else if (hasProp(defined, depName) ||
-                           hasProp(waiting, depName) ||
-                           hasProp(defining, depName)) {
-                    args[i] = callDep(depName);
-                } else if (map.p) {
-                    map.p.load(map.n, makeRequire(relName, true), makeLoad(depName), {});
-                    args[i] = defined[depName];
-                } else {
-                    throw new Error(name + ' missing ' + depName);
-                }
-            }
-
-            ret = callback ? callback.apply(defined[name], args) : undefined;
-
-            if (name) {
-                //If setting exports via "module" is in play,
-                //favor that over return value and exports. After that,
-                //favor a non-undefined return value over exports use.
-                if (cjsModule && cjsModule.exports !== undef &&
-                        cjsModule.exports !== defined[name]) {
-                    defined[name] = cjsModule.exports;
-                } else if (ret !== undef || !usingExports) {
-                    //Use the return value from the function.
-                    defined[name] = ret;
-                }
-            }
-        } else if (name) {
-            //May just be an object definition for the module. Only
-            //worry about defining if have a module name.
-            defined[name] = callback;
-        }
-    };
-
-    requirejs = require = req = function (deps, callback, relName, forceSync, alt) {
-        if (typeof deps === "string") {
-            if (handlers[deps]) {
-                //callback in this case is really relName
-                return handlers[deps](callback);
-            }
-            //Just return the module wanted. In this scenario, the
-            //deps arg is the module name, and second arg (if passed)
-            //is just the relName.
-            //Normalize module name, if it contains . or ..
-            return callDep(makeMap(deps, callback).f);
-        } else if (!deps.splice) {
-            //deps is a config object, not an array.
-            config = deps;
-            if (config.deps) {
-                req(config.deps, config.callback);
-            }
-            if (!callback) {
-                return;
-            }
-
-            if (callback.splice) {
-                //callback is an array, which means it is a dependency list.
-                //Adjust args if there are dependencies
-                deps = callback;
-                callback = relName;
-                relName = null;
-            } else {
-                deps = undef;
-            }
-        }
-
-        //Support require(['a'])
-        callback = callback || function () {};
-
-        //If relName is a function, it is an errback handler,
-        //so remove it.
-        if (typeof relName === 'function') {
-            relName = forceSync;
-            forceSync = alt;
-        }
-        main(undef, deps, callback, relName);
-
-        return req;
-    };
-
-    /**
-     * Just drops the config on the floor, but returns req in case
-     * the config return value is used.
-     */
-    req.config = function (cfg) {
-        return req(cfg);
-    };
-
-    /**
-     * Expose module registry for debugging and tooling
-     */
-    requirejs._defined = defined;
-
-    define = function (name, deps, callback) {
-
-        //This module may not have dependencies
-        if (!deps.splice) {
-            //deps is not an array, so probably means
-            //an object literal or factory function for
-            //the value. Adjust args.
-            callback = deps;
-            deps = [];
-        }
-
-        if (!hasProp(defined, name) && !hasProp(waiting, name)) {
-            waiting[name] = [name, deps, callback];
-        }
-    };
-
-    define.amd = {
-        jQuery: true
-    };
-}());
-
-define("../../build/almond", function(){});
-
-define( 'functions/refreshHTMLClasses.js',[],function() {
+* jGallery unreleased
+* http://jgallery.jakubkowalczyk.pl/
+*
+* Released under the MIT license
+*
+* Date: 2014-12-07
+*/
+( function() {
+    "use strict";
+var defaults = {
+    autostart: true, // Boolean; If set as 'true' jGallery will be started automatically after loading the document(only for full-screen or standard mode).; [ true, false ]
+    autostartAtImage: 1, // Number; Number of image which will be loaded by autostart(only when 'autostart' parameter set as 'true').; ; [ 1, 2, 3 ]
+    autostartAtAlbum: 1, // Number; Number of album which will be loaded by autostart(only when 'autostart' parameter set as 'true').; ; [ 1, 2, 3 ]
+    backgroundColor: '#fff', // String; Background color for jGallery container.; ; [ '#ffffff', 'silver' ]
+    browserHistory: true, // Boolean; If set as 'true', changes of active image will be saved in browser history.; [ true, false ]
+    canChangeMode: true, // Boolean; If set as 'true' you can change display mode(only for full-screen or standard mode).; [ true, false ]
+    canClose: false, // Boolean; If set as 'true' you can close jGallery(only for full-screen or standard mode).; [ true, false ]
+    canMinimalizeThumbnails: true, // Boolean; If set as 'true', you can minimalize thumbnails(only when 'thumbnails' parameter set as 'true').; [ true, false ]
+    canZoom: true, // Boolean; If set as 'true' you can zoom photos.; [ true, false ]
+    disabledOnIE8AndOlder: true, // Boolean; If set as 'true', jGallery will be blocked for Internet Explorer 8 and older.; [ true, false ]
+    draggableZoom: true, // Boolean; If set as 'true' you can drag active image.; [ true, false ]
+    height: '600px', // String; Height of jGallery container(only for standard or slider mode).
+    hideThumbnailsOnInit: false, // Boolean; If set as 'true', thumbnails will be minimized by default, when jGallery will be started(only when 'thumbnails' parameter set as 'true').; [ true, false ]
+    mode: 'standard', // String; Display mode.; [ 'full-screen', 'standard', 'slider' ]
+    preloadAll: false, // Boolean; If set as 'true', all photos will be loaded before first shown photo.; [ true, false ]
+    slideshow: true, // Boolean; If set as 'true', option slideshow is enabled.; [ true, false ]
+    slideshowAutostart: false, // Boolean; If set as 'true', slideshow will be started immediately after initializing jGallery(only when 'slideshow' has been set as true).; [ true, false ]
+    slideshowCanRandom: true, // Boolean; If set as 'true', you can enable random change photos for slideshow(only when 'slideshow' has been set as true).; [ true, false ]
+    slideshowInterval: '8s', // String; Time between change of photos for slideshow(only when 'slideshow' has been set as true).; [ '3s', '6s', '10s' ] 
+    slideshowRandom: false, // Boolean; If set as 'true', photos in slideshow will be changing random(only when 'slideshow' has been set as true and 'slideshowCanRandom' has been set as true).; [ true, false ]
+    textColor: '#000', // String; Color of text and icons.; ; [ '#000000', 'rgb(0,153,221)' ]
+    thumbnails: true, // Boolean; If set as 'true', thumbnails will be displayed.; [ true, false ]
+    thumbHeight: 75, // Number; Height(pixels) of thumbnails.; ; [ 50, 75, 125 ]
+    thumbHeightOnFullScreen: 100, // Number; Height(pixels) of thumbnails for thumbnails displayed in full-screen.; ; [ 125, 160, 200 ]
+    thumbnailsFullScreen: true, // Boolean; If set as 'true', thumbnails will be displayed in full-screen.; [ true, false ]
+    thumbnailsPosition: 'bottom', // String; Thumbnails position(only when 'thumbnails' parameter set as 'true').; [ 'top',  'bottom', 'left', 'right' ]
+    thumbType: 'image', // String; Thumbnails type(only when 'thumbnails' parameter set as 'true').; [ 'image', 'square', 'number' ]
+    thumbWidth: 75, // Number; Width(pixels) of thumbnails.; ; [ 50, 75, 125 ]
+    thumbWidthOnFullScreen: 100, // Number; Width(pixels) of thumbnails for thumbnails displayed in full-screen.; ; [ 125, 160, 200 ]
+    title: true, // Boolean; If set as 'true', near photo will be shown title from alt attribute of img.; [ true, false ]
+    titleExpanded: false, // Boolean; If set as 'true', in bottom area of zoomed photo will be shown title from alt attribute of img(only when 'title' has been set as true).; [ true, false ]
+    tooltipClose: 'Close', // String; Text of tooltip which will be displayed next to icon for close jgallery(if you set canClose parameter as true).; ;
+    tooltipFullScreen: 'Full screen', // String; Text of tooltip which will be displayed next to icon for change display mode.; ; [ 'Full screen', 'Tryb pełnoekranowy' ]
+    tooltipRandom: 'Random', // String; Text of tooltip which will be displayed next to icon for random slideshow toggling.; ; [ 'Random', 'Kolejność losowa' ]
+    tooltips: true, // Boolean; If set as 'true', tooltips will be displayed next to icons.; [ true, false ]
+    tooltipSeeAllPhotos: 'See all photos', // String; Text of tooltip which will be displayed next to icon for change thumbnails view.; ; [ 'See all photos', 'Zobacz wszystkie zdjęcia' ]
+    tooltipSeeOtherAlbums: 'See other albums', // String; Text of tooltip which will be displayed next to icon for change album(if your jGallery has more than one album).; ; [ 'See other albums', 'Zobacz pozostałe albumy' ]
+    tooltipSlideshow: 'Slideshow', // String; Text of tooltip which will be displayed next to icon for play/pause slideshow.; ; [ 'Slideshow', 'Pokaz slajdów' ]
+    tooltipToggleThumbnails: 'Toggle thumbnails', // String; Text of tooltip which will be displayed next to icon for toggle thumbnails.; ; [ 'Toggle thumbnails', 'Pokaż/ukryj miniatury' ]
+    tooltipZoom: 'Zoom', // String; Text of tooltip which will be displayed next to icon for zoom photo.; ; [ 'Zoom', 'Powiększenie' ]
+    transition: 'moveToRight_moveFromLeft', // String; Transition effect for change active image.; [ 'moveToLeft_moveFromRight', 'moveToRight_moveFromLeft', 'moveToTop_moveFromBottom', 'moveToBottom_moveFromTop', 'fade_moveFromRight', 'fade_moveFromLeft', 'fade_moveFromBottom', 'fade_moveFromTop', 'moveToLeftFade_moveFromRightFade', 'moveToRightFade_moveFromLeftFade', 'moveToTopFade_moveFromBottomFade', 'moveToBottomFade_moveFromTopFade', 'moveToLeftEasing_moveFromRight', 'moveToRightEasing_moveFromLeft', 'moveToTopEasing_moveFromBottom', 'moveToBottomEasing_moveFromTop', 'scaleDown_moveFromRight', 'scaleDown_moveFromLeft', 'scaleDown_moveFromBottom', 'scaleDown_moveFromTop', 'scaleDown_scaleUpDown', 'scaleDownUp_scaleUp', 'moveToLeft_scaleUp', 'moveToRight_scaleUp', 'moveToTop_scaleUp', 'moveToBottom_scaleUp', 'scaleDownCenter_scaleUpCenter', 'rotateRightSideFirst_moveFromRight', 'rotateLeftSideFirst_moveFromLeft', 'rotateTopSideFirst_moveFromTop', 'rotateBottomSideFirst_moveFromBottom', 'flipOutRight_flipInLeft', 'flipOutLeft_flipInRight', 'flipOutTop_flipInBottom', 'flipOutBottom_flipInTop', 'rotateFall_scaleUp', 'rotateOutNewspaper_rotateInNewspaper', 'rotatePushLeft_moveFromRight', 'rotatePushRight_moveFromLeft', 'rotatePushTop_moveFromBottom', 'rotatePushBottom_moveFromTop', 'rotatePushLeft_rotatePullRight', 'rotatePushRight_rotatePullLeft', 'rotatePushTop_rotatePullBottom', 'rotatePushBottom_page', 'rotateFoldLeft_moveFromRightFade', 'rotateFoldRight_moveFromLeftFade', 'rotateFoldTop_moveFromBottomFade', 'rotateFoldBottom_moveFromTopFade', 'moveToRightFade_rotateUnfoldLeft', 'moveToLeftFade_rotateUnfoldRight', 'moveToBottomFade_rotateUnfoldTop', 'moveToTopFade_rotateUnfoldBottom', 'rotateRoomLeftOut_rotateRoomLeftIn', 'rotateRoomRightOut_rotateRoomRightIn', 'rotateRoomTopOut_rotateRoomTopIn', 'rotateRoomBottomOut_rotateRoomBottomIn', 'rotateCubeLeftOut_rotateCubeLeftIn', 'rotateCubeRightOut_rotateCubeRightIn', 'rotateCubeTopOut_rotateCubeTopIn', 'rotateCubeBottomOut_rotateCubeBottomIn', 'rotateCarouselLeftOut_rotateCarouselLeftIn', 'rotateCarouselRightOut_rotateCarouselRightIn', 'rotateCarouselTopOut_rotateCarouselTopIn', 'rotateCarouselBottomOut_rotateCarouselBottomIn', 'rotateSidesOut_rotateSidesInDelay', 'rotateSlideOut_rotateSlideIn', 'random' ]
+    transitionBackward: 'auto', // String; Transition effect for change active image(when user selected one of previous images).; [ 'auto', 'moveToLeft_moveFromRight', 'moveToRight_moveFromLeft', 'moveToTop_moveFromBottom', 'moveToBottom_moveFromTop', 'fade_moveFromRight', 'fade_moveFromLeft', 'fade_moveFromBottom', 'fade_moveFromTop', 'moveToLeftFade_moveFromRightFade', 'moveToRightFade_moveFromLeftFade', 'moveToTopFade_moveFromBottomFade', 'moveToBottomFade_moveFromTopFade', 'moveToLeftEasing_moveFromRight', 'moveToRightEasing_moveFromLeft', 'moveToTopEasing_moveFromBottom', 'moveToBottomEasing_moveFromTop', 'scaleDown_moveFromRight', 'scaleDown_moveFromLeft', 'scaleDown_moveFromBottom', 'scaleDown_moveFromTop', 'scaleDown_scaleUpDown', 'scaleDownUp_scaleUp', 'moveToLeft_scaleUp', 'moveToRight_scaleUp', 'moveToTop_scaleUp', 'moveToBottom_scaleUp', 'scaleDownCenter_scaleUpCenter', 'rotateRightSideFirst_moveFromRight', 'rotateLeftSideFirst_moveFromLeft', 'rotateTopSideFirst_moveFromTop', 'rotateBottomSideFirst_moveFromBottom', 'flipOutRight_flipInLeft', 'flipOutLeft_flipInRight', 'flipOutTop_flipInBottom', 'flipOutBottom_flipInTop', 'rotateFall_scaleUp', 'rotateOutNewspaper_rotateInNewspaper', 'rotatePushLeft_moveFromRight', 'rotatePushRight_moveFromLeft', 'rotatePushTop_moveFromBottom', 'rotatePushBottom_moveFromTop', 'rotatePushLeft_rotatePullRight', 'rotatePushRight_rotatePullLeft', 'rotatePushTop_rotatePullBottom', 'rotatePushBottom_page', 'rotateFoldLeft_moveFromRightFade', 'rotateFoldRight_moveFromLeftFade', 'rotateFoldTop_moveFromBottomFade', 'rotateFoldBottom_moveFromTopFade', 'moveToRightFade_rotateUnfoldLeft', 'moveToLeftFade_rotateUnfoldRight', 'moveToBottomFade_rotateUnfoldTop', 'moveToTopFade_rotateUnfoldBottom', 'rotateRoomLeftOut_rotateRoomLeftIn', 'rotateRoomRightOut_rotateRoomRightIn', 'rotateRoomTopOut_rotateRoomTopIn', 'rotateRoomBottomOut_rotateRoomBottomIn', 'rotateCubeLeftOut_rotateCubeLeftIn', 'rotateCubeRightOut_rotateCubeRightIn', 'rotateCubeTopOut_rotateCubeTopIn', 'rotateCubeBottomOut_rotateCubeBottomIn', 'rotateCarouselLeftOut_rotateCarouselLeftIn', 'rotateCarouselRightOut_rotateCarouselRightIn', 'rotateCarouselTopOut_rotateCarouselTopIn', 'rotateCarouselBottomOut_rotateCarouselBottomIn', 'rotateSidesOut_rotateSidesInDelay', 'rotateSlideOut_rotateSlideIn', 'random' ]
+    transitionCols: 1, // Number; Number of columns in the image divided into columns.; ; [ 1, 2, 3, 4, 5, 6 ]
+    transitionDuration: '0.7s', // String; Duration of transition between photos.; [ '0.2s', '0.5s', '1s' ] 
+    transitionRows: 1, // Number; Number of columns in the image divided into rows.; ; [ 1, 2, 3, 4, 5, 6 ]
+    transitionTimingFunction: 'cubic-bezier(0,1,1,1)', // String; Timig function for showing photo.; [ 'linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out', 'cubic-bezier(0.5,-0.5,0.5,1.5)', 'cubic-bezier(0,1,1,1)' ]
+    transitionWaveDirection: 'forward', // String; Direction of animation(only when 'transitionCols' > 1 or 'transitionRows' > 1).; [ 'forward', 'backward' ]
+    width: '100%', // String; Width of jGallery container(only for standard or slider mode).
+    zoomSize: 'fit', // String; Size of zoomed photo(only for full-screen or standard mode).; [ 'fit', 'original', 'fill' ]
+    afterLoadPhoto: function() {}, // Function; Custom function that will be called after loading photo.; ; [ function() { alert( 'afterLoadPhoto' ) } ]
+    beforeLoadPhoto: function() {}, // Function; Custom function that will be called before loading photo.; ; [ function() { alert( 'beforeLoadPhoto' ) } ]
+    closeGallery: function() {}, // Function; Custom function that will be called after hiding jGallery.; ; [ function() { alert( 'closeGallery' ) } ]
+    initGallery: function() {}, // Function; Custom function that will be called before initialization of jGallery.; ; [ function() { alert( 'initGallery' ) } ]
+    showGallery: function() {}, // Function; Custom function that will be called after showing jGallery.; ; [ function() { alert( 'showGallery' ) } ]
+    showPhoto: function() {} // Function; Custom function that will be called before showing photo.; ; [ function() { alert( 'showPhoto' ) } ]
+};
+var defaultsFullScreenMode = {};
+var defaultsSliderMode = {
+    width: '940px',
+    height: '360px',
+    canZoom: false,
+    draggableZoom: false,
+    browserHistory: false,
+    thumbnailsFullScreen: false,
+    thumbType: 'square',
+    thumbWidth: 20, //px
+    thumbHeight: 20, //px
+    canMinimalizeThumbnails: false,
+    transition: 'rotateCubeRightOut_rotateCubeRightIn',
+    transitionBackward: 'rotateCubeRightOut_rotateCubeRightIn',
+    transitionCols: 6,
+    transitionRows: 1,
+    slideshow: true,
+    slideshowAutostart: true,
+    zoomSize: 'fill'
+};
+var requiredFullScreenMode = {};
+var requiredSliderMode = {
+    autostart: true,
+    canClose: false,
+    zoomSize: 'fill',
+    canChangeMode: false
+};
+var jGalleryTransitions = {
+    moveToLeft_moveFromRight: ["pt-page-moveToLeft","pt-page-moveFromRight"],
+    moveToRight_moveFromLeft: ["pt-page-moveToRight","pt-page-moveFromLeft"],
+    moveToTop_moveFromBottom: ["pt-page-moveToTop","pt-page-moveFromBottom"],
+    moveToBottom_moveFromTop: ["pt-page-moveToBottom","pt-page-moveFromTop"],
+    fade_moveFromRight: ["pt-page-fade","pt-page-moveFromRight pt-page-ontop"],
+    fade_moveFromLeft: ["pt-page-fade","pt-page-moveFromLeft pt-page-ontop"],
+    fade_moveFromBottom: ["pt-page-fade","pt-page-moveFromBottom pt-page-ontop"],
+    fade_moveFromTop: ["pt-page-fade","pt-page-moveFromTop pt-page-ontop"],
+    moveToLeftFade_moveFromRightFade: ["pt-page-moveToLeftFade","pt-page-moveFromRightFade"],
+    moveToRightFade_moveFromLeftFade: ["pt-page-moveToRightFade","pt-page-moveFromLeftFade"],
+    moveToTopFade_moveFromBottomFade: ["pt-page-moveToTopFade","pt-page-moveFromBottomFade"],
+    moveToBottomFade_moveFromTopFade: ["pt-page-moveToBottomFade","pt-page-moveFromTopFade"],
+    moveToLeftEasing_moveFromRight: ["pt-page-moveToLeftEasing pt-page-ontop","pt-page-moveFromRight"],
+    moveToRightEasing_moveFromLeft: ["pt-page-moveToRightEasing pt-page-ontop","pt-page-moveFromLeft"],
+    moveToTopEasing_moveFromBottom: ["pt-page-moveToTopEasing pt-page-ontop","pt-page-moveFromBottom"],
+    moveToBottomEasing_moveFromTop: ["pt-page-moveToBottomEasing pt-page-ontop","pt-page-moveFromTop"],
+    scaleDown_moveFromRight: ["pt-page-scaleDown","pt-page-moveFromRight pt-page-ontop"],
+    scaleDown_moveFromLeft: ["pt-page-scaleDown","pt-page-moveFromLeft pt-page-ontop"],
+    scaleDown_moveFromBottom: ["pt-page-scaleDown","pt-page-moveFromBottom pt-page-ontop"],
+    scaleDown_moveFromTop: ["pt-page-scaleDown","pt-page-moveFromTop pt-page-ontop"],
+    scaleDown_scaleUpDown: ["pt-page-scaleDown","pt-page-scaleUpDown pt-page-delay300"],
+    scaleDownUp_scaleUp: ["pt-page-scaleDownUp","pt-page-scaleUp pt-page-delay300"],
+    moveToLeft_scaleUp: ["pt-page-moveToLeft pt-page-ontop","pt-page-scaleUp"],
+    moveToRight_scaleUp: ["pt-page-moveToRight pt-page-ontop","pt-page-scaleUp"],
+    moveToTop_scaleUp: ["pt-page-moveToTop pt-page-ontop","pt-page-scaleUp"],
+    moveToBottom_scaleUp: ["pt-page-moveToBottom pt-page-ontop","pt-page-scaleUp"],
+    scaleDownCenter_scaleUpCenter: ["pt-page-scaleDownCenter","pt-page-scaleUpCenter pt-page-delay400"],
+    rotateRightSideFirst_moveFromRight: ["pt-page-rotateRightSideFirst","pt-page-moveFromRight pt-page-delay200 pt-page-ontop"],
+    rotateLeftSideFirst_moveFromLeft: ["pt-page-rotateLeftSideFirst","pt-page-moveFromLeft pt-page-delay200 pt-page-ontop"],
+    rotateTopSideFirst_moveFromTop: ["pt-page-rotateTopSideFirst","pt-page-moveFromTop pt-page-delay200 pt-page-ontop"],
+    rotateBottomSideFirst_moveFromBottom: ["pt-page-rotateBottomSideFirst","pt-page-moveFromBottom pt-page-delay200 pt-page-ontop"],
+    flipOutRight_flipInLeft: ["pt-page-flipOutRight","pt-page-flipInLeft pt-page-delay500"],
+    flipOutLeft_flipInRight: ["pt-page-flipOutLeft","pt-page-flipInRight pt-page-delay500"],
+    flipOutTop_flipInBottom: ["pt-page-flipOutTop","pt-page-flipInBottom pt-page-delay500"],
+    flipOutBottom_flipInTop: ["pt-page-flipOutBottom","pt-page-flipInTop pt-page-delay500"],
+    rotateFall_scaleUp: ["pt-page-rotateFall pt-page-ontop","pt-page-scaleUp"],
+    rotateOutNewspaper_rotateInNewspaper: ["pt-page-rotateOutNewspaper","pt-page-rotateInNewspaper pt-page-delay500"],
+    rotatePushLeft_moveFromRight: ["pt-page-rotatePushLeft","pt-page-moveFromRight"],
+    rotatePushRight_moveFromLeft: ["pt-page-rotatePushRight","pt-page-moveFromLeft"],
+    rotatePushTop_moveFromBottom: ["pt-page-rotatePushTop","pt-page-moveFromBottom"],
+    rotatePushBottom_moveFromTop: ["pt-page-rotatePushBottom","pt-page-moveFromTop"],
+    rotatePushLeft_rotatePullRight: ["pt-page-rotatePushLeft","pt-page-rotatePullRight pt-page-delay180"],
+    rotatePushRight_rotatePullLeft: ["pt-page-rotatePushRight","pt-page-rotatePullLeft pt-page-delay180"],
+    rotatePushTop_rotatePullBottom: ["pt-page-rotatePushTop","pt-page-rotatePullBottom pt-page-delay180"],
+    rotatePushBottom_page: ["pt-page-rotatePushBottom","pt-page-rotatePullTop pt-page-delay180"],
+    rotateFoldLeft_moveFromRightFade: ["pt-page-rotateFoldLeft","pt-page-moveFromRightFade"],
+    rotateFoldRight_moveFromLeftFade: ["pt-page-rotateFoldRight","pt-page-moveFromLeftFade"],
+    rotateFoldTop_moveFromBottomFade: ["pt-page-rotateFoldTop","pt-page-moveFromBottomFade"],
+    rotateFoldBottom_moveFromTopFade: ["pt-page-rotateFoldBottom","pt-page-moveFromTopFade"],
+    moveToRightFade_rotateUnfoldLeft: ["pt-page-moveToRightFade","pt-page-rotateUnfoldLeft"],
+    moveToLeftFade_rotateUnfoldRight: ["pt-page-moveToLeftFade","pt-page-rotateUnfoldRight"],
+    moveToBottomFade_rotateUnfoldTop: ["pt-page-moveToBottomFade","pt-page-rotateUnfoldTop"],
+    moveToTopFade_rotateUnfoldBottom: ["pt-page-moveToTopFade","pt-page-rotateUnfoldBottom"],
+    rotateRoomLeftOut_rotateRoomLeftIn: ["pt-page-rotateRoomLeftOut pt-page-ontop","pt-page-rotateRoomLeftIn"],
+    rotateRoomRightOut_rotateRoomRightIn: ["pt-page-rotateRoomRightOut pt-page-ontop","pt-page-rotateRoomRightIn"],
+    rotateRoomTopOut_rotateRoomTopIn: ["pt-page-rotateRoomTopOut pt-page-ontop","pt-page-rotateRoomTopIn"],
+    rotateRoomBottomOut_rotateRoomBottomIn: ["pt-page-rotateRoomBottomOut pt-page-ontop","pt-page-rotateRoomBottomIn"],
+    rotateCubeLeftOut_rotateCubeLeftIn: ["pt-page-rotateCubeLeftOut pt-page-ontop","pt-page-rotateCubeLeftIn"],
+    rotateCubeRightOut_rotateCubeRightIn: ["pt-page-rotateCubeRightOut pt-page-ontop","pt-page-rotateCubeRightIn"],
+    rotateCubeTopOut_rotateCubeTopIn: ["pt-page-rotateCubeTopOut pt-page-ontop","pt-page-rotateCubeTopIn"],
+    rotateCubeBottomOut_rotateCubeBottomIn: ["pt-page-rotateCubeBottomOut pt-page-ontop","pt-page-rotateCubeBottomIn"],
+    rotateCarouselLeftOut_rotateCarouselLeftIn: ["pt-page-rotateCarouselLeftOut pt-page-ontop","pt-page-rotateCarouselLeftIn"],
+    rotateCarouselRightOut_rotateCarouselRightIn: ["pt-page-rotateCarouselRightOut pt-page-ontop","pt-page-rotateCarouselRightIn"],
+    rotateCarouselTopOut_rotateCarouselTopIn: ["pt-page-rotateCarouselTopOut pt-page-ontop","pt-page-rotateCarouselTopIn"],
+    rotateCarouselBottomOut_rotateCarouselBottomIn: ["pt-page-rotateCarouselBottomOut pt-page-ontop","pt-page-rotateCarouselBottomIn"],
+    rotateSidesOut_rotateSidesInDelay: ["pt-page-rotateSidesOut","pt-page-rotateSidesIn pt-page-delay200"],
+    rotateSlideOut_rotateSlideIn: ["pt-page-rotateSlideOut","pt-page-rotateSlideIn"]
+};
+var jGalleryArrayTransitions = ( function( jGalleryTransitions ) {
     var $ = jQuery;
-    var $html = $( 'html' );
+    var jGalleryArrayTransitions = [];
     
-    return function() {
-        $html.find( '.jgallery' ).length === 0 ? $html.removeClass( 'has-jgallery' ) : $html.addClass( 'has-jgallery' );
-        $html.find( '.jgallery.hidden' ).length === 0 ? $html.removeClass( 'has-hidden-jgallery' ) : $html.addClass( 'has-hidden-jgallery' );
-        $html.find( '.jgallery:not(.hidden)' ).length === 0 ? $html.removeClass( 'has-visible-jgallery' ) : $html.addClass( 'has-visible-jgallery' );
-    };
-} );
-define( 'var/defaults.js',[],function() {
-    return {
-        autostart: true, // Boolean; If set as 'true' jGallery will be started automatically after loading the document(only for full-screen or standard mode).; [ true, false ]
-        autostartAtImage: 1, // Number; Number of image which will be loaded by autostart(only when 'autostart' parameter set as 'true').; ; [ 1, 2, 3 ]
-        autostartAtAlbum: 1, // Number; Number of album which will be loaded by autostart(only when 'autostart' parameter set as 'true').; ; [ 1, 2, 3 ]
-        backgroundColor: '#fff', // String; Background color for jGallery container.; ; [ '#ffffff', 'silver' ]
-        browserHistory: true, // Boolean; If set as 'true', changes of active image will be saved in browser history.; [ true, false ]
-        canChangeMode: true, // Boolean; If set as 'true' you can change display mode(only for full-screen or standard mode).; [ true, false ]
-        canClose: false, // Boolean; If set as 'true' you can close jGallery(only for full-screen or standard mode).; [ true, false ]
-        canMinimalizeThumbnails: true, // Boolean; If set as 'true', you can minimalize thumbnails(only when 'thumbnails' parameter set as 'true').; [ true, false ]
-        canZoom: true, // Boolean; If set as 'true' you can zoom photos.; [ true, false ]
-        disabledOnIE8AndOlder: true, // Boolean; If set as 'true', jGallery will be blocked for Internet Explorer 8 and older.; [ true, false ]
-        draggableZoom: true, // Boolean; If set as 'true' you can drag active image.; [ true, false ]
-        height: '600px', // String; Height of jGallery container(only for standard or slider mode).
-        hideThumbnailsOnInit: false, // Boolean; If set as 'true', thumbnails will be minimized by default, when jGallery will be started(only when 'thumbnails' parameter set as 'true').; [ true, false ]
-        mode: 'standard', // String; Display mode.; [ 'full-screen', 'standard', 'slider' ]
-        preloadAll: false, // Boolean; If set as 'true', all photos will be loaded before first shown photo.; [ true, false ]
-        slideshow: true, // Boolean; If set as 'true', option slideshow is enabled.; [ true, false ]
-        slideshowAutostart: false, // Boolean; If set as 'true', slideshow will be started immediately after initializing jGallery(only when 'slideshow' has been set as true).; [ true, false ]
-        slideshowCanRandom: true, // Boolean; If set as 'true', you can enable random change photos for slideshow(only when 'slideshow' has been set as true).; [ true, false ]
-        slideshowInterval: '8s', // String; Time between change of photos for slideshow(only when 'slideshow' has been set as true).; [ '3s', '6s', '10s' ] 
-        slideshowRandom: false, // Boolean; If set as 'true', photos in slideshow will be changing random(only when 'slideshow' has been set as true and 'slideshowCanRandom' has been set as true).; [ true, false ]
-        textColor: '#000', // String; Color of text and icons.; ; [ '#000000', 'rgb(0,153,221)' ]
-        thumbnails: true, // Boolean; If set as 'true', thumbnails will be displayed.; [ true, false ]
-        thumbHeight: 75, // Number; Height(pixels) of thumbnails.; ; [ 50, 75, 125 ]
-        thumbHeightOnFullScreen: 100, // Number; Height(pixels) of thumbnails for thumbnails displayed in full-screen.; ; [ 125, 160, 200 ]
-        thumbnailsFullScreen: true, // Boolean; If set as 'true', thumbnails will be displayed in full-screen.; [ true, false ]
-        thumbnailsPosition: 'bottom', // String; Thumbnails position(only when 'thumbnails' parameter set as 'true').; [ 'top',  'bottom', 'left', 'right' ]
-        thumbType: 'image', // String; Thumbnails type(only when 'thumbnails' parameter set as 'true').; [ 'image', 'square', 'number' ]
-        thumbWidth: 75, // Number; Width(pixels) of thumbnails.; ; [ 50, 75, 125 ]
-        thumbWidthOnFullScreen: 100, // Number; Width(pixels) of thumbnails for thumbnails displayed in full-screen.; ; [ 125, 160, 200 ]
-        title: true, // Boolean; If set as 'true', near photo will be shown title from alt attribute of img.; [ true, false ]
-        titleExpanded: false, // Boolean; If set as 'true', in bottom area of zoomed photo will be shown title from alt attribute of img(only when 'title' has been set as true).; [ true, false ]
-        tooltipClose: 'Close', // String; Text of tooltip which will be displayed next to icon for close jgallery(if you set canClose parameter as true).; ;
-        tooltipFullScreen: 'Full screen', // String; Text of tooltip which will be displayed next to icon for change display mode.; ; [ 'Full screen', 'Tryb pełnoekranowy' ]
-        tooltipRandom: 'Random', // String; Text of tooltip which will be displayed next to icon for random slideshow toggling.; ; [ 'Random', 'Kolejność losowa' ]
-        tooltips: true, // Boolean; If set as 'true', tooltips will be displayed next to icons.; [ true, false ]
-        tooltipSeeAllPhotos: 'See all photos', // String; Text of tooltip which will be displayed next to icon for change thumbnails view.; ; [ 'See all photos', 'Zobacz wszystkie zdjęcia' ]
-        tooltipSeeOtherAlbums: 'See other albums', // String; Text of tooltip which will be displayed next to icon for change album(if your jGallery has more than one album).; ; [ 'See other albums', 'Zobacz pozostałe albumy' ]
-        tooltipSlideshow: 'Slideshow', // String; Text of tooltip which will be displayed next to icon for play/pause slideshow.; ; [ 'Slideshow', 'Pokaz slajdów' ]
-        tooltipToggleThumbnails: 'Toggle thumbnails', // String; Text of tooltip which will be displayed next to icon for toggle thumbnails.; ; [ 'Toggle thumbnails', 'Pokaż/ukryj miniatury' ]
-        tooltipZoom: 'Zoom', // String; Text of tooltip which will be displayed next to icon for zoom photo.; ; [ 'Zoom', 'Powiększenie' ]
-        transition: 'moveToRight_moveFromLeft', // String; Transition effect for change active image.; [ 'moveToLeft_moveFromRight', 'moveToRight_moveFromLeft', 'moveToTop_moveFromBottom', 'moveToBottom_moveFromTop', 'fade_moveFromRight', 'fade_moveFromLeft', 'fade_moveFromBottom', 'fade_moveFromTop', 'moveToLeftFade_moveFromRightFade', 'moveToRightFade_moveFromLeftFade', 'moveToTopFade_moveFromBottomFade', 'moveToBottomFade_moveFromTopFade', 'moveToLeftEasing_moveFromRight', 'moveToRightEasing_moveFromLeft', 'moveToTopEasing_moveFromBottom', 'moveToBottomEasing_moveFromTop', 'scaleDown_moveFromRight', 'scaleDown_moveFromLeft', 'scaleDown_moveFromBottom', 'scaleDown_moveFromTop', 'scaleDown_scaleUpDown', 'scaleDownUp_scaleUp', 'moveToLeft_scaleUp', 'moveToRight_scaleUp', 'moveToTop_scaleUp', 'moveToBottom_scaleUp', 'scaleDownCenter_scaleUpCenter', 'rotateRightSideFirst_moveFromRight', 'rotateLeftSideFirst_moveFromLeft', 'rotateTopSideFirst_moveFromTop', 'rotateBottomSideFirst_moveFromBottom', 'flipOutRight_flipInLeft', 'flipOutLeft_flipInRight', 'flipOutTop_flipInBottom', 'flipOutBottom_flipInTop', 'rotateFall_scaleUp', 'rotateOutNewspaper_rotateInNewspaper', 'rotatePushLeft_moveFromRight', 'rotatePushRight_moveFromLeft', 'rotatePushTop_moveFromBottom', 'rotatePushBottom_moveFromTop', 'rotatePushLeft_rotatePullRight', 'rotatePushRight_rotatePullLeft', 'rotatePushTop_rotatePullBottom', 'rotatePushBottom_page', 'rotateFoldLeft_moveFromRightFade', 'rotateFoldRight_moveFromLeftFade', 'rotateFoldTop_moveFromBottomFade', 'rotateFoldBottom_moveFromTopFade', 'moveToRightFade_rotateUnfoldLeft', 'moveToLeftFade_rotateUnfoldRight', 'moveToBottomFade_rotateUnfoldTop', 'moveToTopFade_rotateUnfoldBottom', 'rotateRoomLeftOut_rotateRoomLeftIn', 'rotateRoomRightOut_rotateRoomRightIn', 'rotateRoomTopOut_rotateRoomTopIn', 'rotateRoomBottomOut_rotateRoomBottomIn', 'rotateCubeLeftOut_rotateCubeLeftIn', 'rotateCubeRightOut_rotateCubeRightIn', 'rotateCubeTopOut_rotateCubeTopIn', 'rotateCubeBottomOut_rotateCubeBottomIn', 'rotateCarouselLeftOut_rotateCarouselLeftIn', 'rotateCarouselRightOut_rotateCarouselRightIn', 'rotateCarouselTopOut_rotateCarouselTopIn', 'rotateCarouselBottomOut_rotateCarouselBottomIn', 'rotateSidesOut_rotateSidesInDelay', 'rotateSlideOut_rotateSlideIn', 'random' ]
-        transitionBackward: 'auto', // String; Transition effect for change active image(when user selected one of previous images).; [ 'auto', 'moveToLeft_moveFromRight', 'moveToRight_moveFromLeft', 'moveToTop_moveFromBottom', 'moveToBottom_moveFromTop', 'fade_moveFromRight', 'fade_moveFromLeft', 'fade_moveFromBottom', 'fade_moveFromTop', 'moveToLeftFade_moveFromRightFade', 'moveToRightFade_moveFromLeftFade', 'moveToTopFade_moveFromBottomFade', 'moveToBottomFade_moveFromTopFade', 'moveToLeftEasing_moveFromRight', 'moveToRightEasing_moveFromLeft', 'moveToTopEasing_moveFromBottom', 'moveToBottomEasing_moveFromTop', 'scaleDown_moveFromRight', 'scaleDown_moveFromLeft', 'scaleDown_moveFromBottom', 'scaleDown_moveFromTop', 'scaleDown_scaleUpDown', 'scaleDownUp_scaleUp', 'moveToLeft_scaleUp', 'moveToRight_scaleUp', 'moveToTop_scaleUp', 'moveToBottom_scaleUp', 'scaleDownCenter_scaleUpCenter', 'rotateRightSideFirst_moveFromRight', 'rotateLeftSideFirst_moveFromLeft', 'rotateTopSideFirst_moveFromTop', 'rotateBottomSideFirst_moveFromBottom', 'flipOutRight_flipInLeft', 'flipOutLeft_flipInRight', 'flipOutTop_flipInBottom', 'flipOutBottom_flipInTop', 'rotateFall_scaleUp', 'rotateOutNewspaper_rotateInNewspaper', 'rotatePushLeft_moveFromRight', 'rotatePushRight_moveFromLeft', 'rotatePushTop_moveFromBottom', 'rotatePushBottom_moveFromTop', 'rotatePushLeft_rotatePullRight', 'rotatePushRight_rotatePullLeft', 'rotatePushTop_rotatePullBottom', 'rotatePushBottom_page', 'rotateFoldLeft_moveFromRightFade', 'rotateFoldRight_moveFromLeftFade', 'rotateFoldTop_moveFromBottomFade', 'rotateFoldBottom_moveFromTopFade', 'moveToRightFade_rotateUnfoldLeft', 'moveToLeftFade_rotateUnfoldRight', 'moveToBottomFade_rotateUnfoldTop', 'moveToTopFade_rotateUnfoldBottom', 'rotateRoomLeftOut_rotateRoomLeftIn', 'rotateRoomRightOut_rotateRoomRightIn', 'rotateRoomTopOut_rotateRoomTopIn', 'rotateRoomBottomOut_rotateRoomBottomIn', 'rotateCubeLeftOut_rotateCubeLeftIn', 'rotateCubeRightOut_rotateCubeRightIn', 'rotateCubeTopOut_rotateCubeTopIn', 'rotateCubeBottomOut_rotateCubeBottomIn', 'rotateCarouselLeftOut_rotateCarouselLeftIn', 'rotateCarouselRightOut_rotateCarouselRightIn', 'rotateCarouselTopOut_rotateCarouselTopIn', 'rotateCarouselBottomOut_rotateCarouselBottomIn', 'rotateSidesOut_rotateSidesInDelay', 'rotateSlideOut_rotateSlideIn', 'random' ]
-        transitionCols: 1, // Number; Number of columns in the image divided into columns.; ; [ 1, 2, 3, 4, 5, 6 ]
-        transitionDuration: '0.7s', // String; Duration of transition between photos.; [ '0.2s', '0.5s', '1s' ] 
-        transitionRows: 1, // Number; Number of columns in the image divided into rows.; ; [ 1, 2, 3, 4, 5, 6 ]
-        transitionTimingFunction: 'cubic-bezier(0,1,1,1)', // String; Timig function for showing photo.; [ 'linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out', 'cubic-bezier(0.5,-0.5,0.5,1.5)', 'cubic-bezier(0,1,1,1)' ]
-        transitionWaveDirection: 'forward', // String; Direction of animation(only when 'transitionCols' > 1 or 'transitionRows' > 1).; [ 'forward', 'backward' ]
-        width: '100%', // String; Width of jGallery container(only for standard or slider mode).
-        zoomSize: 'fit', // String; Size of zoomed photo(only for full-screen or standard mode).; [ 'fit', 'original', 'fill' ]
-        afterLoadPhoto: function() {}, // Function; Custom function that will be called after loading photo.; ; [ function() { alert( 'afterLoadPhoto' ) } ]
-        beforeLoadPhoto: function() {}, // Function; Custom function that will be called before loading photo.; ; [ function() { alert( 'beforeLoadPhoto' ) } ]
-        closeGallery: function() {}, // Function; Custom function that will be called after hiding jGallery.; ; [ function() { alert( 'closeGallery' ) } ]
-        initGallery: function() {}, // Function; Custom function that will be called before initialization of jGallery.; ; [ function() { alert( 'initGallery' ) } ]
-        showGallery: function() {}, // Function; Custom function that will be called after showing jGallery.; ; [ function() { alert( 'showGallery' ) } ]
-        showPhoto: function() {} // Function; Custom function that will be called before showing photo.; ; [ function() { alert( 'showPhoto' ) } ]
-    };
-} );
-define( 'var/transitions.js',[],function() {
-    return {
-        moveToLeft_moveFromRight: ["pt-page-moveToLeft","pt-page-moveFromRight"],
-        moveToRight_moveFromLeft: ["pt-page-moveToRight","pt-page-moveFromLeft"],
-        moveToTop_moveFromBottom: ["pt-page-moveToTop","pt-page-moveFromBottom"],
-        moveToBottom_moveFromTop: ["pt-page-moveToBottom","pt-page-moveFromTop"],
-        fade_moveFromRight: ["pt-page-fade","pt-page-moveFromRight pt-page-ontop"],
-        fade_moveFromLeft: ["pt-page-fade","pt-page-moveFromLeft pt-page-ontop"],
-        fade_moveFromBottom: ["pt-page-fade","pt-page-moveFromBottom pt-page-ontop"],
-        fade_moveFromTop: ["pt-page-fade","pt-page-moveFromTop pt-page-ontop"],
-        moveToLeftFade_moveFromRightFade: ["pt-page-moveToLeftFade","pt-page-moveFromRightFade"],
-        moveToRightFade_moveFromLeftFade: ["pt-page-moveToRightFade","pt-page-moveFromLeftFade"],
-        moveToTopFade_moveFromBottomFade: ["pt-page-moveToTopFade","pt-page-moveFromBottomFade"],
-        moveToBottomFade_moveFromTopFade: ["pt-page-moveToBottomFade","pt-page-moveFromTopFade"],
-        moveToLeftEasing_moveFromRight: ["pt-page-moveToLeftEasing pt-page-ontop","pt-page-moveFromRight"],
-        moveToRightEasing_moveFromLeft: ["pt-page-moveToRightEasing pt-page-ontop","pt-page-moveFromLeft"],
-        moveToTopEasing_moveFromBottom: ["pt-page-moveToTopEasing pt-page-ontop","pt-page-moveFromBottom"],
-        moveToBottomEasing_moveFromTop: ["pt-page-moveToBottomEasing pt-page-ontop","pt-page-moveFromTop"],
-        scaleDown_moveFromRight: ["pt-page-scaleDown","pt-page-moveFromRight pt-page-ontop"],
-        scaleDown_moveFromLeft: ["pt-page-scaleDown","pt-page-moveFromLeft pt-page-ontop"],
-        scaleDown_moveFromBottom: ["pt-page-scaleDown","pt-page-moveFromBottom pt-page-ontop"],
-        scaleDown_moveFromTop: ["pt-page-scaleDown","pt-page-moveFromTop pt-page-ontop"],
-        scaleDown_scaleUpDown: ["pt-page-scaleDown","pt-page-scaleUpDown pt-page-delay300"],
-        scaleDownUp_scaleUp: ["pt-page-scaleDownUp","pt-page-scaleUp pt-page-delay300"],
-        moveToLeft_scaleUp: ["pt-page-moveToLeft pt-page-ontop","pt-page-scaleUp"],
-        moveToRight_scaleUp: ["pt-page-moveToRight pt-page-ontop","pt-page-scaleUp"],
-        moveToTop_scaleUp: ["pt-page-moveToTop pt-page-ontop","pt-page-scaleUp"],
-        moveToBottom_scaleUp: ["pt-page-moveToBottom pt-page-ontop","pt-page-scaleUp"],
-        scaleDownCenter_scaleUpCenter: ["pt-page-scaleDownCenter","pt-page-scaleUpCenter pt-page-delay400"],
-        rotateRightSideFirst_moveFromRight: ["pt-page-rotateRightSideFirst","pt-page-moveFromRight pt-page-delay200 pt-page-ontop"],
-        rotateLeftSideFirst_moveFromLeft: ["pt-page-rotateLeftSideFirst","pt-page-moveFromLeft pt-page-delay200 pt-page-ontop"],
-        rotateTopSideFirst_moveFromTop: ["pt-page-rotateTopSideFirst","pt-page-moveFromTop pt-page-delay200 pt-page-ontop"],
-        rotateBottomSideFirst_moveFromBottom: ["pt-page-rotateBottomSideFirst","pt-page-moveFromBottom pt-page-delay200 pt-page-ontop"],
-        flipOutRight_flipInLeft: ["pt-page-flipOutRight","pt-page-flipInLeft pt-page-delay500"],
-        flipOutLeft_flipInRight: ["pt-page-flipOutLeft","pt-page-flipInRight pt-page-delay500"],
-        flipOutTop_flipInBottom: ["pt-page-flipOutTop","pt-page-flipInBottom pt-page-delay500"],
-        flipOutBottom_flipInTop: ["pt-page-flipOutBottom","pt-page-flipInTop pt-page-delay500"],
-        rotateFall_scaleUp: ["pt-page-rotateFall pt-page-ontop","pt-page-scaleUp"],
-        rotateOutNewspaper_rotateInNewspaper: ["pt-page-rotateOutNewspaper","pt-page-rotateInNewspaper pt-page-delay500"],
-        rotatePushLeft_moveFromRight: ["pt-page-rotatePushLeft","pt-page-moveFromRight"],
-        rotatePushRight_moveFromLeft: ["pt-page-rotatePushRight","pt-page-moveFromLeft"],
-        rotatePushTop_moveFromBottom: ["pt-page-rotatePushTop","pt-page-moveFromBottom"],
-        rotatePushBottom_moveFromTop: ["pt-page-rotatePushBottom","pt-page-moveFromTop"],
-        rotatePushLeft_rotatePullRight: ["pt-page-rotatePushLeft","pt-page-rotatePullRight pt-page-delay180"],
-        rotatePushRight_rotatePullLeft: ["pt-page-rotatePushRight","pt-page-rotatePullLeft pt-page-delay180"],
-        rotatePushTop_rotatePullBottom: ["pt-page-rotatePushTop","pt-page-rotatePullBottom pt-page-delay180"],
-        rotatePushBottom_page: ["pt-page-rotatePushBottom","pt-page-rotatePullTop pt-page-delay180"],
-        rotateFoldLeft_moveFromRightFade: ["pt-page-rotateFoldLeft","pt-page-moveFromRightFade"],
-        rotateFoldRight_moveFromLeftFade: ["pt-page-rotateFoldRight","pt-page-moveFromLeftFade"],
-        rotateFoldTop_moveFromBottomFade: ["pt-page-rotateFoldTop","pt-page-moveFromBottomFade"],
-        rotateFoldBottom_moveFromTopFade: ["pt-page-rotateFoldBottom","pt-page-moveFromTopFade"],
-        moveToRightFade_rotateUnfoldLeft: ["pt-page-moveToRightFade","pt-page-rotateUnfoldLeft"],
-        moveToLeftFade_rotateUnfoldRight: ["pt-page-moveToLeftFade","pt-page-rotateUnfoldRight"],
-        moveToBottomFade_rotateUnfoldTop: ["pt-page-moveToBottomFade","pt-page-rotateUnfoldTop"],
-        moveToTopFade_rotateUnfoldBottom: ["pt-page-moveToTopFade","pt-page-rotateUnfoldBottom"],
-        rotateRoomLeftOut_rotateRoomLeftIn: ["pt-page-rotateRoomLeftOut pt-page-ontop","pt-page-rotateRoomLeftIn"],
-        rotateRoomRightOut_rotateRoomRightIn: ["pt-page-rotateRoomRightOut pt-page-ontop","pt-page-rotateRoomRightIn"],
-        rotateRoomTopOut_rotateRoomTopIn: ["pt-page-rotateRoomTopOut pt-page-ontop","pt-page-rotateRoomTopIn"],
-        rotateRoomBottomOut_rotateRoomBottomIn: ["pt-page-rotateRoomBottomOut pt-page-ontop","pt-page-rotateRoomBottomIn"],
-        rotateCubeLeftOut_rotateCubeLeftIn: ["pt-page-rotateCubeLeftOut pt-page-ontop","pt-page-rotateCubeLeftIn"],
-        rotateCubeRightOut_rotateCubeRightIn: ["pt-page-rotateCubeRightOut pt-page-ontop","pt-page-rotateCubeRightIn"],
-        rotateCubeTopOut_rotateCubeTopIn: ["pt-page-rotateCubeTopOut pt-page-ontop","pt-page-rotateCubeTopIn"],
-        rotateCubeBottomOut_rotateCubeBottomIn: ["pt-page-rotateCubeBottomOut pt-page-ontop","pt-page-rotateCubeBottomIn"],
-        rotateCarouselLeftOut_rotateCarouselLeftIn: ["pt-page-rotateCarouselLeftOut pt-page-ontop","pt-page-rotateCarouselLeftIn"],
-        rotateCarouselRightOut_rotateCarouselRightIn: ["pt-page-rotateCarouselRightOut pt-page-ontop","pt-page-rotateCarouselRightIn"],
-        rotateCarouselTopOut_rotateCarouselTopIn: ["pt-page-rotateCarouselTopOut pt-page-ontop","pt-page-rotateCarouselTopIn"],
-        rotateCarouselBottomOut_rotateCarouselBottomIn: ["pt-page-rotateCarouselBottomOut pt-page-ontop","pt-page-rotateCarouselBottomIn"],
-        rotateSidesOut_rotateSidesInDelay: ["pt-page-rotateSidesOut","pt-page-rotateSidesIn pt-page-delay200"],
-        rotateSlideOut_rotateSlideIn: ["pt-page-rotateSlideOut","pt-page-rotateSlideIn"]
-    };
-} );
-define( 'jqueryExtensions/outerHtml.js',[],function() {
-    return function(){
-        return (!this.length) ? this : (this[0].outerHTML || (
-          function(el){
-              var div = document.createElement('div');
-              div.appendChild(el.cloneNode(true));
-              var contents = div.innerHTML;
-              div = null;
-              return contents;
-        })(this[0]));
-    };
-} );
-define( 'functions/historyPushState.js',[],function() {
-    var $ = jQuery;
-    var $title = $( 'title' );
+    $.each( jGalleryTransitions, function( index, value ) {
+        jGalleryArrayTransitions.push( value );
+    } );
     
-    return function( options ) {
-        options = $.extend( {}, {
-            stateObj: {},
-            title: $title.html(),
-            path: ''
-        }, options );
-        window.history.pushState( options.stateObj, options.title, document.location.href.split('#')[0] + '#' + options.path );
-    };
-} );
-define( 'functions/isIE.js',[],function() {
-    return function() {
-        var rv = false;
-
-        if ( navigator.appName === 'Microsoft Internet Explorer' ) {
-            var ua = navigator.userAgent;
-            var re  = new RegExp( "MSIE ([0-9]{1,}[\.0-9]{0,})" );
-            if ( re.exec(ua) !== null ) {
-                rv = true;
-            }
-        }
-        return rv;
-    };
-} );
-define( 'functions/isIE8AndOlder.js',[],function() {
-    return function() {
-        var rv = false;
-
-        if ( navigator.appName === 'Microsoft Internet Explorer' ) {
-            var ua = navigator.userAgent;
-            var re  = new RegExp( "MSIE ([0-9]{1,}[\.0-9]{0,})" );
-            if ( re.exec(ua) !== null ) {
-                rv = parseFloat( RegExp.$1 );
-                rv = rv < 9;
-            }
-        }
-        return rv;
-    };
-} );
-define( 'var/defaultsFullScreenMode.js',[],function() {
-    return {};
-} );
-define( 'var/defaultsSliderMode.js',[],function() {
-    return {
-        width: '940px',
-        height: '360px',
-        canZoom: false,
-        draggableZoom: false,
-        browserHistory: false,
-        thumbnailsFullScreen: false,
-        thumbType: 'square',
-        thumbWidth: 20, //px
-        thumbHeight: 20, //px
-        canMinimalizeThumbnails: false,
-        transition: 'rotateCubeRightOut_rotateCubeRightIn',
-        transitionBackward: 'rotateCubeRightOut_rotateCubeRightIn',
-        transitionCols: 6,
-        transitionRows: 1,
-        slideshow: true,
-        slideshowAutostart: true,
-        zoomSize: 'fill'
-    };
-} );
-define( 'var/requiredFullScreenMode.js',[],function() {
-    return {};
-} );
-define( 'var/requiredSliderMode.js',[],function() {
-    return {
-        autostart: true,
-        canClose: false,
-        zoomSize: 'fill',
-        canChangeMode: false
-    };
-} );
-define( 'prototype/iconChangeAlbum.js',[],function() {
-    var $ = jQuery;
-    var $html = $( 'html' );
-    
-    var IconChangeAlbum = function( $this, jGallery ) {        
-        this.$element = $this;
-        this.jGallery = jGallery;
-        this.$title = this.$element.find( '.title' );
-    };
-
-    IconChangeAlbum.prototype = {
-        bindEvents: function( jGallery ) {
-            var self = this;
-
-            this.getElement().on( {
-                click: function( event ) {
-                    self.menuToggle();
-                    event.stopPropagation();
-                }
-            } );
-            this.getItemsOfMenu().on( {
-                click: function() {
-                    var $this = $( this );
-
-                    if ( $this.is( '.active' ) ) {
-                        return;
-                    }
-                    jGallery.thumbnails.setActiveAlbum( jGallery.thumbnails.$albums.filter( '[data-jgallery-album-title="' + $this.attr( 'data-jgallery-album-title' ) + '"]' ) );
-                }
-            } );
-            $html.on( 'click', function(){ self.menuHide(); } );  
-        },
-
-        setTitle: function( strTitle ) {
-            this.$title.html( strTitle );
-        },
-
-        getTitle: function() {
-            return this.$title.html();
-        },
-
-        getListOfAlbums: function() {
-            return this.getElement().find( '.menu' );
-        },
-
-        getElement: function() {
-            return this.$element;
-        },
-
-        getItemsOfMenu: function() {
-            return this.getListOfAlbums().find( '.item' );
-        },
-
-        appendToMenu: function( strHtml ) {
-            this.getListOfAlbums().append( strHtml );
-        },
-
-        menuToggle: function() {
-            this.getElement().toggleClass( 'active' );
-        },
-
-        menuHide: function() {
-            this.getElement().removeClass( 'active' );
-        },
-
-        clearMenu: function() {
-            this.getListOfAlbums().html( '' );
-        },
-
-        refreshMenuHeight: function() {
-            this.getListOfAlbums().css( 'max-height', this.jGallery.zoom.$container.outerHeight() - 8 );
-        }
-    };
-    
-    return IconChangeAlbum;
-} );
-define( 'prototype/progress.js',[],function() {
-    var Progress = function( $this, jGallery ) {
-        this.jGallery = jGallery;
-        this.$element = $this;
-    };
-
-    Progress.prototype = {
-        clear: function() {            
-            this.$element.stop( false, true ).css( {width: 0} );
-            return this;         
-        },
-
-        start: function( intWidth, success ) {            
-            var interval = parseInt( this.jGallery.options.slideshowInterval ) * 1000;
-            var $element = this.$element;
-
-            $element.animate( {
-                width: intWidth
-            }, interval - interval * ( $element.width() / $element.parent().width() ), 'linear', success );
-            return this;    
-        },
-
-        pause: function() {
-            this.$element.stop();
-            return this;
-        }        
-    };
-    
-    return Progress;
-} );
-define( 'jqueryExtensions/overlay.js',[],function() {
+    return jGalleryArrayTransitions;
+} )( jGalleryTransitions );
+var jGalleryBackwardTransitions = {
+    moveToLeft_moveFromRight: 'moveToRight_moveFromLeft',
+    moveToRight_moveFromLeft: 'moveToLeft_moveFromRight',
+    moveToTop_moveFromBottom: 'moveToBottom_moveFromTop',
+    moveToBottom_moveFromTop: 'moveToTop_moveFromBottom',
+    fade_moveFromRight: 'fade_moveFromLeft',
+    fade_moveFromLeft: 'fade_moveFromRight',
+    fade_moveFromBottom: 'fade_moveFromTop',
+    fade_moveFromTop: 'fade_moveFromBottom',
+    moveToLeftFade_moveFromRightFade: 'moveToRightFade_moveFromLeftFade',
+    moveToRightFade_moveFromLeftFade: 'moveToLeftFade_moveFromRightFade',
+    moveToTopFade_moveFromBottomFade: 'moveToBottomFade_moveFromTopFade',
+    moveToBottomFade_moveFromTopFade: 'moveToTopFade_moveFromBottomFade',
+    moveToLeftEasing_moveFromRight: 'moveToRightEasing_moveFromLeft',
+    moveToRightEasing_moveFromLeft: 'moveToLeftEasing_moveFromRight',
+    moveToTopEasing_moveFromBottom: 'moveToBottomEasing_moveFromTop',
+    moveToBottomEasing_moveFromTop: 'moveToTopEasing_moveFromBottom',
+    scaleDown_moveFromRight: 'scaleDown_moveFromLeft',
+    scaleDown_moveFromLeft: 'scaleDown_moveFromRight',
+    scaleDown_moveFromBottom: 'scaleDown_moveFromTop',
+    scaleDown_moveFromTop: 'scaleDown_moveFromBottom',
+    scaleDown_scaleUpDown: 'scaleDownUp_scaleUp',
+    scaleDownUp_scaleUp: 'scaleDown_scaleUpDown',
+    moveToLeft_scaleUp: 'moveToRight_scaleUp',
+    moveToRight_scaleUp: 'moveToLeft_scaleUp',
+    moveToTop_scaleUp: 'moveToBottom_scaleUp',
+    moveToBottom_scaleUp: 'moveToTop_scaleUp',
+    scaleDownCenter_scaleUpCenter: 'scaleDownCenter_scaleUpCenter',
+    rotateRightSideFirst_moveFromRight: 'rotateLeftSideFirst_moveFromLeft',
+    rotateLeftSideFirst_moveFromLeft: 'rotateRightSideFirst_moveFromRight',
+    rotateTopSideFirst_moveFromTop: 'rotateBottomSideFirst_moveFromBottom',
+    rotateBottomSideFirst_moveFromBottom: 'rotateTopSideFirst_moveFromTop',
+    flipOutRight_flipInLeft: 'flipOutLeft_flipInRight',
+    flipOutLeft_flipInRight: 'flipOutRight_flipInLeft',
+    flipOutTop_flipInBottom: 'flipOutBottom_flipInTop',
+    flipOutBottom_flipInTop: 'flipOutTop_flipInBottom',
+    rotateFall_scaleUp: 'rotateFall_scaleUp',
+    rotateOutNewspaper_rotateInNewspaper: 'rotateOutNewspaper_rotateInNewspaper',
+    rotatePushLeft_moveFromRight: 'rotatePushRight_moveFromLeft',
+    rotatePushRight_moveFromLeft: 'rotatePushLeft_moveFromRight',
+    rotatePushTop_moveFromBottom: 'rotatePushBottom_moveFromTop',
+    rotatePushBottom_moveFromTop: 'rotatePushTop_moveFromBottom',
+    rotatePushLeft_rotatePullRight: 'rotatePushRight_rotatePullLeft',
+    rotatePushRight_rotatePullLeft: 'rotatePushLeft_rotatePullRight',
+    rotatePushTop_rotatePullBottom: 'rotatePushTop_rotatePullBottom',
+    rotatePushBottom_page: 'rotatePushBottom_page',
+    rotateFoldLeft_moveFromRightFade: 'rotateFoldRight_moveFromLeftFade',
+    rotateFoldRight_moveFromLeftFade: 'rotateFoldLeft_moveFromRightFade',
+    rotateFoldTop_moveFromBottomFade: 'rotateFoldBottom_moveFromTopFade',
+    rotateFoldBottom_moveFromTopFade: 'rotateFoldTop_moveFromBottomFade',
+    moveToRightFade_rotateUnfoldLeft: 'moveToLeftFade_rotateUnfoldRight',
+    moveToLeftFade_rotateUnfoldRight: 'moveToRightFade_rotateUnfoldLeft',
+    moveToBottomFade_rotateUnfoldTop: 'moveToTopFade_rotateUnfoldBottom',
+    moveToTopFade_rotateUnfoldBottom: 'moveToBottomFade_rotateUnfoldTop',
+    rotateRoomLeftOut_rotateRoomLeftIn: 'rotateRoomRightOut_rotateRoomRightIn',
+    rotateRoomRightOut_rotateRoomRightIn: 'rotateRoomLeftOut_rotateRoomLeftIn',
+    rotateRoomTopOut_rotateRoomTopIn: 'rotateRoomBottomOut_rotateRoomBottomIn',
+    rotateRoomBottomOut_rotateRoomBottomIn: 'rotateRoomTopOut_rotateRoomTopIn',
+    rotateCubeLeftOut_rotateCubeLeftIn: 'rotateCubeRightOut_rotateCubeRightIn',
+    rotateCubeRightOut_rotateCubeRightIn: 'rotateCubeLeftOut_rotateCubeLeftIn',
+    rotateCubeTopOut_rotateCubeTopIn: 'rotateCubeBottomOut_rotateCubeBottomIn',
+    rotateCubeBottomOut_rotateCubeBottomIn: 'rotateCubeTopOut_rotateCubeTopIn',
+    rotateCarouselLeftOut_rotateCarouselLeftIn: 'rotateCarouselRightOut_rotateCarouselRightIn',
+    rotateCarouselRightOut_rotateCarouselRightIn: 'rotateCarouselLeftOut_rotateCarouselLeftIn',
+    rotateCarouselTopOut_rotateCarouselTopIn: 'rotateCarouselBottomOut_rotateCarouselBottomIn',
+    rotateCarouselBottomOut_rotateCarouselBottomIn: 'rotateCarouselTopOut_rotateCarouselTopIn',
+    rotateSidesOut_rotateSidesInDelay: 'rotateSidesOut_rotateSidesInDelay',
+    rotateSlideOut_rotateSlideIn: 'rotateSlideOut_rotateSlideIn'
+};
+var outerHtml = function(){
+    return (!this.length) ? this : (this[0].outerHTML || (
+      function(el){
+          var div = document.createElement('div');
+          div.appendChild(el.cloneNode(true));
+          var contents = div.innerHTML;
+          div = null;
+          return contents;
+    })(this[0]));
+};
+var overlay = ( function() {
     var $ = jQuery;
     var $html = $( 'html' );
     
@@ -860,10 +351,8 @@ define( 'jqueryExtensions/overlay.js',[],function() {
             //endinit
         } );
     };
-} );
-define( 'jqueryExtensions/jLoader.js',[
-    '../jqueryExtensions/overlay.js'
-], function( overlay ) {
+} )();
+var jLoader = ( function( overlay ) {
     var $ = jQuery;
     
     $.fn.overlay = overlay;
@@ -954,10 +443,366 @@ define( 'jqueryExtensions/jLoader.js',[
             check();
         } );
      };
-} );
-define( 'prototype/thumbnails.js',[
-    '../jqueryExtensions/jLoader.js'
-], function( jLoader ) {
+} )( overlay );
+var historyPushState = function() {
+    var $ = jQuery;
+    var $title = $( 'title' );
+    
+    return function( options ) {
+        options = $.extend( {}, {
+            stateObj: {},
+            title: $title.html(),
+            path: ''
+        }, options );
+        window.history.pushState( options.stateObj, options.title, document.location.href.split('#')[0] + '#' + options.path );
+    };
+};
+var isInternetExplorer = function() {
+    var rv = false;
+
+    if ( navigator.appName === 'Microsoft Internet Explorer' ) {
+        var ua = navigator.userAgent;
+        var re  = new RegExp( "MSIE ([0-9]{1,}[\.0-9]{0,})" );
+        if ( re.exec(ua) !== null ) {
+            rv = true;
+        }
+    }
+    return rv;
+};
+var isInternetExplorer8AndOlder = function() {
+    var rv = false;
+
+    if ( navigator.appName === 'Microsoft Internet Explorer' ) {
+        var ua = navigator.userAgent;
+        var re  = new RegExp( "MSIE ([0-9]{1,}[\.0-9]{0,})" );
+        if ( re.exec(ua) !== null ) {
+            rv = parseFloat( RegExp.$1 );
+            rv = rv < 9;
+        }
+    }
+    return rv;
+};
+var refreshHTMLClasses = function() {
+    var $ = jQuery;
+    var $html = $( 'html' );
+    
+    return function() {
+        $html.find( '.jgallery' ).length === 0 ? $html.removeClass( 'has-jgallery' ) : $html.addClass( 'has-jgallery' );
+        $html.find( '.jgallery.hidden' ).length === 0 ? $html.removeClass( 'has-hidden-jgallery' ) : $html.addClass( 'has-hidden-jgallery' );
+        $html.find( '.jgallery:not(.hidden)' ).length === 0 ? $html.removeClass( 'has-visible-jgallery' ) : $html.addClass( 'has-visible-jgallery' );
+    };
+};
+var AdvancedAnimation = ( function( isInternetExplorer8AndOlder ) {
+    var $ = jQuery;
+    var $head = $( 'head' );
+    var intAdvancedAnimationLastId = 0;
+
+    var AdvancedAnimation = function( $this ) {
+        if ( $this.is( '[data-advanced-animation-id]') ) {
+            return;
+        }
+        this.cols = 1;
+        this.rows = 1;
+        this.direction = 'forward';
+        this.animation = true;
+        this.$element = $this;
+        this.$element.filter( ':not( [data-advanced-animation-id] )' ).attr( 'data-advanced-animation-id', ++intAdvancedAnimationLastId );
+        this.$element.find( '.pt-item' ).wrap( '<div class="pt-page" />' );
+        this.$element.wrapInner( '<div class="pt-part" />' );
+        this.generateHtml();
+        this._showParts( this.$element.find( '.pt-part' ), 1 );
+    };
+
+    AdvancedAnimation.prototype = {
+        next: function() {
+            var $next = this.$element.find( '.pt-part' ).eq( this.direction === 'backward' ? -1 : 0 ).find( '.pt-page-current:not(.pt-page-prev)' ).next();
+
+            if ( $next.length ) {
+                this.show( $next );
+            }
+            else {
+                this.show( this.$element.find( '.pt-part' ).eq( this.direction === 'backward' ? -1 : 0 ).find( '.pt-page' ).eq( 0 ) );
+            }
+        },
+
+        show: function( $new, options ) {
+            var intPtPageNumber = $new.prevAll().length + 1;
+
+            if ( $new.is( '.pt-page-current:not(.pt-page-prev)' ) ) {
+                return;
+            }
+            options = $.extend( {}, {
+                animation: true
+            }, options );
+            this.animation = options.animation;
+            this._waveJumpToEnd();
+            if ( this.animation ) {
+                this._runWave( intPtPageNumber );
+            } else {
+                this._showParts( this.$element.find( '.pt-part' ), intPtPageNumber );
+            }
+            this.intPrevPtPageNumber = intPtPageNumber;
+        },
+
+        setQuantityParts: function( intCols, intRows ) {
+            this.cols = intCols;
+            this.rows = intRows;
+            this.generateHtml();
+        },
+
+        setAnimationProperties: function( options ) {
+            var intId = this.$element.attr( 'data-advanced-animation-id' );
+            var $stylesheet = $head.find( 'style[data-advanced-animation-id="' + intId + '"]' );
+
+            this.duration = options.duration;
+            if ( isInternetExplorer8AndOlder() ) {
+                return;
+            }
+            if ( $stylesheet.length === 0 ) {
+                $stylesheet = $head.append( '<style type="text/css" data-advanced-animation-id="' + intId + '" />' ).children( ':last-child' );
+            }
+            $stylesheet.html('\
+                [data-advanced-animation-id="' + intId + '"] .pt-page {\
+                    -webkit-animation-duration: ' + options.duration + ';\
+                    -moz-animation-duration: ' + options.duration + ';\
+                    animation-duration: ' + options.duration + ';\
+                    -webkit-animation-timing-function: ' + options.transitionTimingFunction + ';\
+                    -moz-animation-timing-function: ' + options.transitionTimingFunction + ';\
+                    animation-timing-function: ' + options.transitionTimingFunction + ';\
+                }\
+            ');
+        },
+
+        setHideEffect: function( hideEffect ) {
+            this.prevHideEffect = this.hideEffect;
+            this.hideEffect = hideEffect;
+            if ( /moveTo|rotateRoom|rotateCarousel|rotateSlideOut/.test( hideEffect ) ) {
+                this.$element.find( '.pt-part' ).addClass( 'hide-overflow' );
+            }
+            else {
+                this.$element.find( '.pt-part' ).removeClass( 'hide-overflow' );                
+            }
+        },
+
+        setShowEffect: function( showEffect ) {
+            this.prevShowEffect = this.showEffect;
+            this.showEffect = showEffect;
+        },
+
+        setDirection: function( direction ) {
+            this.direction = direction;
+        },
+
+        _runWave: function( intPtPageNumber ) {
+            this.$element.find( '.pt-part' ).addClass( 'in-queue' );
+            this._showNextPart( intPtPageNumber );
+        },
+
+        _waveJumpToEnd: function() {
+            clearTimeout( this.showPartsTimeout );
+            if ( typeof this.intPrevPtPageNumber !== 'undefined' ) {
+                this._showParts( this.$element.find( '.pt-part.in-queue' ).removeClass( 'in-queue' ), this.intPrevPtPageNumber );
+            }
+        },
+
+        _showNextPart: function( intPtPageNumber ) {
+            var self = this;
+            var $part = this.$element.find( '.pt-part.in-queue' ).eq( this.direction === 'backward' ? -1 : 0 );
+
+            if ( $part.length === 0 ) {
+                return;
+            }
+            this._showParts( $part.removeClass( 'in-queue' ), intPtPageNumber );
+            if ( $part.length === 0 ) {
+                return;
+            }
+            clearTimeout( this.showPartsTimeout );
+            this.showPartsTimeout = setTimeout( function() {
+                self._showNextPart( intPtPageNumber );
+            }, parseFloat( this.duration ) * 1000 * 0.25 / Math.max( 1, this.$element.find( '.pt-part' ).length - 1 ) );
+        },
+
+        _showParts: function( $this, intPtPageNumber ) {
+            $this.find( '.pt-page-current.pt-page-prev' ).removeClass( 'pt-page-prev' ).removeClass( 'pt-page-current' );
+            $this.find( '.pt-page-current' ).addClass( 'pt-page-prev' );
+            $this.find( '.pt-page:nth-child(' + intPtPageNumber + ')' ).addClass( 'pt-page-current' );
+            $this.find( '.pt-page' ).removeClass( this.hideEffect ).removeClass( this.showEffect );
+            if ( typeof this.prevHideEffect !== 'undefined' ) {
+                $this.find( '.pt-page' ).removeClass( this.prevHideEffect );
+            }
+            if ( typeof this.prevShowEffect !== 'undefined' ) {
+                $this.find( '.pt-page' ).removeClass( this.prevShowEffect );
+            }
+            if ( this.animation ) {
+                $this.find( '.pt-page-prev' ).addClass( this.hideEffect );
+                $this.find( '.pt-page-current:not(.pt-page-prev)' ).addClass( this.showEffect );
+            }
+        },
+
+        hideActive: function() {
+            this.$element.find( '.pt-page-current' ).addClass( 'pt-page-prev' ).addClass( this.hideEffect );
+        },
+
+        generateHtml: function() {
+            var intI;
+            var intJ;
+            var $content;
+
+            this.$element.html( this.$element.find( '.pt-part' ).eq( 0 ).html() );
+            $content = this.$element.html();
+            this.$element.children( '.pt-part' ).remove();
+            for ( intJ = 0; intJ < this.rows; intJ++ ) {
+                for ( intI = 0; intI < this.cols; intI++ ) {
+                    this.$element
+                        .append( '<div class="pt-part pt-perspective" data-col-no="' + intI + '" data-row-no="' + intJ + '" style="position: absolute;"></div>' )
+                        .children( ':last-child' )
+                        .html( $content )
+                        .find( '.pt-item' );
+                }
+            }
+            this.setPositionParts();
+            this.$element.children( ':not(.pt-part)' ).remove();
+        },
+
+        setPositionParts: function() {
+            var self = this;
+            var intWidth = this.$element.outerWidth();
+            var intHeight = this.$element.outerHeight();
+            var intPartWidth = intWidth / this.cols;
+            var intPartHeight = intHeight / this.rows;
+
+            this.$element.find( '.pt-part' ).each( function() {
+                var $this = $( this );
+                var intI = $this.attr( 'data-col-no' );
+                var intJ = $this.attr( 'data-row-no' );
+
+                $this
+                .css( {
+                    left: self.$element.outerWidth() * ( 100 / self.cols * intI ) / 100 + 'px',
+                    top: self.$element.outerHeight() * ( 100 / self.rows * intJ ) / 100 + 'px',
+                    width: self.$element.outerWidth() * ( 100 / self.cols ) / 100 + 1 + 'px',
+                    height: self.$element.outerHeight() * ( 100 / self.rows ) / 100 + 1 + 'px'                   
+                } )
+                .find( '.pt-item' )
+                .css( {
+                    width: intWidth,
+                    height: intHeight,
+                    left: - intPartWidth * intI,
+                    top: - intPartHeight * intJ
+                } );
+            } );          
+        }
+    };
+    
+    return AdvancedAnimation;
+} )( isInternetExplorer8AndOlder );
+var IconChangeAlbum = ( function() {
+    var $ = jQuery;
+    var $html = $( 'html' );
+    
+    var IconChangeAlbum = function( $this, jGallery ) {        
+        this.$element = $this;
+        this.jGallery = jGallery;
+        this.$title = this.$element.find( '.title' );
+    };
+
+    IconChangeAlbum.prototype = {
+        bindEvents: function( jGallery ) {
+            var self = this;
+
+            this.getElement().on( {
+                click: function( event ) {
+                    self.menuToggle();
+                    event.stopPropagation();
+                }
+            } );
+            this.getItemsOfMenu().on( {
+                click: function() {
+                    var $this = $( this );
+
+                    if ( $this.is( '.active' ) ) {
+                        return;
+                    }
+                    jGallery.thumbnails.setActiveAlbum( jGallery.thumbnails.$albums.filter( '[data-jgallery-album-title="' + $this.attr( 'data-jgallery-album-title' ) + '"]' ) );
+                }
+            } );
+            $html.on( 'click', function(){ self.menuHide(); } );  
+        },
+
+        setTitle: function( strTitle ) {
+            this.$title.html( strTitle );
+        },
+
+        getTitle: function() {
+            return this.$title.html();
+        },
+
+        getListOfAlbums: function() {
+            return this.getElement().find( '.menu' );
+        },
+
+        getElement: function() {
+            return this.$element;
+        },
+
+        getItemsOfMenu: function() {
+            return this.getListOfAlbums().find( '.item' );
+        },
+
+        appendToMenu: function( strHtml ) {
+            this.getListOfAlbums().append( strHtml );
+        },
+
+        menuToggle: function() {
+            this.getElement().toggleClass( 'active' );
+        },
+
+        menuHide: function() {
+            this.getElement().removeClass( 'active' );
+        },
+
+        clearMenu: function() {
+            this.getListOfAlbums().html( '' );
+        },
+
+        refreshMenuHeight: function() {
+            this.getListOfAlbums().css( 'max-height', this.jGallery.zoom.$container.outerHeight() - 8 );
+        }
+    };
+    
+    return IconChangeAlbum;
+} )();
+var Progress = ( function() {
+    var Progress = function( $this, jGallery ) {
+        this.jGallery = jGallery;
+        this.$element = $this;
+    };
+
+    Progress.prototype = {
+        clear: function() {            
+            this.$element.stop( false, true ).css( {width: 0} );
+            return this;         
+        },
+
+        start: function( intWidth, success ) {            
+            var interval = parseInt( this.jGallery.options.slideshowInterval ) * 1000;
+            var $element = this.$element;
+
+            $element.animate( {
+                width: intWidth
+            }, interval - interval * ( $element.width() / $element.parent().width() ), 'linear', success );
+            return this;    
+        },
+
+        pause: function() {
+            this.$element.stop();
+            return this;
+        }        
+    };
+    
+    return Progress;
+} )();
+var Thumbnails = ( function( jLoader ) {
     var $ = jQuery;
     var $head = $( 'head' );
     var $window = $( window );
@@ -1285,10 +1130,8 @@ define( 'prototype/thumbnails.js',[
     };
     
     return Thumbnails;
-} );
-define( 'prototype/thumbnailsGenerator.js',[
-    '../jqueryExtensions/outerHtml.js'
-], function( outerHtml ) {
+} )( jLoader );
+var ThumbnailsGenerator = ( function( outerHtml ) {
     var $ = jQuery;
     
     $.fn.outerHtml = outerHtml;
@@ -1298,6 +1141,7 @@ define( 'prototype/thumbnailsGenerator.js',[
             thumbsHidden: true
         }, options );
         this.jGallery = jGallery;
+        this.isSlider = jGallery.isSlider();
         this.$element = jGallery.$this;
         this.booIsAlbums = jGallery.booIsAlbums;
         this.$tmp;
@@ -1349,7 +1193,10 @@ define( 'prototype/thumbnailsGenerator.js',[
             } );            
         },
 
-        insertImage: function( $this, $container ) {            
+        insertImage: function( $this, $container ) {
+            var $a;
+            var $parent;
+            
             if ( $this.is( 'a' ) ) {
                 $container.append( '<a href="' + $this.attr( 'href' ) + '">' + this.generateImgTag( $this.find( 'img' ).eq( 0 ) ).outerHtml() + '</a>' );
                 if ( this.options.thumbsHidden ) {
@@ -1357,7 +1204,14 @@ define( 'prototype/thumbnailsGenerator.js',[
                 }
             }
             else if ( $this.is( 'img' ) ) {
-                $container.append( $( '<a href="' + $this.attr( 'src' ) + '">' + this.generateImgTag( $this ).outerHtml() + '</a>' ) );                
+                $a = $container.append( $( '<a href="' + $this.attr( 'src' ) + '">' + this.generateImgTag( $this ).outerHtml() + '</a>' ) ).children( ':last-child' );
+                $parent = $this.parent();
+                if ( this.isSlider && $parent.is( 'a' ) ) {
+                    $a.attr( 'link', $parent.attr( 'href' ) );
+                    if ( $parent.is( '[target]' ) ) {
+                        $a.attr( 'target', $parent.attr( 'target' ) );
+                    }
+                }
             }
             $container.children( ':last-child' ).attr( 'data-jgallery-photo-id', this.intI++ ).attr( 'data-jgallery-number', this.intNo++ );
         },
@@ -1403,304 +1257,8 @@ define( 'prototype/thumbnailsGenerator.js',[
     };
     
     return ThumbnailsGenerator;
-} );
-define( 'var/transitionsAsArray.js',['../var/transitions.js'], function( jGalleryTransitions ) {
-    var $ = jQuery;
-    var jGalleryArrayTransitions = [];
-    
-    $.each( jGalleryTransitions, function( index, value ) {
-        jGalleryArrayTransitions.push( value );
-    } );
-    
-    return jGalleryArrayTransitions;
-} );
-define( 'var/transitionsBackward.js',[],function() {
-    return {
-        moveToLeft_moveFromRight: 'moveToRight_moveFromLeft',
-        moveToRight_moveFromLeft: 'moveToLeft_moveFromRight',
-        moveToTop_moveFromBottom: 'moveToBottom_moveFromTop',
-        moveToBottom_moveFromTop: 'moveToTop_moveFromBottom',
-        fade_moveFromRight: 'fade_moveFromLeft',
-        fade_moveFromLeft: 'fade_moveFromRight',
-        fade_moveFromBottom: 'fade_moveFromTop',
-        fade_moveFromTop: 'fade_moveFromBottom',
-        moveToLeftFade_moveFromRightFade: 'moveToRightFade_moveFromLeftFade',
-        moveToRightFade_moveFromLeftFade: 'moveToLeftFade_moveFromRightFade',
-        moveToTopFade_moveFromBottomFade: 'moveToBottomFade_moveFromTopFade',
-        moveToBottomFade_moveFromTopFade: 'moveToTopFade_moveFromBottomFade',
-        moveToLeftEasing_moveFromRight: 'moveToRightEasing_moveFromLeft',
-        moveToRightEasing_moveFromLeft: 'moveToLeftEasing_moveFromRight',
-        moveToTopEasing_moveFromBottom: 'moveToBottomEasing_moveFromTop',
-        moveToBottomEasing_moveFromTop: 'moveToTopEasing_moveFromBottom',
-        scaleDown_moveFromRight: 'scaleDown_moveFromLeft',
-        scaleDown_moveFromLeft: 'scaleDown_moveFromRight',
-        scaleDown_moveFromBottom: 'scaleDown_moveFromTop',
-        scaleDown_moveFromTop: 'scaleDown_moveFromBottom',
-        scaleDown_scaleUpDown: 'scaleDownUp_scaleUp',
-        scaleDownUp_scaleUp: 'scaleDown_scaleUpDown',
-        moveToLeft_scaleUp: 'moveToRight_scaleUp',
-        moveToRight_scaleUp: 'moveToLeft_scaleUp',
-        moveToTop_scaleUp: 'moveToBottom_scaleUp',
-        moveToBottom_scaleUp: 'moveToTop_scaleUp',
-        scaleDownCenter_scaleUpCenter: 'scaleDownCenter_scaleUpCenter',
-        rotateRightSideFirst_moveFromRight: 'rotateLeftSideFirst_moveFromLeft',
-        rotateLeftSideFirst_moveFromLeft: 'rotateRightSideFirst_moveFromRight',
-        rotateTopSideFirst_moveFromTop: 'rotateBottomSideFirst_moveFromBottom',
-        rotateBottomSideFirst_moveFromBottom: 'rotateTopSideFirst_moveFromTop',
-        flipOutRight_flipInLeft: 'flipOutLeft_flipInRight',
-        flipOutLeft_flipInRight: 'flipOutRight_flipInLeft',
-        flipOutTop_flipInBottom: 'flipOutBottom_flipInTop',
-        flipOutBottom_flipInTop: 'flipOutTop_flipInBottom',
-        rotateFall_scaleUp: 'rotateFall_scaleUp',
-        rotateOutNewspaper_rotateInNewspaper: 'rotateOutNewspaper_rotateInNewspaper',
-        rotatePushLeft_moveFromRight: 'rotatePushRight_moveFromLeft',
-        rotatePushRight_moveFromLeft: 'rotatePushLeft_moveFromRight',
-        rotatePushTop_moveFromBottom: 'rotatePushBottom_moveFromTop',
-        rotatePushBottom_moveFromTop: 'rotatePushTop_moveFromBottom',
-        rotatePushLeft_rotatePullRight: 'rotatePushRight_rotatePullLeft',
-        rotatePushRight_rotatePullLeft: 'rotatePushLeft_rotatePullRight',
-        rotatePushTop_rotatePullBottom: 'rotatePushTop_rotatePullBottom',
-        rotatePushBottom_page: 'rotatePushBottom_page',
-        rotateFoldLeft_moveFromRightFade: 'rotateFoldRight_moveFromLeftFade',
-        rotateFoldRight_moveFromLeftFade: 'rotateFoldLeft_moveFromRightFade',
-        rotateFoldTop_moveFromBottomFade: 'rotateFoldBottom_moveFromTopFade',
-        rotateFoldBottom_moveFromTopFade: 'rotateFoldTop_moveFromBottomFade',
-        moveToRightFade_rotateUnfoldLeft: 'moveToLeftFade_rotateUnfoldRight',
-        moveToLeftFade_rotateUnfoldRight: 'moveToRightFade_rotateUnfoldLeft',
-        moveToBottomFade_rotateUnfoldTop: 'moveToTopFade_rotateUnfoldBottom',
-        moveToTopFade_rotateUnfoldBottom: 'moveToBottomFade_rotateUnfoldTop',
-        rotateRoomLeftOut_rotateRoomLeftIn: 'rotateRoomRightOut_rotateRoomRightIn',
-        rotateRoomRightOut_rotateRoomRightIn: 'rotateRoomLeftOut_rotateRoomLeftIn',
-        rotateRoomTopOut_rotateRoomTopIn: 'rotateRoomBottomOut_rotateRoomBottomIn',
-        rotateRoomBottomOut_rotateRoomBottomIn: 'rotateRoomTopOut_rotateRoomTopIn',
-        rotateCubeLeftOut_rotateCubeLeftIn: 'rotateCubeRightOut_rotateCubeRightIn',
-        rotateCubeRightOut_rotateCubeRightIn: 'rotateCubeLeftOut_rotateCubeLeftIn',
-        rotateCubeTopOut_rotateCubeTopIn: 'rotateCubeBottomOut_rotateCubeBottomIn',
-        rotateCubeBottomOut_rotateCubeBottomIn: 'rotateCubeTopOut_rotateCubeTopIn',
-        rotateCarouselLeftOut_rotateCarouselLeftIn: 'rotateCarouselRightOut_rotateCarouselRightIn',
-        rotateCarouselRightOut_rotateCarouselRightIn: 'rotateCarouselLeftOut_rotateCarouselLeftIn',
-        rotateCarouselTopOut_rotateCarouselTopIn: 'rotateCarouselBottomOut_rotateCarouselBottomIn',
-        rotateCarouselBottomOut_rotateCarouselBottomIn: 'rotateCarouselTopOut_rotateCarouselTopIn',
-        rotateSidesOut_rotateSidesInDelay: 'rotateSidesOut_rotateSidesInDelay',
-        rotateSlideOut_rotateSlideIn: 'rotateSlideOut_rotateSlideIn'
-    };
-} );
-define( 'prototype/advancedAnimation.js',[
-        '../functions/isIE8AndOlder.js'
-], function( isInternetExplorer8AndOlder ) {
-    var $ = jQuery;
-    var $head = $( 'head' );
-    var intAdvancedAnimationLastId = 0;
-
-    var AdvancedAnimation = function( $this ) {
-        if ( $this.is( '[data-advanced-animation-id]') ) {
-            return;
-        }
-        this.cols = 1;
-        this.rows = 1;
-        this.direction = 'forward';
-        this.animation = true;
-        this.$element = $this;
-        this.$element.filter( ':not( [data-advanced-animation-id] )' ).attr( 'data-advanced-animation-id', ++intAdvancedAnimationLastId );
-        this.$element.find( '.pt-item' ).wrap( '<div class="pt-page" />' );
-        this.$element.wrapInner( '<div class="pt-part" />' );
-        this.generateHtml();
-        this._showParts( this.$element.find( '.pt-part' ), 1 );
-    };
-
-    AdvancedAnimation.prototype = {
-        next: function() {
-            var $next = this.$element.find( '.pt-part' ).eq( this.direction === 'backward' ? -1 : 0 ).find( '.pt-page-current:not(.pt-page-prev)' ).next();
-
-            if ( $next.length ) {
-                this.show( $next );
-            }
-            else {
-                this.show( this.$element.find( '.pt-part' ).eq( this.direction === 'backward' ? -1 : 0 ).find( '.pt-page' ).eq( 0 ) );
-            }
-        },
-
-        show: function( $new, options ) {
-            var intPtPageNumber = $new.prevAll().length + 1;
-
-            if ( $new.is( '.pt-page-current:not(.pt-page-prev)' ) ) {
-                return;
-            }
-            options = $.extend( {}, {
-                animation: true
-            }, options );
-            this.animation = options.animation;
-            this._waveJumpToEnd();
-            if ( this.animation ) {
-                this._runWave( intPtPageNumber );
-            } else {
-                this._showParts( this.$element.find( '.pt-part' ), intPtPageNumber );
-            }
-            this.intPrevPtPageNumber = intPtPageNumber;
-        },
-
-        setQuantityParts: function( intCols, intRows ) {
-            this.cols = intCols;
-            this.rows = intRows;
-            this.generateHtml();
-        },
-
-        setAnimationProperties: function( options ) {
-            var intId = this.$element.attr( 'data-advanced-animation-id' );
-            var $stylesheet = $head.find( 'style[data-advanced-animation-id="' + intId + '"]' );
-
-            this.duration = options.duration;
-            if ( isInternetExplorer8AndOlder() ) {
-                return;
-            }
-            if ( $stylesheet.length === 0 ) {
-                $stylesheet = $head.append( '<style type="text/css" data-advanced-animation-id="' + intId + '" />' ).children( ':last-child' );
-            }
-            $stylesheet.html('\
-                [data-advanced-animation-id="' + intId + '"] .pt-page {\
-                    -webkit-animation-duration: ' + options.duration + ';\
-                    -moz-animation-duration: ' + options.duration + ';\
-                    animation-duration: ' + options.duration + ';\
-                    -webkit-animation-timing-function: ' + options.transitionTimingFunction + ';\
-                    -moz-animation-timing-function: ' + options.transitionTimingFunction + ';\
-                    animation-timing-function: ' + options.transitionTimingFunction + ';\
-                }\
-            ');
-        },
-
-        setHideEffect: function( hideEffect ) {
-            this.prevHideEffect = this.hideEffect;
-            this.hideEffect = hideEffect;
-            if ( /moveTo|rotateRoom|rotateCarousel|rotateSlideOut/.test( hideEffect ) ) {
-                this.$element.find( '.pt-part' ).addClass( 'hide-overflow' );
-            }
-            else {
-                this.$element.find( '.pt-part' ).removeClass( 'hide-overflow' );                
-            }
-        },
-
-        setShowEffect: function( showEffect ) {
-            this.prevShowEffect = this.showEffect;
-            this.showEffect = showEffect;
-        },
-
-        setDirection: function( direction ) {
-            this.direction = direction;
-        },
-
-        _runWave: function( intPtPageNumber ) {
-            this.$element.find( '.pt-part' ).addClass( 'in-queue' );
-            this._showNextPart( intPtPageNumber );
-        },
-
-        _waveJumpToEnd: function() {
-            clearTimeout( this.showPartsTimeout );
-            if ( typeof this.intPrevPtPageNumber !== 'undefined' ) {
-                this._showParts( this.$element.find( '.pt-part.in-queue' ).removeClass( 'in-queue' ), this.intPrevPtPageNumber );
-            }
-        },
-
-        _showNextPart: function( intPtPageNumber ) {
-            var self = this;
-            var $part = this.$element.find( '.pt-part.in-queue' ).eq( this.direction === 'backward' ? -1 : 0 );
-
-            if ( $part.length === 0 ) {
-                return;
-            }
-            this._showParts( $part.removeClass( 'in-queue' ), intPtPageNumber );
-            if ( $part.length === 0 ) {
-                return;
-            }
-            clearTimeout( this.showPartsTimeout );
-            this.showPartsTimeout = setTimeout( function() {
-                self._showNextPart( intPtPageNumber );
-            }, parseFloat( this.duration ) * 1000 * 0.25 / Math.max( 1, this.$element.find( '.pt-part' ).length - 1 ) );
-        },
-
-        _showParts: function( $this, intPtPageNumber ) {
-            $this.find( '.pt-page-current.pt-page-prev' ).removeClass( 'pt-page-prev' ).removeClass( 'pt-page-current' );
-            $this.find( '.pt-page-current' ).addClass( 'pt-page-prev' );
-            $this.find( '.pt-page:nth-child(' + intPtPageNumber + ')' ).addClass( 'pt-page-current' );
-            $this.find( '.pt-page' ).removeClass( this.hideEffect ).removeClass( this.showEffect );
-            if ( typeof this.prevHideEffect !== 'undefined' ) {
-                $this.find( '.pt-page' ).removeClass( this.prevHideEffect );
-            }
-            if ( typeof this.prevShowEffect !== 'undefined' ) {
-                $this.find( '.pt-page' ).removeClass( this.prevShowEffect );
-            }
-            if ( this.animation ) {
-                $this.find( '.pt-page-prev' ).addClass( this.hideEffect );
-                $this.find( '.pt-page-current:not(.pt-page-prev)' ).addClass( this.showEffect );
-            }
-        },
-
-        hideActive: function() {
-            this.$element.find( '.pt-page-current' ).addClass( 'pt-page-prev' ).addClass( this.hideEffect );
-        },
-
-        generateHtml: function() {
-            var intI;
-            var intJ;
-            var $content;
-
-            this.$element.html( this.$element.find( '.pt-part' ).eq( 0 ).html() );
-            $content = this.$element.html();
-            this.$element.children( '.pt-part' ).remove();
-            for ( intJ = 0; intJ < this.rows; intJ++ ) {
-                for ( intI = 0; intI < this.cols; intI++ ) {
-                    this.$element
-                        .append( '<div class="pt-part pt-perspective" data-col-no="' + intI + '" data-row-no="' + intJ + '" style="position: absolute;"></div>' )
-                        .children( ':last-child' )
-                        .html( $content )
-                        .find( '.pt-item' );
-                }
-            }
-            this.setPositionParts();
-            this.$element.children( ':not(.pt-part)' ).remove();
-        },
-
-        setPositionParts: function() {
-            var self = this;
-            var intWidth = this.$element.outerWidth();
-            var intHeight = this.$element.outerHeight();
-            var intPartWidth = intWidth / this.cols;
-            var intPartHeight = intHeight / this.rows;
-
-            this.$element.find( '.pt-part' ).each( function() {
-                var $this = $( this );
-                var intI = $this.attr( 'data-col-no' );
-                var intJ = $this.attr( 'data-row-no' );
-
-                $this
-                .css( {
-                    left: self.$element.outerWidth() * ( 100 / self.cols * intI ) / 100 + 'px',
-                    top: self.$element.outerHeight() * ( 100 / self.rows * intJ ) / 100 + 'px',
-                    width: self.$element.outerWidth() * ( 100 / self.cols ) / 100 + 1 + 'px',
-                    height: self.$element.outerHeight() * ( 100 / self.rows ) / 100 + 1 + 'px'                   
-                } )
-                .find( '.pt-item' )
-                .css( {
-                    width: intWidth,
-                    height: intHeight,
-                    left: - intPartWidth * intI,
-                    top: - intPartHeight * intJ
-                } );
-            } );          
-        }
-    };
-    
-    return AdvancedAnimation;
-} );
-define( 'prototype/zoom.js',[
-    '../jqueryExtensions/jLoader.js',
-    '../jqueryExtensions/overlay.js',
-    '../functions/historyPushState.js',
-    '../var/transitions.js',
-    '../var/transitionsAsArray.js',
-    '../var/transitionsBackward.js',
-    '../prototype/advancedAnimation.js',
-    '../prototype/iconChangeAlbum.js'
-], function( jLoader, overlay, historyPushState, jGalleryTransitions, jGalleryArrayTransitions, jGalleryBackwardTransitions, AdvancedAnimation, IconChangeAlbum ) {
+} )( outerHtml );
+var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, jGalleryArrayTransitions, jGalleryBackwardTransitions, AdvancedAnimation, IconChangeAlbum ) {
     var $ = jQuery;
     var $body = $( 'body' );
     
@@ -2081,6 +1639,9 @@ define( 'prototype/zoom.js',[
 
             $thumbActive.prev( 'a' ).length === 1 ? this.$btnPrev.add( this.$container.children( '.left' ) ).removeClass( 'hidden' ) : this.$btnPrev.add( this.$container.children( '.left' ) ).addClass( 'hidden' );
             $thumbActive.next( 'a' ).length === 1 ? this.$btnNext.add( this.$container.children( '.right' ) ).removeClass( 'hidden' ) : this.$btnNext.add( this.$container.children( '.right' ) ).addClass( 'hidden' );
+            if ( this.$element.is( '.is-link' ) ) {
+                this.$container.children( '.left, .right' ).addClass( 'hidden' );
+            }
         },
 
         slideshowStop: function () {
@@ -2216,6 +1777,19 @@ define( 'prototype/zoom.js',[
                 this.booLoadingInProgress = false;
                 this.setJGalleryColoursForActiveThumb();
                 return;
+            }
+            if ( $a.is( '[link]' ) ) {
+                this.$element.addClass( 'is-link' );
+                if ( $a.is( '[target="_blank"]') ) {
+                    this.$element.attr( 'onclick', 'window.open("' + $a.attr( 'link' ) + '")' );
+                }
+                else {
+                    this.$element.attr( 'onclick', 'window.location="' + $a.attr( 'link' ) + '"' );                    
+                }
+            }
+            else {
+                this.$element.removeClass( 'is-link' );
+                this.$element.removeAttr( 'onclick' );                
             }
             this.refreshNav();
             if ( this.jGallery.options.title ) {
@@ -2462,24 +2036,8 @@ define( 'prototype/zoom.js',[
     };
     
     return Zoom;
-} );
-define( 'prototype/jgallery.js',[
-    '../jqueryExtensions/outerHtml.js',
-    '../functions/historyPushState.js',
-    '../functions/isIE.js',
-    '../functions/isIE8AndOlder.js',
-    '../functions/refreshHTMLClasses.js',
-    '../var/defaults.js',
-    '../var/defaultsFullScreenMode.js',
-    '../var/defaultsSliderMode.js',
-    '../var/requiredFullScreenMode.js',
-    '../var/requiredSliderMode.js',
-    '../prototype/iconChangeAlbum.js',
-    '../prototype/progress.js',
-    '../prototype/thumbnails.js',
-    '../prototype/thumbnailsGenerator.js',
-    '../prototype/zoom.js'
-], function( outerHtml, historyPushState, isInternetExplorer, isInternetExplorer8AndOlder, refreshHTMLClasses, defaults, defaultsFullScreenMode, defaultsSliderMode, requiredFullScreenMode, requiredSliderMode, IconChangeAlbum, Progress, Thumbnails, ThumbnailsGenerator, Zoom ) {
+} )( jLoader, overlay, historyPushState, jGalleryTransitions, jGalleryArrayTransitions, jGalleryBackwardTransitions, AdvancedAnimation, IconChangeAlbum );
+var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isInternetExplorer8AndOlder, refreshHTMLClasses, defaults, defaultsFullScreenMode, defaultsSliderMode, requiredFullScreenMode, requiredSliderMode, IconChangeAlbum, Progress, Thumbnails, ThumbnailsGenerator, Zoom ) {
     var $ = jQuery;
     var $html = $( 'html' );
     var $head = $( 'head' );
@@ -3200,13 +2758,8 @@ define( 'prototype/jgallery.js',[
     };
     
     return JGallery;
-} );
-require( [
-    './functions/refreshHTMLClasses.js',
-    './var/defaults.js',
-    './var/transitions.js',
-    './prototype/jgallery.js'
-], function( refreshHTMLClasses, defaults, jGalleryTransitions, JGallery ) {
+} )( outerHtml, historyPushState, isInternetExplorer, isInternetExplorer8AndOlder, refreshHTMLClasses, defaults, defaultsFullScreenMode, defaultsSliderMode, requiredFullScreenMode, requiredSliderMode, IconChangeAlbum, Progress, Thumbnails, ThumbnailsGenerator, Zoom );
+( function( refreshHTMLClasses, defaults, jGalleryTransitions, JGallery ) {
     var jGalleryCollection = [ '' ];
     var $ = jQuery;
     var $html = $( 'html' );
@@ -3259,8 +2812,5 @@ require( [
 
         return this;
     };
-} );
-
-define("jgallery", function(){});
-
+} )( refreshHTMLClasses, defaults, jGalleryTransitions, JGallery );
 } )();

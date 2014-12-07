@@ -47,7 +47,7 @@
 .jgallery .change-album .menu .item {
   margin: 0;
   padding: 10px 40px 10px 10px;
-  border-bottom: 1px solid rgba(127,127,127,0.5);
+  border-bottom: 1px solid rgba(127, 127, 127, 0.5);
   font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
   font-weight: bold;
   font-size: 14px;
@@ -212,7 +212,7 @@
   right: 100px;
   top: 100%;
   height: 30px;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   -webkit-box-shadow: 0 0 40px 40px rgba( 0, 0, 0, .5 );
   box-shadow: 0 0 40px 40px rgba( 0, 0, 0, .5 );
   -webkit-transform: rotateX( 75deg );
@@ -236,7 +236,7 @@ body {
   color: #fff;
   left: 0;
   top: 0;
-  background: center center no-repeat #000;
+  background: center center no-repeat #000000;
   position: absolute;
   z-index: 10000;
 }
@@ -332,7 +332,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   border: 0;
   line-height: 4px;
   background: #fff;
-  background: rgba(255,255,255,0.5);
+  background: rgba(255, 255, 255, 0.5);
   left: 0;
   bottom: 0;
   overflow: hidden;
@@ -454,13 +454,13 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 .jgallery .jgallery-thumbnails-horizontal .prev:before {
   width: 40px;
   right: -40px;
-  background: -moz-linear-gradient(left,#111111 0%,rgba(17,17,17,0) 100%);
-  background: -webkit-gradient(linear,left top,right top,color-stop(0%,#111111),color-stop(100%,rgba(17,17,17,0)));
-  background: -webkit-linear-gradient(left,#111111 0%,rgba(17,17,17,0) 100%);
-  background: -o-linear-gradient(left,#111111 0%,rgba(17,17,17,0) 100%);
-  background: -ms-linear-gradient(left,#111111 0%,rgba(17,17,17,0) 100%);
-  background: linear-gradient(to right,#111111 0%,rgba(17,17,17,0) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#111111',endColorstr='#00111111',GradientType=1);
+  background: -moz-linear-gradient(left, #111111 0%, rgba(17, 17, 17, 0) 100%);
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #111111), color-stop(100%, rgba(17, 17, 17, 0)));
+  background: -webkit-linear-gradient(left, #111111 0%, rgba(17, 17, 17, 0) 100%);
+  background: -o-linear-gradient(left, #111111 0%, rgba(17, 17, 17, 0) 100%);
+  background: -ms-linear-gradient(left, #111111 0%, rgba(17, 17, 17, 0) 100%);
+  background: linear-gradient(to right, #111111 0%, rgba(17, 17, 17, 0) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#111111', endColorstr='#00111111', GradientType=1);
   top: 0;
   bottom: 0;
   content: "";
@@ -473,13 +473,13 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 .jgallery .jgallery-thumbnails-horizontal .next:before {
   width: 40px;
   left: -40px;
-  background: -moz-linear-gradient(left,rgba(17,17,17,0) 0%,#111111 100%);
-  background: -webkit-gradient(linear,left top,right top,color-stop(0%,rgba(17,17,17,0)),color-stop(100%,#111111));
-  background: -webkit-linear-gradient(left,rgba(17,17,17,0) 0%,#111111 100%);
-  background: -o-linear-gradient(left,rgba(17,17,17,0) 0%,#111111 100%);
-  background: -ms-linear-gradient(left,rgba(17,17,17,0) 0%,#111111 100%);
-  background: linear-gradient(to right,rgba(17,17,17,0) 0%,#111111 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00111111',endColorstr='#111111',GradientType=1);
+  background: -moz-linear-gradient(left, rgba(17, 17, 17, 0) 0%, #111111 100%);
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%, rgba(17, 17, 17, 0)), color-stop(100%, #111111));
+  background: -webkit-linear-gradient(left, rgba(17, 17, 17, 0) 0%, #111111 100%);
+  background: -o-linear-gradient(left, rgba(17, 17, 17, 0) 0%, #111111 100%);
+  background: -ms-linear-gradient(left, rgba(17, 17, 17, 0) 0%, #111111 100%);
+  background: linear-gradient(to right, rgba(17, 17, 17, 0) 0%, #111111 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00111111', endColorstr='#111111', GradientType=1);
   top: 0;
   bottom: 0;
   content: "";
@@ -508,13 +508,13 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 .jgallery .jgallery-thumbnails-vertical .prev:before {
   height: 40px;
   bottom: -40px;
-  background: -moz-linear-gradient(top,#111111 0%,rgba(17,17,17,0) 100%);
-  background: -webkit-gradient(linear,left top,left bottom,color-stop(0%,#111111),color-stop(100%,rgba(17,17,17,0)));
-  background: -webkit-linear-gradient(top,#111111 0%,rgba(17,17,17,0) 100%);
-  background: -o-linear-gradient(top,#111111 0%,rgba(17,17,17,0) 100%);
-  background: -ms-linear-gradient(top,#111111 0%,rgba(17,17,17,0) 100%);
-  background: linear-gradient(to bottom,#111111 0%,rgba(17,17,17,0) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#111111',endColorstr='#00111111',GradientType=0);
+  background: -moz-linear-gradient(top, #111111 0%, rgba(17, 17, 17, 0) 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #111111), color-stop(100%, rgba(17, 17, 17, 0)));
+  background: -webkit-linear-gradient(top, #111111 0%, rgba(17, 17, 17, 0) 100%);
+  background: -o-linear-gradient(top, #111111 0%, rgba(17, 17, 17, 0) 100%);
+  background: -ms-linear-gradient(top, #111111 0%, rgba(17, 17, 17, 0) 100%);
+  background: linear-gradient(to bottom, #111111 0%, rgba(17, 17, 17, 0) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#111111', endColorstr='#00111111', GradientType=0);
   left: 0;
   right: 0;
   content: "";
@@ -527,13 +527,13 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 .jgallery .jgallery-thumbnails-vertical .next:before {
   height: 40px;
   top: -40px;
-  background: -moz-linear-gradient(top,rgba(17,17,17,0) 0%,#111111 100%);
-  background: -webkit-gradient(linear,left top,left bottom,color-stop(0%,rgba(17,17,17,0)),color-stop(100%,#111111));
-  background: -webkit-linear-gradient(top,rgba(17,17,17,0) 0%,#111111 100%);
-  background: -o-linear-gradient(top,rgba(17,17,17,0) 0%,#111111 100%);
-  background: -ms-linear-gradient(top,rgba(17,17,17,0) 0%,#111111 100%);
-  background: linear-gradient(to bottom,rgba(17,17,17,0) 0%,#111111 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00111111',endColorstr='#111111',GradientType=0);
+  background: -moz-linear-gradient(top, rgba(17, 17, 17, 0) 0%, #111111 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(17, 17, 17, 0)), color-stop(100%, #111111));
+  background: -webkit-linear-gradient(top, rgba(17, 17, 17, 0) 0%, #111111 100%);
+  background: -o-linear-gradient(top, rgba(17, 17, 17, 0) 0%, #111111 100%);
+  background: -ms-linear-gradient(top, rgba(17, 17, 17, 0) 0%, #111111 100%);
+  background: linear-gradient(to bottom, rgba(17, 17, 17, 0) 0%, #111111 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00111111', endColorstr='#111111', GradientType=0);
   left: 0;
   right: 0;
   content: "";
@@ -607,19 +607,19 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 .jgallery .jgallery-thumbnails.images a img {
   -webkit-transition: -webkit-filter 0.2s, filter 0.2s;
   transition: -webkit-filter 0.2s, filter 0.2s;
-  -webkit-filter: #000000;
-  filter: #000000;
+  -webkit-filter: saturate(0.4);
+  filter: saturate(0.4);
 }
 .jgallery .jgallery-thumbnails.images a:hover img {
-  -webkit-filter: #000000;
-  filter: #000000;
+  -webkit-filter: saturate(1);
+  filter: saturate(1);
 }
 .jgallery .jgallery-thumbnails.images a:hover:after {
   opacity: 0;
 }
 .jgallery .jgallery-thumbnails.images a.active img {
-  -webkit-filter: #000000;
-  filter: #000000;
+  -webkit-filter: saturate(1);
+  filter: saturate(1);
 }
 .jgallery .jgallery-thumbnails.images a.active:after {
   opacity: .25;
@@ -713,20 +713,20 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   background: #000;
 }
 .jgallery .jgallery-thumbnails.full-screen .prev:before {
-  background-image: -webkit-gradient(linear,left 0%,left 100%,from(rgba(0,0,0,1)),to(rgba(0,0,0,0)));
-  background-image: -webkit-linear-gradient(top,rgba(0,0,0,1),0%,rgba(0,0,0,0),100%);
-  background-image: -moz-linear-gradient(top,rgba(0,0,0,1) 0%,rgba(0,0,0,0) 100%);
-  background-image: linear-gradient(to bottom,rgba(0,0,0,1) 0%,rgba(0,0,0,0) 100%);
+  background-image: -webkit-gradient(linear, left 0%, left 100%, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));
+  background-image: -webkit-linear-gradient(top, rgba(0,0,0,1), 0%, rgba(0,0,0,0), 100%);
+  background-image: -moz-linear-gradient(top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+  background-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
   background-repeat: repeat-x;
 }
 .jgallery .jgallery-thumbnails.full-screen .next {
   background: #000;
 }
 .jgallery .jgallery-thumbnails.full-screen .next:before {
-  background-image: -webkit-gradient(linear,left 0%,left 100%,from(rgba(0,0,0,0)),to(rgba(0,0,0,1)));
-  background-image: -webkit-linear-gradient(top,rgba(0,0,0,0),0%,rgba(0,0,0,1),100%);
-  background-image: -moz-linear-gradient(top,rgba(0,0,0,0) 0%,rgba(0,0,0,1) 100%);
-  background-image: linear-gradient(to bottom,rgba(0,0,0,0) 0%,rgba(0,0,0,1) 100%);
+  background-image: -webkit-gradient(linear, left 0%, left 100%, from(rgba(0,0,0,0)), to(rgba(0,0,0,1)));
+  background-image: -webkit-linear-gradient(top, rgba(0,0,0,0), 0%, rgba(0,0,0,1), 100%);
+  background-image: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%);
+  background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%);
   background-repeat: repeat-x;
 }
 .jgallery .jgallery-thumbnails.full-screen .change-album {
@@ -852,6 +852,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 .jgallery .jgallery-thumbnails.square.number:not(.full-screen) img {
   display: none;
 }
+/* title
+--------------------------------------------------------------------------*/
 .jgallery .zoom-container .nav-bottom > .title {
   padding: 4px 0;
   bottom: 5px;
@@ -881,10 +883,10 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   text-shadow: 0 0 .25em #fff;
   color: transparent;
   opacity: .5;
-  -webkit-transition: top, left, right, bottom, opacity 0.5s;
-  -moz-transition: top, left, right, bottom, opacity 0.5s;
-  -o-transition: top, left, right, bottom, opacity 0.5s;
-  transition: top, left, right, bottom, opacity 0.5s;
+  -webkit-transition: top,left,right,bottom,opacity 0.5s;
+  -moz-transition: top,left,right,bottom,opacity 0.5s;
+  -o-transition: top,left,right,bottom,opacity 0.5s;
+  transition: top,left,right,bottom,opacity 0.5s;
 }
 .jgallery .zoom-container .nav-bottom > .title.fade {
   bottom: 5px;
@@ -951,9 +953,9 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   -webkit-backface-visibility: hidden;
   -moz-backface-visibility: hidden;
   backface-visibility: hidden;
-  -webkit-transform: translate3d(0,0,0);
-  -moz-transform: translate3d(0,0,0);
-  transform: translate3d(0,0,0);
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
   -webkit-transform-style: preserve-3d;
   -moz-transform-style: preserve-3d;
   transform-style: preserve-3d;
@@ -969,6 +971,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 .pt-page-ontop {
   z-index: 999;
 }
+/* Text Styles, Colors, Backgrounds */
 .pt-page h1 {
   position: absolute;
   font-weight: 300;
@@ -993,7 +996,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   opacity: 0.4;
 }
 .pt-page h1 strong {
-  color: rgba(0,0,0,0.1);
+  color: rgba(0, 0, 0, 0.1);
 }
 .pt-page-1 {
   background: #0ac2d2;
@@ -1013,6 +1016,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 .pt-page-6 {
   background: #f68dbb;
 }
+/* Triggers (menu and button) */
 .pt-triggers {
   position: absolute;
   width: 300px;
@@ -1043,7 +1047,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   cursor: pointer;
   display: block;
   font-family: 'Lato', Calibri, Arial, sans-serif;
-  box-shadow: 0 3px 0 rgba(0,0,0,0.1);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.1);
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -1059,7 +1063,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   margin-bottom: 0;
 }
 .pt-touch-button:active {
-  box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
 }
 .touch .pt-triggers .dl-menuwrapper {
   display: none;
@@ -1106,6 +1110,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
     display: none;
   }
 }
+/* animation sets */
+/* move from / to  */
 .pt-page-moveToLeft {
   -webkit-animation: moveToLeft .6s ease both;
   -moz-animation: moveToLeft .6s ease both;
@@ -1146,11 +1152,13 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   -moz-animation: moveFromBottom .6s ease both;
   animation: moveFromBottom .6s ease both;
 }
+/* fade */
 .pt-page-fade {
   -webkit-animation: fade .7s ease both;
   -moz-animation: fade .7s ease both;
   animation: fade .7s ease both;
 }
+/* move from / to and fade */
 .pt-page-moveToLeftFade {
   -webkit-animation: moveToLeftFade .7s ease both;
   -moz-animation: moveToLeftFade .7s ease both;
@@ -1191,26 +1199,29 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   -moz-animation: moveFromBottomFade .7s ease both;
   animation: moveFromBottomFade .7s ease both;
 }
+/* move to with different easing */
 .pt-page-moveToLeftEasing {
-  -webkit-animation: moveToLeft .7s ease-in-out both;
-  -moz-animation: moveToLeft .7s ease-in-out both;
-  animation: moveToLeft .7s ease-in-out both;
+  -webkit-animation: moveToLeft 0.7s ease-in-out both;
+  -moz-animation: moveToLeft 0.7s ease-in-out both;
+  animation: moveToLeft 0.7s ease-in-out both;
 }
 .pt-page-moveToRightEasing {
-  -webkit-animation: moveToRight .7s ease-in-out both;
-  -moz-animation: moveToRight .7s ease-in-out both;
-  animation: moveToRight .7s ease-in-out both;
+  -webkit-animation: moveToRight 0.7s ease-in-out both;
+  -moz-animation: moveToRight 0.7s ease-in-out both;
+  animation: moveToRight 0.7s ease-in-out both;
 }
 .pt-page-moveToTopEasing {
-  -webkit-animation: moveToTop .7s ease-in-out both;
-  -moz-animation: moveToTop .7s ease-in-out both;
-  animation: moveToTop .7s ease-in-out both;
+  -webkit-animation: moveToTop 0.7s ease-in-out both;
+  -moz-animation: moveToTop 0.7s ease-in-out both;
+  animation: moveToTop 0.7s ease-in-out both;
 }
 .pt-page-moveToBottomEasing {
-  -webkit-animation: moveToBottom .7s ease-in-out both;
-  -moz-animation: moveToBottom .7s ease-in-out both;
-  animation: moveToBottom .7s ease-in-out both;
+  -webkit-animation: moveToBottom 0.7s ease-in-out both;
+  -moz-animation: moveToBottom 0.7s ease-in-out both;
+  animation: moveToBottom 0.7s ease-in-out both;
 }
+/********************************* keyframes **************************************/
+/* move from / to  */
 @-webkit-keyframes moveToLeft {
   to {
     -webkit-transform: translateX(-100%);
@@ -1331,6 +1342,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
     transform: translateY(100%);
   }
 }
+/* fade */
 @-webkit-keyframes fade {
   to {
     opacity: 0.3;
@@ -1346,6 +1358,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
     opacity: 0.3;
   }
 }
+/* move from / to and fade */
 @-webkit-keyframes moveToLeftFade {
   to {
     opacity: 0.3;
@@ -1490,6 +1503,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
     transform: translateY(100%);
   }
 }
+/* scale and fade */
 .pt-page-scaleDown {
   -webkit-animation: scaleDown .7s ease both;
   -moz-animation: scaleDown .7s ease both;
@@ -1511,49 +1525,51 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   animation: scaleDownUp .5s ease both;
 }
 .pt-page-scaleDownCenter {
-  -webkit-animation: scaleDownCenter .4s ease-in both;
-  -moz-animation: scaleDownCenter .4s ease-in both;
-  animation: scaleDownCenter .4s ease-in both;
+  -webkit-animation: scaleDownCenter 0.4s ease-in both;
+  -moz-animation: scaleDownCenter 0.4s ease-in both;
+  animation: scaleDownCenter 0.4s ease-in both;
 }
 .pt-page-scaleUpCenter {
-  -webkit-animation: scaleUpCenter .4s ease-out both;
-  -moz-animation: scaleUpCenter .4s ease-out both;
-  animation: scaleUpCenter .4s ease-out both;
+  -webkit-animation: scaleUpCenter 0.4s ease-out both;
+  -moz-animation: scaleUpCenter 0.4s ease-out both;
+  animation: scaleUpCenter 0.4s ease-out both;
 }
+/********************************* keyframes **************************************/
+/* scale and fade */
 @-webkit-keyframes scaleDown {
   to {
     opacity: 0;
-    -webkit-transform: scale(.8);
+    -webkit-transform: scale(0.8);
   }
 }
 @-moz-keyframes scaleDown {
   to {
     opacity: 0;
-    -moz-transform: scale(.8);
+    -moz-transform: scale(0.8);
   }
 }
 @keyframes scaleDown {
   to {
     opacity: 0;
-    transform: scale(.8);
+    transform: scale(0.8);
   }
 }
 @-webkit-keyframes scaleUp {
   from {
     opacity: 0;
-    -webkit-transform: scale(.8);
+    -webkit-transform: scale(0.8);
   }
 }
 @-moz-keyframes scaleUp {
   from {
     opacity: 0;
-    -moz-transform: scale(.8);
+    -moz-transform: scale(0.8);
   }
 }
 @keyframes scaleUp {
   from {
     opacity: 0;
-    transform: scale(.8);
+    transform: scale(0.8);
   }
 }
 @-webkit-keyframes scaleUpDown {
@@ -1595,135 +1611,138 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 @-webkit-keyframes scaleDownCenter {
   to {
     opacity: 0;
-    -webkit-transform: scale(.7);
+    -webkit-transform: scale(0.7);
   }
 }
 @-moz-keyframes scaleDownCenter {
   to {
     opacity: 0;
-    -moz-transform: scale(.7);
+    -moz-transform: scale(0.7);
   }
 }
 @keyframes scaleDownCenter {
   to {
     opacity: 0;
-    transform: scale(.7);
+    transform: scale(0.7);
   }
 }
 @-webkit-keyframes scaleUpCenter {
   from {
     opacity: 0;
-    -webkit-transform: scale(.7);
+    -webkit-transform: scale(0.7);
   }
 }
 @-moz-keyframes scaleUpCenter {
   from {
     opacity: 0;
-    -moz-transform: scale(.7);
+    -moz-transform: scale(0.7);
   }
 }
 @keyframes scaleUpCenter {
   from {
     opacity: 0;
-    transform: scale(.7);
+    transform: scale(0.7);
   }
 }
+/* rotate sides first and scale */
 .pt-page-rotateRightSideFirst {
   -webkit-transform-origin: 0% 50%;
-  -webkit-animation: rotateRightSideFirst .8s both ease-in;
+  -webkit-animation: rotateRightSideFirst 0.8s both ease-in;
   -moz-transform-origin: 0% 50%;
-  -moz-animation: rotateRightSideFirst .8s both ease-in;
+  -moz-animation: rotateRightSideFirst 0.8s both ease-in;
   transform-origin: 0% 50%;
-  animation: rotateRightSideFirst .8s both ease-in;
+  animation: rotateRightSideFirst 0.8s both ease-in;
 }
 .pt-page-rotateLeftSideFirst {
   -webkit-transform-origin: 100% 50%;
-  -webkit-animation: rotateLeftSideFirst .8s both ease-in;
+  -webkit-animation: rotateLeftSideFirst 0.8s both ease-in;
   -moz-transform-origin: 100% 50%;
-  -moz-animation: rotateLeftSideFirst .8s both ease-in;
+  -moz-animation: rotateLeftSideFirst 0.8s both ease-in;
   transform-origin: 100% 50%;
-  animation: rotateLeftSideFirst .8s both ease-in;
+  animation: rotateLeftSideFirst 0.8s both ease-in;
 }
 .pt-page-rotateTopSideFirst {
   -webkit-transform-origin: 50% 100%;
-  -webkit-animation: rotateTopSideFirst .8s both ease-in;
+  -webkit-animation: rotateTopSideFirst 0.8s both ease-in;
   -moz-transform-origin: 50% 100%;
-  -moz-animation: rotateTopSideFirst .8s both ease-in;
+  -moz-animation: rotateTopSideFirst 0.8s both ease-in;
   transform-origin: 50% 100%;
-  animation: rotateTopSideFirst .8s both ease-in;
+  animation: rotateTopSideFirst 0.8s both ease-in;
 }
 .pt-page-rotateBottomSideFirst {
   -webkit-transform-origin: 50% 0%;
-  -webkit-animation: rotateBottomSideFirst .8s both ease-in;
+  -webkit-animation: rotateBottomSideFirst 0.8s both ease-in;
   -moz-transform-origin: 50% 0%;
-  -moz-animation: rotateBottomSideFirst .8s both ease-in;
+  -moz-animation: rotateBottomSideFirst 0.8s both ease-in;
   transform-origin: 50% 0%;
-  animation: rotateBottomSideFirst .8s both ease-in;
+  animation: rotateBottomSideFirst 0.8s both ease-in;
 }
+/* flip */
 .pt-page-flipOutRight {
   -webkit-transform-origin: 50% 50%;
-  -webkit-animation: flipOutRight .5s both ease-in;
+  -webkit-animation: flipOutRight 0.5s both ease-in;
   -moz-transform-origin: 50% 50%;
-  -moz-animation: flipOutRight .5s both ease-in;
+  -moz-animation: flipOutRight 0.5s both ease-in;
   transform-origin: 50% 50%;
-  animation: flipOutRight .5s both ease-in;
+  animation: flipOutRight 0.5s both ease-in;
 }
 .pt-page-flipInLeft {
   -webkit-transform-origin: 50% 50%;
-  -webkit-animation: flipInLeft .5s both ease-out;
+  -webkit-animation: flipInLeft 0.5s both ease-out;
   -moz-transform-origin: 50% 50%;
-  -moz-animation: flipInLeft .5s both ease-out;
+  -moz-animation: flipInLeft 0.5s both ease-out;
   transform-origin: 50% 50%;
-  animation: flipInLeft .5s both ease-out;
+  animation: flipInLeft 0.5s both ease-out;
 }
 .pt-page-flipOutLeft {
   -webkit-transform-origin: 50% 50%;
-  -webkit-animation: flipOutLeft .5s both ease-in;
+  -webkit-animation: flipOutLeft 0.5s both ease-in;
   -moz-transform-origin: 50% 50%;
-  -moz-animation: flipOutLeft .5s both ease-in;
+  -moz-animation: flipOutLeft 0.5s both ease-in;
   transform-origin: 50% 50%;
-  animation: flipOutLeft .5s both ease-in;
+  animation: flipOutLeft 0.5s both ease-in;
 }
 .pt-page-flipInRight {
   -webkit-transform-origin: 50% 50%;
-  -webkit-animation: flipInRight .5s both ease-out;
+  -webkit-animation: flipInRight 0.5s both ease-out;
   -moz-transform-origin: 50% 50%;
-  -moz-animation: flipInRight .5s both ease-out;
+  -moz-animation: flipInRight 0.5s both ease-out;
   transform-origin: 50% 50%;
-  animation: flipInRight .5s both ease-out;
+  animation: flipInRight 0.5s both ease-out;
 }
 .pt-page-flipOutTop {
   -webkit-transform-origin: 50% 50%;
-  -webkit-animation: flipOutTop .5s both ease-in;
+  -webkit-animation: flipOutTop 0.5s both ease-in;
   -moz-transform-origin: 50% 50%;
-  -moz-animation: flipOutTop .5s both ease-in;
+  -moz-animation: flipOutTop 0.5s both ease-in;
   transform-origin: 50% 50%;
-  animation: flipOutTop .5s both ease-in;
+  animation: flipOutTop 0.5s both ease-in;
 }
 .pt-page-flipInBottom {
   -webkit-transform-origin: 50% 50%;
-  -webkit-animation: flipInBottom .5s both ease-out;
+  -webkit-animation: flipInBottom 0.5s both ease-out;
   -moz-transform-origin: 50% 50%;
-  -moz-animation: flipInBottom .5s both ease-out;
+  -moz-animation: flipInBottom 0.5s both ease-out;
   transform-origin: 50% 50%;
-  animation: flipInBottom .5s both ease-out;
+  animation: flipInBottom 0.5s both ease-out;
 }
 .pt-page-flipOutBottom {
   -webkit-transform-origin: 50% 50%;
-  -webkit-animation: flipOutBottom .5s both ease-in;
+  -webkit-animation: flipOutBottom 0.5s both ease-in;
   -moz-transform-origin: 50% 50%;
-  -moz-animation: flipOutBottom .5s both ease-in;
+  -moz-animation: flipOutBottom 0.5s both ease-in;
   transform-origin: 50% 50%;
-  animation: flipOutBottom .5s both ease-in;
+  animation: flipOutBottom 0.5s both ease-in;
 }
 .pt-page-flipInTop {
   -webkit-transform-origin: 50% 50%;
-  -webkit-animation: flipInTop .5s both ease-out;
+  -webkit-animation: flipInTop 0.5s both ease-out;
   -moz-transform-origin: 50% 50%;
-  -moz-animation: flipInTop .5s both ease-out;
+  -moz-animation: flipInTop 0.5s both ease-out;
   transform-origin: 50% 50%;
-  animation: flipInTop .5s both ease-out;
+  animation: flipInTop 0.5s both ease-out;
 }
+/* rotate fall */
 .pt-page-rotateFall {
   -webkit-transform-origin: 0% 0%;
   -webkit-animation: rotateFall 1s both ease-in;
@@ -1732,22 +1751,24 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   transform-origin: 0% 0%;
   animation: rotateFall 1s both ease-in;
 }
+/* rotate newspaper */
 .pt-page-rotateOutNewspaper {
   -webkit-transform-origin: 50% 50%;
-  -webkit-animation: rotateOutNewspaper .5s both ease-in;
+  -webkit-animation: rotateOutNewspaper 0.5s both ease-in;
   -moz-transform-origin: 50% 50%;
-  -moz-animation: rotateOutNewspaper .5s both ease-in;
+  -moz-animation: rotateOutNewspaper 0.5s both ease-in;
   transform-origin: 50% 50%;
-  animation: rotateOutNewspaper .5s both ease-in;
+  animation: rotateOutNewspaper 0.5s both ease-in;
 }
 .pt-page-rotateInNewspaper {
   -webkit-transform-origin: 50% 50%;
-  -webkit-animation: rotateInNewspaper .5s both ease-out;
+  -webkit-animation: rotateInNewspaper 0.5s both ease-out;
   -moz-transform-origin: 50% 50%;
-  -moz-animation: rotateInNewspaper .5s both ease-out;
+  -moz-animation: rotateInNewspaper 0.5s both ease-out;
   transform-origin: 50% 50%;
-  animation: rotateInNewspaper .5s both ease-out;
+  animation: rotateInNewspaper 0.5s both ease-out;
 }
+/* push */
 .pt-page-rotatePushLeft {
   -webkit-transform-origin: 0% 50%;
   -webkit-animation: rotatePushLeft .8s both ease;
@@ -1780,6 +1801,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   transform-origin: 50% 100%;
   animation: rotatePushBottom .8s both ease;
 }
+/* pull */
 .pt-page-rotatePullRight {
   -webkit-transform-origin: 100% 50%;
   -webkit-animation: rotatePullRight .5s both ease;
@@ -1812,6 +1834,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   transform-origin: 50% 100%;
   animation: rotatePullBottom .5s both ease;
 }
+/* fold */
 .pt-page-rotateFoldRight {
   -webkit-transform-origin: 0% 50%;
   -webkit-animation: rotateFoldRight .7s both ease;
@@ -1844,6 +1867,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   transform-origin: 50% 0%;
   animation: rotateFoldBottom .7s both ease;
 }
+/* unfold */
 .pt-page-rotateUnfoldLeft {
   -webkit-transform-origin: 100% 50%;
   -webkit-animation: rotateUnfoldLeft .7s both ease;
@@ -1876,6 +1900,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   transform-origin: 50% 0%;
   animation: rotateUnfoldBottom .7s both ease;
 }
+/* room walls */
 .pt-page-rotateRoomLeftOut {
   -webkit-transform-origin: 100% 50%;
   -webkit-animation: rotateRoomLeftOut .8s both ease;
@@ -1940,70 +1965,72 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   transform-origin: 50% 100%;
   animation: rotateRoomBottomIn .8s both ease;
 }
+/* cube */
 .pt-page-rotateCubeLeftOut {
   -webkit-transform-origin: 100% 50%;
-  -webkit-animation: rotateCubeLeftOut .6s both ease-in;
+  -webkit-animation: rotateCubeLeftOut 0.6s both ease-in;
   -moz-transform-origin: 100% 50%;
-  -moz-animation: rotateCubeLeftOut .6s both ease-in;
+  -moz-animation: rotateCubeLeftOut 0.6s both ease-in;
   transform-origin: 100% 50%;
-  animation: rotateCubeLeftOut .6s both ease-in;
+  animation: rotateCubeLeftOut 0.6s both ease-in;
 }
 .pt-page-rotateCubeLeftIn {
   -webkit-transform-origin: 0% 50%;
-  -webkit-animation: rotateCubeLeftIn .6s both ease-in;
+  -webkit-animation: rotateCubeLeftIn 0.6s both ease-in;
   -moz-transform-origin: 0% 50%;
-  -moz-animation: rotateCubeLeftIn .6s both ease-in;
+  -moz-animation: rotateCubeLeftIn 0.6s both ease-in;
   transform-origin: 0% 50%;
-  animation: rotateCubeLeftIn .6s both ease-in;
+  animation: rotateCubeLeftIn 0.6s both ease-in;
 }
 .pt-page-rotateCubeRightOut {
   -webkit-transform-origin: 0% 50%;
-  -webkit-animation: rotateCubeRightOut .6s both ease-in;
+  -webkit-animation: rotateCubeRightOut 0.6s both ease-in;
   -moz-transform-origin: 0% 50%;
-  -moz-animation: rotateCubeRightOut .6s both ease-in;
+  -moz-animation: rotateCubeRightOut 0.6s both ease-in;
   transform-origin: 0% 50%;
-  animation: rotateCubeRightOut .6s both ease-in;
+  animation: rotateCubeRightOut 0.6s both ease-in;
 }
 .pt-page-rotateCubeRightIn {
   -webkit-transform-origin: 100% 50%;
-  -webkit-animation: rotateCubeRightIn .6s both ease-in;
+  -webkit-animation: rotateCubeRightIn 0.6s both ease-in;
   -moz-transform-origin: 100% 50%;
-  -moz-animation: rotateCubeRightIn .6s both ease-in;
+  -moz-animation: rotateCubeRightIn 0.6s both ease-in;
   transform-origin: 100% 50%;
-  animation: rotateCubeRightIn .6s both ease-in;
+  animation: rotateCubeRightIn 0.6s both ease-in;
 }
 .pt-page-rotateCubeTopOut {
   -webkit-transform-origin: 50% 100%;
-  -webkit-animation: rotateCubeTopOut .6s both ease-in;
+  -webkit-animation: rotateCubeTopOut 0.6s both ease-in;
   -moz-transform-origin: 50% 100%;
-  -moz-animation: rotateCubeTopOut .6s both ease-in;
+  -moz-animation: rotateCubeTopOut 0.6s both ease-in;
   transform-origin: 50% 100%;
-  animation: rotateCubeTopOut .6s both ease-in;
+  animation: rotateCubeTopOut 0.6s both ease-in;
 }
 .pt-page-rotateCubeTopIn {
   -webkit-transform-origin: 50% 0%;
-  -webkit-animation: rotateCubeTopIn .6s both ease-in;
+  -webkit-animation: rotateCubeTopIn 0.6s both ease-in;
   -moz-transform-origin: 50% 0%;
-  -moz-animation: rotateCubeTopIn .6s both ease-in;
+  -moz-animation: rotateCubeTopIn 0.6s both ease-in;
   transform-origin: 50% 0%;
-  animation: rotateCubeTopIn .6s both ease-in;
+  animation: rotateCubeTopIn 0.6s both ease-in;
 }
 .pt-page-rotateCubeBottomOut {
   -webkit-transform-origin: 50% 0%;
-  -webkit-animation: rotateCubeBottomOut .6s both ease-in;
+  -webkit-animation: rotateCubeBottomOut 0.6s both ease-in;
   -moz-transform-origin: 50% 0%;
-  -moz-animation: rotateCubeBottomOut .6s both ease-in;
+  -moz-animation: rotateCubeBottomOut 0.6s both ease-in;
   transform-origin: 50% 0%;
-  animation: rotateCubeBottomOut .6s both ease-in;
+  animation: rotateCubeBottomOut 0.6s both ease-in;
 }
 .pt-page-rotateCubeBottomIn {
   -webkit-transform-origin: 50% 100%;
-  -webkit-animation: rotateCubeBottomIn .6s both ease-in;
+  -webkit-animation: rotateCubeBottomIn 0.6s both ease-in;
   -moz-transform-origin: 50% 100%;
-  -moz-animation: rotateCubeBottomIn .6s both ease-in;
+  -moz-animation: rotateCubeBottomIn 0.6s both ease-in;
   transform-origin: 50% 100%;
-  animation: rotateCubeBottomIn .6s both ease-in;
+  animation: rotateCubeBottomIn 0.6s both ease-in;
 }
+/* carousel */
 .pt-page-rotateCarouselLeftOut {
   -webkit-transform-origin: 100% 50%;
   -webkit-animation: rotateCarouselLeftOut .8s both ease;
@@ -2068,22 +2095,24 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   transform-origin: 50% 100%;
   animation: rotateCarouselBottomIn .8s both ease;
 }
+/* sides */
 .pt-page-rotateSidesOut {
   -webkit-transform-origin: -50% 50%;
-  -webkit-animation: rotateSidesOut .5s both ease-in;
+  -webkit-animation: rotateSidesOut 0.5s both ease-in;
   -moz-transform-origin: -50% 50%;
-  -moz-animation: rotateSidesOut .5s both ease-in;
+  -moz-animation: rotateSidesOut 0.5s both ease-in;
   transform-origin: -50% 50%;
-  animation: rotateSidesOut .5s both ease-in;
+  animation: rotateSidesOut 0.5s both ease-in;
 }
 .pt-page-rotateSidesIn {
   -webkit-transform-origin: 150% 50%;
-  -webkit-animation: rotateSidesIn .5s both ease-out;
+  -webkit-animation: rotateSidesIn 0.5s both ease-out;
   -moz-transform-origin: 150% 50%;
-  -moz-animation: rotateSidesIn .5s both ease-out;
+  -moz-animation: rotateSidesIn 0.5s both ease-out;
   transform-origin: 150% 50%;
-  animation: rotateSidesIn .5s both ease-out;
+  animation: rotateSidesIn 0.5s both ease-out;
 }
+/* slide */
 .pt-page-rotateSlideOut {
   -webkit-animation: rotateSlideOut 1s both ease;
   -moz-animation: rotateSlideOut 1s both ease;
@@ -2094,6 +2123,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   -moz-animation: rotateSlideIn 1s both ease;
   animation: rotateSlideIn 1s both ease;
 }
+/********************************* keyframes **************************************/
+/* rotate sides first and scale */
 @-webkit-keyframes rotateRightSideFirst {
   40% {
     -webkit-transform: rotateY(15deg);
@@ -2226,6 +2257,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
     opacity: 0;
   }
 }
+/* flip */
 @-webkit-keyframes flipOutRight {
   to {
     -webkit-transform: translateZ(-1000px) rotateY(90deg);
@@ -2370,6 +2402,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
     opacity: 0.2;
   }
 }
+/* fall */
 @-webkit-keyframes rotateFall {
   0% {
     -webkit-transform: rotateZ(0deg);
@@ -2424,6 +2457,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
     transform: translateY(100%) rotateZ(17deg);
   }
 }
+/* newspaper */
 @-webkit-keyframes rotateOutNewspaper {
   to {
     -webkit-transform: translateZ(-3000px) rotateZ(360deg);
@@ -2460,6 +2494,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
     opacity: 0;
   }
 }
+/* push */
 @-webkit-keyframes rotatePushLeft {
   to {
     opacity: 0;
@@ -2532,6 +2567,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
     transform: rotateX(90deg);
   }
 }
+/* pull */
 @-webkit-keyframes rotatePullRight {
   from {
     opacity: 0;
@@ -2604,6 +2640,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
     transform: rotateX(90deg);
   }
 }
+/* fold */
 @-webkit-keyframes rotateFoldRight {
   to {
     opacity: 0;
@@ -2676,6 +2713,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
     transform: translateY(100%) rotateX(-90deg);
   }
 }
+/* unfold */
 @-webkit-keyframes rotateUnfoldLeft {
   from {
     opacity: 0;
@@ -2748,6 +2786,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
     transform: translateY(100%) rotateX(-90deg);
   }
 }
+/* room walls */
 @-webkit-keyframes rotateRoomLeftOut {
   to {
     opacity: .3;
@@ -2892,6 +2931,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
     transform: translateY(-100%) rotateX(-90deg);
   }
 }
+/* cube */
 @-webkit-keyframes rotateCubeLeftOut {
   50% {
     -webkit-animation-timing-function: ease-out;
@@ -3132,150 +3172,152 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
     transform: translateY(-50%) translateZ(-200px) rotateX(45deg);
   }
 }
+/* carousel */
 @-webkit-keyframes rotateCarouselLeftOut {
   to {
     opacity: .3;
-    -webkit-transform: translateX(-150%) scale(.4) rotateY(-65deg);
+    -webkit-transform: translateX(-150%) scale(0.4) rotateY(-65deg);
   }
 }
 @-moz-keyframes rotateCarouselLeftOut {
   to {
     opacity: .3;
-    -moz-transform: translateX(-150%) scale(.4) rotateY(-65deg);
+    -moz-transform: translateX(-150%) scale(0.4) rotateY(-65deg);
   }
 }
 @keyframes rotateCarouselLeftOut {
   to {
     opacity: .3;
-    transform: translateX(-150%) scale(.4) rotateY(-65deg);
+    transform: translateX(-150%) scale(0.4) rotateY(-65deg);
   }
 }
 @-webkit-keyframes rotateCarouselLeftIn {
   from {
     opacity: .3;
-    -webkit-transform: translateX(200%) scale(.4) rotateY(65deg);
+    -webkit-transform: translateX(200%) scale(0.4) rotateY(65deg);
   }
 }
 @-moz-keyframes rotateCarouselLeftIn {
   from {
     opacity: .3;
-    -moz-transform: translateX(200%) scale(.4) rotateY(65deg);
+    -moz-transform: translateX(200%) scale(0.4) rotateY(65deg);
   }
 }
 @keyframes rotateCarouselLeftIn {
   from {
     opacity: .3;
-    transform: translateX(200%) scale(.4) rotateY(65deg);
+    transform: translateX(200%) scale(0.4) rotateY(65deg);
   }
 }
 @-webkit-keyframes rotateCarouselRightOut {
   to {
     opacity: .3;
-    -webkit-transform: translateX(200%) scale(.4) rotateY(65deg);
+    -webkit-transform: translateX(200%) scale(0.4) rotateY(65deg);
   }
 }
 @-moz-keyframes rotateCarouselRightOut {
   to {
     opacity: .3;
-    -moz-transform: translateX(200%) scale(.4) rotateY(65deg);
+    -moz-transform: translateX(200%) scale(0.4) rotateY(65deg);
   }
 }
 @keyframes rotateCarouselRightOut {
   to {
     opacity: .3;
-    transform: translateX(200%) scale(.4) rotateY(65deg);
+    transform: translateX(200%) scale(0.4) rotateY(65deg);
   }
 }
 @-webkit-keyframes rotateCarouselRightIn {
   from {
     opacity: .3;
-    -webkit-transform: translateX(-200%) scale(.4) rotateY(-65deg);
+    -webkit-transform: translateX(-200%) scale(0.4) rotateY(-65deg);
   }
 }
 @-moz-keyframes rotateCarouselRightIn {
   from {
     opacity: .3;
-    -moz-transform: translateX(-200%) scale(.4) rotateY(-65deg);
+    -moz-transform: translateX(-200%) scale(0.4) rotateY(-65deg);
   }
 }
 @keyframes rotateCarouselRightIn {
   from {
     opacity: .3;
-    transform: translateX(-200%) scale(.4) rotateY(-65deg);
+    transform: translateX(-200%) scale(0.4) rotateY(-65deg);
   }
 }
 @-webkit-keyframes rotateCarouselTopOut {
   to {
     opacity: .3;
-    -webkit-transform: translateY(-200%) scale(.4) rotateX(65deg);
+    -webkit-transform: translateY(-200%) scale(0.4) rotateX(65deg);
   }
 }
 @-moz-keyframes rotateCarouselTopOut {
   to {
     opacity: .3;
-    -moz-transform: translateY(-200%) scale(.4) rotateX(65deg);
+    -moz-transform: translateY(-200%) scale(0.4) rotateX(65deg);
   }
 }
 @keyframes rotateCarouselTopOut {
   to {
     opacity: .3;
-    transform: translateY(-200%) scale(.4) rotateX(65deg);
+    transform: translateY(-200%) scale(0.4) rotateX(65deg);
   }
 }
 @-webkit-keyframes rotateCarouselTopIn {
   from {
     opacity: .3;
-    -webkit-transform: translateY(200%) scale(.4) rotateX(-65deg);
+    -webkit-transform: translateY(200%) scale(0.4) rotateX(-65deg);
   }
 }
 @-moz-keyframes rotateCarouselTopIn {
   from {
     opacity: .3;
-    -moz-transform: translateY(200%) scale(.4) rotateX(-65deg);
+    -moz-transform: translateY(200%) scale(0.4) rotateX(-65deg);
   }
 }
 @keyframes rotateCarouselTopIn {
   from {
     opacity: .3;
-    transform: translateY(200%) scale(.4) rotateX(-65deg);
+    transform: translateY(200%) scale(0.4) rotateX(-65deg);
   }
 }
 @-webkit-keyframes rotateCarouselBottomOut {
   to {
     opacity: .3;
-    -webkit-transform: translateY(200%) scale(.4) rotateX(-65deg);
+    -webkit-transform: translateY(200%) scale(0.4) rotateX(-65deg);
   }
 }
 @-moz-keyframes rotateCarouselBottomOut {
   to {
     opacity: .3;
-    -moz-transform: translateY(200%) scale(.4) rotateX(-65deg);
+    -moz-transform: translateY(200%) scale(0.4) rotateX(-65deg);
   }
 }
 @keyframes rotateCarouselBottomOut {
   to {
     opacity: .3;
-    transform: translateY(200%) scale(.4) rotateX(-65deg);
+    transform: translateY(200%) scale(0.4) rotateX(-65deg);
   }
 }
 @-webkit-keyframes rotateCarouselBottomIn {
   from {
     opacity: .3;
-    -webkit-transform: translateY(-200%) scale(.4) rotateX(65deg);
+    -webkit-transform: translateY(-200%) scale(0.4) rotateX(65deg);
   }
 }
 @-moz-keyframes rotateCarouselBottomIn {
   from {
     opacity: .3;
-    -moz-transform: translateY(-200%) scale(.4) rotateX(65deg);
+    -moz-transform: translateY(-200%) scale(0.4) rotateX(65deg);
   }
 }
 @keyframes rotateCarouselBottomIn {
   from {
     opacity: .3;
-    transform: translateY(-200%) scale(.4) rotateX(65deg);
+    transform: translateY(-200%) scale(0.4) rotateX(65deg);
   }
 }
+/* sides */
 @-webkit-keyframes rotateSidesOut {
   to {
     opacity: 0;
@@ -3312,6 +3354,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
     transform: translateZ(-500px) rotateY(-90deg);
   }
 }
+/* slide */
 @-webkit-keyframes rotateSlideOut {
   25% {
     opacity: .5;
@@ -3399,6 +3442,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
     transform: translateZ(0) translateX(0);
   }
 }
+/* animation delay classes */
 .pt-page-delay100 {
   -webkit-animation-delay: .1s;
   -moz-animation-delay: .1s;
@@ -3439,6 +3483,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   -moz-animation-delay: 1s;
   animation-delay: 1s;
 }
+/********************************* parts **************************************/
 .pt-part .pt-page {
   width: 100%;
   height: 100%;
@@ -3450,6 +3495,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 .pt-perspective {
   z-index: 0;
 }
+/* zoom
+--------------------------------------------------------------------------*/
 .jgallery .zoom {
   -webkit-perspective: 1200px;
   perspective: 1200px;
@@ -3486,6 +3533,9 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   left: 50%;
   position: absolute;
   z-index: 1;
+}
+.jgallery .zoom.is-link {
+  cursor: pointer;
 }
 .jgallery .zoom.hidden .zoom-container .nav {
   top: -40px;
@@ -3626,8 +3676,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   filter: blur(1px);
 }
 .jgallery .zoom-container .drag-nav .crop {
-  top: 0;
-  left: 0;
+  max-width: 100%;
+  max-height: 100%;
   overflow: hidden;
   position: absolute;
 }
@@ -3670,6 +3720,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   -moz-transform: scale( .5 );
   transform: scale( .5 );
 }
+/* zoom slide-down
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.slide-down.before {
   bottom: 150%;
   opacity: 0;
@@ -3681,6 +3733,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   top: 150%;
   opacity: 0;
 }
+/* zoom slide-up
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.slide-up.before {
   top: 150%;
   opacity: 0;
@@ -3692,6 +3746,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   bottom: 150%;
   opacity: 0;
 }
+/* zoom slide-right
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.slide-right.before {
   right: 150%;
   opacity: 0;
@@ -3703,6 +3759,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   left: 150%;
   opacity: 0;
 }
+/* zoom slide-left
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.slide-left.before {
   left: 150%;
   opacity: 0;
@@ -3714,6 +3772,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   right: 150%;
   opacity: 0;
 }
+/* zoom slide-up-left
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.slide-up-left.before {
   top: 150%;
   left: 150%;
@@ -3727,6 +3787,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   right: 150%;
   opacity: 0;
 }
+/* zoom slide-up-right
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.slide-up-right.before {
   top: 150%;
   right: 150%;
@@ -3740,6 +3802,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   left: 150%;
   opacity: 0;
 }
+/* zoom slide-down-left
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.slide-down-left.before {
   bottom: 150%;
   left: 150%;
@@ -3753,6 +3817,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   right: 150%;
   opacity: 0;
 }
+/* zoom slide-down-right
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.slide-down-right.before {
   bottom: 150%;
   right: 150%;
@@ -3766,6 +3832,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   left: 150%;
   opacity: 0;
 }
+/* zoom fade
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.fade.before {
   opacity: 0;
 }
@@ -3775,42 +3843,48 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 .jgallery .zoom .jgallery-container.fade.after {
   opacity: 0;
 }
+/* zoom zoom-in
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.zoom-in.before {
   opacity: 0;
-  -webkit-transform: scale(0.1,0.1);
-  -ms-transform: scale(0.1,0.1);
-  transform: scale(0.1,0.1);
+  -webkit-transform: scale(0.1, 0.1);
+  -ms-transform: scale(0.1, 0.1);
+  transform: scale(0.1, 0.1);
 }
 .jgallery .zoom .jgallery-container.zoom-in.visible {
   opacity: 1;
-  -webkit-transform: scale(1,1);
-  -ms-transform: scale(1,1);
-  transform: scale(1,1);
+  -webkit-transform: scale(1, 1);
+  -ms-transform: scale(1, 1);
+  transform: scale(1, 1);
 }
 .jgallery .zoom .jgallery-container.zoom-in.after {
   opacity: 0;
-  -webkit-transform: scale(5,5);
-  -ms-transform: scale(5,5);
-  transform: scale(5,5);
+  -webkit-transform: scale(5, 5);
+  -ms-transform: scale(5, 5);
+  transform: scale(5, 5);
 }
+/* zoom zoom-out
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.zoom-out.before {
   opacity: 0;
-  -webkit-transform: scale(5,5);
-  -ms-transform: scale(5,5);
-  transform: scale(5,5);
+  -webkit-transform: scale(5, 5);
+  -ms-transform: scale(5, 5);
+  transform: scale(5, 5);
 }
 .jgallery .zoom .jgallery-container.zoom-out.visible {
   opacity: 1;
-  -webkit-transform: scale(1,1);
-  -ms-transform: scale(1,1);
-  transform: scale(1,1);
+  -webkit-transform: scale(1, 1);
+  -ms-transform: scale(1, 1);
+  transform: scale(1, 1);
 }
 .jgallery .zoom .jgallery-container.zoom-out.after {
   opacity: 0;
-  -webkit-transform: scale(0.1,0.1);
-  -ms-transform: scale(0.1,0.1);
-  transform: scale(0.1,0.1);
+  -webkit-transform: scale(0.1, 0.1);
+  -ms-transform: scale(0.1, 0.1);
+  transform: scale(0.1, 0.1);
 }
+/* zoom rotate-room-right
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.rotate-room-right.before {
   opacity: 0;
   -webkit-transform: translateZ(-600px) rotateY(45deg);
@@ -3830,6 +3904,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   left: 50%;
   right: -50%;
 }
+/* zoom rotate-room-left
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.rotate-room-left.before {
   opacity: 0;
   -webkit-transform: translateZ(-600px) rotateY(-45deg);
@@ -3849,6 +3925,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   left: -50%;
   right: 50%;
 }
+/* zoom rotate-room-up
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.rotate-room-up.before {
   opacity: 0;
   -webkit-transform: translateZ(-600px) rotateX(-45deg);
@@ -3868,6 +3946,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   top: -50%;
   bottom: 50%;
 }
+/* zoom rotate-room-down
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.rotate-room-down.before {
   opacity: 0;
   -webkit-transform: translateZ(-600px) rotateX(45deg);
@@ -3887,6 +3967,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   top: 50%;
   bottom: -50%;
 }
+/* zoom rotate-room-down-left
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.rotate-room-down-left.before {
   opacity: 0;
   -webkit-transform: translateZ(-600px) rotateY(-45deg) rotateX(45deg);
@@ -3910,6 +3992,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   left: -50%;
   right: 50%;
 }
+/* zoom rotate-room-up-left
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.rotate-room-up-left.before {
   opacity: 0;
   -webkit-transform: translateZ(-600px) rotateY(-45deg) rotateX(-45deg);
@@ -3933,6 +4017,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   left: -50%;
   right: 50%;
 }
+/* zoom rotate-room-down-right
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.rotate-room-down-right.before {
   opacity: 0;
   -webkit-transform: translateZ(-600px) rotateY(45deg) rotateX(45deg);
@@ -3956,6 +4042,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   left: 50%;
   right: -50%;
 }
+/* zoom rotate-room-up-right
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.rotate-room-up-right.before {
   opacity: 0;
   -webkit-transform: translateZ(-600px) rotateY(45deg) rotateX(-45deg);
@@ -3979,6 +4067,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   left: 50%;
   right: -50%;
 }
+/* zoom rotate-carousel-right
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.rotate-carousel-right.before {
   opacity: 0;
   -webkit-transform: translateZ(-600px) rotateY(-45deg);
@@ -3998,6 +4088,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   left: 50%;
   right: -50%;
 }
+/* zoom rotate-carousel-left
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.rotate-carousel-left.before {
   opacity: 0;
   -webkit-transform: translateZ(-600px) rotateY(45deg);
@@ -4017,6 +4109,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   left: -50%;
   right: 50%;
 }
+/* zoom rotate-carousel-up
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.rotate-carousel-up.before {
   opacity: 0;
   -webkit-transform: translateZ(-600px) rotateX(-45deg);
@@ -4036,6 +4130,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   top: -50%;
   bottom: 50%;
 }
+/* zoom rotate-carousel-down
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.rotate-carousel-down.before {
   opacity: 0;
   -webkit-transform: translateZ(-600px) rotateX(45deg);
@@ -4055,6 +4151,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   top: 50%;
   bottom: -50%;
 }
+/* zoom rotate-carousel-up-left
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.rotate-carousel-up-left.before {
   opacity: 0;
   -webkit-transform: translateZ(-600px) rotateY(45deg) rotateX(-45deg);
@@ -4078,6 +4176,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   left: -50%;
   right: 50%;
 }
+/* zoom rotate-carousel-down-left
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.rotate-carousel-down-left.before {
   opacity: 0;
   -webkit-transform: translateZ(-600px) rotateY(45deg) rotateX(45deg);
@@ -4101,6 +4201,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   left: -50%;
   right: 50%;
 }
+/* zoom rotate-carousel-down-right
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.rotate-carousel-down-right.before {
   opacity: 0;
   -webkit-transform: translateZ(-600px) rotateY(-45deg) rotateX(45deg);
@@ -4124,6 +4226,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   left: 50%;
   right: -50%;
 }
+/* zoom rotate-carousel-up-right
+--------------------------------------------------------------------------*/
 .jgallery .zoom .jgallery-container.rotate-carousel-up-right.before {
   opacity: 0;
   -webkit-transform: translateZ(-600px) rotateY(-45deg) rotateX(-45deg);

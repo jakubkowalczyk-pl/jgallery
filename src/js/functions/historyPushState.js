@@ -1,4 +1,4 @@
-define( function() {
+var historyPushState = function() {
     var $ = jQuery;
     var $title = $( 'title' );
     
@@ -10,4 +10,4 @@ define( function() {
         }, options );
         window.history.pushState( options.stateObj, options.title, document.location.href.split('#')[0] + '#' + options.path );
     };
-} );
+};

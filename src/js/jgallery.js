@@ -1,9 +1,4 @@
-require( [
-    './functions/refreshHTMLClasses.js',
-    './var/defaults.js',
-    './var/transitions.js',
-    './prototype/jgallery.js'
-], function( refreshHTMLClasses, defaults, jGalleryTransitions, JGallery ) {
+( function( refreshHTMLClasses, defaults, jGalleryTransitions, JGallery ) {
     var jGalleryCollection = [ '' ];
     var $ = jQuery;
     var $html = $( 'html' );
@@ -56,4 +51,4 @@ require( [
 
         return this;
     };
-} );
+} )( refreshHTMLClasses, defaults, jGalleryTransitions, JGallery );

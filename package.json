@@ -1,0 +1,34 @@
+{
+    "name": "jGallery",
+    "title": "jGallery - FREE jQuery photo gallery and slider with albums and preloader",
+    "description": "FREE jQuery photo gallery and slider with albums, preloader and 3D transitions effect. Unlimited scalability, compatible with all major browsers, retina friendly. Released under the MIT license.",
+    "version": "unreleased",
+    "keywords": ["jgallery", "albums", "gallery", "preloader", "free", "transitions", "slider", "lightbox", "zoom"],
+    "author": {
+        "name": "Jakub Kowalczyk",
+        "url": "http://jgallery.jakubkowalczyk.pl/",
+        "email": "info@jakubkowalczyk.pl"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "http://jgallery.jakubkowalczyk.pl/license"
+        }
+    ],
+    "bugs": "https://github.com/jakubkowalczyk-pl/jgallery/issues",
+    "homepage": "http://jgallery.jakubkowalczyk.pl/",
+    "docs": "http://jgallery.jakubkowalczyk.pl/documentation",
+    "demo": "http://jgallery.jakubkowalczyk.pl/customize-full-screen",
+    "dependencies": {
+        "jquery": ">=1.7.0",
+        "font-awesome": "=4.1.x",
+        "tinycolor2": ">=0.9.16"
+    },
+    "devDependencies": {
+        "grunt": "~0.4.5",
+        "grunt-contrib-concat": "~0.5.0",
+        "grunt-contrib-watch": "~0.6.1",
+        "grunt-contrib-uglify": "~0.6.0",
+        "grunt-contrib-less": "~0.12.0"
+    }
+}

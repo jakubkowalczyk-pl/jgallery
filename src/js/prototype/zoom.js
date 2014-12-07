@@ -1,13 +1,4 @@
-define( [
-    '../jqueryExtensions/jLoader.js',
-    '../jqueryExtensions/overlay.js',
-    '../functions/historyPushState.js',
-    '../var/transitions.js',
-    '../var/transitionsAsArray.js',
-    '../var/transitionsBackward.js',
-    '../prototype/advancedAnimation.js',
-    '../prototype/iconChangeAlbum.js'
-], function( jLoader, overlay, historyPushState, jGalleryTransitions, jGalleryArrayTransitions, jGalleryBackwardTransitions, AdvancedAnimation, IconChangeAlbum ) {
+var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, jGalleryArrayTransitions, jGalleryBackwardTransitions, AdvancedAnimation, IconChangeAlbum ) {
     var $ = jQuery;
     var $body = $( 'body' );
     
@@ -388,6 +379,9 @@ define( [
 
             $thumbActive.prev( 'a' ).length === 1 ? this.$btnPrev.add( this.$container.children( '.left' ) ).removeClass( 'hidden' ) : this.$btnPrev.add( this.$container.children( '.left' ) ).addClass( 'hidden' );
             $thumbActive.next( 'a' ).length === 1 ? this.$btnNext.add( this.$container.children( '.right' ) ).removeClass( 'hidden' ) : this.$btnNext.add( this.$container.children( '.right' ) ).addClass( 'hidden' );
+            if ( this.$element.is( '.is-link' ) ) {
+                this.$container.children( '.left, .right' ).addClass( 'hidden' );
+            }
         },
 
         slideshowStop: function () {
@@ -523,6 +517,19 @@ define( [
                 this.booLoadingInProgress = false;
                 this.setJGalleryColoursForActiveThumb();
                 return;
+            }
+            if ( $a.is( '[link]' ) ) {
+                this.$element.addClass( 'is-link' );
+                if ( $a.is( '[target="_blank"]') ) {
+                    this.$element.attr( 'onclick', 'window.open("' + $a.attr( 'link' ) + '")' );
+                }
+                else {
+                    this.$element.attr( 'onclick', 'window.location="' + $a.attr( 'link' ) + '"' );                    
+                }
+            }
+            else {
+                this.$element.removeClass( 'is-link' );
+                this.$element.removeAttr( 'onclick' );                
             }
             this.refreshNav();
             if ( this.jGallery.options.title ) {
@@ -769,4 +776,4 @@ define( [
     };
     
     return Zoom;
-} );
+} )( jLoader, overlay, historyPushState, jGalleryTransitions, jGalleryArrayTransitions, jGalleryBackwardTransitions, AdvancedAnimation, IconChangeAlbum );

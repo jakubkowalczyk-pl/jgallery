@@ -1,20 +1,4 @@
-define( [
-    '../jqueryExtensions/outerHtml.js',
-    '../functions/historyPushState.js',
-    '../functions/isIE.js',
-    '../functions/isIE8AndOlder.js',
-    '../functions/refreshHTMLClasses.js',
-    '../var/defaults.js',
-    '../var/defaultsFullScreenMode.js',
-    '../var/defaultsSliderMode.js',
-    '../var/requiredFullScreenMode.js',
-    '../var/requiredSliderMode.js',
-    '../prototype/iconChangeAlbum.js',
-    '../prototype/progress.js',
-    '../prototype/thumbnails.js',
-    '../prototype/thumbnailsGenerator.js',
-    '../prototype/zoom.js'
-], function( outerHtml, historyPushState, isInternetExplorer, isInternetExplorer8AndOlder, refreshHTMLClasses, defaults, defaultsFullScreenMode, defaultsSliderMode, requiredFullScreenMode, requiredSliderMode, IconChangeAlbum, Progress, Thumbnails, ThumbnailsGenerator, Zoom ) {
+var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isInternetExplorer8AndOlder, refreshHTMLClasses, defaults, defaultsFullScreenMode, defaultsSliderMode, requiredFullScreenMode, requiredSliderMode, IconChangeAlbum, Progress, Thumbnails, ThumbnailsGenerator, Zoom ) {
     var $ = jQuery;
     var $html = $( 'html' );
     var $head = $( 'head' );
@@ -735,4 +719,4 @@ define( [
     };
     
     return JGallery;
-} );
+} )( outerHtml, historyPushState, isInternetExplorer, isInternetExplorer8AndOlder, refreshHTMLClasses, defaults, defaultsFullScreenMode, defaultsSliderMode, requiredFullScreenMode, requiredSliderMode, IconChangeAlbum, Progress, Thumbnails, ThumbnailsGenerator, Zoom );

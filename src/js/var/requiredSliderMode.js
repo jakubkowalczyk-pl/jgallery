@@ -1,8 +1,6 @@
-define( function() {
-    return {
-        autostart: true,
-        canClose: false,
-        zoomSize: 'fill',
-        canChangeMode: false
-    };
-} );
+var requiredSliderMode = {
+    autostart: true,
+    canClose: false,
+    zoomSize: 'fill',
+    canChangeMode: false
+};

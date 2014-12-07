@@ -1,4 +1,4 @@
-define( function() {
+var Progress = ( function() {
     var Progress = function( $this, jGallery ) {
         this.jGallery = jGallery;
         this.$element = $this;
@@ -27,4 +27,4 @@ define( function() {
     };
     
     return Progress;
-} );
+} )();

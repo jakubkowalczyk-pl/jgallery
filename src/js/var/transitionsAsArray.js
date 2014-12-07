@@ -1,4 +1,4 @@
-define( ['../var/transitions.js'], function( jGalleryTransitions ) {
+var jGalleryArrayTransitions = ( function( jGalleryTransitions ) {
     var $ = jQuery;
     var jGalleryArrayTransitions = [];
     
@@ -7,4 +7,4 @@ define( ['../var/transitions.js'], function( jGalleryTransitions ) {
     } );
     
     return jGalleryArrayTransitions;
-} );
+} )( jGalleryTransitions );

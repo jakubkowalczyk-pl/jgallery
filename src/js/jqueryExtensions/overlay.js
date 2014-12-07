@@ -1,4 +1,4 @@
-define( function() {
+var overlay = ( function() {
     var $ = jQuery;
     var $html = $( 'html' );
     
@@ -99,4 +99,4 @@ define( function() {
             //endinit
         } );
     };
-} );
+} )();

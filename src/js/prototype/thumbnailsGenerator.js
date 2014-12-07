@@ -1,6 +1,4 @@
-define( [
-    '../jqueryExtensions/outerHtml.js'
-], function( outerHtml ) {
+var ThumbnailsGenerator = ( function( outerHtml ) {
     var $ = jQuery;
     
     $.fn.outerHtml = outerHtml;
@@ -10,6 +8,7 @@ define( [
             thumbsHidden: true
         }, options );
         this.jGallery = jGallery;
+        this.isSlider = jGallery.isSlider();
         this.$element = jGallery.$this;
         this.booIsAlbums = jGallery.booIsAlbums;
         this.$tmp;
@@ -61,7 +60,10 @@ define( [
             } );            
         },
 
-        insertImage: function( $this, $container ) {            
+        insertImage: function( $this, $container ) {
+            var $a;
+            var $parent;
+            
             if ( $this.is( 'a' ) ) {
                 $container.append( '<a href="' + $this.attr( 'href' ) + '">' + this.generateImgTag( $this.find( 'img' ).eq( 0 ) ).outerHtml() + '</a>' );
                 if ( this.options.thumbsHidden ) {
@@ -69,7 +71,14 @@ define( [
                 }
             }
             else if ( $this.is( 'img' ) ) {
-                $container.append( $( '<a href="' + $this.attr( 'src' ) + '">' + this.generateImgTag( $this ).outerHtml() + '</a>' ) );                
+                $a = $container.append( $( '<a href="' + $this.attr( 'src' ) + '">' + this.generateImgTag( $this ).outerHtml() + '</a>' ) ).children( ':last-child' );
+                $parent = $this.parent();
+                if ( this.isSlider && $parent.is( 'a' ) ) {
+                    $a.attr( 'link', $parent.attr( 'href' ) );
+                    if ( $parent.is( '[target]' ) ) {
+                        $a.attr( 'target', $parent.attr( 'target' ) );
+                    }
+                }
             }
             $container.children( ':last-child' ).attr( 'data-jgallery-photo-id', this.intI++ ).attr( 'data-jgallery-number', this.intNo++ );
         },
@@ -115,4 +124,4 @@ define( [
     };
     
     return ThumbnailsGenerator;
-} );
+} )( outerHtml );

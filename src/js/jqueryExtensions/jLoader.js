@@ -1,6 +1,4 @@
-define( [
-    '../jqueryExtensions/overlay.js'
-], function( overlay ) {
+var jLoader = ( function( overlay ) {
     var $ = jQuery;
     
     $.fn.overlay = overlay;
@@ -91,4 +89,4 @@ define( [
             check();
         } );
      };
-} );
+} )( overlay );

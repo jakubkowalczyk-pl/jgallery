@@ -1,4 +1,4 @@
-define( function() {
+var IconChangeAlbum = ( function() {
     var $ = jQuery;
     var $html = $( 'html' );
     
@@ -73,4 +73,4 @@ define( function() {
     };
     
     return IconChangeAlbum;
-} );
+} )();

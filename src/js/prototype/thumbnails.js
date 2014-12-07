@@ -1,6 +1,4 @@
-define( [
-    '../jqueryExtensions/jLoader.js'
-], function( jLoader ) {
+var Thumbnails = ( function( jLoader ) {
     var $ = jQuery;
     var $head = $( 'head' );
     var $window = $( window );
@@ -328,4 +326,4 @@ define( [
     };
     
     return Thumbnails;
-} );
+} )( jLoader );
