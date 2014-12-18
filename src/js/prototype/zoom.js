@@ -123,7 +123,7 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
         refreshDragNavVisibility: function() {
             var $img = this.$element.find( 'img.active' );
             
-            if ( $img.width() <= this.$element.outerWidth() && $img.height() <= this.$element.outerHeight() ) {
+            if ( $img.width() <= this.$element.outerWidth() || $img.height() <= this.$element.outerHeight() ) {
                 this.hideDragNav();
             }
             else {
