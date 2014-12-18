@@ -385,6 +385,7 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
                     options.success();
                 }
             } );
+            this.refreshCssClassJGalleryMobile();
         },
 
         isSlider: function() {
@@ -392,7 +393,14 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
         },
 
         windowOnResize: function( event ) {
-            event.data.jGallery.refreshDimensions();
+            var jGallery = event.data.jGallery;
+            
+            jGallery.refreshThumbnailsVisibility();
+            jGallery.refreshCssClassJGalleryMobile();
+        },
+        
+        refreshCssClassJGalleryMobile: function() {
+            this.isMobile() ? this.$jgallery.addClass( 'jgallery-mobile' ) : this.$jgallery.removeClass( 'jgallery-mobile' );
         },
 
         refreshDimensions: function() {
@@ -421,6 +429,37 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
             }
             return intCanvasWidth / intCanvasHeight;
         },
+        
+        hideThumbnailsBar: function() {
+            this.thumbnails.getElement().addClass( 'inactive' );
+            this.zoom.$container.find( '.minimalize-thumbnails' ).hide();
+        },
+        
+        showThumbnailsBar: function() {
+            this.thumbnails.getElement().removeClass( 'inactive' );
+            this.options.canMinimalizeThumbnails && this.options.thumbnails ? this.zoom.$container.find( '.minimalize-thumbnails' ).show() : this.zoom.$container.find( '.minimalize-thumbnails' ).hide();
+        },
+        
+        refreshThumbnailsVisibility: function() {
+            if ( ! this.isMobile() ) {
+                if ( ! this.options.thumbnails ) {
+                    this.hideThumbnailsBar();
+                }
+                else {
+                    this.showThumbnailsBar();
+                } 
+            }
+            else {
+                if( this.options.thumbnailsHideOnMobile ) {
+                    this.hideThumbnailsBar();
+                }
+            } 
+            this.refreshDimensions();
+        },
+        
+        isMobile: function() {
+            return $window.width() <= this.options.maxMobileWidth;
+        },
 
         setUserOptions: function() {
             var options = this.options;
@@ -433,22 +472,12 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
             this.options.canChangeMode ? this.zoom.$changeMode.show() : this.zoom.$changeMode.hide();
             this.options.mode === 'standard' ? this.zoom.$changeMode.removeClass( 'fa-compress' ).addClass( 'fa-expand' ) : this.zoom.$changeMode.removeClass( 'fa-expand' ).addClass( 'fa-compress' );
             this.options.canClose ? this.zoom.$container.find( '.jgallery-close' ).show() : this.zoom.$container.find( '.jgallery-close' ).hide();
-            if ( ! this.options.thumbnails ) {
-                this.thumbnails.getElement().addClass( 'inactive' );
-                this.options.thumbnailsPosition = '';
-            }
-            else {
-                this.thumbnails.getElement().removeClass( 'inactive' );
-                if ( this.options.thumbnailsPosition === '' ) {
-                    this.options.thumbnailsPosition = defaults.thumbnailsPosition;
-                }                    
-            }
+            this.refreshThumbnailsVisibility();
             this.options.slideshow ? this.zoom.$slideshow.show() : this.zoom.$slideshow.hide();
             this.options.slideshow && this.options.slideshowCanRandom && this.options.slideshowAutostart ? this.zoom.$random.show(): this.zoom.$random.hide();
             this.options.slideshow && this.options.slideshowCanRandom && this.options.slideshowRandom ? this.zoom.$random.addClass( 'active' ) : this.zoom.$random.removeClass( 'active' );
 
             this.options.thumbnailsFullScreen && this.options.thumbnails ? this.zoom.$container.find( '.full-screen' ).show() : this.zoom.$container.find( '.full-screen' ).hide();
-            this.options.canMinimalizeThumbnails && this.options.thumbnails ? this.zoom.$container.find( '.minimalize-thumbnails' ).show() : this.zoom.$container.find( '.minimalize-thumbnails' ).hide();
             this.options.hideThumbnailsOnInit && this.options.thumbnails ? this.thumbnails.hide() : this.thumbnails.show();
             this.options.titleExpanded ? this.zoom.$title.addClass( 'expanded' ) : this.zoom.$title.removeClass( 'expanded' );
             this.setColours( {
@@ -460,6 +489,7 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
                 width: width,
                 height: height
             } );
+            this.options.draggableZoomHideNavigationOnMobile ? this.$jgallery.addClass( 'jgallery-hide-draggable-navigation-on-mobile' ) : this.$jgallery.removeClass( 'jgallery-hide-draggable-navigation-on-mobile' );
         },
 
         refreshAttrClasses: function() {

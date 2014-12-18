@@ -222,6 +222,9 @@
   position: absolute;
   display: block;
 }
+.jgallery.jgallery-mobile.jgallery-hide-draggable-navigation-on-mobile .zoom-container .drag-nav {
+  display: none;
+}
 html,
 body {
   height: 100%;
@@ -3547,30 +3550,6 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 }
 .jgallery .zoom-container {
   position: relative;
-}
-.jgallery .zoom-container > .left {
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 50%;
-  position: absolute;
-  cursor: pointer;
-  z-index: 4;
-}
-.jgallery .zoom-container > .left.hidden {
-  display: none;
-}
-.jgallery .zoom-container > .right {
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  right: 0;
-  position: absolute;
-  cursor: pointer;
-  z-index: 4;
-}
-.jgallery .zoom-container > .right.hidden {
-  display: none;
 }
 .jgallery .zoom-container .prev {
   top: 50%;

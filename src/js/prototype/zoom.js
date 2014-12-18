@@ -11,8 +11,6 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
         this.$title = this.$container.find( '.nav-bottom > .title' );
         this.$btnPrev = this.$container.children( '.prev' );
         this.$btnNext = this.$container.children( '.next' );
-        this.$left = this.$container.find( '.left' );
-        this.$right = this.$container.find( '.right' );
         this.thumbnails = jGallery.thumbnails;
         this.$jGallery = jGallery.$element;
         this.jGallery = jGallery;
@@ -31,6 +29,10 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             $( this ).toggleClass( 'expanded' );
         } );
         this.update();
+        this.enableDrag();
+        if ( this.jGallery.options.swipeEvents ) {
+            this.initSwipeEvents();
+        }
     };
 
     Zoom.prototype = {
@@ -46,6 +48,50 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
                 this.jGallery.options.showEffect = transition[ 1 ];
             }
             this.initAdvancedAnimation();  
+        },
+        
+        initSwipeEvents: function() {
+            if ( ! $.fn.swipe ) {
+                return;
+            }
+            
+            var $zoom = this.$element;
+            var self = this;
+            var draggedHorizontal;
+            var translate = function( distance ) {
+                $zoom.css( {
+                    "-webkit-transform": 'translateX(' + distance +  'px)',
+                    "transform": 'translateX(' + distance +  'px)'
+                } );
+            };
+            
+            $zoom.swipe( {
+                swipeStatus: function ( event, phase, direction, distance ) {
+                    if ( phase === 'start' ) {
+                        draggedHorizontal = self.draggedHorizontal;
+                    }
+                    if ( ! draggedHorizontal ) {
+                        return;
+                    }
+                    if ( phase === "move" && ( direction === "left" || direction === "right" ) ) {
+                        if ( direction === "left" ) {
+                            translate( - distance );
+                        } else if ( direction === "right" ) {
+                            translate( distance );
+                        }
+                    } else if ( phase === "cancel" ) {
+                        translate( 0 );
+                    } else if ( phase === "end" ) {
+                        if ( direction === "left" ) {
+                            self.showNextPhoto();
+                            translate( 0 );
+                        } else if ( direction === "right" ) {
+                            self.showPrevPhoto();
+                            translate( 0 );
+                        }
+                    }
+                }
+            } );
         },
 
         initAdvancedAnimation: function() {
@@ -65,6 +111,42 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
         setThumbnails: function( thumbnails ) {
             this.thumbnails = thumbnails;
         },
+        
+        showDragNav: function() {
+            this.$dragNav.removeClass( 'hide' ).addClass( 'show' );  
+        },
+        
+        hideDragNav: function() {
+            this.$dragNav.removeClass( 'show' ).addClass( 'hide' );  
+        },
+        
+        refreshDragNavVisibility: function() {
+            var $img = this.$element.find( 'img.active' );
+            
+            if ( $img.width() <= this.$element.outerWidth() && $img.height() <= this.$element.outerHeight() ) {
+                this.hideDragNav();
+            }
+            else {
+                this.showDragNav();
+            }
+        },
+        
+        refreshDragged: function() {
+            var $img = this.$element.find( 'img.active' );
+            
+            if ( $img.width() <= this.$element.outerWidth() ) {
+                this.draggedHorizontal = true;
+            }
+            else {
+                this.draggedHorizontal = false;
+            }            
+            if ( $img.height() <= this.$element.outerHeight() ) {
+                this.draggedVertical = true;
+            }
+            else {
+                this.draggedVertical = false;
+            }
+        },
 
         enableDrag: function() {
             if ( ! this.jGallery.options.draggableZoom ) {
@@ -73,6 +155,8 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             var self = this;
             var startMarginLeft;
             var startMarginTop;
+            var draggedHorizontal;
+            var draggedVertical;
 
             var startDrag = function( event ) {
                 var startX = event.pageX;
@@ -85,21 +169,24 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
                     mousemove: function( event ) { 
                         drag( event.pageX - startX, event.pageY - startY );
                     },
+                    touchmove: function( event ) { 
+                        event = event.originalEvent.touches[0];                        
+                        drag( event.pageX - startX, event.pageY - startY );
+                    },
                     mouseleave: function() {
+                        stopDrag();
+                    },
+                    touchend: function() {
                         stopDrag();
                     }
                 } );
-                if ( self.jGallery.options.zoomSize === 'fill' ) {
-                    self.$dragNav.removeClass( 'hide' ).addClass( 'show' );
-                }
                 drag( 0, 0 );
             };
 
             var stopDrag = function() {
-                self.$element.off( 'mousemove' );
-                if ( self.jGallery.options.zoomSize === 'fill' ) {
-                    self.$dragNav.removeClass( 'show' ).addClass( 'hide' );
-                }
+                self.$element.off( 'mousemove touchmove' );
+                self.draggedHorizontal = draggedHorizontal;
+                self.draggedVertical = draggedVertical;
             };
 
             var drag = function( x, y ) {
@@ -107,34 +194,45 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
                 var marginTop = parseFloat( parseFloat( startMarginTop ) + y );
                 var $img = self.$element.find( 'img.active' );
                 var $first = $img.eq( 0 );
+                var firstPosition = $first.position();
+                var firstPositionLeft = firstPosition.left;
+                var firstPositionTop = firstPosition.top;
                 var $last = $img.eq( -1 );
+                var lastPosition = $last.position();
                 var $lastParent = $last.parent();
+                var $dragNavCrop = self.$dragNavCrop;
+                var dragNavCropPosition = $dragNavCrop.position();
 
-                if ( $first.position().left + marginLeft < 0 && $last.position().left + $last.width() + marginLeft > $lastParent.outerWidth() ) {
+                if ( firstPositionLeft + marginLeft < 0 && lastPosition.left + $last.width() + marginLeft > $lastParent.outerWidth() ) {
                     $img.css( {
                         'margin-left': marginLeft
                     } );
-                    self.$dragNavCrop.css( {
-                        left: - ( $first.position().left + marginLeft ) / $img.width() * 100 + '%'
+                    $dragNavCrop.css( {
+                        left: - ( firstPositionLeft + marginLeft ) / $img.width() * 100 + '%'
                     } );
+                    draggedHorizontal = false;
                 }
-                if ( $first.position().top + marginTop < 0 && $last.position().top + $last.height() + marginTop > $lastParent.outerHeight() ) {
+                else {
+                    draggedHorizontal = true;
+                }
+                if ( firstPositionTop + marginTop < 0 && lastPosition.top + $last.height() + marginTop > $lastParent.outerHeight() ) {
                     $img.css( {
                         'margin-top': marginTop
                     } );
-                    self.$dragNavCrop.css( {
-                        top: - ( $first.position().top + marginTop ) / $img.height() * 100 + '%'
+                    $dragNavCrop.css( {
+                        top: - ( firstPositionTop + marginTop ) / $img.height() * 100 + '%'
                     } );
+                    draggedVertical = false;
+                }
+                else {
+                    draggedVertical = true;                    
                 }
                 self.$dragNavCropImg.css( {
-                    'margin-left': - self.$dragNavCrop.position().left,
-                    'margin-top': - self.$dragNavCrop.position().top
+                    'margin-left': - dragNavCropPosition.left,
+                    'margin-top': - dragNavCropPosition.top
                 } );
             };
 
-            if ( self.jGallery.options.zoomSize === 'original' ) {
-                self.$dragNav.removeClass( 'hide' ).addClass( 'show' );
-            }
             this.refreshDragNavCropSize();
             this.$element.css( 'cursor', 'move' ).on( {
                 mousedown: function( event ) {
@@ -142,26 +240,23 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
                     startDrag( event );
                     self.slideshowPause();
                 },
+                touchstart: function( event ) {
+                    event.preventDefault();
+                    startDrag( event.originalEvent.touches[0] );
+                    self.slideshowPause();
+                },
                 mouseup: function() {
+                    stopDrag();
+                },
+                touchend: function() {
                     stopDrag();
                 }
             } );
-            this.$left.add( this.$right ).hide();
-        },
-
-        disableDrag: function() {
-            if ( ! this.jGallery.options.draggableZoom ) {
-                return;
-            }
-            this.$dragNav.removeClass( 'show' ).addClass( 'hide' );
-            this.$element.css( 'cursor', 'default' );
-            this.$element.off();
-            this.$left.add( this.$right ).show(); 
         },
 
         refreshContainerSize: function () {
             var intNavBottomHeight = this.jGallery.isSlider() ? 0 : this.$container.find( '.nav-bottom' ).outerHeight();
-            var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.hidden' );
+            var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.inactive' );
             var strThumbnailsPosition = isThumbnailsVisible ? this.jGallery.options.thumbnailsPosition : '';
 
             this.$container.css( {
@@ -189,6 +284,11 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             }
             else {
                 this.fit();
+            }
+            if ( this.jGallery.options.draggableZoom ) {
+                this.refreshDragNavCropSize();
+                this.refreshDragNavVisibility();
+                this.refreshDragged();
             }
             this.$element.addClass( 'visible' );
         },
@@ -229,24 +329,21 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
         changeSize: function() {
             if ( this.jGallery.options.zoomSize === 'fit' ) {
                 this.jGallery.options.zoomSize = 'fill';
-                this.fill();
             }
             else if ( this.jGallery.options.zoomSize === 'fill' ) {
                 var $img = this.$element.find( 'img.active' ).eq( 0 );
 
                 if ( this.$element.outerWidth().toString() === $img.attr( 'data-width' ) ) {
                     this.jGallery.options.zoomSize = 'fit';
-                    this.fit(); 
                 }
                 else {        
-                    this.jGallery.options.zoomSize = 'original';
-                    this.original();         
+                    this.jGallery.options.zoomSize = 'original';        
                 }
             }
             else if ( this.jGallery.options.zoomSize === 'original' ) {
                 this.jGallery.options.zoomSize = 'fit';
-                this.fit();
             }
+            this.refreshSize();
             this.$container.attr( 'data-size', this.jGallery.options.zoomSize );
         },
 
@@ -258,11 +355,9 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             this.setImgSizeForOriginal( this.$element.find( '.pt-page.init img' ) );
             if ( $img.attr( 'data-width' ) <= this.$element.outerWidth() && $img.attr( 'data-height' ) <= this.$element.outerHeight() ) {
                 this.$resize.addClass( 'fa-search-plus' ).removeClass( 'fa-search-minus' );  
-                this.disableDrag();
             }
             else {
                 this.$resize.addClass( 'fa-search-minus' ).removeClass( 'fa-search-plus' );
-                this.enableDrag();
             }
         },
 
@@ -273,7 +368,6 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             this.setImgSizeForFit( $img.filter( '.active' ) );
             this.setImgSizeForFit( $img.filter( ':not( .active )' ) );
             this.$resize.addClass( 'fa-search-plus' ).removeClass( 'fa-search-minus' );
-            this.disableDrag();
         },
 
         fill: function() {
@@ -288,7 +382,6 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             else {
                 this.$resize.addClass( 'fa-search-minus' ).removeClass( 'fa-search-plus' );
             }
-            this.enableDrag();
         },
 
         setImgSizeForOriginal: function( $img ) {
@@ -308,7 +401,7 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
 
         setImgSizeForFit: function( $img ) {
             var intNavBottomHeight = this.jGallery.isSlider() ? 0 : this.$container.find( '.nav-bottom' ).outerHeight();
-            var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.hidden' );
+            var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.inactive' );
 
             $img.css( {
                 'width': 'auto',
@@ -338,7 +431,7 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
 
         setImgSizeForFill: function( $img ) {
             var intNavBottomHeight = this.jGallery.isSlider() ? 0 : this.$container.find( '.nav-bottom' ).outerHeight();
-            var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.hidden' );
+            var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.inactive' );
 
             $img.css( {
                 'width': 'auto',
@@ -377,11 +470,8 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
         refreshNav: function() {
             var $thumbActive = this.thumbnails.getElement().find( 'div.active a.active' );
 
-            $thumbActive.prev( 'a' ).length === 1 ? this.$btnPrev.add( this.$container.children( '.left' ) ).removeClass( 'hidden' ) : this.$btnPrev.add( this.$container.children( '.left' ) ).addClass( 'hidden' );
-            $thumbActive.next( 'a' ).length === 1 ? this.$btnNext.add( this.$container.children( '.right' ) ).removeClass( 'hidden' ) : this.$btnNext.add( this.$container.children( '.right' ) ).addClass( 'hidden' );
-            if ( this.$element.is( '.is-link' ) ) {
-                this.$container.children( '.left, .right' ).addClass( 'hidden' );
-            }
+            $thumbActive.prev( 'a' ).length === 1 ? this.$btnPrev.removeClass( 'hidden' ) : this.$btnPrev.addClass( 'hidden' );
+            $thumbActive.next( 'a' ).length === 1 ? this.$btnNext.removeClass( 'hidden' ) : this.$btnNext.addClass( 'hidden' );
         },
 
         slideshowStop: function () {

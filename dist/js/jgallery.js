@@ -1,10 +1,10 @@
 /*!
-* jGallery unreleased
+* jGallery v1.5.0
 * http://jgallery.jakubkowalczyk.pl/
 *
 * Released under the MIT license
 *
-* Date: 2014-12-07
+* Date: 2014-12-18
 */
 ( function() {
     "use strict";
@@ -20,8 +20,10 @@ var defaults = {
     canZoom: true, // Boolean; If set as 'true' you can zoom photos.; [ true, false ]
     disabledOnIE8AndOlder: true, // Boolean; If set as 'true', jGallery will be blocked for Internet Explorer 8 and older.; [ true, false ]
     draggableZoom: true, // Boolean; If set as 'true' you can drag active image.; [ true, false ]
+    draggableZoomHideNavigationOnMobile: true, // Boolean; If set as 'true' navigation of draggable zoom will be hidden when width of window <= 'maxMobileWidth' parameter (default value - 767px); [ true, false ]
     height: '600px', // String; Height of jGallery container(only for standard or slider mode).
     hideThumbnailsOnInit: false, // Boolean; If set as 'true', thumbnails will be minimized by default, when jGallery will be started(only when 'thumbnails' parameter set as 'true').; [ true, false ]
+    maxMobileWidth: 767, // Number; Maximum width(px) for jGallery shows a view for mobile device.
     mode: 'standard', // String; Display mode.; [ 'full-screen', 'standard', 'slider' ]
     preloadAll: false, // Boolean; If set as 'true', all photos will be loaded before first shown photo.; [ true, false ]
     slideshow: true, // Boolean; If set as 'true', option slideshow is enabled.; [ true, false ]
@@ -29,18 +31,20 @@ var defaults = {
     slideshowCanRandom: true, // Boolean; If set as 'true', you can enable random change photos for slideshow(only when 'slideshow' has been set as true).; [ true, false ]
     slideshowInterval: '8s', // String; Time between change of photos for slideshow(only when 'slideshow' has been set as true).; [ '3s', '6s', '10s' ] 
     slideshowRandom: false, // Boolean; If set as 'true', photos in slideshow will be changing random(only when 'slideshow' has been set as true and 'slideshowCanRandom' has been set as true).; [ true, false ]
+    swipeEvents: true, // Boolean; If set as 'true', you can switch to next/prev photo and thumbnails using swipe events.; [ true, false ]
     textColor: '#000', // String; Color of text and icons.; ; [ '#000000', 'rgb(0,153,221)' ]
     thumbnails: true, // Boolean; If set as 'true', thumbnails will be displayed.; [ true, false ]
     thumbHeight: 75, // Number; Height(pixels) of thumbnails.; ; [ 50, 75, 125 ]
     thumbHeightOnFullScreen: 100, // Number; Height(pixels) of thumbnails for thumbnails displayed in full-screen.; ; [ 125, 160, 200 ]
     thumbnailsFullScreen: true, // Boolean; If set as 'true', thumbnails will be displayed in full-screen.; [ true, false ]
+    thumbnailsHideOnMobile: true, // Boolean; If set as 'true', thumbnails will be hidden when width of window <= 'maxMobileWidth' parameter (default value - 767px).; [ true, false ]
     thumbnailsPosition: 'bottom', // String; Thumbnails position(only when 'thumbnails' parameter set as 'true').; [ 'top',  'bottom', 'left', 'right' ]
     thumbType: 'image', // String; Thumbnails type(only when 'thumbnails' parameter set as 'true').; [ 'image', 'square', 'number' ]
     thumbWidth: 75, // Number; Width(pixels) of thumbnails.; ; [ 50, 75, 125 ]
     thumbWidthOnFullScreen: 100, // Number; Width(pixels) of thumbnails for thumbnails displayed in full-screen.; ; [ 125, 160, 200 ]
     title: true, // Boolean; If set as 'true', near photo will be shown title from alt attribute of img.; [ true, false ]
     titleExpanded: false, // Boolean; If set as 'true', in bottom area of zoomed photo will be shown title from alt attribute of img(only when 'title' has been set as true).; [ true, false ]
-    tooltipClose: 'Close', // String; Text of tooltip which will be displayed next to icon for close jgallery(if you set canClose parameter as true).; ;
+    tooltipClose: 'Close', // String; Text of tooltip which will be displayed next to icon for close jgallery(if you set canClose parameter as true).; ; [ 'Close', 'Zamknij' ]
     tooltipFullScreen: 'Full screen', // String; Text of tooltip which will be displayed next to icon for change display mode.; ; [ 'Full screen', 'Tryb pełnoekranowy' ]
     tooltipRandom: 'Random', // String; Text of tooltip which will be displayed next to icon for random slideshow toggling.; ; [ 'Random', 'Kolejność losowa' ]
     tooltips: true, // Boolean; If set as 'true', tooltips will be displayed next to icons.; [ true, false ]
@@ -49,7 +53,7 @@ var defaults = {
     tooltipSlideshow: 'Slideshow', // String; Text of tooltip which will be displayed next to icon for play/pause slideshow.; ; [ 'Slideshow', 'Pokaz slajdów' ]
     tooltipToggleThumbnails: 'Toggle thumbnails', // String; Text of tooltip which will be displayed next to icon for toggle thumbnails.; ; [ 'Toggle thumbnails', 'Pokaż/ukryj miniatury' ]
     tooltipZoom: 'Zoom', // String; Text of tooltip which will be displayed next to icon for zoom photo.; ; [ 'Zoom', 'Powiększenie' ]
-    transition: 'moveToRight_moveFromLeft', // String; Transition effect for change active image.; [ 'moveToLeft_moveFromRight', 'moveToRight_moveFromLeft', 'moveToTop_moveFromBottom', 'moveToBottom_moveFromTop', 'fade_moveFromRight', 'fade_moveFromLeft', 'fade_moveFromBottom', 'fade_moveFromTop', 'moveToLeftFade_moveFromRightFade', 'moveToRightFade_moveFromLeftFade', 'moveToTopFade_moveFromBottomFade', 'moveToBottomFade_moveFromTopFade', 'moveToLeftEasing_moveFromRight', 'moveToRightEasing_moveFromLeft', 'moveToTopEasing_moveFromBottom', 'moveToBottomEasing_moveFromTop', 'scaleDown_moveFromRight', 'scaleDown_moveFromLeft', 'scaleDown_moveFromBottom', 'scaleDown_moveFromTop', 'scaleDown_scaleUpDown', 'scaleDownUp_scaleUp', 'moveToLeft_scaleUp', 'moveToRight_scaleUp', 'moveToTop_scaleUp', 'moveToBottom_scaleUp', 'scaleDownCenter_scaleUpCenter', 'rotateRightSideFirst_moveFromRight', 'rotateLeftSideFirst_moveFromLeft', 'rotateTopSideFirst_moveFromTop', 'rotateBottomSideFirst_moveFromBottom', 'flipOutRight_flipInLeft', 'flipOutLeft_flipInRight', 'flipOutTop_flipInBottom', 'flipOutBottom_flipInTop', 'rotateFall_scaleUp', 'rotateOutNewspaper_rotateInNewspaper', 'rotatePushLeft_moveFromRight', 'rotatePushRight_moveFromLeft', 'rotatePushTop_moveFromBottom', 'rotatePushBottom_moveFromTop', 'rotatePushLeft_rotatePullRight', 'rotatePushRight_rotatePullLeft', 'rotatePushTop_rotatePullBottom', 'rotatePushBottom_page', 'rotateFoldLeft_moveFromRightFade', 'rotateFoldRight_moveFromLeftFade', 'rotateFoldTop_moveFromBottomFade', 'rotateFoldBottom_moveFromTopFade', 'moveToRightFade_rotateUnfoldLeft', 'moveToLeftFade_rotateUnfoldRight', 'moveToBottomFade_rotateUnfoldTop', 'moveToTopFade_rotateUnfoldBottom', 'rotateRoomLeftOut_rotateRoomLeftIn', 'rotateRoomRightOut_rotateRoomRightIn', 'rotateRoomTopOut_rotateRoomTopIn', 'rotateRoomBottomOut_rotateRoomBottomIn', 'rotateCubeLeftOut_rotateCubeLeftIn', 'rotateCubeRightOut_rotateCubeRightIn', 'rotateCubeTopOut_rotateCubeTopIn', 'rotateCubeBottomOut_rotateCubeBottomIn', 'rotateCarouselLeftOut_rotateCarouselLeftIn', 'rotateCarouselRightOut_rotateCarouselRightIn', 'rotateCarouselTopOut_rotateCarouselTopIn', 'rotateCarouselBottomOut_rotateCarouselBottomIn', 'rotateSidesOut_rotateSidesInDelay', 'rotateSlideOut_rotateSlideIn', 'random' ]
+    transition: 'moveToLeft_moveFromRight', // String; Transition effect for change active image.; [ 'moveToLeft_moveFromRight', 'moveToRight_moveFromLeft', 'moveToTop_moveFromBottom', 'moveToBottom_moveFromTop', 'fade_moveFromRight', 'fade_moveFromLeft', 'fade_moveFromBottom', 'fade_moveFromTop', 'moveToLeftFade_moveFromRightFade', 'moveToRightFade_moveFromLeftFade', 'moveToTopFade_moveFromBottomFade', 'moveToBottomFade_moveFromTopFade', 'moveToLeftEasing_moveFromRight', 'moveToRightEasing_moveFromLeft', 'moveToTopEasing_moveFromBottom', 'moveToBottomEasing_moveFromTop', 'scaleDown_moveFromRight', 'scaleDown_moveFromLeft', 'scaleDown_moveFromBottom', 'scaleDown_moveFromTop', 'scaleDown_scaleUpDown', 'scaleDownUp_scaleUp', 'moveToLeft_scaleUp', 'moveToRight_scaleUp', 'moveToTop_scaleUp', 'moveToBottom_scaleUp', 'scaleDownCenter_scaleUpCenter', 'rotateRightSideFirst_moveFromRight', 'rotateLeftSideFirst_moveFromLeft', 'rotateTopSideFirst_moveFromTop', 'rotateBottomSideFirst_moveFromBottom', 'flipOutRight_flipInLeft', 'flipOutLeft_flipInRight', 'flipOutTop_flipInBottom', 'flipOutBottom_flipInTop', 'rotateFall_scaleUp', 'rotateOutNewspaper_rotateInNewspaper', 'rotatePushLeft_moveFromRight', 'rotatePushRight_moveFromLeft', 'rotatePushTop_moveFromBottom', 'rotatePushBottom_moveFromTop', 'rotatePushLeft_rotatePullRight', 'rotatePushRight_rotatePullLeft', 'rotatePushTop_rotatePullBottom', 'rotatePushBottom_page', 'rotateFoldLeft_moveFromRightFade', 'rotateFoldRight_moveFromLeftFade', 'rotateFoldTop_moveFromBottomFade', 'rotateFoldBottom_moveFromTopFade', 'moveToRightFade_rotateUnfoldLeft', 'moveToLeftFade_rotateUnfoldRight', 'moveToBottomFade_rotateUnfoldTop', 'moveToTopFade_rotateUnfoldBottom', 'rotateRoomLeftOut_rotateRoomLeftIn', 'rotateRoomRightOut_rotateRoomRightIn', 'rotateRoomTopOut_rotateRoomTopIn', 'rotateRoomBottomOut_rotateRoomBottomIn', 'rotateCubeLeftOut_rotateCubeLeftIn', 'rotateCubeRightOut_rotateCubeRightIn', 'rotateCubeTopOut_rotateCubeTopIn', 'rotateCubeBottomOut_rotateCubeBottomIn', 'rotateCarouselLeftOut_rotateCarouselLeftIn', 'rotateCarouselRightOut_rotateCarouselRightIn', 'rotateCarouselTopOut_rotateCarouselTopIn', 'rotateCarouselBottomOut_rotateCarouselBottomIn', 'rotateSidesOut_rotateSidesInDelay', 'rotateSlideOut_rotateSlideIn', 'random' ]
     transitionBackward: 'auto', // String; Transition effect for change active image(when user selected one of previous images).; [ 'auto', 'moveToLeft_moveFromRight', 'moveToRight_moveFromLeft', 'moveToTop_moveFromBottom', 'moveToBottom_moveFromTop', 'fade_moveFromRight', 'fade_moveFromLeft', 'fade_moveFromBottom', 'fade_moveFromTop', 'moveToLeftFade_moveFromRightFade', 'moveToRightFade_moveFromLeftFade', 'moveToTopFade_moveFromBottomFade', 'moveToBottomFade_moveFromTopFade', 'moveToLeftEasing_moveFromRight', 'moveToRightEasing_moveFromLeft', 'moveToTopEasing_moveFromBottom', 'moveToBottomEasing_moveFromTop', 'scaleDown_moveFromRight', 'scaleDown_moveFromLeft', 'scaleDown_moveFromBottom', 'scaleDown_moveFromTop', 'scaleDown_scaleUpDown', 'scaleDownUp_scaleUp', 'moveToLeft_scaleUp', 'moveToRight_scaleUp', 'moveToTop_scaleUp', 'moveToBottom_scaleUp', 'scaleDownCenter_scaleUpCenter', 'rotateRightSideFirst_moveFromRight', 'rotateLeftSideFirst_moveFromLeft', 'rotateTopSideFirst_moveFromTop', 'rotateBottomSideFirst_moveFromBottom', 'flipOutRight_flipInLeft', 'flipOutLeft_flipInRight', 'flipOutTop_flipInBottom', 'flipOutBottom_flipInTop', 'rotateFall_scaleUp', 'rotateOutNewspaper_rotateInNewspaper', 'rotatePushLeft_moveFromRight', 'rotatePushRight_moveFromLeft', 'rotatePushTop_moveFromBottom', 'rotatePushBottom_moveFromTop', 'rotatePushLeft_rotatePullRight', 'rotatePushRight_rotatePullLeft', 'rotatePushTop_rotatePullBottom', 'rotatePushBottom_page', 'rotateFoldLeft_moveFromRightFade', 'rotateFoldRight_moveFromLeftFade', 'rotateFoldTop_moveFromBottomFade', 'rotateFoldBottom_moveFromTopFade', 'moveToRightFade_rotateUnfoldLeft', 'moveToLeftFade_rotateUnfoldRight', 'moveToBottomFade_rotateUnfoldTop', 'moveToTopFade_rotateUnfoldBottom', 'rotateRoomLeftOut_rotateRoomLeftIn', 'rotateRoomRightOut_rotateRoomRightIn', 'rotateRoomTopOut_rotateRoomTopIn', 'rotateRoomBottomOut_rotateRoomBottomIn', 'rotateCubeLeftOut_rotateCubeLeftIn', 'rotateCubeRightOut_rotateCubeRightIn', 'rotateCubeTopOut_rotateCubeTopIn', 'rotateCubeBottomOut_rotateCubeBottomIn', 'rotateCarouselLeftOut_rotateCarouselLeftIn', 'rotateCarouselRightOut_rotateCarouselRightIn', 'rotateCarouselTopOut_rotateCarouselTopIn', 'rotateCarouselBottomOut_rotateCarouselBottomIn', 'rotateSidesOut_rotateSidesInDelay', 'rotateSlideOut_rotateSlideIn', 'random' ]
     transitionCols: 1, // Number; Number of columns in the image divided into columns.; ; [ 1, 2, 3, 4, 5, 6 ]
     transitionDuration: '0.7s', // String; Duration of transition between photos.; [ '0.2s', '0.5s', '1s' ] 
@@ -444,7 +448,7 @@ var jLoader = ( function( overlay ) {
         } );
      };
 } )( overlay );
-var historyPushState = function() {
+var historyPushState = ( function() {
     var $ = jQuery;
     var $title = $( 'title' );
     
@@ -456,7 +460,7 @@ var historyPushState = function() {
         }, options );
         window.history.pushState( options.stateObj, options.title, document.location.href.split('#')[0] + '#' + options.path );
     };
-};
+} )();
 var isInternetExplorer = function() {
     var rv = false;
 
@@ -822,6 +826,9 @@ var Thumbnails = ( function( jLoader ) {
         this.zoom = jGallery.zoom;
         this.$iconToggleThumbsVisibility = this.zoom.$container.find( '.minimalize-thumbnails' );
         this.jGallery = jGallery;
+        if ( this.jGallery.options.swipeEvents ) {
+            this.initSwipeEvents();
+        }
     };
 
     Thumbnails.prototype = {
@@ -847,6 +854,57 @@ var Thumbnails = ( function( jLoader ) {
             if ( this.jGallery.options.thumbType === 'number' ) {
                 this._initNumber();
             }
+        },
+        
+        initSwipeEvents: function() {
+            if ( ! $.fn.swipe ) {
+                return;
+            }
+            
+            var $container = this.$container;
+            var self = this;
+            var canScrollToPrev;
+            var canScrollToNext;
+            var translate = function( distance ) {
+                if ( self.isVertical() || self.isFullScreen() ) {
+                    $container.css( {
+                        "-webkit-transform": 'translateY(' + distance +  'px)',
+                        "transform": 'translateY(' + distance +  'px)'
+                    } );  
+                }
+                else {    
+                    $container.css( {
+                        "-webkit-transform": 'translateX(' + distance +  'px)',
+                        "transform": 'translateX(' + distance +  'px)'
+                    } );              
+                }
+            };
+            
+            $container.swipe( {
+                swipeStatus: function ( event, phase, direction, distance ) {
+                    if ( phase === "start" ) {
+                        canScrollToPrev = self.canScrollToPrev();
+                        canScrollToNext = self.canScrollToNext();
+                    } 
+                    else if ( phase === "move" ) {
+                        if ( canScrollToNext && ( direction === "left" || direction === "down" ) ) {
+                            translate( - distance );
+                        } else if ( canScrollToPrev ) {
+                            translate( distance );
+                        }
+                    } else if ( phase === "end" ) {
+                        if ( canScrollToNext && ( direction === "left" || direction === "down" ) ) {
+                            self._scrollToNext();
+                            translate( 0 );
+                        } else if ( canScrollToPrev ) {
+                            self._scrollToPrev();
+                            translate( 0 );
+                        }
+                    } else {
+                        translate( 0 );
+                    }
+                }
+            } );
         },
 
         show: function() {
@@ -917,12 +975,8 @@ var Thumbnails = ( function( jLoader ) {
         },
 
         refreshNavigation: function() {
-            if ( this.isVertical() || this.isFullScreen() ) {
-                this._refreshVerticalNavigation();
-            }
-            else if ( this.isHorizontal() ) {
-                this._refreshHorizontalNavigation();
-            }
+            this.canScrollToPrev() ? this.$btnPrev.addClass( 'visible' ) : this.$btnPrev.removeClass( 'visible' );
+            this.canScrollToNext() ? this.$btnNext.addClass( 'visible' ) : this.$btnNext.removeClass( 'visible' );
         },
 
         center: function( $a ) {
@@ -973,7 +1027,7 @@ var Thumbnails = ( function( jLoader ) {
             if ( this.isHorizontal() ) {
                 this.getElement().addClass( 'jgallery-thumbnails-vertical' ).removeClass( 'jgallery-thumbnails-horizontal' );                    
             }
-            this._refreshVerticalNavigation();
+            this.refreshNavigation();
         },
 
         setActiveAlbum: function( $album ) {
@@ -1076,18 +1130,26 @@ var Thumbnails = ( function( jLoader ) {
                 self.refreshNavigation();
             } );
         },
-
-        _refreshHorizontalNavigation: function() {
-            var $album = this.getElement().find( 'div.active' );
-            var intThumbsWidth = this.jGallery.options.thumbType === 'image' ? this.$a.outerWidth( true ) * $album.find( 'img' ).length : this.$a.outerWidth( true ) * $album.find( 'a' ).length;
-
-            this.$container.scrollLeft() > 0 ? this.$btnPrev.addClass( 'visible' ) : this.$btnPrev.removeClass( 'visible' );
-            intThumbsWidth > this.$container.width() + this.$container.scrollLeft() ? this.$btnNext.addClass( 'visible' ) : this.$btnNext.removeClass( 'visible' );
+        
+        canScrollToPrev: function() {
+            if ( this.isVertical() || this.isFullScreen() ) {
+                return this.$container.scrollTop() > 0;
+            }
+            else {
+                return this.$container.scrollLeft() > 0;
+            }
         },
-
-        _refreshVerticalNavigation: function() {
-            this.$container.scrollTop() > 0 ? this.$btnPrev.addClass( 'visible' ) : this.$btnPrev.removeClass( 'visible' );
-            this.$container.find( '.jgallery-container-inner' ).height() > this.$container.height() + this.$container.scrollTop() ? this.$btnNext.addClass( 'visible' ) : this.$btnNext.removeClass( 'visible' );
+        
+        canScrollToNext: function() {
+            if ( this.isVertical() || this.isFullScreen() ) {
+                return this.$container.find( '.jgallery-container-inner' ).height() > this.$container.height() + this.$container.scrollTop();
+            }
+            else {
+                var $album = this.getElement().find( 'div.active' );
+                var intThumbsWidth = this.jGallery.options.thumbType === 'image' ? this.$a.outerWidth( true ) * $album.find( 'img' ).length : this.$a.outerWidth( true ) * $album.find( 'a' ).length;
+                
+                return intThumbsWidth > this.$container.width() + this.$container.scrollLeft();
+            }
         },
 
         _scrollToPrev: function() {
@@ -1271,8 +1333,6 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
         this.$title = this.$container.find( '.nav-bottom > .title' );
         this.$btnPrev = this.$container.children( '.prev' );
         this.$btnNext = this.$container.children( '.next' );
-        this.$left = this.$container.find( '.left' );
-        this.$right = this.$container.find( '.right' );
         this.thumbnails = jGallery.thumbnails;
         this.$jGallery = jGallery.$element;
         this.jGallery = jGallery;
@@ -1291,6 +1351,10 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             $( this ).toggleClass( 'expanded' );
         } );
         this.update();
+        this.enableDrag();
+        if ( this.jGallery.options.swipeEvents ) {
+            this.initSwipeEvents();
+        }
     };
 
     Zoom.prototype = {
@@ -1306,6 +1370,50 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
                 this.jGallery.options.showEffect = transition[ 1 ];
             }
             this.initAdvancedAnimation();  
+        },
+        
+        initSwipeEvents: function() {
+            if ( ! $.fn.swipe ) {
+                return;
+            }
+            
+            var $zoom = this.$element;
+            var self = this;
+            var draggedHorizontal;
+            var translate = function( distance ) {
+                $zoom.css( {
+                    "-webkit-transform": 'translateX(' + distance +  'px)',
+                    "transform": 'translateX(' + distance +  'px)'
+                } );
+            };
+            
+            $zoom.swipe( {
+                swipeStatus: function ( event, phase, direction, distance ) {
+                    if ( phase === 'start' ) {
+                        draggedHorizontal = self.draggedHorizontal;
+                    }
+                    if ( ! draggedHorizontal ) {
+                        return;
+                    }
+                    if ( phase === "move" && ( direction === "left" || direction === "right" ) ) {
+                        if ( direction === "left" ) {
+                            translate( - distance );
+                        } else if ( direction === "right" ) {
+                            translate( distance );
+                        }
+                    } else if ( phase === "cancel" ) {
+                        translate( 0 );
+                    } else if ( phase === "end" ) {
+                        if ( direction === "left" ) {
+                            self.showNextPhoto();
+                            translate( 0 );
+                        } else if ( direction === "right" ) {
+                            self.showPrevPhoto();
+                            translate( 0 );
+                        }
+                    }
+                }
+            } );
         },
 
         initAdvancedAnimation: function() {
@@ -1325,6 +1433,42 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
         setThumbnails: function( thumbnails ) {
             this.thumbnails = thumbnails;
         },
+        
+        showDragNav: function() {
+            this.$dragNav.removeClass( 'hide' ).addClass( 'show' );  
+        },
+        
+        hideDragNav: function() {
+            this.$dragNav.removeClass( 'show' ).addClass( 'hide' );  
+        },
+        
+        refreshDragNavVisibility: function() {
+            var $img = this.$element.find( 'img.active' );
+            
+            if ( $img.width() <= this.$element.outerWidth() && $img.height() <= this.$element.outerHeight() ) {
+                this.hideDragNav();
+            }
+            else {
+                this.showDragNav();
+            }
+        },
+        
+        refreshDragged: function() {
+            var $img = this.$element.find( 'img.active' );
+            
+            if ( $img.width() <= this.$element.outerWidth() ) {
+                this.draggedHorizontal = true;
+            }
+            else {
+                this.draggedHorizontal = false;
+            }            
+            if ( $img.height() <= this.$element.outerHeight() ) {
+                this.draggedVertical = true;
+            }
+            else {
+                this.draggedVertical = false;
+            }
+        },
 
         enableDrag: function() {
             if ( ! this.jGallery.options.draggableZoom ) {
@@ -1333,6 +1477,8 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             var self = this;
             var startMarginLeft;
             var startMarginTop;
+            var draggedHorizontal;
+            var draggedVertical;
 
             var startDrag = function( event ) {
                 var startX = event.pageX;
@@ -1345,21 +1491,24 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
                     mousemove: function( event ) { 
                         drag( event.pageX - startX, event.pageY - startY );
                     },
+                    touchmove: function( event ) { 
+                        event = event.originalEvent.touches[0];                        
+                        drag( event.pageX - startX, event.pageY - startY );
+                    },
                     mouseleave: function() {
+                        stopDrag();
+                    },
+                    touchend: function() {
                         stopDrag();
                     }
                 } );
-                if ( self.jGallery.options.zoomSize === 'fill' ) {
-                    self.$dragNav.removeClass( 'hide' ).addClass( 'show' );
-                }
                 drag( 0, 0 );
             };
 
             var stopDrag = function() {
-                self.$element.off( 'mousemove' );
-                if ( self.jGallery.options.zoomSize === 'fill' ) {
-                    self.$dragNav.removeClass( 'show' ).addClass( 'hide' );
-                }
+                self.$element.off( 'mousemove touchmove' );
+                self.draggedHorizontal = draggedHorizontal;
+                self.draggedVertical = draggedVertical;
             };
 
             var drag = function( x, y ) {
@@ -1367,34 +1516,45 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
                 var marginTop = parseFloat( parseFloat( startMarginTop ) + y );
                 var $img = self.$element.find( 'img.active' );
                 var $first = $img.eq( 0 );
+                var firstPosition = $first.position();
+                var firstPositionLeft = firstPosition.left;
+                var firstPositionTop = firstPosition.top;
                 var $last = $img.eq( -1 );
+                var lastPosition = $last.position();
                 var $lastParent = $last.parent();
+                var $dragNavCrop = self.$dragNavCrop;
+                var dragNavCropPosition = $dragNavCrop.position();
 
-                if ( $first.position().left + marginLeft < 0 && $last.position().left + $last.width() + marginLeft > $lastParent.outerWidth() ) {
+                if ( firstPositionLeft + marginLeft < 0 && lastPosition.left + $last.width() + marginLeft > $lastParent.outerWidth() ) {
                     $img.css( {
                         'margin-left': marginLeft
                     } );
-                    self.$dragNavCrop.css( {
-                        left: - ( $first.position().left + marginLeft ) / $img.width() * 100 + '%'
+                    $dragNavCrop.css( {
+                        left: - ( firstPositionLeft + marginLeft ) / $img.width() * 100 + '%'
                     } );
+                    draggedHorizontal = false;
                 }
-                if ( $first.position().top + marginTop < 0 && $last.position().top + $last.height() + marginTop > $lastParent.outerHeight() ) {
+                else {
+                    draggedHorizontal = true;
+                }
+                if ( firstPositionTop + marginTop < 0 && lastPosition.top + $last.height() + marginTop > $lastParent.outerHeight() ) {
                     $img.css( {
                         'margin-top': marginTop
                     } );
-                    self.$dragNavCrop.css( {
-                        top: - ( $first.position().top + marginTop ) / $img.height() * 100 + '%'
+                    $dragNavCrop.css( {
+                        top: - ( firstPositionTop + marginTop ) / $img.height() * 100 + '%'
                     } );
+                    draggedVertical = false;
+                }
+                else {
+                    draggedVertical = true;                    
                 }
                 self.$dragNavCropImg.css( {
-                    'margin-left': - self.$dragNavCrop.position().left,
-                    'margin-top': - self.$dragNavCrop.position().top
+                    'margin-left': - dragNavCropPosition.left,
+                    'margin-top': - dragNavCropPosition.top
                 } );
             };
 
-            if ( self.jGallery.options.zoomSize === 'original' ) {
-                self.$dragNav.removeClass( 'hide' ).addClass( 'show' );
-            }
             this.refreshDragNavCropSize();
             this.$element.css( 'cursor', 'move' ).on( {
                 mousedown: function( event ) {
@@ -1402,26 +1562,23 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
                     startDrag( event );
                     self.slideshowPause();
                 },
+                touchstart: function( event ) {
+                    event.preventDefault();
+                    startDrag( event.originalEvent.touches[0] );
+                    self.slideshowPause();
+                },
                 mouseup: function() {
+                    stopDrag();
+                },
+                touchend: function() {
                     stopDrag();
                 }
             } );
-            this.$left.add( this.$right ).hide();
-        },
-
-        disableDrag: function() {
-            if ( ! this.jGallery.options.draggableZoom ) {
-                return;
-            }
-            this.$dragNav.removeClass( 'show' ).addClass( 'hide' );
-            this.$element.css( 'cursor', 'default' );
-            this.$element.off();
-            this.$left.add( this.$right ).show(); 
         },
 
         refreshContainerSize: function () {
             var intNavBottomHeight = this.jGallery.isSlider() ? 0 : this.$container.find( '.nav-bottom' ).outerHeight();
-            var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.hidden' );
+            var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.inactive' );
             var strThumbnailsPosition = isThumbnailsVisible ? this.jGallery.options.thumbnailsPosition : '';
 
             this.$container.css( {
@@ -1449,6 +1606,11 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             }
             else {
                 this.fit();
+            }
+            if ( this.jGallery.options.draggableZoom ) {
+                this.refreshDragNavCropSize();
+                this.refreshDragNavVisibility();
+                this.refreshDragged();
             }
             this.$element.addClass( 'visible' );
         },
@@ -1489,24 +1651,21 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
         changeSize: function() {
             if ( this.jGallery.options.zoomSize === 'fit' ) {
                 this.jGallery.options.zoomSize = 'fill';
-                this.fill();
             }
             else if ( this.jGallery.options.zoomSize === 'fill' ) {
                 var $img = this.$element.find( 'img.active' ).eq( 0 );
 
                 if ( this.$element.outerWidth().toString() === $img.attr( 'data-width' ) ) {
                     this.jGallery.options.zoomSize = 'fit';
-                    this.fit(); 
                 }
                 else {        
-                    this.jGallery.options.zoomSize = 'original';
-                    this.original();         
+                    this.jGallery.options.zoomSize = 'original';        
                 }
             }
             else if ( this.jGallery.options.zoomSize === 'original' ) {
                 this.jGallery.options.zoomSize = 'fit';
-                this.fit();
             }
+            this.refreshSize();
             this.$container.attr( 'data-size', this.jGallery.options.zoomSize );
         },
 
@@ -1518,11 +1677,9 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             this.setImgSizeForOriginal( this.$element.find( '.pt-page.init img' ) );
             if ( $img.attr( 'data-width' ) <= this.$element.outerWidth() && $img.attr( 'data-height' ) <= this.$element.outerHeight() ) {
                 this.$resize.addClass( 'fa-search-plus' ).removeClass( 'fa-search-minus' );  
-                this.disableDrag();
             }
             else {
                 this.$resize.addClass( 'fa-search-minus' ).removeClass( 'fa-search-plus' );
-                this.enableDrag();
             }
         },
 
@@ -1533,7 +1690,6 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             this.setImgSizeForFit( $img.filter( '.active' ) );
             this.setImgSizeForFit( $img.filter( ':not( .active )' ) );
             this.$resize.addClass( 'fa-search-plus' ).removeClass( 'fa-search-minus' );
-            this.disableDrag();
         },
 
         fill: function() {
@@ -1548,7 +1704,6 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             else {
                 this.$resize.addClass( 'fa-search-minus' ).removeClass( 'fa-search-plus' );
             }
-            this.enableDrag();
         },
 
         setImgSizeForOriginal: function( $img ) {
@@ -1568,7 +1723,7 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
 
         setImgSizeForFit: function( $img ) {
             var intNavBottomHeight = this.jGallery.isSlider() ? 0 : this.$container.find( '.nav-bottom' ).outerHeight();
-            var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.hidden' );
+            var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.inactive' );
 
             $img.css( {
                 'width': 'auto',
@@ -1598,7 +1753,7 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
 
         setImgSizeForFill: function( $img ) {
             var intNavBottomHeight = this.jGallery.isSlider() ? 0 : this.$container.find( '.nav-bottom' ).outerHeight();
-            var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.hidden' );
+            var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.inactive' );
 
             $img.css( {
                 'width': 'auto',
@@ -1637,11 +1792,8 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
         refreshNav: function() {
             var $thumbActive = this.thumbnails.getElement().find( 'div.active a.active' );
 
-            $thumbActive.prev( 'a' ).length === 1 ? this.$btnPrev.add( this.$container.children( '.left' ) ).removeClass( 'hidden' ) : this.$btnPrev.add( this.$container.children( '.left' ) ).addClass( 'hidden' );
-            $thumbActive.next( 'a' ).length === 1 ? this.$btnNext.add( this.$container.children( '.right' ) ).removeClass( 'hidden' ) : this.$btnNext.add( this.$container.children( '.right' ) ).addClass( 'hidden' );
-            if ( this.$element.is( '.is-link' ) ) {
-                this.$container.children( '.left, .right' ).addClass( 'hidden' );
-            }
+            $thumbActive.prev( 'a' ).length === 1 ? this.$btnPrev.removeClass( 'hidden' ) : this.$btnPrev.addClass( 'hidden' );
+            $thumbActive.next( 'a' ).length === 1 ? this.$btnNext.removeClass( 'hidden' ) : this.$btnNext.addClass( 'hidden' );
         },
 
         slideshowStop: function () {
@@ -2424,6 +2576,7 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
                     options.success();
                 }
             } );
+            this.refreshCssClassJGalleryMobile();
         },
 
         isSlider: function() {
@@ -2431,7 +2584,14 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
         },
 
         windowOnResize: function( event ) {
-            event.data.jGallery.refreshDimensions();
+            var jGallery = event.data.jGallery;
+            
+            jGallery.refreshThumbnailsVisibility();
+            jGallery.refreshCssClassJGalleryMobile();
+        },
+        
+        refreshCssClassJGalleryMobile: function() {
+            this.isMobile() ? this.$jgallery.addClass( 'jgallery-mobile' ) : this.$jgallery.removeClass( 'jgallery-mobile' );
         },
 
         refreshDimensions: function() {
@@ -2460,6 +2620,37 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
             }
             return intCanvasWidth / intCanvasHeight;
         },
+        
+        hideThumbnailsBar: function() {
+            this.thumbnails.getElement().addClass( 'inactive' );
+            this.zoom.$container.find( '.minimalize-thumbnails' ).hide();
+        },
+        
+        showThumbnailsBar: function() {
+            this.thumbnails.getElement().removeClass( 'inactive' );
+            this.options.canMinimalizeThumbnails && this.options.thumbnails ? this.zoom.$container.find( '.minimalize-thumbnails' ).show() : this.zoom.$container.find( '.minimalize-thumbnails' ).hide();
+        },
+        
+        refreshThumbnailsVisibility: function() {
+            if ( ! this.isMobile() ) {
+                if ( ! this.options.thumbnails ) {
+                    this.hideThumbnailsBar();
+                }
+                else {
+                    this.showThumbnailsBar();
+                } 
+            }
+            else {
+                if( this.options.thumbnailsHideOnMobile ) {
+                    this.hideThumbnailsBar();
+                }
+            } 
+            this.refreshDimensions();
+        },
+        
+        isMobile: function() {
+            return $window.width() <= this.options.maxMobileWidth;
+        },
 
         setUserOptions: function() {
             var options = this.options;
@@ -2472,22 +2663,12 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
             this.options.canChangeMode ? this.zoom.$changeMode.show() : this.zoom.$changeMode.hide();
             this.options.mode === 'standard' ? this.zoom.$changeMode.removeClass( 'fa-compress' ).addClass( 'fa-expand' ) : this.zoom.$changeMode.removeClass( 'fa-expand' ).addClass( 'fa-compress' );
             this.options.canClose ? this.zoom.$container.find( '.jgallery-close' ).show() : this.zoom.$container.find( '.jgallery-close' ).hide();
-            if ( ! this.options.thumbnails ) {
-                this.thumbnails.getElement().addClass( 'inactive' );
-                this.options.thumbnailsPosition = '';
-            }
-            else {
-                this.thumbnails.getElement().removeClass( 'inactive' );
-                if ( this.options.thumbnailsPosition === '' ) {
-                    this.options.thumbnailsPosition = defaults.thumbnailsPosition;
-                }                    
-            }
+            this.refreshThumbnailsVisibility();
             this.options.slideshow ? this.zoom.$slideshow.show() : this.zoom.$slideshow.hide();
             this.options.slideshow && this.options.slideshowCanRandom && this.options.slideshowAutostart ? this.zoom.$random.show(): this.zoom.$random.hide();
             this.options.slideshow && this.options.slideshowCanRandom && this.options.slideshowRandom ? this.zoom.$random.addClass( 'active' ) : this.zoom.$random.removeClass( 'active' );
 
             this.options.thumbnailsFullScreen && this.options.thumbnails ? this.zoom.$container.find( '.full-screen' ).show() : this.zoom.$container.find( '.full-screen' ).hide();
-            this.options.canMinimalizeThumbnails && this.options.thumbnails ? this.zoom.$container.find( '.minimalize-thumbnails' ).show() : this.zoom.$container.find( '.minimalize-thumbnails' ).hide();
             this.options.hideThumbnailsOnInit && this.options.thumbnails ? this.thumbnails.hide() : this.thumbnails.show();
             this.options.titleExpanded ? this.zoom.$title.addClass( 'expanded' ) : this.zoom.$title.removeClass( 'expanded' );
             this.setColours( {
@@ -2499,6 +2680,7 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
                 width: width,
                 height: height
             } );
+            this.options.draggableZoomHideNavigationOnMobile ? this.$jgallery.addClass( 'jgallery-hide-draggable-navigation-on-mobile' ) : this.$jgallery.removeClass( 'jgallery-hide-draggable-navigation-on-mobile' );
         },
 
         refreshAttrClasses: function() {

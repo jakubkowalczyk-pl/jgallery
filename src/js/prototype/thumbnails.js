@@ -18,6 +18,9 @@ var Thumbnails = ( function( jLoader ) {
         this.zoom = jGallery.zoom;
         this.$iconToggleThumbsVisibility = this.zoom.$container.find( '.minimalize-thumbnails' );
         this.jGallery = jGallery;
+        if ( this.jGallery.options.swipeEvents ) {
+            this.initSwipeEvents();
+        }
     };
 
     Thumbnails.prototype = {
@@ -43,6 +46,57 @@ var Thumbnails = ( function( jLoader ) {
             if ( this.jGallery.options.thumbType === 'number' ) {
                 this._initNumber();
             }
+        },
+        
+        initSwipeEvents: function() {
+            if ( ! $.fn.swipe ) {
+                return;
+            }
+            
+            var $container = this.$container;
+            var self = this;
+            var canScrollToPrev;
+            var canScrollToNext;
+            var translate = function( distance ) {
+                if ( self.isVertical() || self.isFullScreen() ) {
+                    $container.css( {
+                        "-webkit-transform": 'translateY(' + distance +  'px)',
+                        "transform": 'translateY(' + distance +  'px)'
+                    } );  
+                }
+                else {    
+                    $container.css( {
+                        "-webkit-transform": 'translateX(' + distance +  'px)',
+                        "transform": 'translateX(' + distance +  'px)'
+                    } );              
+                }
+            };
+            
+            $container.swipe( {
+                swipeStatus: function ( event, phase, direction, distance ) {
+                    if ( phase === "start" ) {
+                        canScrollToPrev = self.canScrollToPrev();
+                        canScrollToNext = self.canScrollToNext();
+                    } 
+                    else if ( phase === "move" ) {
+                        if ( canScrollToNext && ( direction === "left" || direction === "down" ) ) {
+                            translate( - distance );
+                        } else if ( canScrollToPrev ) {
+                            translate( distance );
+                        }
+                    } else if ( phase === "end" ) {
+                        if ( canScrollToNext && ( direction === "left" || direction === "down" ) ) {
+                            self._scrollToNext();
+                            translate( 0 );
+                        } else if ( canScrollToPrev ) {
+                            self._scrollToPrev();
+                            translate( 0 );
+                        }
+                    } else {
+                        translate( 0 );
+                    }
+                }
+            } );
         },
 
         show: function() {
@@ -113,12 +167,8 @@ var Thumbnails = ( function( jLoader ) {
         },
 
         refreshNavigation: function() {
-            if ( this.isVertical() || this.isFullScreen() ) {
-                this._refreshVerticalNavigation();
-            }
-            else if ( this.isHorizontal() ) {
-                this._refreshHorizontalNavigation();
-            }
+            this.canScrollToPrev() ? this.$btnPrev.addClass( 'visible' ) : this.$btnPrev.removeClass( 'visible' );
+            this.canScrollToNext() ? this.$btnNext.addClass( 'visible' ) : this.$btnNext.removeClass( 'visible' );
         },
 
         center: function( $a ) {
@@ -169,7 +219,7 @@ var Thumbnails = ( function( jLoader ) {
             if ( this.isHorizontal() ) {
                 this.getElement().addClass( 'jgallery-thumbnails-vertical' ).removeClass( 'jgallery-thumbnails-horizontal' );                    
             }
-            this._refreshVerticalNavigation();
+            this.refreshNavigation();
         },
 
         setActiveAlbum: function( $album ) {
@@ -272,18 +322,26 @@ var Thumbnails = ( function( jLoader ) {
                 self.refreshNavigation();
             } );
         },
-
-        _refreshHorizontalNavigation: function() {
-            var $album = this.getElement().find( 'div.active' );
-            var intThumbsWidth = this.jGallery.options.thumbType === 'image' ? this.$a.outerWidth( true ) * $album.find( 'img' ).length : this.$a.outerWidth( true ) * $album.find( 'a' ).length;
-
-            this.$container.scrollLeft() > 0 ? this.$btnPrev.addClass( 'visible' ) : this.$btnPrev.removeClass( 'visible' );
-            intThumbsWidth > this.$container.width() + this.$container.scrollLeft() ? this.$btnNext.addClass( 'visible' ) : this.$btnNext.removeClass( 'visible' );
+        
+        canScrollToPrev: function() {
+            if ( this.isVertical() || this.isFullScreen() ) {
+                return this.$container.scrollTop() > 0;
+            }
+            else {
+                return this.$container.scrollLeft() > 0;
+            }
         },
-
-        _refreshVerticalNavigation: function() {
-            this.$container.scrollTop() > 0 ? this.$btnPrev.addClass( 'visible' ) : this.$btnPrev.removeClass( 'visible' );
-            this.$container.find( '.jgallery-container-inner' ).height() > this.$container.height() + this.$container.scrollTop() ? this.$btnNext.addClass( 'visible' ) : this.$btnNext.removeClass( 'visible' );
+        
+        canScrollToNext: function() {
+            if ( this.isVertical() || this.isFullScreen() ) {
+                return this.$container.find( '.jgallery-container-inner' ).height() > this.$container.height() + this.$container.scrollTop();
+            }
+            else {
+                var $album = this.getElement().find( 'div.active' );
+                var intThumbsWidth = this.jGallery.options.thumbType === 'image' ? this.$a.outerWidth( true ) * $album.find( 'img' ).length : this.$a.outerWidth( true ) * $album.find( 'a' ).length;
+                
+                return intThumbsWidth > this.$container.width() + this.$container.scrollLeft();
+            }
         },
 
         _scrollToPrev: function() {
