@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8" />
+    <title>Slider</title>
+    <link rel="stylesheet" type="text/css" media="all" href="css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="css/jgallery.min.css?v=1.5.0" />
+    <script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/jgallery.min.js?v=1.5.0"></script>
+    <script type="text/javascript" src="js/touchswipe.min.js"></script>
+</head>
+<body style="width: 900px; margin: 100px auto; height: auto;">
+<div id="gallery">
+    <img src="images/large/1.jpg" alt="Photo 1" />
+    <img src="images/large/2.jpg" alt="Photo 2" />
+    <img src="images/large/3.jpg" alt="Photo 3" />
+</div>
+<script type="text/javascript">
+$( function() {
+    $( '#gallery' ).jGallery( { mode: 'slider' } );
+} );
+</script>
+</body>
+</html>
