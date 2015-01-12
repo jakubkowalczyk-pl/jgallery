@@ -691,6 +691,9 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
                 .jgallery[data-jgallery-id="' + this.intId + '"] .overlayContainer .imageLoaderPositionAbsolute:after {\
                   border-color: rgba(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ', .5 );\
                 }\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails .overlayContainer .overlay {\
+                  background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
+                }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails-horizontal .prev {\
                   background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
                 }\

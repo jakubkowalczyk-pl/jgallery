@@ -1,10 +1,10 @@
 /*!
-* jGallery v1.5.0
+* jgallery v1.5.1
 * http://jgallery.jakubkowalczyk.pl/
 *
 * Released under the MIT license
 *
-* Date: 2014-12-18
+* Date: 2015-01-12
 */
 ( function() {
     "use strict";
@@ -256,7 +256,6 @@ var outerHtml = function(){
 };
 var overlay = ( function() {
     var $ = jQuery;
-    var $html = $( 'html' );
     
     return function( options ) {
         var defaults = {
@@ -264,6 +263,9 @@ var overlay = ( function() {
             'hide': false,
             'showLoader': false,
             'hideLoader': false,
+            'showProgress': false,
+            'hideProgress': false,
+            'resetProgress': false,
             'fadeIn': true,
             'fadeOut': true,
             'fadeInLoader': true,
@@ -276,22 +278,9 @@ var overlay = ( function() {
                 $this = $( this ),
                 $overlay,
                 $imageLoader,
+                $progress,
+                $spinner,
                 boolInitialized = $this.is( '.overlayContainer:has(.overlay)' ),
-                setImageLoaderPosition = function() {
-                    var
-                        top = Math.max( $this.offset().top, $( 'body, html' ).scrollTop() ),
-                        bottom = Math.min( $this.offset().top + $this.outerHeight(), $( 'body, html' ).scrollTop() + $( window ).height() ),
-                        center = top + ( bottom - top ) / 2 - $this.offset().top;
-                    $imageLoader.css( {
-                        'top': center + 'px'
-                    } );
-                },
-                setOverlayWidthAndHeight = function() {
-                    $this.children( '.overlay' ).css( {
-                        width: $this.outerWidth(),
-                        height: $this.is( 'body' ) ? $html.outerHeight() : $this.outerHeight()
-                    } );
-                },
                 showOverlay = function() {
                     options.fadeIn ? $overlay.fadeIn( 500 ) : $overlay.show();
                 },
@@ -304,15 +293,6 @@ var overlay = ( function() {
                 hideLoader = function() {
                     options.fadeOutLoader ? $imageLoader.filter( ':visible' ).fadeOut( 500 ) : $imageLoader.filter( ':visible' ).hide();
                 };
-
-            $( window ).scroll( function() {
-                setImageLoaderPosition();
-            } );
-
-            $( window ).resize( function() {
-                setImageLoaderPosition();
-                setOverlayWidthAndHeight();
-            } );
 
             //init
             if ( $this.is( 'table' ) ) {
@@ -327,12 +307,28 @@ var overlay = ( function() {
                     $this = $this.parent();
                 }
                 $this.addClass( 'overlayContainer' );
-                $this.append( '<div class="overlay" style="display: none;"><div class="imageLoaderPositionAbsolute" style="display: none;"></div></div>' );
+                $this.append( '<div class="overlay" style="display: none;"><div class="imageLoaderPositionAbsolute" style="display: none;"><span class="fa fa-spin fa-spinner"></span><span class="progress-value" style="display: none;">0</span></div></div>' );
                 options.afterInit();
             }
 
             $overlay = $this.children( '.overlay' );
             $imageLoader = $this.find( '.imageLoaderPositionAbsolute' );
+            
+            $progress = $imageLoader.find( '.progress-value' );
+            $spinner = $imageLoader.find( '.fa-spinner' );
+            if ( options.resetProgress ) {
+                $progress.html( '0' );
+            }
+            if ( options.showProgress ) {
+                $imageLoader.addClass( 'preloadAll' );
+                $progress.show();
+                $spinner.hide();
+            }
+            else if ( options.hideProgress ) {
+                $imageLoader.removeClass( 'preloadAll' );
+                $progress.hide(); 
+                $spinner.show();               
+            }
 
             $overlay.stop( false, true );
             $imageLoader.stop( false, true );
@@ -348,10 +344,6 @@ var overlay = ( function() {
             else if ( options.hideLoader ) {
                 hideLoader();
             }
-
-            setImageLoaderPosition();
-
-            setOverlayWidthAndHeight();
             //endinit
         } );
     };
@@ -1193,10 +1185,11 @@ var Thumbnails = ( function( jLoader ) {
     
     return Thumbnails;
 } )( jLoader );
-var ThumbnailsGenerator = ( function( outerHtml ) {
+var ThumbnailsGenerator = ( function( outerHtml, jLoader ) {
     var $ = jQuery;
     
     $.fn.outerHtml = outerHtml;
+    $.fn.jLoader = jLoader;
     
     var ThumbnailsGenerator = function( jGallery, options ) {
         this.options = $.extend( {}, {
@@ -1256,14 +1249,11 @@ var ThumbnailsGenerator = ( function( outerHtml ) {
         },
 
         insertImage: function( $this, $container ) {
-            var $a;
+            var $a = $();
             var $parent;
             
             if ( $this.is( 'a' ) ) {
-                $container.append( '<a href="' + $this.attr( 'href' ) + '">' + this.generateImgTag( $this.find( 'img' ).eq( 0 ) ).outerHtml() + '</a>' );
-                if ( this.options.thumbsHidden ) {
-                    $container.children( ':last-child' ).addClass( 'hidden' );
-                }
+                $a = $container.append( '<a href="' + $this.attr( 'href' ) + '">' + this.generateImgTag( $this.find( 'img' ).eq( 0 ) ).outerHtml() + '</a>' ).children( ':last-child' );
             }
             else if ( $this.is( 'img' ) ) {
                 $a = $container.append( $( '<a href="' + $this.attr( 'src' ) + '">' + this.generateImgTag( $this ).outerHtml() + '</a>' ) ).children( ':last-child' );
@@ -1275,6 +1265,21 @@ var ThumbnailsGenerator = ( function( outerHtml ) {
                     }
                 }
             }
+            $a.jLoader( {
+                start: function() {
+                    $a.overlay( {
+                        fadeIn: false,
+                        fadeOut: false,
+                        show: true,
+                        showLoader: true
+                    } );
+                },
+                success: function() {
+                    $a.overlay( {
+                        hide: true
+                    } );
+                }
+            } );
             $container.children( ':last-child' ).attr( 'data-jgallery-photo-id', this.intI++ ).attr( 'data-jgallery-number', this.intNo++ );
         },
 
@@ -1319,7 +1324,7 @@ var ThumbnailsGenerator = ( function( outerHtml ) {
     };
     
     return ThumbnailsGenerator;
-} )( outerHtml );
+} )( outerHtml, jLoader );
 var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, jGalleryArrayTransitions, jGalleryBackwardTransitions, AdvancedAnimation, IconChangeAlbum ) {
     var $ = jQuery;
     var $body = $( 'body' );
@@ -1964,7 +1969,7 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             }
             if ( ! booIsLoaded || ( self.jGallery.options.preloadAll && ! self.booLoadedAll ) ) {
                 self.booLoadedAll = true;
-                self.$container.overlay( {'show': true, 'showLoader': true} );
+                self.$container.overlay( {'show': true, 'showLoader': true, 'showProgress': self.jGallery.options.preloadAll, 'resetProgress': self.jGallery.options.preloadAll } );
                 self.jGallery.options.beforeLoadPhoto();
                 self.loadPhoto( self.$element, $a, options );
             }
@@ -2015,16 +2020,7 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             $toLoading.jLoader( {
                 interval: 500,
                 skip: '.loaded',
-                start: function() {   
-                    if ( self.jGallery.options.preloadAll ) {
-                        self.$container.find( '.overlay .imageLoaderPositionAbsolute:not(:has(.progress-value))' ).addClass( 'preloadAll' )
-                            .append( '<span class="progress-value"></span>' );
-                        self.$container.find( '.progress-value' ).html( '0' );
-                    }
-                    else {
-                        self.$container.find( '.overlay .imageLoaderPositionAbsolute:not(:has(.fa-spin))' )
-                            .append( '<span class="fa fa-spin fa-spinner"></span>' );                            
-                    }
+                start: function() {
                 },
                 success: function() {
                     $zoom.find( 'img' ).addClass( 'loaded' );
@@ -2881,6 +2877,9 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .overlayContainer .imageLoaderPositionAbsolute:after {\
                   border-color: rgba(' + arrText.r + ',' + arrText.g + ', ' + arrText.b + ', .5 );\
+                }\
+                .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails .overlayContainer .overlay {\
+                  background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\
                 }\
                 .jgallery[data-jgallery-id="' + this.intId + '"] .jgallery-thumbnails-horizontal .prev {\
                   background: rgb(' + arrBgAlt.r + ',' + arrBgAlt.g + ', ' + arrBgAlt.b + ');\

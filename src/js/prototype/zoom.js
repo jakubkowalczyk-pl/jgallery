@@ -642,7 +642,7 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             }
             if ( ! booIsLoaded || ( self.jGallery.options.preloadAll && ! self.booLoadedAll ) ) {
                 self.booLoadedAll = true;
-                self.$container.overlay( {'show': true, 'showLoader': true} );
+                self.$container.overlay( {'show': true, 'showLoader': true, 'showProgress': self.jGallery.options.preloadAll, 'resetProgress': self.jGallery.options.preloadAll } );
                 self.jGallery.options.beforeLoadPhoto();
                 self.loadPhoto( self.$element, $a, options );
             }
@@ -693,16 +693,7 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             $toLoading.jLoader( {
                 interval: 500,
                 skip: '.loaded',
-                start: function() {   
-                    if ( self.jGallery.options.preloadAll ) {
-                        self.$container.find( '.overlay .imageLoaderPositionAbsolute:not(:has(.progress-value))' ).addClass( 'preloadAll' )
-                            .append( '<span class="progress-value"></span>' );
-                        self.$container.find( '.progress-value' ).html( '0' );
-                    }
-                    else {
-                        self.$container.find( '.overlay .imageLoaderPositionAbsolute:not(:has(.fa-spin))' )
-                            .append( '<span class="fa fa-spin fa-spinner"></span>' );                            
-                    }
+                start: function() {
                 },
                 success: function() {
                     $zoom.find( 'img' ).addClass( 'loaded' );

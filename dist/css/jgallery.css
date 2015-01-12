@@ -239,26 +239,30 @@ body {
   color: #fff;
   left: 0;
   top: 0;
+  right: 0;
+  bottom: 0;
   background: center center no-repeat #000000;
   position: absolute;
   z-index: 10000;
 }
 .overlayContainer .imageLoaderPositionAbsolute {
-  width: 60px;
-  height: 60px;
-  line-height: 60px;
-  margin: -30px 0 0 -30px;
   font-size: 60px;
+  width: 1em;
+  height: 1em;
+  line-height: 1em;
+  margin: -0.5em;
   font-weight: bold;
   letter-spacing: -0.02em;
   text-align: center;
+  top: 50%;
+  left: 50%;
   position: absolute;
   z-index: 10001;
 }
 .overlayContainer .imageLoaderPositionAbsolute [class*="fa-"] {
-  width: 60px;
-  height: 60px;
-  line-height: 60px;
+  width: 1em;
+  height: 1em;
+  line-height: 1em;
 }
 .overlayContainer .imageLoaderPositionAbsolute.preloadAll:after {
   border-radius: 1.7em;
@@ -438,6 +442,9 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 }
 .jgallery .jgallery-thumbnails .change-album {
   display: none;
+}
+.jgallery .jgallery-thumbnails .overlayContainer .imageLoaderPositionAbsolute {
+  font-size: 30px;
 }
 .jgallery .jgallery-thumbnails-horizontal {
   left: 0;

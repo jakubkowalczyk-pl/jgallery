@@ -1,6 +1,5 @@
 var overlay = ( function() {
     var $ = jQuery;
-    var $html = $( 'html' );
     
     return function( options ) {
         var defaults = {
@@ -8,6 +7,9 @@ var overlay = ( function() {
             'hide': false,
             'showLoader': false,
             'hideLoader': false,
+            'showProgress': false,
+            'hideProgress': false,
+            'resetProgress': false,
             'fadeIn': true,
             'fadeOut': true,
             'fadeInLoader': true,
@@ -20,22 +22,9 @@ var overlay = ( function() {
                 $this = $( this ),
                 $overlay,
                 $imageLoader,
+                $progress,
+                $spinner,
                 boolInitialized = $this.is( '.overlayContainer:has(.overlay)' ),
-                setImageLoaderPosition = function() {
-                    var
-                        top = Math.max( $this.offset().top, $( 'body, html' ).scrollTop() ),
-                        bottom = Math.min( $this.offset().top + $this.outerHeight(), $( 'body, html' ).scrollTop() + $( window ).height() ),
-                        center = top + ( bottom - top ) / 2 - $this.offset().top;
-                    $imageLoader.css( {
-                        'top': center + 'px'
-                    } );
-                },
-                setOverlayWidthAndHeight = function() {
-                    $this.children( '.overlay' ).css( {
-                        width: $this.outerWidth(),
-                        height: $this.is( 'body' ) ? $html.outerHeight() : $this.outerHeight()
-                    } );
-                },
                 showOverlay = function() {
                     options.fadeIn ? $overlay.fadeIn( 500 ) : $overlay.show();
                 },
@@ -48,15 +37,6 @@ var overlay = ( function() {
                 hideLoader = function() {
                     options.fadeOutLoader ? $imageLoader.filter( ':visible' ).fadeOut( 500 ) : $imageLoader.filter( ':visible' ).hide();
                 };
-
-            $( window ).scroll( function() {
-                setImageLoaderPosition();
-            } );
-
-            $( window ).resize( function() {
-                setImageLoaderPosition();
-                setOverlayWidthAndHeight();
-            } );
 
             //init
             if ( $this.is( 'table' ) ) {
@@ -71,12 +51,28 @@ var overlay = ( function() {
                     $this = $this.parent();
                 }
                 $this.addClass( 'overlayContainer' );
-                $this.append( '<div class="overlay" style="display: none;"><div class="imageLoaderPositionAbsolute" style="display: none;"></div></div>' );
+                $this.append( '<div class="overlay" style="display: none;"><div class="imageLoaderPositionAbsolute" style="display: none;"><span class="fa fa-spin fa-spinner"></span><span class="progress-value" style="display: none;">0</span></div></div>' );
                 options.afterInit();
             }
 
             $overlay = $this.children( '.overlay' );
             $imageLoader = $this.find( '.imageLoaderPositionAbsolute' );
+            
+            $progress = $imageLoader.find( '.progress-value' );
+            $spinner = $imageLoader.find( '.fa-spinner' );
+            if ( options.resetProgress ) {
+                $progress.html( '0' );
+            }
+            if ( options.showProgress ) {
+                $imageLoader.addClass( 'preloadAll' );
+                $progress.show();
+                $spinner.hide();
+            }
+            else if ( options.hideProgress ) {
+                $imageLoader.removeClass( 'preloadAll' );
+                $progress.hide(); 
+                $spinner.show();               
+            }
 
             $overlay.stop( false, true );
             $imageLoader.stop( false, true );
@@ -92,10 +88,6 @@ var overlay = ( function() {
             else if ( options.hideLoader ) {
                 hideLoader();
             }
-
-            setImageLoaderPosition();
-
-            setOverlayWidthAndHeight();
             //endinit
         } );
     };

@@ -12,28 +12,31 @@ html, body {
         color: #fff;
         left: 0;
         top: 0;
+        right: 0;
+        bottom: 0;
         background: center center no-repeat #000;
         position: absolute;
         z-index: 10000;
     }
 
     .imageLoaderPositionAbsolute {
-        @size: 60px;
-        width: @size;
-        height: @size;
-        line-height: @size;
-        margin: -@size/2 0 0 -@size/2;
-        font-size: @size;
+        font-size: 60px;
+        width: 1em;
+        height: 1em;
+        line-height: 1em;
+        margin: -.5em;
         font-weight: bold;
         letter-spacing: -0.02em;
         text-align: center;
+        top: 50%;
+        left: 50%;
         position: absolute;
         z-index: 10001;
 
         [class*="fa-"] {
-            width: @size;
-            height: @size;
-            line-height: @size;           
+            width: 1em;
+            height: 1em;
+            line-height: 1em;           
         }
             
         &.preloadAll:after {

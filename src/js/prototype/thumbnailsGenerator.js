@@ -1,7 +1,8 @@
-var ThumbnailsGenerator = ( function( outerHtml ) {
+var ThumbnailsGenerator = ( function( outerHtml, jLoader ) {
     var $ = jQuery;
     
     $.fn.outerHtml = outerHtml;
+    $.fn.jLoader = jLoader;
     
     var ThumbnailsGenerator = function( jGallery, options ) {
         this.options = $.extend( {}, {
@@ -61,14 +62,11 @@ var ThumbnailsGenerator = ( function( outerHtml ) {
         },
 
         insertImage: function( $this, $container ) {
-            var $a;
+            var $a = $();
             var $parent;
             
             if ( $this.is( 'a' ) ) {
-                $container.append( '<a href="' + $this.attr( 'href' ) + '">' + this.generateImgTag( $this.find( 'img' ).eq( 0 ) ).outerHtml() + '</a>' );
-                if ( this.options.thumbsHidden ) {
-                    $container.children( ':last-child' ).addClass( 'hidden' );
-                }
+                $a = $container.append( '<a href="' + $this.attr( 'href' ) + '">' + this.generateImgTag( $this.find( 'img' ).eq( 0 ) ).outerHtml() + '</a>' ).children( ':last-child' );
             }
             else if ( $this.is( 'img' ) ) {
                 $a = $container.append( $( '<a href="' + $this.attr( 'src' ) + '">' + this.generateImgTag( $this ).outerHtml() + '</a>' ) ).children( ':last-child' );
@@ -80,6 +78,21 @@ var ThumbnailsGenerator = ( function( outerHtml ) {
                     }
                 }
             }
+            $a.jLoader( {
+                start: function() {
+                    $a.overlay( {
+                        fadeIn: false,
+                        fadeOut: false,
+                        show: true,
+                        showLoader: true
+                    } );
+                },
+                success: function() {
+                    $a.overlay( {
+                        hide: true
+                    } );
+                }
+            } );
             $container.children( ':last-child' ).attr( 'data-jgallery-photo-id', this.intI++ ).attr( 'data-jgallery-number', this.intNo++ );
         },
 
@@ -124,4 +137,4 @@ var ThumbnailsGenerator = ( function( outerHtml ) {
     };
     
     return ThumbnailsGenerator;
-} )( outerHtml );
+} )( outerHtml, jLoader );
