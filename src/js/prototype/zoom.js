@@ -431,7 +431,7 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
 
         setImgSizeForFill: function( $img ) {
             var intNavBottomHeight = this.jGallery.isSlider() ? 0 : this.$container.find( '.nav-bottom' ).outerHeight();
-            var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.inactive' );
+            var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.hidden' );
 
             $img.css( {
                 'width': 'auto',
