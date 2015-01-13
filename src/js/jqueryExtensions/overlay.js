@@ -39,19 +39,9 @@ var overlay = ( function() {
                 };
 
             //init
-            if ( $this.is( 'table' ) ) {
-                if ( $this.parent().is( '.overlayContainer' ) ) {
-                    $this = $this.parent();
-                }
-            }
-
             if ( ! boolInitialized ) {
-                if ( $this.is( 'table' ) ) {
-                    $this.wrap( '<div></div>' );
-                    $this = $this.parent();
-                }
                 $this.addClass( 'overlayContainer' );
-                $this.append( '<div class="overlay" style="display: none;"><div class="imageLoaderPositionAbsolute" style="display: none;"><span class="fa fa-spin fa-spinner"></span><span class="progress-value" style="display: none;">0</span></div></div>' );
+                $this.append( '<span class="overlay" style="display: none;"><span class="imageLoaderPositionAbsolute" style="display: none;"><span class="fa fa-spin fa-spinner"></span><span class="progress-value" style="display: none;">0</span></span></span>' );
                 options.afterInit();
             }
 

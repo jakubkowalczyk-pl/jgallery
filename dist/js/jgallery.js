@@ -1,10 +1,10 @@
 /*!
-* jgallery v1.5.1
+* jgallery v1.5.2
 * http://jgallery.jakubkowalczyk.pl/
 *
 * Released under the MIT license
 *
-* Date: 2015-01-12
+* Date: 2015-01-13
 */
 ( function() {
     "use strict";
@@ -295,19 +295,9 @@ var overlay = ( function() {
                 };
 
             //init
-            if ( $this.is( 'table' ) ) {
-                if ( $this.parent().is( '.overlayContainer' ) ) {
-                    $this = $this.parent();
-                }
-            }
-
             if ( ! boolInitialized ) {
-                if ( $this.is( 'table' ) ) {
-                    $this.wrap( '<div></div>' );
-                    $this = $this.parent();
-                }
                 $this.addClass( 'overlayContainer' );
-                $this.append( '<div class="overlay" style="display: none;"><div class="imageLoaderPositionAbsolute" style="display: none;"><span class="fa fa-spin fa-spinner"></span><span class="progress-value" style="display: none;">0</span></div></div>' );
+                $this.append( '<span class="overlay" style="display: none;"><span class="imageLoaderPositionAbsolute" style="display: none;"><span class="fa fa-spin fa-spinner"></span><span class="progress-value" style="display: none;">0</span></span></span>' );
                 options.afterInit();
             }
 
@@ -1583,7 +1573,7 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
 
         refreshContainerSize: function () {
             var intNavBottomHeight = this.jGallery.isSlider() ? 0 : this.$container.find( '.nav-bottom' ).outerHeight();
-            var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.inactive' );
+            var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.hidden' );
             var strThumbnailsPosition = isThumbnailsVisible ? this.jGallery.options.thumbnailsPosition : '';
 
             this.$container.css( {
@@ -2249,8 +2239,8 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
             html: '<div class="jgallery" style="display: none;">\
                         <div class="jgallery-thumbnails hidden">\
                             <div class="jgallery-container"><div class="jgallery-container-inner"></div></div>\
-                            <span class="prev jgallery-btn hidden"><span class="fa fa-chevron-left ico"></span></span>\
-                            <span class="next jgallery-btn hidden"><span class="fa fa-chevron-right ico"></span></span>\
+                            <span class="prev jgallery-btn"><span class="fa fa-chevron-left ico"></span></span>\
+                            <span class="next jgallery-btn"><span class="fa fa-chevron-right ico"></span></span>\
                         </div>\
                         <div class="zoom-container">\
                             <div class="zoom before pt-perspective"></div>\

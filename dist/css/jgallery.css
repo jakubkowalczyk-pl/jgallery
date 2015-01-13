@@ -34,6 +34,7 @@
   color: #fff;
 }
 .jgallery .change-album {
+  z-index: 1;
   position: relative;
 }
 .jgallery .change-album .menu {
@@ -424,6 +425,7 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   -webkit-box-shadow: none;
   box-shadow: none;
   cursor: pointer;
+  z-index: 1;
   position: absolute;
 }
 .jgallery .jgallery-thumbnails .ico {

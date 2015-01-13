@@ -256,7 +256,7 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
 
         refreshContainerSize: function () {
             var intNavBottomHeight = this.jGallery.isSlider() ? 0 : this.$container.find( '.nav-bottom' ).outerHeight();
-            var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.inactive' );
+            var isThumbnailsVisible = ! this.jGallery.isSlider() && ! this.thumbnails.getElement().is( '.hidden' );
             var strThumbnailsPosition = isThumbnailsVisible ? this.jGallery.options.thumbnailsPosition : '';
 
             this.$container.css( {
