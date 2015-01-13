@@ -431,12 +431,12 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
         },
         
         hideThumbnailsBar: function() {
-            this.thumbnails.getElement().addClass( 'inactive' );
+            this.thumbnails.getElement().addClass( 'hidden' );
             this.zoom.$container.find( '.minimalize-thumbnails' ).hide();
         },
         
         showThumbnailsBar: function() {
-            this.thumbnails.getElement().removeClass( 'inactive' );
+            this.thumbnails.getElement().removeClass( 'hidden' );
             this.options.canMinimalizeThumbnails && this.options.thumbnails ? this.zoom.$container.find( '.minimalize-thumbnails' ).show() : this.zoom.$container.find( '.minimalize-thumbnails' ).hide();
         },
         
@@ -473,6 +473,7 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
             this.options.mode === 'standard' ? this.zoom.$changeMode.removeClass( 'fa-compress' ).addClass( 'fa-expand' ) : this.zoom.$changeMode.removeClass( 'fa-expand' ).addClass( 'fa-compress' );
             this.options.canClose ? this.zoom.$container.find( '.jgallery-close' ).show() : this.zoom.$container.find( '.jgallery-close' ).hide();
             this.refreshThumbnailsVisibility();
+            this.zoom.refreshSize();
             this.options.slideshow ? this.zoom.$slideshow.show() : this.zoom.$slideshow.hide();
             this.options.slideshow && this.options.slideshowCanRandom && this.options.slideshowAutostart ? this.zoom.$random.show(): this.zoom.$random.hide();
             this.options.slideshow && this.options.slideshowCanRandom && this.options.slideshowRandom ? this.zoom.$random.addClass( 'active' ) : this.zoom.$random.removeClass( 'active' );

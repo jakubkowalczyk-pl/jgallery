@@ -4239,18 +4239,15 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   left: 50%;
   right: -50%;
 }
-@media (max-width: 979px) {
-  .jgallery .jgallery-thumbnails-horizontal .prev.visible {
-    left: 0;
+@media (max-width: 767px) {
+  .jgallery .jgallery-thumbnails .jgallery-btn.prev,
+  .jgallery .zoom-container .jgallery-btn.prev,
+  .jgallery .jgallery-thumbnails .jgallery-btn.next,
+  .jgallery .zoom-container .jgallery-btn.next {
+    display: none !important;
   }
-  .jgallery .jgallery-thumbnails-horizontal .next.visible {
-    right: 0;
-  }
-  .jgallery .jgallery-thumbnails-vertical .prev.visible {
-    top: 0;
-  }
-  .jgallery .jgallery-thumbnails-vertical .next.visible {
-    bottom: 0;
+  .jgallery .jgallery-tooltips [tooltip]:hover:after {
+    display: none !important;
   }
 }
 .jgallery {

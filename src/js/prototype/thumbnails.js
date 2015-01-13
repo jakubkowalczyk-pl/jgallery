@@ -105,7 +105,9 @@ var Thumbnails = ( function( jLoader ) {
             if ( ! this.getElement().is( '.hidden' ) ) {
                 return;
             }
-            this.getElement().removeClass( 'hidden' );
+            if ( ! ( this.jGallery.isMobile() && this.jGallery.options.thumbnailsHideOnMobile ) ) {
+                this.getElement().removeClass( 'hidden' );
+            }
             if ( ! this.getElement().is( '.loaded' ) ) {
                 this.getElement().jLoader( {
                     start: function() {},
