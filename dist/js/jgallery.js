@@ -4,7 +4,7 @@
 *
 * Released under the MIT license
 *
-* Date: 2015-01-13
+* Date: 2015-02-11
 */
 ( function() {
     "use strict";
@@ -1888,16 +1888,12 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             //preload images next prev
             var $nexta=$a.next();
             if ($nexta.length>0){
-                //this.jGallery.preloadNext = new Image();
-                //this.jGallery.preloadNext.src=$nexta.attr( 'href' );
                 if ( ! self.isLoaded( $nexta ) ) {
                     this.appendPhoto( $nexta );
                 }
             }
             var $preva=$a.prev();
             if ($preva.length>0){
-                //this.jGallery.preloadPrev = new Image();
-                //this.jGallery.preloadPrev.src=$preva.attr( 'href' );
                 if ( ! self.isLoaded( $preva ) ) {
                     this.appendPhoto( $preva );
                 }

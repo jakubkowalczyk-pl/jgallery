@@ -565,6 +565,21 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             var albumTitle;
             var transition;
             var transitionName;
+            
+            //preload images next prev
+            var $nexta=$a.next();
+            if ($nexta.length>0){
+                if ( ! self.isLoaded( $nexta ) ) {
+                    this.appendPhoto( $nexta );
+                }
+            }
+            var $preva=$a.prev();
+            if ($preva.length>0){
+                if ( ! self.isLoaded( $preva ) ) {
+                    this.appendPhoto( $preva );
+                }
+            }
+            //preload images next prev
 
             if ( ! this.jGallery.initialized() ) {
                 this.showPhotoInit();
