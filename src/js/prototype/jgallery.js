@@ -83,7 +83,7 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
                                     <span class="fa fa-play slideshow jgallery-btn jgallery-btn-small"></span>\
                                     <span class="fa fa-random random jgallery-btn jgallery-btn-small inactive"></span>\
                                     <span class="fa fa-th full-screen jgallery-btn jgallery-btn-small"></span>\
-                                    <span class="fa fa-ellipsis-h minimalize-thumbnails jgallery-btn jgallery-btn-small inactive"></span>\
+                                    <span class="fa fa-ellipsis-h minimalize-thumbnails jgallery-btn jgallery-btn-small"></span>\
                                 </div>\
                                 <div class="title before"></div>\
                             </div>\
@@ -383,6 +383,9 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
 
                     self.thumbnails.bindEvents();      
                     options.success();
+                    if ( self.options.hideThumbnailsOnInit ) {
+                        self.zoom.$container.find( '.minimalize-thumbnails' ).addClass( 'inactive' );
+                    }
                 }
             } );
             this.refreshCssClassJGalleryMobile();
