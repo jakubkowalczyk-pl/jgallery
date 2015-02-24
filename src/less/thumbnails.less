@@ -1,10 +1,20 @@
 .jgallery .jgallery-thumbnails {
-    background: #111;
-    .transition( ~"background 0.2s, background-color 0.2s" );
+    .transition( ~"background .2s, opacity .2s" );
+    overflow: hidden;
     position: absolute;
     z-index: 3;
     font-size: 0;
     line-height: 0;
+    
+    &:hover {
+        a {
+            img {
+                transform: scale( 1, 1 );
+                -webkit-filter: blur( 0 ) grayscale( 0 );
+                opacity: 1;
+            }
+        }
+    }
   
     &.hidden {
         display: none;
@@ -35,46 +45,27 @@
     }
 
     .album {
+        min-width: 100%;
+        text-align: center;
         display: none;
 
         &.active {
-            display: inline;
+            display: block;
         }
     }
 
     a {
-        border-radius: .7em;
         white-space: normal;
+        opacity: .65;
+        overflow: hidden;
         display: inline-block;
 
-        &:hover:not(.active) {
-            border-radius: 2px !important;
-
-            img {
-                border-radius: 2px !important;
-            }
-        }
-
         img {
-            border-radius: .7em;
-            -webkit-transition: all 0.5s;
-            -moz-transition: all 0.5s;
-            -o-transition: all 0.5s;
-            transition: all 0.5s;
+            -webkit-filter: blur( 1px ) grayscale( 1 );
+            transform: scale( 1.2, 1.2 );
+            opacity: .5;
+            transition: all .2s;
         }
-    }
-
-    .prev,
-    .next {
-        font-size: 24px;
-        text-align: center;
-        background: #111;
-        opacity: 1;
-        .box-shadow( none );
-        cursor: pointer;
-        z-index: 1;
-        position: absolute;
-
     }
 
     .ico {
@@ -82,7 +73,7 @@
         height: 40px;
         margin: -20px 0 0 -20px;
         line-height: 40px;
-        color: #fff;
+        //color: #fff;
         top: 50%;
         left: 50%;
         position: absolute;

@@ -243,3 +243,21 @@
     background-image: linear-gradient(@angle, @color 25%, transparent 25%, transparent 50%, @color 50%, @color 75%, transparent 75%, transparent);
   }
 }
+
+
+.gradient-horizontal( @color1, @color2 ) {
+    .gradient( @color1, @color2, left, right );
+}
+
+.gradient-vertical( @color1, @color2 ) {
+    .gradient( @color1, @color2, top, bottom );
+}
+
+.gradient( @color1, @color2, @from, @to ) {
+    background: -moz-linear-gradient(@from,  @color1 0%, @color2 100%);
+    background: -webkit-gradient(linear, @from top, right top, color-stop(0%,@color1), color-stop(100%,@color2));
+    background: -webkit-linear-gradient(@from,  @color1 0%,@color2 100%);
+    background: -o-linear-gradient(@from,  @color1 0%,@color2 100%);
+    background: -ms-linear-gradient(@from,  @color1 0%,@color2 100%);
+    background: linear-gradient(to @to,  @color1 0%,@color2 100%);    
+}

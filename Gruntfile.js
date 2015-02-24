@@ -37,24 +37,26 @@ module.exports = function( grunt ) {
                 'src/js/var/defaultsSliderMode.js',
                 'src/js/var/requiredFullScreenMode.js',
                 'src/js/var/requiredSliderMode.js',
-                'src/js/var/transitions.js',
-                'src/js/var/transitionsAsArray.js',
-                'src/js/var/transitionsBackward.js',
-                'src/js/jqueryExtensions/outerHtml.js',
-                'src/js/jqueryExtensions/overlay.js',
-                'src/js/jqueryExtensions/jLoader.js',
-                'src/js/functions/historyPushState.js',
-                'src/js/functions/isIE.js',
-                'src/js/functions/isIE8AndOlder.js',
-                'src/js/functions/refreshHTMLClasses.js',
-                'src/js/prototype/advancedAnimation.js',
-                'src/js/prototype/iconChangeAlbum.js',
-                'src/js/prototype/progress.js',
-                'src/js/prototype/thumbnails.js',
-                'src/js/prototype/thumbnailsGenerator.js',
-                'src/js/prototype/zoom.js',
-                'src/js/prototype/jgallery.js',
-                'src/js/jgallery.js',
+//                'src/js/var/transitions.js',
+//                'src/js/var/transitionsAsArray.js',
+//                'src/js/var/transitionsBackward.js',
+//                'src/js/jqueryExtensions/outerHtml.js',
+//                'src/js/jqueryExtensions/overlay.js',
+//                'src/js/jqueryExtensions/jLoader.js',
+//                'src/js/functions/historyPushState.js',
+//                'src/js/functions/isIE.js',
+//                'src/js/functions/isIE8AndOlder.js',
+//                'src/js/functions/refreshHTMLClasses.js',
+//                'src/js/prototype/advancedAnimation.js',
+//                'src/js/prototype/iconChangeAlbum.js',
+//                'src/js/prototype/progress.js',
+//                'src/js/prototype/thumbnails.js',
+//                'src/js/prototype/thumbnailsGenerator.js',
+//                'src/js/prototype/zoom.js',
+//                'src/js/prototype/jgallery.js',
+//                'src/js/jgallery.js',
+                'src/templates/template.js',
+                'src/js/directives/*.js',
                 'src/js/end.frag.js'
             ];
             
@@ -78,13 +80,32 @@ module.exports = function( grunt ) {
                 }
             }
         },
+        ngtemplates:  {
+            jgallery: {
+                cwd: 'src/js/directives',
+                src: '../../templates/*.html',
+                dest: 'src/templates/template.js',
+                options: {
+                    htmlmin: {
+                        collapseBooleanAttributes:      true,
+                        collapseWhitespace:             true,
+                        removeAttributeQuotes:          true,
+                        removeComments:                 true,
+                        removeEmptyAttributes:          true,
+                        removeRedundantAttributes:      true,
+                        removeScriptTypeAttributes:     true,
+                        removeStyleLinkTypeAttributes:  true
+                    }
+                }
+            }
+        },
         watch: {
             css: {
                 files: ['src/**/*.less'],
                 tasks: ['build-css']
             },
             js: {
-                files: ['src/**/*.js'],
+                files: ['src/**/*.js', 'src/**/*.html'],
                 tasks: ['build-js']
             }
         }
@@ -93,7 +114,8 @@ module.exports = function( grunt ) {
     grunt.loadNpmTasks( 'grunt-contrib-uglify' );
     grunt.loadNpmTasks( 'grunt-contrib-concat' );
     grunt.loadNpmTasks( 'grunt-contrib-watch' );
-    grunt.registerTask( 'build-js', ['concat:dev','uglify:jgallery'] );
+    grunt.loadNpmTasks( 'grunt-angular-templates' );
+    grunt.registerTask( 'build-js', ['ngtemplates:jgallery','concat:dev','uglify:jgallery'] );
     grunt.registerTask( 'build-css', ['less:dev','less:min'] );
     grunt.registerTask( 'default', ['build-js', 'build-css'] );
 };

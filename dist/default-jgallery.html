@@ -4,21 +4,22 @@
     <meta charset="UTF-8" />
     <title>jGallery</title>
     <link rel="stylesheet" type="text/css" media="all" href="css/font-awesome.min.css" />
-    <link rel="stylesheet" type="text/css" media="all" href="css/jgallery.min.css?v=1.5.0" />
-    <script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
-    <script type="text/javascript" src="js/jgallery.min.js?v=1.5.0"></script>
-    <script type="text/javascript" src="js/touchswipe.min.js"></script>
+    <link rel="stylesheet" type="text/css" media="all" href="css/jgallery.min.css" />
+    <script type="text/javascript" src="js/angular.js"></script>
+    <script type="text/javascript" src="js/jgallery.min.js"></script>
 </head>
-<body style="width: 900px; margin: 100px auto; height: auto;">
-<div id="gallery">
-    <a href="images/large/1.jpg"><img src="images/thumbs/1.jpg" alt="Photo 1" /></a>
-    <a href="images/large/2.jpg"><img src="images/thumbs/2.jpg" alt="Photo 2" /></a>
-    <a href="images/large/3.jpg"><img src="images/thumbs/3.jpg" alt="Photo 3" /></a>
+<body data-ng-app="jgallery" style="max-width: 900px; margin: 0 auto; height: auto; background: #ccc;overflow:hidden">
+<div data-jgallery>
+    <div data-jgallery-album="Album 1">
+        <a href="../../images/large/1.jpg" data-jgallery-photo><img src="../../images/thumbs/1.jpg" alt="Photo 1" /></a>
+        <a href="../../images/large/2.jpg" data-jgallery-photo><img src="../../images/thumbs/2.jpg" alt="Photo 2" /></a>
+        <a href="../../images/large/3.jpg" data-jgallery-photo><img src="../../images/thumbs/3.jpg" alt="Photo 3" /></a>
+    </div>
+    <div data-jgallery-album="Album 2">
+        <a href="../../images/large/4.jpg" data-jgallery-photo><img src="../../images/thumbs/4.jpg" alt="Photo 4" /></a>
+        <a href="../../images/large/5.jpg" data-jgallery-photo><img src="../../images/thumbs/5.jpg" alt="Photo 5" /></a>
+        <a href="../../images/large/6.jpg" data-jgallery-photo><img src="../../images/thumbs/6.jpg" alt="Photo 6" /></a>
+    </div>
 </div>
-<script type="text/javascript">
-$( function() {
-    $( '#gallery' ).jGallery();
-} );
-</script>
 </body>
 </html>

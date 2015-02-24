@@ -1,0 +1,24 @@
+<div jgallery-scrollable>
+    <div ng-repeat="album in albums"
+         class="album"
+         ng-class="{'active': album.id == activeAlbum.id}"
+         style="{{ thumbnailsIsVertical ? '' : 'width: ' + album.photos.length * thumbWidth + 'px' }}">
+        <a ng-repeat="photo in album.photos"
+           ng-click="$event.preventDefault(); $parent.$parent.$parent.$parent.showPhoto( photo ); $parent.$parent.$parent.$parent.thumbnailsIsFullScreen = false;"
+           ng-href="{{ isSlider ? photo.src : photo.href }}"
+           ng-attr-link="{{ isSlider ? photo.href : undefined }}"
+           ng-attr-target="{{ isSlider ? photo.target : undefined }}"
+           style="width: {{ thumbWidth }}px; height: {{ thumbHeight }}px; font-size: {{ thumbHeight }}px;">
+            <img ng-src="{{ photo.src }}"
+                 ng-attr-alt="{{ photo.title }}"
+                 ng-attr-data-jgallery-bg-color="{{ photo.bgColor }}"
+                 ng-attr-data-jgallery-text-color="{{ photo.textColor }}"
+                 ng-class="{
+                     'thumb-vertical': photo.thumbWidth / photo.thumbHeight < options.thumbWidth / options.thumbHeight,
+                     'thumb-horizontal': photo.thumbWidth / photo.thumbHeight >= options.thumbWidth / options.thumbHeight,
+                     'thumb-on-full-screen-vertical': photo.thumbWidth / photo.thumbHeight < options.thumbWidthOnFullScreen / options.thumbHeightOnFullScreen,
+                     'thumb-on-full-screen-horizontal': photo.thumbWidth / photo.thumbHeight >= options.thumbWidthOnFullScreen / options.thumbHeightOnFullScreen
+                 }">
+        </a>
+    </div>
+</div>

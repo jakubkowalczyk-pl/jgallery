@@ -3,9 +3,6 @@
   transition: all 0.2s;
   cursor: pointer;
 }
-.jgallery .jgallery-btn:hover {
-  text-shadow: 0 0 .15em #fff;
-}
 .jgallery .jgallery-btn.inactive {
   opacity: .5;
 }
@@ -13,7 +10,6 @@
   opacity: 1;
 }
 .jgallery .jgallery-btn.active {
-  color: #fff;
   opacity: 1;
 }
 .jgallery .jgallery-btn-large {
@@ -22,7 +18,6 @@
   line-height: 64px;
   font-size: 30px;
   text-align: center;
-  color: #fff;
 }
 .jgallery .jgallery-btn-small {
   width: 40px;
@@ -31,7 +26,6 @@
   line-height: 43px;
   font-size: 18px;
   text-align: center;
-  color: #fff;
 }
 .jgallery .change-album {
   z-index: 1;
@@ -41,6 +35,7 @@
   left: 0;
   bottom: 42px;
   background: #111;
+  opacity: .92;
   position: absolute;
   overflow: auto;
   display: none;
@@ -57,7 +52,6 @@
   transition: all 0.3s;
   line-height: normal;
   white-space: pre;
-  color: #ddd;
   text-shadow: none;
   display: block;
 }
@@ -359,14 +353,137 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   content: "";
   position: absolute;
 }
+[jgallery-scrollable] [ng-transclude] {
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  overflow: hidden;
+}
+[jgallery-scrollable] .jgallery-scroll,
+[jgallery-scrollable] .jgallery-scroll-horizontal,
+[jgallery-scrollable] .jgallery-scroll-horizontal:before,
+[jgallery-scrollable] .jgallery-scroll-vertical,
+[jgallery-scrollable] .jgallery-scroll-vertical:before,
+[jgallery-scrollable] .jgallery-scroll-left,
+[jgallery-scrollable] .jgallery-scroll-left:before,
+[jgallery-scrollable] .jgallery-scroll-left:before,
+[jgallery-scrollable] .jgallery-scroll-left:before:before,
+[jgallery-scrollable] .jgallery-scroll-right,
+[jgallery-scrollable] .jgallery-scroll-right:before,
+[jgallery-scrollable] .jgallery-scroll-right:before,
+[jgallery-scrollable] .jgallery-scroll-right:before:before,
+[jgallery-scrollable] .jgallery-scroll-top,
+[jgallery-scrollable] .jgallery-scroll-top:before,
+[jgallery-scrollable] .jgallery-scroll-top:before,
+[jgallery-scrollable] .jgallery-scroll-top:before:before,
+[jgallery-scrollable] .jgallery-scroll-bottom,
+[jgallery-scrollable] .jgallery-scroll-bottom:before,
+[jgallery-scrollable] .jgallery-scroll-bottom:before,
+[jgallery-scrollable] .jgallery-scroll-bottom:before:before {
+  font-size: 24px;
+  text-align: center;
+  opacity: 1;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  cursor: pointer;
+  z-index: 1;
+  position: absolute;
+}
+[jgallery-scrollable] .jgallery-scroll-horizontal,
+[jgallery-scrollable] .jgallery-scroll-left,
+[jgallery-scrollable] .jgallery-scroll-left:before,
+[jgallery-scrollable] .jgallery-scroll-right,
+[jgallery-scrollable] .jgallery-scroll-right:before {
+  width: 40px;
+  top: 0;
+  bottom: 0;
+}
+[jgallery-scrollable] .jgallery-scroll-horizontal:before,
+[jgallery-scrollable] .jgallery-scroll-left:before,
+[jgallery-scrollable] .jgallery-scroll-left:before:before,
+[jgallery-scrollable] .jgallery-scroll-right:before,
+[jgallery-scrollable] .jgallery-scroll-right:before:before {
+  width: 40px;
+  top: 0;
+  bottom: 0;
+  content: "";
+  position: absolute;
+}
+[jgallery-scrollable] .jgallery-scroll-left {
+  padding-left: 8px;
+  left: -100px;
+}
+[jgallery-scrollable] .jgallery-scroll-left:before {
+  right: -40px;
+}
+[jgallery-scrollable] .jgallery-scroll-right {
+  padding-right: 8px;
+  right: -100px;
+}
+[jgallery-scrollable] .jgallery-scroll-right:before {
+  left: -40px;
+}
+[jgallery-scrollable]:hover .jgallery-scroll-left.visible {
+  left: 0;
+}
+[jgallery-scrollable]:hover .jgallery-scroll-right.visible {
+  right: 0;
+}
+[jgallery-scrollable] .jgallery-scroll-vertical,
+[jgallery-scrollable] .jgallery-scroll-top,
+[jgallery-scrollable] .jgallery-scroll-top:before,
+[jgallery-scrollable] .jgallery-scroll-bottom,
+[jgallery-scrollable] .jgallery-scroll-bottom:before {
+  height: 40px;
+  left: 0;
+  right: 0;
+}
+[jgallery-scrollable] .jgallery-scroll-vertical:before,
+[jgallery-scrollable] .jgallery-scroll-top:before,
+[jgallery-scrollable] .jgallery-scroll-top:before:before,
+[jgallery-scrollable] .jgallery-scroll-bottom:before,
+[jgallery-scrollable] .jgallery-scroll-bottom:before:before {
+  height: 40px;
+  left: 0;
+  right: 0;
+  content: "";
+  position: absolute;
+}
+[jgallery-scrollable] .jgallery-scroll-top {
+  padding-top: 8px;
+  top: -100px;
+}
+[jgallery-scrollable] .jgallery-scroll-top:before {
+  bottom: -40px;
+}
+[jgallery-scrollable] .jgallery-scroll-bottom {
+  padding-bottom: 8px;
+  bottom: -100px;
+}
+[jgallery-scrollable] .jgallery-scroll-bottom:before {
+  top: -40px;
+}
+[jgallery-scrollable]:hover .jgallery-scroll-top.visible {
+  top: 0;
+}
+[jgallery-scrollable]:hover .jgallery-scroll-bottom.visible {
+  bottom: 0;
+}
 .jgallery .jgallery-thumbnails {
-  background: #111;
-  -webkit-transition: background 0.2s, background-color 0.2s;
-  transition: background 0.2s, background-color 0.2s;
+  -webkit-transition: background .2s, opacity .2s;
+  transition: background .2s, opacity .2s;
+  overflow: hidden;
   position: absolute;
   z-index: 3;
   font-size: 0;
   line-height: 0;
+}
+.jgallery .jgallery-thumbnails:hover a img {
+  transform: scale(1, 1);
+  -webkit-filter: blur(0) grayscale(0);
+  opacity: 1;
 }
 .jgallery .jgallery-thumbnails.hidden {
   display: none;
@@ -393,47 +510,30 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   overflow: hidden;
 }
 .jgallery .jgallery-thumbnails .album {
+  min-width: 100%;
+  text-align: center;
   display: none;
 }
 .jgallery .jgallery-thumbnails .album.active {
-  display: inline;
+  display: block;
 }
 .jgallery .jgallery-thumbnails a {
-  border-radius: .7em;
   white-space: normal;
+  opacity: .65;
+  overflow: hidden;
   display: inline-block;
 }
-.jgallery .jgallery-thumbnails a:hover:not(.active) {
-  border-radius: 2px !important;
-}
-.jgallery .jgallery-thumbnails a:hover:not(.active) img {
-  border-radius: 2px !important;
-}
 .jgallery .jgallery-thumbnails a img {
-  border-radius: .7em;
-  -webkit-transition: all 0.5s;
-  -moz-transition: all 0.5s;
-  -o-transition: all 0.5s;
-  transition: all 0.5s;
-}
-.jgallery .jgallery-thumbnails .prev,
-.jgallery .jgallery-thumbnails .next {
-  font-size: 24px;
-  text-align: center;
-  background: #111;
-  opacity: 1;
-  -webkit-box-shadow: none;
-  box-shadow: none;
-  cursor: pointer;
-  z-index: 1;
-  position: absolute;
+  -webkit-filter: blur(1px) grayscale(1);
+  transform: scale(1.2, 1.2);
+  opacity: .5;
+  transition: all .2s;
 }
 .jgallery .jgallery-thumbnails .ico {
   width: 40px;
   height: 40px;
   margin: -20px 0 0 -20px;
   line-height: 40px;
-  color: #fff;
   top: 50%;
   left: 50%;
   position: absolute;
@@ -448,121 +548,18 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 .jgallery .jgallery-thumbnails .overlayContainer .imageLoaderPositionAbsolute {
   font-size: 30px;
 }
-.jgallery .jgallery-thumbnails-horizontal {
+.jgallery .jgallery-thumbnails-horizontal,
+.jgallery-thumbnails-bottom,
+.jgallery .jgallery-thumbnails-top {
   left: 0;
   right: 0;
   white-space: pre;
 }
-.jgallery .jgallery-thumbnails-horizontal .prev,
-.jgallery .jgallery-thumbnails-horizontal .next {
-  width: 40px;
+.jgallery .jgallery-thumbnails-vertical,
+.jgallery .jgallery-thumbnails-left,
+.jgallery .jgallery-thumbnails-right {
   top: 0;
   bottom: 0;
-}
-.jgallery .jgallery-thumbnails-horizontal .prev {
-  padding-left: 8px;
-  left: -100px;
-}
-.jgallery .jgallery-thumbnails-horizontal .prev:before {
-  width: 40px;
-  right: -40px;
-  background: -moz-linear-gradient(left, #111111 0%, rgba(17, 17, 17, 0) 100%);
-  background: -webkit-gradient(linear, left top, right top, color-stop(0%, #111111), color-stop(100%, rgba(17, 17, 17, 0)));
-  background: -webkit-linear-gradient(left, #111111 0%, rgba(17, 17, 17, 0) 100%);
-  background: -o-linear-gradient(left, #111111 0%, rgba(17, 17, 17, 0) 100%);
-  background: -ms-linear-gradient(left, #111111 0%, rgba(17, 17, 17, 0) 100%);
-  background: linear-gradient(to right, #111111 0%, rgba(17, 17, 17, 0) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#111111', endColorstr='#00111111', GradientType=1);
-  top: 0;
-  bottom: 0;
-  content: "";
-  position: absolute;
-}
-.jgallery .jgallery-thumbnails-horizontal .next {
-  padding-right: 8px;
-  right: -100px;
-}
-.jgallery .jgallery-thumbnails-horizontal .next:before {
-  width: 40px;
-  left: -40px;
-  background: -moz-linear-gradient(left, rgba(17, 17, 17, 0) 0%, #111111 100%);
-  background: -webkit-gradient(linear, left top, right top, color-stop(0%, rgba(17, 17, 17, 0)), color-stop(100%, #111111));
-  background: -webkit-linear-gradient(left, rgba(17, 17, 17, 0) 0%, #111111 100%);
-  background: -o-linear-gradient(left, rgba(17, 17, 17, 0) 0%, #111111 100%);
-  background: -ms-linear-gradient(left, rgba(17, 17, 17, 0) 0%, #111111 100%);
-  background: linear-gradient(to right, rgba(17, 17, 17, 0) 0%, #111111 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00111111', endColorstr='#111111', GradientType=1);
-  top: 0;
-  bottom: 0;
-  content: "";
-  position: absolute;
-}
-.jgallery .jgallery-thumbnails-horizontal:hover .prev.visible {
-  left: 0;
-}
-.jgallery .jgallery-thumbnails-horizontal:hover .next.visible {
-  right: 0;
-}
-.jgallery .jgallery-thumbnails-vertical {
-  top: 0;
-  bottom: 0;
-}
-.jgallery .jgallery-thumbnails-vertical .prev,
-.jgallery .jgallery-thumbnails-vertical .next {
-  height: 40px;
-  left: 0;
-  right: 0;
-}
-.jgallery .jgallery-thumbnails-vertical .prev {
-  padding-top: 8px;
-  top: -100px;
-}
-.jgallery .jgallery-thumbnails-vertical .prev:before {
-  height: 40px;
-  bottom: -40px;
-  background: -moz-linear-gradient(top, #111111 0%, rgba(17, 17, 17, 0) 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #111111), color-stop(100%, rgba(17, 17, 17, 0)));
-  background: -webkit-linear-gradient(top, #111111 0%, rgba(17, 17, 17, 0) 100%);
-  background: -o-linear-gradient(top, #111111 0%, rgba(17, 17, 17, 0) 100%);
-  background: -ms-linear-gradient(top, #111111 0%, rgba(17, 17, 17, 0) 100%);
-  background: linear-gradient(to bottom, #111111 0%, rgba(17, 17, 17, 0) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#111111', endColorstr='#00111111', GradientType=0);
-  left: 0;
-  right: 0;
-  content: "";
-  position: absolute;
-}
-.jgallery .jgallery-thumbnails-vertical .next {
-  padding-bottom: 8px;
-  bottom: -100px;
-}
-.jgallery .jgallery-thumbnails-vertical .next:before {
-  height: 40px;
-  top: -40px;
-  background: -moz-linear-gradient(top, rgba(17, 17, 17, 0) 0%, #111111 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(17, 17, 17, 0)), color-stop(100%, #111111));
-  background: -webkit-linear-gradient(top, rgba(17, 17, 17, 0) 0%, #111111 100%);
-  background: -o-linear-gradient(top, rgba(17, 17, 17, 0) 0%, #111111 100%);
-  background: -ms-linear-gradient(top, rgba(17, 17, 17, 0) 0%, #111111 100%);
-  background: linear-gradient(to bottom, rgba(17, 17, 17, 0) 0%, #111111 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00111111', endColorstr='#111111', GradientType=0);
-  left: 0;
-  right: 0;
-  content: "";
-  position: absolute;
-}
-.jgallery .jgallery-thumbnails-vertical:hover .prev.visible {
-  top: 0;
-}
-.jgallery .jgallery-thumbnails-vertical:hover .next.visible {
-  bottom: 0;
-}
-.jgallery .jgallery-thumbnails-vertical .prev .ico,
-.jgallery .jgallery-thumbnails-vertical .next .ico {
-  -webkit-transform: rotate(90deg);
-  -moz-transform: rotate(90deg);
-  transform: rotate(90deg);
-  display: block;
 }
 .jgallery .jgallery-thumbnails-bottom.images:not(.full-screen),
 .jgallery .jgallery-thumbnails.jgallery-thumbnails-bottom.images.images:not(.full-screen) {
@@ -616,12 +613,6 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   transition: opacity 0.5s;
   font-size: 0;
 }
-.jgallery .jgallery-thumbnails.images a img {
-  -webkit-transition: -webkit-filter 0.2s, filter 0.2s;
-  transition: -webkit-filter 0.2s, filter 0.2s;
-  -webkit-filter: saturate(0.4);
-  filter: saturate(0.4);
-}
 .jgallery .jgallery-thumbnails.images a:hover img {
   -webkit-filter: saturate(1);
   filter: saturate(1);
@@ -635,29 +626,6 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 }
 .jgallery .jgallery-thumbnails.images a.active:after {
   opacity: .25;
-}
-.jgallery .jgallery-thumbnails.images a:after {
-  opacity: .5;
-  background: #111;
-  -webkit-transition: all 0.5s;
-  -moz-transition: all 0.5s;
-  -o-transition: all 0.5s;
-  transition: all 0.5s;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  content: "";
-  position: absolute;
-}
-.jgallery .jgallery-thumbnails.images:hover a:after {
-  opacity: 0;
-}
-.jgallery .jgallery-thumbnails.images img {
-  padding: 1px;
-  border: 0;
-  -webkit-border-radius: 0;
-  border-radius: 0;
 }
 .jgallery .jgallery-thumbnails.images.jgallery-thumbnails-vertical .prev,
 .jgallery .jgallery-thumbnails.images.jgallery-thumbnails-vertical .next {
@@ -919,10 +887,10 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 .jgallery .zoom-container .nav-bottom > .title.fade.after {
   opacity: 0;
 }
-.jgallery.jgallery-tooltips [tooltip] {
+.jgallery.jgallery-tooltips [data-tooltip] {
   position: relative;
 }
-.jgallery.jgallery-tooltips [tooltip]:after {
+.jgallery.jgallery-tooltips [data-tooltip]:after {
   padding: .5em;
   font-size: .8em;
   line-height: 1em;
@@ -935,15 +903,15 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   display: none;
   position: absolute;
 }
-.jgallery.jgallery-tooltips [tooltip][tooltip-position*="bottom"]:after {
+.jgallery.jgallery-tooltips [data-tooltip][tooltip-position*="bottom"]:after {
   bottom: auto;
   top: 100%;
 }
-.jgallery.jgallery-tooltips [tooltip][tooltip-position*="right"]:after {
+.jgallery.jgallery-tooltips [data-tooltip][tooltip-position*="right"]:after {
   left: auto;
   right: 0;
 }
-.jgallery.jgallery-tooltips [tooltip]:hover:after {
+.jgallery.jgallery-tooltips [data-tooltip]:hover:after {
   display: block;
 }
 .pt-perspective {
@@ -3510,6 +3478,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 /* zoom
 --------------------------------------------------------------------------*/
 .jgallery .zoom {
+  background-repeat: no-repeat;
+  background-position: center center;
   -webkit-perspective: 1200px;
   perspective: 1200px;
   left: 0;
@@ -3541,6 +3511,9 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   z-index: 3;
 }
 .jgallery .zoom img {
+  -webkit-transform: translateX( -50% ) translateY( -50% );
+  -moz-transform: translateX( -50% ) translateY( -50% );
+  transform: translateX( -50% ) translateY( -50% );
   top: 50%;
   left: 50%;
   position: absolute;
@@ -3558,7 +3531,8 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   left: -150px;
 }
 .jgallery .zoom-container {
-  position: relative;
+  position: absolute;
+  z-index: 1;
 }
 .jgallery .zoom-container .prev {
   top: 50%;
@@ -3592,18 +3566,24 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 }
 .jgallery .zoom-container .nav-bottom {
   height: 40px;
-  background: #111;
   -webkit-transition: all 0.2s;
   transition: all 0.2s;
   left: 0;
   bottom: -40px;
   right: 0;
   text-align: left;
-  z-index: 10002;
+  z-index: 2;
   position: absolute;
 }
+.jgallery .zoom-container .nav-bottom > * {
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
+  opacity: .5;
+}
+.jgallery .zoom-container .nav-bottom:hover > * {
+  opacity: 1;
+}
 .jgallery .zoom-container .nav-bottom .icons {
-  background: #111;
   -webkit-transition: all 0.2s;
   transition: all 0.2s;
   float: left;
@@ -3611,7 +3591,6 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   z-index: 1;
 }
 .jgallery .zoom-container .nav-bottom .icons [class*="fa-"] {
-  background: #111;
   -webkit-transition: all 0.2s;
   transition: all 0.2s;
 }
@@ -3631,7 +3610,6 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   margin-left: -5px;
   padding: 8px 29px 6px 0;
   font-size: 14px;
-  background: #111;
   -webkit-transition: all 0.2s;
   transition: all 0.2s;
   right: auto;
@@ -4257,13 +4235,13 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   right: 0;
   bottom: 0;
   text-align: center;
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
   position: fixed;
   z-index: 10002;
 }
 .jgallery * {
   outline: none;
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }

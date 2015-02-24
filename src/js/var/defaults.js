@@ -3,6 +3,7 @@ var defaults = {
     autostartAtImage: 1, // Number; Number of image which will be loaded by autostart(only when 'autostart' parameter set as 'true').; ; [ 1, 2, 3 ]
     autostartAtAlbum: 1, // Number; Number of album which will be loaded by autostart(only when 'autostart' parameter set as 'true').; ; [ 1, 2, 3 ]
     backgroundColor: '#fff', // String; Background color for jGallery container.; ; [ '#ffffff', 'silver' ]
+    backgroundColorAlternative: '#ddd', // String; Background color for jGallery container.; ; [ '#ffffff', 'silver' ]
     browserHistory: true, // Boolean; If set as 'true', changes of active image will be saved in browser history.; [ true, false ]
     canChangeMode: true, // Boolean; If set as 'true' you can change display mode(only for full-screen or standard mode).; [ true, false ]
     canClose: false, // Boolean; If set as 'true' you can close jGallery(only for full-screen or standard mode).; [ true, false ]
@@ -11,7 +12,7 @@ var defaults = {
     disabledOnIE8AndOlder: true, // Boolean; If set as 'true', jGallery will be blocked for Internet Explorer 8 and older.; [ true, false ]
     draggableZoom: true, // Boolean; If set as 'true' you can drag active image.; [ true, false ]
     draggableZoomHideNavigationOnMobile: true, // Boolean; If set as 'true' navigation of draggable zoom will be hidden when width of window <= 'maxMobileWidth' parameter (default value - 767px); [ true, false ]
-    height: '600px', // String; Height of jGallery container(only for standard or slider mode).
+    height: '100vh', // String; Height of jGallery container(only for standard or slider mode).
     hideThumbnailsOnInit: false, // Boolean; If set as 'true', thumbnails will be minimized by default, when jGallery will be started(only when 'thumbnails' parameter set as 'true').; [ true, false ]
     maxMobileWidth: 767, // Number; Maximum width(px) for jGallery shows a view for mobile device.
     mode: 'standard', // String; Display mode.; [ 'full-screen', 'standard', 'slider' ]
@@ -29,7 +30,7 @@ var defaults = {
     thumbnailsFullScreen: true, // Boolean; If set as 'true', thumbnails will be displayed in full-screen.; [ true, false ]
     thumbnailsHideOnMobile: true, // Boolean; If set as 'true', thumbnails will be hidden when width of window <= 'maxMobileWidth' parameter (default value - 767px).; [ true, false ]
     thumbnailsPosition: 'bottom', // String; Thumbnails position(only when 'thumbnails' parameter set as 'true').; [ 'top',  'bottom', 'left', 'right' ]
-    thumbType: 'image', // String; Thumbnails type(only when 'thumbnails' parameter set as 'true').; [ 'image', 'square', 'number' ]
+    thumbType: 'images', // String; Thumbnails type(only when 'thumbnails' parameter set as 'true').; [ 'images', 'square', 'number' ]
     thumbWidth: 75, // Number; Width(pixels) of thumbnails.; ; [ 50, 75, 125 ]
     thumbWidthOnFullScreen: 100, // Number; Width(pixels) of thumbnails for thumbnails displayed in full-screen.; ; [ 125, 160, 200 ]
     title: true, // Boolean; If set as 'true', near photo will be shown title from alt attribute of img.; [ true, false ]

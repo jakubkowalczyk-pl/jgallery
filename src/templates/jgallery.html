@@ -1,0 +1,18 @@
+<div ng-transclude ng-hide="options.mode !== 'full-screen' && isVisible"></div>
+<div class="jgallery jgallery-{{ options.mode }}" data-jgallery-id="{{ id }}"
+     ng-show="isVisible"
+     ng-style="{
+        background: options.backgroundColor,
+        color: options.textColor,
+        'text-shadow': '0 0 1px ' + options.backgroundColor,
+        width: options.mode != 'full-screen' ? options.width : 'inherit',
+        height: options.mode != 'full-screen' ? options.height : 'inherit'
+     }">
+    <div jgallery-thumbnails
+         ng-hide="thumbnailsIsHidden && ! thumbnailsIsFullScreen"
+         class="jgallery-thumbnails jgallery-thumbnails-{{ options.thumbnailsPosition }} {{ options.thumbType }}"
+         style="{{ thumbnailsIsVertical ? 'width: ' + thumbWidth : 'height: ' + thumbHeight }}px; background: {{ options.backgroundColor }}"
+         ng-class="{'full-screen': thumbnailsIsFullScreen}">
+    </div>
+    <div data-jgallery-preview></div>
+</div>
