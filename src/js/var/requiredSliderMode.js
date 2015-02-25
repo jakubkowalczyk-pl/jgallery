@@ -1,6 +1,8 @@
-var requiredSliderMode = {
-    autostart: true,
-    canClose: false,
-    zoomSize: 'fill',
-    canChangeMode: false
-};
+angular.module( 'jgallery' ).factory( 'requiredSliderMode', function() {
+    return {
+        autostart: true,
+        canClose: false,
+        zoomSize: 'fill',
+        canChangeMode: false
+    };
+} );

@@ -1,103 +1,113 @@
 /*!
-* jgallery v1.5.2
+* jgallery v2.0.0
 * http://jgallery.jakubkowalczyk.pl/
 *
 * Released under the MIT license
 *
-* Date: 2015-02-24
+* Date: 2015-02-25
 */
 ( function( angular ) {
     "use strict";
     angular.module( 'jgallery', [] );
-var defaults = {
-    autostart: true, // Boolean; If set as 'true' jGallery will be started automatically after loading the document(only for full-screen or standard mode).; [ true, false ]
-    autostartAtImage: 1, // Number; Number of image which will be loaded by autostart(only when 'autostart' parameter set as 'true').; ; [ 1, 2, 3 ]
-    autostartAtAlbum: 1, // Number; Number of album which will be loaded by autostart(only when 'autostart' parameter set as 'true').; ; [ 1, 2, 3 ]
-    backgroundColor: '#fff', // String; Background color for jGallery container.; ; [ '#ffffff', 'silver' ]
-    backgroundColorAlternative: '#ddd', // String; Background color for jGallery container.; ; [ '#ffffff', 'silver' ]
-    browserHistory: true, // Boolean; If set as 'true', changes of active image will be saved in browser history.; [ true, false ]
-    canChangeMode: true, // Boolean; If set as 'true' you can change display mode(only for full-screen or standard mode).; [ true, false ]
-    canClose: false, // Boolean; If set as 'true' you can close jGallery(only for full-screen or standard mode).; [ true, false ]
-    canMinimalizeThumbnails: true, // Boolean; If set as 'true', you can minimalize thumbnails(only when 'thumbnails' parameter set as 'true').; [ true, false ]
-    canZoom: true, // Boolean; If set as 'true' you can zoom photos.; [ true, false ]
-    disabledOnIE8AndOlder: true, // Boolean; If set as 'true', jGallery will be blocked for Internet Explorer 8 and older.; [ true, false ]
-    draggableZoom: true, // Boolean; If set as 'true' you can drag active image.; [ true, false ]
-    draggableZoomHideNavigationOnMobile: true, // Boolean; If set as 'true' navigation of draggable zoom will be hidden when width of window <= 'maxMobileWidth' parameter (default value - 767px); [ true, false ]
-    height: '100vh', // String; Height of jGallery container(only for standard or slider mode).
-    hideThumbnailsOnInit: false, // Boolean; If set as 'true', thumbnails will be minimized by default, when jGallery will be started(only when 'thumbnails' parameter set as 'true').; [ true, false ]
-    maxMobileWidth: 767, // Number; Maximum width(px) for jGallery shows a view for mobile device.
-    mode: 'standard', // String; Display mode.; [ 'full-screen', 'standard', 'slider' ]
-    preloadAll: false, // Boolean; If set as 'true', all photos will be loaded before first shown photo.; [ true, false ]
-    slideshow: true, // Boolean; If set as 'true', option slideshow is enabled.; [ true, false ]
-    slideshowAutostart: false, // Boolean; If set as 'true', slideshow will be started immediately after initializing jGallery(only when 'slideshow' has been set as true).; [ true, false ]
-    slideshowCanRandom: true, // Boolean; If set as 'true', you can enable random change photos for slideshow(only when 'slideshow' has been set as true).; [ true, false ]
-    slideshowInterval: '8s', // String; Time between change of photos for slideshow(only when 'slideshow' has been set as true).; [ '3s', '6s', '10s' ] 
-    slideshowRandom: false, // Boolean; If set as 'true', photos in slideshow will be changing random(only when 'slideshow' has been set as true and 'slideshowCanRandom' has been set as true).; [ true, false ]
-    swipeEvents: true, // Boolean; If set as 'true', you can switch to next/prev photo and thumbnails using swipe events.; [ true, false ]
-    textColor: '#000', // String; Color of text and icons.; ; [ '#000000', 'rgb(0,153,221)' ]
-    thumbnails: true, // Boolean; If set as 'true', thumbnails will be displayed.; [ true, false ]
-    thumbHeight: 75, // Number; Height(pixels) of thumbnails.; ; [ 50, 75, 125 ]
-    thumbHeightOnFullScreen: 100, // Number; Height(pixels) of thumbnails for thumbnails displayed in full-screen.; ; [ 125, 160, 200 ]
-    thumbnailsFullScreen: true, // Boolean; If set as 'true', thumbnails will be displayed in full-screen.; [ true, false ]
-    thumbnailsHideOnMobile: true, // Boolean; If set as 'true', thumbnails will be hidden when width of window <= 'maxMobileWidth' parameter (default value - 767px).; [ true, false ]
-    thumbnailsPosition: 'bottom', // String; Thumbnails position(only when 'thumbnails' parameter set as 'true').; [ 'top',  'bottom', 'left', 'right' ]
-    thumbType: 'images', // String; Thumbnails type(only when 'thumbnails' parameter set as 'true').; [ 'images', 'square', 'number' ]
-    thumbWidth: 75, // Number; Width(pixels) of thumbnails.; ; [ 50, 75, 125 ]
-    thumbWidthOnFullScreen: 100, // Number; Width(pixels) of thumbnails for thumbnails displayed in full-screen.; ; [ 125, 160, 200 ]
-    title: true, // Boolean; If set as 'true', near photo will be shown title from alt attribute of img.; [ true, false ]
-    titleExpanded: false, // Boolean; If set as 'true', in bottom area of zoomed photo will be shown title from alt attribute of img(only when 'title' has been set as true).; [ true, false ]
-    tooltipClose: 'Close', // String; Text of tooltip which will be displayed next to icon for close jgallery(if you set canClose parameter as true).; ; [ 'Close', 'Zamknij' ]
-    tooltipFullScreen: 'Full screen', // String; Text of tooltip which will be displayed next to icon for change display mode.; ; [ 'Full screen', 'Tryb pełnoekranowy' ]
-    tooltipRandom: 'Random', // String; Text of tooltip which will be displayed next to icon for random slideshow toggling.; ; [ 'Random', 'Kolejność losowa' ]
-    tooltips: true, // Boolean; If set as 'true', tooltips will be displayed next to icons.; [ true, false ]
-    tooltipSeeAllPhotos: 'See all photos', // String; Text of tooltip which will be displayed next to icon for change thumbnails view.; ; [ 'See all photos', 'Zobacz wszystkie zdjęcia' ]
-    tooltipSeeOtherAlbums: 'See other albums', // String; Text of tooltip which will be displayed next to icon for change album(if your jGallery has more than one album).; ; [ 'See other albums', 'Zobacz pozostałe albumy' ]
-    tooltipSlideshow: 'Slideshow', // String; Text of tooltip which will be displayed next to icon for play/pause slideshow.; ; [ 'Slideshow', 'Pokaz slajdów' ]
-    tooltipToggleThumbnails: 'Toggle thumbnails', // String; Text of tooltip which will be displayed next to icon for toggle thumbnails.; ; [ 'Toggle thumbnails', 'Pokaż/ukryj miniatury' ]
-    tooltipZoom: 'Zoom', // String; Text of tooltip which will be displayed next to icon for zoom photo.; ; [ 'Zoom', 'Powiększenie' ]
-    transition: 'moveToLeft_moveFromRight', // String; Transition effect for change active image.; [ 'moveToLeft_moveFromRight', 'moveToRight_moveFromLeft', 'moveToTop_moveFromBottom', 'moveToBottom_moveFromTop', 'fade_moveFromRight', 'fade_moveFromLeft', 'fade_moveFromBottom', 'fade_moveFromTop', 'moveToLeftFade_moveFromRightFade', 'moveToRightFade_moveFromLeftFade', 'moveToTopFade_moveFromBottomFade', 'moveToBottomFade_moveFromTopFade', 'moveToLeftEasing_moveFromRight', 'moveToRightEasing_moveFromLeft', 'moveToTopEasing_moveFromBottom', 'moveToBottomEasing_moveFromTop', 'scaleDown_moveFromRight', 'scaleDown_moveFromLeft', 'scaleDown_moveFromBottom', 'scaleDown_moveFromTop', 'scaleDown_scaleUpDown', 'scaleDownUp_scaleUp', 'moveToLeft_scaleUp', 'moveToRight_scaleUp', 'moveToTop_scaleUp', 'moveToBottom_scaleUp', 'scaleDownCenter_scaleUpCenter', 'rotateRightSideFirst_moveFromRight', 'rotateLeftSideFirst_moveFromLeft', 'rotateTopSideFirst_moveFromTop', 'rotateBottomSideFirst_moveFromBottom', 'flipOutRight_flipInLeft', 'flipOutLeft_flipInRight', 'flipOutTop_flipInBottom', 'flipOutBottom_flipInTop', 'rotateFall_scaleUp', 'rotateOutNewspaper_rotateInNewspaper', 'rotatePushLeft_moveFromRight', 'rotatePushRight_moveFromLeft', 'rotatePushTop_moveFromBottom', 'rotatePushBottom_moveFromTop', 'rotatePushLeft_rotatePullRight', 'rotatePushRight_rotatePullLeft', 'rotatePushTop_rotatePullBottom', 'rotatePushBottom_page', 'rotateFoldLeft_moveFromRightFade', 'rotateFoldRight_moveFromLeftFade', 'rotateFoldTop_moveFromBottomFade', 'rotateFoldBottom_moveFromTopFade', 'moveToRightFade_rotateUnfoldLeft', 'moveToLeftFade_rotateUnfoldRight', 'moveToBottomFade_rotateUnfoldTop', 'moveToTopFade_rotateUnfoldBottom', 'rotateRoomLeftOut_rotateRoomLeftIn', 'rotateRoomRightOut_rotateRoomRightIn', 'rotateRoomTopOut_rotateRoomTopIn', 'rotateRoomBottomOut_rotateRoomBottomIn', 'rotateCubeLeftOut_rotateCubeLeftIn', 'rotateCubeRightOut_rotateCubeRightIn', 'rotateCubeTopOut_rotateCubeTopIn', 'rotateCubeBottomOut_rotateCubeBottomIn', 'rotateCarouselLeftOut_rotateCarouselLeftIn', 'rotateCarouselRightOut_rotateCarouselRightIn', 'rotateCarouselTopOut_rotateCarouselTopIn', 'rotateCarouselBottomOut_rotateCarouselBottomIn', 'rotateSidesOut_rotateSidesInDelay', 'rotateSlideOut_rotateSlideIn', 'random' ]
-    transitionBackward: 'auto', // String; Transition effect for change active image(when user selected one of previous images).; [ 'auto', 'moveToLeft_moveFromRight', 'moveToRight_moveFromLeft', 'moveToTop_moveFromBottom', 'moveToBottom_moveFromTop', 'fade_moveFromRight', 'fade_moveFromLeft', 'fade_moveFromBottom', 'fade_moveFromTop', 'moveToLeftFade_moveFromRightFade', 'moveToRightFade_moveFromLeftFade', 'moveToTopFade_moveFromBottomFade', 'moveToBottomFade_moveFromTopFade', 'moveToLeftEasing_moveFromRight', 'moveToRightEasing_moveFromLeft', 'moveToTopEasing_moveFromBottom', 'moveToBottomEasing_moveFromTop', 'scaleDown_moveFromRight', 'scaleDown_moveFromLeft', 'scaleDown_moveFromBottom', 'scaleDown_moveFromTop', 'scaleDown_scaleUpDown', 'scaleDownUp_scaleUp', 'moveToLeft_scaleUp', 'moveToRight_scaleUp', 'moveToTop_scaleUp', 'moveToBottom_scaleUp', 'scaleDownCenter_scaleUpCenter', 'rotateRightSideFirst_moveFromRight', 'rotateLeftSideFirst_moveFromLeft', 'rotateTopSideFirst_moveFromTop', 'rotateBottomSideFirst_moveFromBottom', 'flipOutRight_flipInLeft', 'flipOutLeft_flipInRight', 'flipOutTop_flipInBottom', 'flipOutBottom_flipInTop', 'rotateFall_scaleUp', 'rotateOutNewspaper_rotateInNewspaper', 'rotatePushLeft_moveFromRight', 'rotatePushRight_moveFromLeft', 'rotatePushTop_moveFromBottom', 'rotatePushBottom_moveFromTop', 'rotatePushLeft_rotatePullRight', 'rotatePushRight_rotatePullLeft', 'rotatePushTop_rotatePullBottom', 'rotatePushBottom_page', 'rotateFoldLeft_moveFromRightFade', 'rotateFoldRight_moveFromLeftFade', 'rotateFoldTop_moveFromBottomFade', 'rotateFoldBottom_moveFromTopFade', 'moveToRightFade_rotateUnfoldLeft', 'moveToLeftFade_rotateUnfoldRight', 'moveToBottomFade_rotateUnfoldTop', 'moveToTopFade_rotateUnfoldBottom', 'rotateRoomLeftOut_rotateRoomLeftIn', 'rotateRoomRightOut_rotateRoomRightIn', 'rotateRoomTopOut_rotateRoomTopIn', 'rotateRoomBottomOut_rotateRoomBottomIn', 'rotateCubeLeftOut_rotateCubeLeftIn', 'rotateCubeRightOut_rotateCubeRightIn', 'rotateCubeTopOut_rotateCubeTopIn', 'rotateCubeBottomOut_rotateCubeBottomIn', 'rotateCarouselLeftOut_rotateCarouselLeftIn', 'rotateCarouselRightOut_rotateCarouselRightIn', 'rotateCarouselTopOut_rotateCarouselTopIn', 'rotateCarouselBottomOut_rotateCarouselBottomIn', 'rotateSidesOut_rotateSidesInDelay', 'rotateSlideOut_rotateSlideIn', 'random' ]
-    transitionCols: 1, // Number; Number of columns in the image divided into columns.; ; [ 1, 2, 3, 4, 5, 6 ]
-    transitionDuration: '0.7s', // String; Duration of transition between photos.; [ '0.2s', '0.5s', '1s' ] 
-    transitionRows: 1, // Number; Number of columns in the image divided into rows.; ; [ 1, 2, 3, 4, 5, 6 ]
-    transitionTimingFunction: 'cubic-bezier(0,1,1,1)', // String; Timig function for showing photo.; [ 'linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out', 'cubic-bezier(0.5,-0.5,0.5,1.5)', 'cubic-bezier(0,1,1,1)' ]
-    transitionWaveDirection: 'forward', // String; Direction of animation(only when 'transitionCols' > 1 or 'transitionRows' > 1).; [ 'forward', 'backward' ]
-    width: '100%', // String; Width of jGallery container(only for standard or slider mode).
-    zoomSize: 'fit', // String; Size of zoomed photo(only for full-screen or standard mode).; [ 'fit', 'original', 'fill' ]
-    afterLoadPhoto: function() {}, // Function; Custom function that will be called after loading photo.; ; [ function() { alert( 'afterLoadPhoto' ) } ]
-    beforeLoadPhoto: function() {}, // Function; Custom function that will be called before loading photo.; ; [ function() { alert( 'beforeLoadPhoto' ) } ]
-    closeGallery: function() {}, // Function; Custom function that will be called after hiding jGallery.; ; [ function() { alert( 'closeGallery' ) } ]
-    initGallery: function() {}, // Function; Custom function that will be called before initialization of jGallery.; ; [ function() { alert( 'initGallery' ) } ]
-    showGallery: function() {}, // Function; Custom function that will be called after showing jGallery.; ; [ function() { alert( 'showGallery' ) } ]
-    showPhoto: function() {} // Function; Custom function that will be called before showing photo.; ; [ function() { alert( 'showPhoto' ) } ]
-};
-var defaultsFullScreenMode = {};
-var defaultsSliderMode = {
-    width: '940px',
-    height: '360px',
-    canZoom: false,
-    draggableZoom: false,
-    browserHistory: false,
-    thumbnailsFullScreen: false,
-    thumbType: 'square',
-    thumbWidth: 20, //px
-    thumbHeight: 20, //px
-    canMinimalizeThumbnails: false,
-    transition: 'rotateCubeRightOut_rotateCubeRightIn',
-    transitionBackward: 'rotateCubeRightOut_rotateCubeRightIn',
-    transitionCols: 6,
-    transitionRows: 1,
-    slideshow: true,
-    slideshowAutostart: true,
-    zoomSize: 'fill'
-};
-var requiredFullScreenMode = {};
-var requiredSliderMode = {
-    autostart: true,
-    canClose: false,
-    zoomSize: 'fill',
-    canChangeMode: false
-};
+angular.module( 'jgallery' ).factory( 'defaults', function() {
+    return {
+        autostart: true, // Boolean; If set as 'true' jGallery will be started automatically after loading the document(only for full-screen or standard mode).; [ true, false ]
+        autostartAtImage: 1, // Number; Number of image which will be loaded by autostart(only when 'autostart' parameter set as 'true').; ; [ 1, 2, 3 ]
+        autostartAtAlbum: 1, // Number; Number of album which will be loaded by autostart(only when 'autostart' parameter set as 'true').; ; [ 1, 2, 3 ]
+        backgroundColor: '#fff', // String; Background color for jGallery container.; ; [ '#ffffff', 'silver' ]
+        backgroundColorAlternative: '#ddd', // String; Background color for jGallery container.; ; [ '#ffffff', 'silver' ]
+        browserHistory: true, // Boolean; If set as 'true', changes of active image will be saved in browser history.; [ true, false ]
+        canChangeMode: true, // Boolean; If set as 'true' you can change display mode(only for full-screen or standard mode).; [ true, false ]
+        canClose: false, // Boolean; If set as 'true' you can close jGallery(only for full-screen or standard mode).; [ true, false ]
+        canMinimalizeThumbnails: true, // Boolean; If set as 'true', you can minimalize thumbnails(only when 'thumbnails' parameter set as 'true').; [ true, false ]
+        canZoom: true, // Boolean; If set as 'true' you can zoom photos.; [ true, false ]
+        disabledOnIE8AndOlder: true, // Boolean; If set as 'true', jGallery will be blocked for Internet Explorer 8 and older.; [ true, false ]
+        draggableZoom: true, // Boolean; If set as 'true' you can drag active image.; [ true, false ]
+        draggableZoomHideNavigationOnMobile: true, // Boolean; If set as 'true' navigation of draggable zoom will be hidden when width of window <= 'maxMobileWidth' parameter (default value - 767px); [ true, false ]
+        height: '100vh', // String; Height of jGallery container(only for standard or slider mode).
+        hideThumbnailsOnInit: false, // Boolean; If set as 'true', thumbnails will be minimized by default, when jGallery will be started(only when 'thumbnails' parameter set as 'true').; [ true, false ]
+        maxMobileWidth: 767, // Number; Maximum width(px) for jGallery shows a view for mobile device.
+        mode: 'standard', // String; Display mode.; [ 'full-screen', 'standard', 'slider' ]
+        preloadAll: false, // Boolean; If set as 'true', all photos will be loaded before first shown photo.; [ true, false ]
+        slideshow: true, // Boolean; If set as 'true', option slideshow is enabled.; [ true, false ]
+        slideshowAutostart: false, // Boolean; If set as 'true', slideshow will be started immediately after initializing jGallery(only when 'slideshow' has been set as true).; [ true, false ]
+        slideshowCanRandom: true, // Boolean; If set as 'true', you can enable random change photos for slideshow(only when 'slideshow' has been set as true).; [ true, false ]
+        slideshowInterval: '8s', // String; Time between change of photos for slideshow(only when 'slideshow' has been set as true).; [ '3s', '6s', '10s' ] 
+        slideshowRandom: false, // Boolean; If set as 'true', photos in slideshow will be changing random(only when 'slideshow' has been set as true and 'slideshowCanRandom' has been set as true).; [ true, false ]
+        swipeEvents: true, // Boolean; If set as 'true', you can switch to next/prev photo and thumbnails using swipe events.; [ true, false ]
+        textColor: '#000', // String; Color of text and icons.; ; [ '#000000', 'rgb(0,153,221)' ]
+        thumbnails: true, // Boolean; If set as 'true', thumbnails will be displayed.; [ true, false ]
+        thumbHeight: 75, // Number; Height(pixels) of thumbnails.; ; [ 50, 75, 125 ]
+        thumbHeightOnFullScreen: 100, // Number; Height(pixels) of thumbnails for thumbnails displayed in full-screen.; ; [ 125, 160, 200 ]
+        thumbnailsFullScreen: true, // Boolean; If set as 'true', thumbnails will be displayed in full-screen.; [ true, false ]
+        thumbnailsHideOnMobile: true, // Boolean; If set as 'true', thumbnails will be hidden when width of window <= 'maxMobileWidth' parameter (default value - 767px).; [ true, false ]
+        thumbnailsPosition: 'bottom', // String; Thumbnails position(only when 'thumbnails' parameter set as 'true').; [ 'top',  'bottom', 'left', 'right' ]
+        thumbType: 'images', // String; Thumbnails type(only when 'thumbnails' parameter set as 'true').; [ 'images', 'square', 'number' ]
+        thumbWidth: 75, // Number; Width(pixels) of thumbnails.; ; [ 50, 75, 125 ]
+        thumbWidthOnFullScreen: 100, // Number; Width(pixels) of thumbnails for thumbnails displayed in full-screen.; ; [ 125, 160, 200 ]
+        title: true, // Boolean; If set as 'true', near photo will be shown title from alt attribute of img.; [ true, false ]
+        titleExpanded: false, // Boolean; If set as 'true', in bottom area of zoomed photo will be shown title from alt attribute of img(only when 'title' has been set as true).; [ true, false ]
+        tooltipClose: 'Close', // String; Text of tooltip which will be displayed next to icon for close jgallery(if you set canClose parameter as true).; ; [ 'Close', 'Zamknij' ]
+        tooltipFullScreen: 'Full screen', // String; Text of tooltip which will be displayed next to icon for change display mode.; ; [ 'Full screen', 'Tryb pełnoekranowy' ]
+        tooltipRandom: 'Random', // String; Text of tooltip which will be displayed next to icon for random slideshow toggling.; ; [ 'Random', 'Kolejność losowa' ]
+        tooltips: true, // Boolean; If set as 'true', tooltips will be displayed next to icons.; [ true, false ]
+        tooltipSeeAllPhotos: 'See all photos', // String; Text of tooltip which will be displayed next to icon for change thumbnails view.; ; [ 'See all photos', 'Zobacz wszystkie zdjęcia' ]
+        tooltipSeeOtherAlbums: 'See other albums', // String; Text of tooltip which will be displayed next to icon for change album(if your jGallery has more than one album).; ; [ 'See other albums', 'Zobacz pozostałe albumy' ]
+        tooltipSlideshow: 'Slideshow', // String; Text of tooltip which will be displayed next to icon for play/pause slideshow.; ; [ 'Slideshow', 'Pokaz slajdów' ]
+        tooltipToggleThumbnails: 'Toggle thumbnails', // String; Text of tooltip which will be displayed next to icon for toggle thumbnails.; ; [ 'Toggle thumbnails', 'Pokaż/ukryj miniatury' ]
+        tooltipZoom: 'Zoom', // String; Text of tooltip which will be displayed next to icon for zoom photo.; ; [ 'Zoom', 'Powiększenie' ]
+        transition: 'moveToLeft_moveFromRight', // String; Transition effect for change active image.; [ 'moveToLeft_moveFromRight', 'moveToRight_moveFromLeft', 'moveToTop_moveFromBottom', 'moveToBottom_moveFromTop', 'fade_moveFromRight', 'fade_moveFromLeft', 'fade_moveFromBottom', 'fade_moveFromTop', 'moveToLeftFade_moveFromRightFade', 'moveToRightFade_moveFromLeftFade', 'moveToTopFade_moveFromBottomFade', 'moveToBottomFade_moveFromTopFade', 'moveToLeftEasing_moveFromRight', 'moveToRightEasing_moveFromLeft', 'moveToTopEasing_moveFromBottom', 'moveToBottomEasing_moveFromTop', 'scaleDown_moveFromRight', 'scaleDown_moveFromLeft', 'scaleDown_moveFromBottom', 'scaleDown_moveFromTop', 'scaleDown_scaleUpDown', 'scaleDownUp_scaleUp', 'moveToLeft_scaleUp', 'moveToRight_scaleUp', 'moveToTop_scaleUp', 'moveToBottom_scaleUp', 'scaleDownCenter_scaleUpCenter', 'rotateRightSideFirst_moveFromRight', 'rotateLeftSideFirst_moveFromLeft', 'rotateTopSideFirst_moveFromTop', 'rotateBottomSideFirst_moveFromBottom', 'flipOutRight_flipInLeft', 'flipOutLeft_flipInRight', 'flipOutTop_flipInBottom', 'flipOutBottom_flipInTop', 'rotateFall_scaleUp', 'rotateOutNewspaper_rotateInNewspaper', 'rotatePushLeft_moveFromRight', 'rotatePushRight_moveFromLeft', 'rotatePushTop_moveFromBottom', 'rotatePushBottom_moveFromTop', 'rotatePushLeft_rotatePullRight', 'rotatePushRight_rotatePullLeft', 'rotatePushTop_rotatePullBottom', 'rotatePushBottom_page', 'rotateFoldLeft_moveFromRightFade', 'rotateFoldRight_moveFromLeftFade', 'rotateFoldTop_moveFromBottomFade', 'rotateFoldBottom_moveFromTopFade', 'moveToRightFade_rotateUnfoldLeft', 'moveToLeftFade_rotateUnfoldRight', 'moveToBottomFade_rotateUnfoldTop', 'moveToTopFade_rotateUnfoldBottom', 'rotateRoomLeftOut_rotateRoomLeftIn', 'rotateRoomRightOut_rotateRoomRightIn', 'rotateRoomTopOut_rotateRoomTopIn', 'rotateRoomBottomOut_rotateRoomBottomIn', 'rotateCubeLeftOut_rotateCubeLeftIn', 'rotateCubeRightOut_rotateCubeRightIn', 'rotateCubeTopOut_rotateCubeTopIn', 'rotateCubeBottomOut_rotateCubeBottomIn', 'rotateCarouselLeftOut_rotateCarouselLeftIn', 'rotateCarouselRightOut_rotateCarouselRightIn', 'rotateCarouselTopOut_rotateCarouselTopIn', 'rotateCarouselBottomOut_rotateCarouselBottomIn', 'rotateSidesOut_rotateSidesInDelay', 'rotateSlideOut_rotateSlideIn', 'random' ]
+        transitionBackward: 'auto', // String; Transition effect for change active image(when user selected one of previous images).; [ 'auto', 'moveToLeft_moveFromRight', 'moveToRight_moveFromLeft', 'moveToTop_moveFromBottom', 'moveToBottom_moveFromTop', 'fade_moveFromRight', 'fade_moveFromLeft', 'fade_moveFromBottom', 'fade_moveFromTop', 'moveToLeftFade_moveFromRightFade', 'moveToRightFade_moveFromLeftFade', 'moveToTopFade_moveFromBottomFade', 'moveToBottomFade_moveFromTopFade', 'moveToLeftEasing_moveFromRight', 'moveToRightEasing_moveFromLeft', 'moveToTopEasing_moveFromBottom', 'moveToBottomEasing_moveFromTop', 'scaleDown_moveFromRight', 'scaleDown_moveFromLeft', 'scaleDown_moveFromBottom', 'scaleDown_moveFromTop', 'scaleDown_scaleUpDown', 'scaleDownUp_scaleUp', 'moveToLeft_scaleUp', 'moveToRight_scaleUp', 'moveToTop_scaleUp', 'moveToBottom_scaleUp', 'scaleDownCenter_scaleUpCenter', 'rotateRightSideFirst_moveFromRight', 'rotateLeftSideFirst_moveFromLeft', 'rotateTopSideFirst_moveFromTop', 'rotateBottomSideFirst_moveFromBottom', 'flipOutRight_flipInLeft', 'flipOutLeft_flipInRight', 'flipOutTop_flipInBottom', 'flipOutBottom_flipInTop', 'rotateFall_scaleUp', 'rotateOutNewspaper_rotateInNewspaper', 'rotatePushLeft_moveFromRight', 'rotatePushRight_moveFromLeft', 'rotatePushTop_moveFromBottom', 'rotatePushBottom_moveFromTop', 'rotatePushLeft_rotatePullRight', 'rotatePushRight_rotatePullLeft', 'rotatePushTop_rotatePullBottom', 'rotatePushBottom_page', 'rotateFoldLeft_moveFromRightFade', 'rotateFoldRight_moveFromLeftFade', 'rotateFoldTop_moveFromBottomFade', 'rotateFoldBottom_moveFromTopFade', 'moveToRightFade_rotateUnfoldLeft', 'moveToLeftFade_rotateUnfoldRight', 'moveToBottomFade_rotateUnfoldTop', 'moveToTopFade_rotateUnfoldBottom', 'rotateRoomLeftOut_rotateRoomLeftIn', 'rotateRoomRightOut_rotateRoomRightIn', 'rotateRoomTopOut_rotateRoomTopIn', 'rotateRoomBottomOut_rotateRoomBottomIn', 'rotateCubeLeftOut_rotateCubeLeftIn', 'rotateCubeRightOut_rotateCubeRightIn', 'rotateCubeTopOut_rotateCubeTopIn', 'rotateCubeBottomOut_rotateCubeBottomIn', 'rotateCarouselLeftOut_rotateCarouselLeftIn', 'rotateCarouselRightOut_rotateCarouselRightIn', 'rotateCarouselTopOut_rotateCarouselTopIn', 'rotateCarouselBottomOut_rotateCarouselBottomIn', 'rotateSidesOut_rotateSidesInDelay', 'rotateSlideOut_rotateSlideIn', 'random' ]
+        transitionCols: 1, // Number; Number of columns in the image divided into columns.; ; [ 1, 2, 3, 4, 5, 6 ]
+        transitionDuration: '0.7s', // String; Duration of transition between photos.; [ '0.2s', '0.5s', '1s' ] 
+        transitionRows: 1, // Number; Number of columns in the image divided into rows.; ; [ 1, 2, 3, 4, 5, 6 ]
+        transitionTimingFunction: 'cubic-bezier(0,1,1,1)', // String; Timig function for showing photo.; [ 'linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out', 'cubic-bezier(0.5,-0.5,0.5,1.5)', 'cubic-bezier(0,1,1,1)' ]
+        transitionWaveDirection: 'forward', // String; Direction of animation(only when 'transitionCols' > 1 or 'transitionRows' > 1).; [ 'forward', 'backward' ]
+        width: '100%', // String; Width of jGallery container(only for standard or slider mode).
+        zoomSize: 'fit', // String; Size of zoomed photo(only for full-screen or standard mode).; [ 'fit', 'original', 'fill' ]
+        afterLoadPhoto: function() {}, // Function; Custom function that will be called after loading photo.; ; [ function() { alert( 'afterLoadPhoto' ) } ]
+        beforeLoadPhoto: function() {}, // Function; Custom function that will be called before loading photo.; ; [ function() { alert( 'beforeLoadPhoto' ) } ]
+        closeGallery: function() {}, // Function; Custom function that will be called after hiding jGallery.; ; [ function() { alert( 'closeGallery' ) } ]
+        initGallery: function() {}, // Function; Custom function that will be called before initialization of jGallery.; ; [ function() { alert( 'initGallery' ) } ]
+        showGallery: function() {}, // Function; Custom function that will be called after showing jGallery.; ; [ function() { alert( 'showGallery' ) } ]
+        showPhoto: function() {} // Function; Custom function that will be called before showing photo.; ; [ function() { alert( 'showPhoto' ) } ]
+    };
+} );
+angular.module( 'jgallery' ).factory( 'defaultsFullScreenMode', function() {
+    return {};
+} );
+angular.module( 'jgallery' ).factory( 'defaultsSliderMode', function() {
+    return {
+        width: '940px',
+        height: '360px',
+        canZoom: false,
+        draggableZoom: false,
+        browserHistory: false,
+        thumbnailsFullScreen: false,
+        thumbType: 'square',
+        thumbWidth: 20, //px
+        thumbHeight: 20, //px
+        canMinimalizeThumbnails: false,
+        transition: 'rotateCubeRightOut_rotateCubeRightIn',
+        transitionBackward: 'rotateCubeRightOut_rotateCubeRightIn',
+        transitionCols: 6,
+        transitionRows: 1,
+        slideshow: true,
+        slideshowAutostart: true,
+        zoomSize: 'fill'
+    };
+} );
+angular.module( 'jgallery' ).factory( 'requiredFullScreenMode', function() {
+    return {};
+} );
+angular.module( 'jgallery' ).factory( 'requiredSliderMode', function() {
+    return {
+        autostart: true,
+        canClose: false,
+        zoomSize: 'fill',
+        canChangeMode: false
+    };
+} );
 angular.module('jgallery').run(['$templateCache', function($templateCache) {
   'use strict';
 
@@ -140,7 +150,7 @@ angular.module('jgallery').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('../../templates/scrollable.html',
-    "<div ng-transclude></div><span class=\"jgallery-scroll-top jgallery-btn\" ng-class=\"{'visible': thumbnailsCanScrollTop()}\" ng-click=thumbnailsScrollTop();><span class=\"fa fa-chevron-up ico\"></span></span> <span class=\"jgallery-scroll-bottom jgallery-btn\" ng-class=\"{'visible': thumbnailsCanScrollBottom()}\" ng-click=thumbnailsScrollBottom();><span class=\"fa fa-chevron-down ico\"></span></span> <span class=\"jgallery-scroll-left jgallery-btn\" ng-class=\"{'visible': thumbnailsCanScrollLeft()}\" ng-click=thumbnailsScrollLeft();><span class=\"fa fa-chevron-left ico\"></span></span> <span class=\"jgallery-scroll-right jgallery-btn\" ng-class=\"{'visible': thumbnailsCanScrollRight()}\" ng-click=thumbnailsScrollRight();><span class=\"fa fa-chevron-right ico\"></span></span>"
+    "<div ng-transclude></div><span class=\"jgallery-scroll-top jgallery-btn\" ng-class=\"{'visible': canScrollTop()}\" ng-click=scrollTop();><span class=\"fa fa-chevron-up ico\"></span></span> <span class=\"jgallery-scroll-bottom jgallery-btn\" ng-class=\"{'visible': canScrollBottom()}\" ng-click=scrollBottom();><span class=\"fa fa-chevron-down ico\"></span></span> <span class=\"jgallery-scroll-left jgallery-btn\" ng-class=\"{'visible': canScrollLeft()}\" ng-click=scrollLeft();><span class=\"fa fa-chevron-left ico\"></span></span> <span class=\"jgallery-scroll-right jgallery-btn\" ng-class=\"{'visible': canScrollRight()}\" ng-click=scrollRight();><span class=\"fa fa-chevron-right ico\"></span></span>"
   );
 
 
@@ -160,61 +170,49 @@ angular.module('jgallery').run(['$templateCache', function($templateCache) {
 
 }]);
 
-( function( a ) {
-    "use strict";
+angular.module( 'jgallery' ).directive( 'jgalleryAlbum', function() {  
     var albumId = 1;
-    
-    a.module( 'jgallery' ).directive( 'jgalleryAlbum', ['$compile', function( $compile ) {        
-        return {
-            scope: {},
-            require: '^jgallery',
-            link: function( scope, element, attrs, jgalleryController ) {
-                scope.album.title = attrs['jgalleryAlbum'];
-                jgalleryController.addAlbum( scope.album );
-            },
-            controller: ['$scope', function( $scope ){
-                $scope.album = {
-                    id: albumId++
-                };
-                var photos = $scope.album.photos = [];
-                    
-                this.addPhoto = function( photo ) {
-                    $scope.$parent.$apply( function() {
-                        photos.push( photo );
-                    } );
-                };
-            }]
-        };
-    }] );
-} )( angular );
-angular.module( 'jgallery' ).directive( 'jgalleryBtn', function() {        
-     return {
-         require: '^jgallery',
-         link: function( scope, element, attrs ) {             
-//             scope.$watch( 'options.backgroundColor + options.color', function() {
-//                var options = scope.options;
-//                var bg = options.backgroundColor;
-//                var color = options.color;
-//                
-//                 element[0].style['text-shadow'] = '0 0 5px ' + bg  + ',1px 1px ' + bg;
-//                 element[0].style.color = color;               
-//             } );
-         }
-     };
- } );
-( function( document, angular, defaults, defaultsFullScreenMode, requiredFullScreenMode, defaultsSliderMode, requiredSliderMode ) {
-    "use strict";
-    var jGalleryId = 1;
-    
-    angular.module( 'jgallery' ).directive( 'jgallery', ['$timeout', '$filter', function( $timeout, $filter ) {        
+
+    return {
+        scope: {},
+        require: '^jgallery',
+        link: function( scope, element, attrs, jgalleryController ) {
+            scope.album.title = attrs['jgalleryAlbum'];
+            jgalleryController.addAlbum( scope.album );
+        },
+        controller: ['$scope', function( $scope ){
+            $scope.album = {
+                id: albumId++
+            };
+            var photos = $scope.album.photos = [];
+
+            this.addPhoto = function( photo ) {
+                $scope.$parent.$apply( function() {
+                    photos.push( photo );
+                } );
+            };
+        }]
+    };
+} );
+angular.module( 'jgallery' ).directive( 'jgallery', [
+    'defaults',
+    'defaultsFullScreenMode',
+    'requiredFullScreenMode',
+    'defaultsSliderMode',
+    'requiredSliderMode',
+    '$timeout',
+    '$filter',
+    '$document',
+    function( defaults, defaultsFullScreenMode, requiredFullScreenMode, defaultsSliderMode, requiredSliderMode, $timeout, $filter, $document ) {      
+        var jGalleryId = 1;
+
         return {
             transclude: true,
             scope: true,
             link: function( scope, element, attrs ) {
                 var id = scope.id = jGalleryId++;
                 var options;
-                window.scope = scope;
-        
+
                 var overrideOptions = function() {
                     scope.options = options = angular.copy( defaults );
                     try {
@@ -231,24 +229,24 @@ angular.module( 'jgallery' ).directive( 'jgalleryBtn', function() {
                         }                    
                     } catch( e ) {};
                 };
-                
+
                 var issetActivePhoto = function() {
                     return scope.activePhoto && scope.activePhoto.id;
                 };
-                
+
                 scope.setAlbumAsActive = function( albumId ) {
                     scope.activeAlbum = $filter( 'filter' )( scope.albums, { id: albumId } )[0];
                     scope.showPhoto( scope.activeAlbum.photos[0] );
                 };
-                
+
                 scope.showPhoto = function( photo ) {
                     scope.activePhoto = angular.extend( {}, scope.activePhoto, photo );
                     scope.isVisible = true;
                 };
-                
+
                 scope.goToPrevPhoto = function() {
                     var prevKey;
-                    
+
                     angular.forEach( scope.activeAlbum.photos, function( photo, key ) {
                         if ( photo.id === scope.activePhoto.id && scope.activeAlbum.photos[key-1] ) {
                             prevKey = key - 1;
@@ -258,10 +256,10 @@ angular.module( 'jgallery' ).directive( 'jgalleryBtn', function() {
                         scope.showPhoto( scope.activeAlbum.photos[prevKey] );
                     }
                 };
-                
+
                 scope.goToNextPhoto = function() {
                     var nextKey;
-                    
+
                     angular.forEach( scope.activeAlbum.photos, function( photo, key ) {
                         if ( photo.id === scope.activePhoto.id && scope.activeAlbum.photos[key+1] ) {
                             nextKey = key + 1;
@@ -271,7 +269,7 @@ angular.module( 'jgallery' ).directive( 'jgalleryBtn', function() {
                         scope.showPhoto( scope.activeAlbum.photos[nextKey] );
                     }
                 };
-                
+
                 angular.element( element ).attr( 'data-jgallery-id', id );
                 overrideOptions();
                 if ( options.autostart ) {
@@ -293,21 +291,18 @@ angular.module( 'jgallery' ).directive( 'jgalleryBtn', function() {
                 scope.$watch( 'options.mode', function( mode ) {
                     scope.isSlider = mode === 'slider';
                 } );
-//                attrs.$observe( 'jgallery', function() {
-//                    overrideOptions();
-//                } );
-                angular.element( document.getElementsByTagName( 'head' ) ).append( '<style type="text/css" class="colours" data-jgallery-id="' + id + '"></style>' );
+                angular.element( $document.find( 'head' ) ).append( '<style type="text/css" class="colours" data-jgallery-id="' + id + '"></style>' );
             },
             controller: ['$scope', function( $scope ) {
                 var albums = $scope.albums = [];
-                    
+
                 this.addAlbum = function( album ) {
                     if ( ! album.title ) {
                         album.title = 'Album ' + album.id;
                     }
                     albums.push( album );
                 };
-                
+
                 this.showPhoto = function( photo ) {
                     $scope.showPhoto( photo );
                     $timeout( function() {
@@ -317,52 +312,50 @@ angular.module( 'jgallery' ).directive( 'jgalleryBtn', function() {
             }],
             templateUrl: '../../templates/jgallery.html'
         };
-    }] );
-} )( document, angular, defaults, defaultsFullScreenMode, requiredFullScreenMode, defaultsSliderMode, requiredSliderMode );
-( function( a ) {
-    "use strict";
-    var photoId = 1;
-    
-    a.module( 'jgallery' ).directive( 'jgalleryPhoto', function() {
-        return {
-            scope: {
-            },
-            require: ['^jgalleryAlbum', '^jgallery'],
-            link: function( scope, element, attrs, controllers ) {    
-                var img;
-                var photo = {};
-                var albumController = controllers[0];
-                var galleryController = controllers[1];
-                
-                if ( element.attr( 'href' ) ) {
-                    img = a.element( element ).find( 'img' );
-                    photo.href = element.attr( 'href' );
-                    photo.target = element.attr( 'target' );
-                }
-                else if ( element.attr( 'src' ) ) {
-                    img = element;                  
-                }
-                photo.src = img.attr( 'src' );
-                photo.title = img.attr( 'alt' );
-                photo.bgColor = img.attr( 'data-jgallery-bg-color' );
-                photo.textColor = img.attr( 'data-jgallery-text-color' );
-                
-                ( function() {
-                    var thumb = new Image();
-                    var img = new Image();
-                                        
-                    thumb.onload = function() {
-                        photo.thumbWidth = thumb.width;
-                        photo.thumbHeight = thumb.height;
-                        photo.id = photoId++;
-                        albumController.addPhoto( photo );
-                        img.onload = function() {
-                            photo.width = img.width;
-                            photo.height = img.height;
-                        };
-                        img.src = photo.href;
-                    };
-                    thumb.src = photo.src;
+    }
+] );
+angular.module( 'jgallery' ).directive( 'jgalleryPhoto', function() {
+   var photoId = 1;
+
+   return {
+       scope: {
+       },
+       require: ['^jgalleryAlbum', '^jgallery'],
+       link: function( scope, element, attrs, controllers ) {    
+           var img;
+           var photo = {};
+           var albumController = controllers[0];
+           var galleryController = controllers[1];
+
+           if ( element.attr( 'href' ) ) {
+               img = angular.element( element ).find( 'img' );
+               photo.href = element.attr( 'href' );
+               photo.target = element.attr( 'target' );
+           }
+           else if ( element.attr( 'src' ) ) {
+               img = element;                  
+           }
+           photo.src = img.attr( 'src' );
+           photo.title = img.attr( 'alt' );
+           photo.bgColor = img.attr( 'data-jgallery-bg-color' );
+           photo.textColor = img.attr( 'data-jgallery-text-color' );
+
+           ( function() {
+               var thumb = new Image();
+               var img = new Image();
+
+               thumb.onload = function() {
+                   photo.thumbWidth = thumb.width;
+                   photo.thumbHeight = thumb.height;
+                   photo.id = photoId++;
+                   albumController.addPhoto( photo );
+                   img.onload = function() {
+                       photo.width = img.width;
+                       photo.height = img.height;
+                   };
+                   img.src = photo.href;
+               };
+               thumb.src = photo.src;
 //                    function preloadImages(srcs, callback) {
 //                        var img, imgs = [];
 //                        var remaining = srcs.length;
@@ -386,17 +379,16 @@ angular.module( 'jgallery' ).directive( 'jgalleryBtn', function() {
 //                        photo.height = images[1].height;
 //                        albumController.addPhoto( photo );
 //                    } );
-                } )();
-                
-                a.element( element ).bind( 'click', function( $event ) {
-                    $event.preventDefault();
-                    galleryController.showPhoto( photo );
-                } );
-            }
-        };
-    } );
-} )( angular );
-angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$window', '$timeout', function( $window, $timeout ) {        
+           } )();
+
+           angular.element( element ).bind( 'click', function( $event ) {
+               $event.preventDefault();
+               galleryController.showPhoto( photo );
+           } );
+       }
+   };
+} );
+angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$timeout', function( $timeout ) {        
      return {
          require: '^jgallery',
          link: function( scope, element, attrs ) {
@@ -412,7 +404,6 @@ angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$window', '$timeout
                     var photo = scope.activePhoto;
                     var preview = scope.preview;
 
-                    console.log(preview.clientWidth,photo.width,preview.clientHeight,photo.height);
                     if ( preview.clientWidth === photo.width || preview.clientHeight === photo.height ) {
                         options.zoomSize = 'fit';
                     }
@@ -506,35 +497,35 @@ angular.module( 'jgallery' ).directive( 'jgalleryScrollable', ['$interval', '$wi
                 }, interval );
             };
 
-            scope.thumbnailsCanScrollTop = function() {
+            scope.canScrollTop = function() {
                 return container.scrollTop > 0;
             };
-            scope.thumbnailsScrollTop = function() {
-                if ( scope.thumbnailsCanScrollTop() ) {
+            scope.scrollTop = function() {
+                if ( scope.canScrollTop() ) {
                     animateScrollTop( container, container.scrollTop - $window.innerHeight * 0.7, 200 );
                 }
             };
-            scope.thumbnailsCanScrollBottom = function() {
+            scope.canScrollBottom = function() {
                 return container.offsetHeight + container.scrollTop < container.scrollHeight;
             };
-            scope.thumbnailsScrollBottom = function() {
-                if ( scope.thumbnailsCanScrollBottom() ) {
+            scope.scrollBottom = function() {
+                if ( scope.canScrollBottom() ) {
                     animateScrollTop( container, container.scrollTop + $window.innerHeight * 0.7, 200 );
                 }
             };               
-            scope.thumbnailsCanScrollLeft = function() {
+            scope.canScrollLeft = function() {
                 return container.scrollLeft > 0;
             };
-            scope.thumbnailsScrollLeft = function() {
-                if ( scope.thumbnailsCanScrollLeft() ) {
+            scope.scrollLeft = function() {
+                if ( scope.canScrollLeft() ) {
                     animateScrollLeft( container, container.scrollLeft - $window.innerWidth * 0.7, 200 );
                 }
             };
-            scope.thumbnailsCanScrollRight = function() {
+            scope.canScrollRight = function() {
                 return container.offsetWidth + container.scrollLeft < container.scrollWidth;
             };
-            scope.thumbnailsScrollRight = function() {
-                if ( scope.thumbnailsCanScrollRight() ) {
+            scope.scrollRight = function() {
+                if ( scope.canScrollRight() ) {
                     animateScrollLeft( container, container.scrollLeft + $window.innerWidth * 0.7, 200 );
                 }
             };
@@ -542,31 +533,27 @@ angular.module( 'jgallery' ).directive( 'jgalleryScrollable', ['$interval', '$wi
         templateUrl: '../../templates/scrollable.html'
     };
 }] );
-( function( window, angular, defaults, defaultsFullScreenMode, requiredFullScreenMode, defaultsSliderMode, requiredSliderMode ) {
-    "use strict";
-    
-    angular.module( 'jgallery' ).directive( 'jgalleryThumbnails', function() {        
-        return {
-            require: '^jgallery',
-            link: function( scope, element, attrs ) {
-                scope.$watch( 'options.thumbnailsPosition', function( position ) {
-                    scope.thumbnailsIsVertical = position === 'left' || position === 'right';
-                } );
-                scope.$watch( 'options.thumbnailsFullScreen', function( fullScreen ) {
-                    if ( fullScreen ) {
-                        scope.thumbWidth = scope.options.thumbWidthOnFullScreen;
-                        scope.thumbHeight = scope.options.thumbHeightOnFullScreen;
-                    }
-                    else {
-                        scope.thumbWidth = scope.options.thumbWidth;
-                        scope.thumbHeight = scope.options.thumbHeight;                        
-                    }
-                } );
-                scope.thumbnails = element[0];
-                scope.thumbnailsFullScreen = false;
-            },
-            templateUrl: '../../templates/thumbnails.html'
-        };
-    } );
-} )( window, angular, defaults, defaultsFullScreenMode, requiredFullScreenMode, defaultsSliderMode, requiredSliderMode );
+angular.module( 'jgallery' ).directive( 'jgalleryThumbnails', function() {        
+    return {
+        require: '^jgallery',
+        link: function( scope, element, attrs ) {
+            scope.$watch( 'options.thumbnailsPosition', function( position ) {
+                scope.thumbnailsIsVertical = position === 'left' || position === 'right';
+            } );
+            scope.$watch( 'options.thumbnailsFullScreen', function( fullScreen ) {
+                if ( fullScreen ) {
+                    scope.thumbWidth = scope.options.thumbWidthOnFullScreen;
+                    scope.thumbHeight = scope.options.thumbHeightOnFullScreen;
+                }
+                else {
+                    scope.thumbWidth = scope.options.thumbWidth;
+                    scope.thumbHeight = scope.options.thumbHeight;                        
+                }
+            } );
+            scope.thumbnails = element[0];
+            scope.thumbnailsFullScreen = false;
+        },
+        templateUrl: '../../templates/thumbnails.html'
+    };
+} );
 } )( angular );

@@ -40,7 +40,7 @@ angular.module('jgallery').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('../../templates/scrollable.html',
-    "<div ng-transclude></div><span class=\"jgallery-scroll-top jgallery-btn\" ng-class=\"{'visible': thumbnailsCanScrollTop()}\" ng-click=thumbnailsScrollTop();><span class=\"fa fa-chevron-up ico\"></span></span> <span class=\"jgallery-scroll-bottom jgallery-btn\" ng-class=\"{'visible': thumbnailsCanScrollBottom()}\" ng-click=thumbnailsScrollBottom();><span class=\"fa fa-chevron-down ico\"></span></span> <span class=\"jgallery-scroll-left jgallery-btn\" ng-class=\"{'visible': thumbnailsCanScrollLeft()}\" ng-click=thumbnailsScrollLeft();><span class=\"fa fa-chevron-left ico\"></span></span> <span class=\"jgallery-scroll-right jgallery-btn\" ng-class=\"{'visible': thumbnailsCanScrollRight()}\" ng-click=thumbnailsScrollRight();><span class=\"fa fa-chevron-right ico\"></span></span>"
+    "<div ng-transclude></div><span class=\"jgallery-scroll-top jgallery-btn\" ng-class=\"{'visible': canScrollTop()}\" ng-click=scrollTop();><span class=\"fa fa-chevron-up ico\"></span></span> <span class=\"jgallery-scroll-bottom jgallery-btn\" ng-class=\"{'visible': canScrollBottom()}\" ng-click=scrollBottom();><span class=\"fa fa-chevron-down ico\"></span></span> <span class=\"jgallery-scroll-left jgallery-btn\" ng-class=\"{'visible': canScrollLeft()}\" ng-click=scrollLeft();><span class=\"fa fa-chevron-left ico\"></span></span> <span class=\"jgallery-scroll-right jgallery-btn\" ng-class=\"{'visible': canScrollRight()}\" ng-click=scrollRight();><span class=\"fa fa-chevron-right ico\"></span></span>"
   );
 
 

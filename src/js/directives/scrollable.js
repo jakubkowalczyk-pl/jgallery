@@ -29,35 +29,35 @@ angular.module( 'jgallery' ).directive( 'jgalleryScrollable', ['$interval', '$wi
                 }, interval );
             };
 
-            scope.thumbnailsCanScrollTop = function() {
+            scope.canScrollTop = function() {
                 return container.scrollTop > 0;
             };
-            scope.thumbnailsScrollTop = function() {
-                if ( scope.thumbnailsCanScrollTop() ) {
+            scope.scrollTop = function() {
+                if ( scope.canScrollTop() ) {
                     animateScrollTop( container, container.scrollTop - $window.innerHeight * 0.7, 200 );
                 }
             };
-            scope.thumbnailsCanScrollBottom = function() {
+            scope.canScrollBottom = function() {
                 return container.offsetHeight + container.scrollTop < container.scrollHeight;
             };
-            scope.thumbnailsScrollBottom = function() {
-                if ( scope.thumbnailsCanScrollBottom() ) {
+            scope.scrollBottom = function() {
+                if ( scope.canScrollBottom() ) {
                     animateScrollTop( container, container.scrollTop + $window.innerHeight * 0.7, 200 );
                 }
             };               
-            scope.thumbnailsCanScrollLeft = function() {
+            scope.canScrollLeft = function() {
                 return container.scrollLeft > 0;
             };
-            scope.thumbnailsScrollLeft = function() {
-                if ( scope.thumbnailsCanScrollLeft() ) {
+            scope.scrollLeft = function() {
+                if ( scope.canScrollLeft() ) {
                     animateScrollLeft( container, container.scrollLeft - $window.innerWidth * 0.7, 200 );
                 }
             };
-            scope.thumbnailsCanScrollRight = function() {
+            scope.canScrollRight = function() {
                 return container.offsetWidth + container.scrollLeft < container.scrollWidth;
             };
-            scope.thumbnailsScrollRight = function() {
-                if ( scope.thumbnailsCanScrollRight() ) {
+            scope.scrollRight = function() {
+                if ( scope.canScrollRight() ) {
                     animateScrollLeft( container, container.scrollLeft + $window.innerWidth * 0.7, 200 );
                 }
             };

@@ -1,16 +1,22 @@
-( function( document, angular, defaults, defaultsFullScreenMode, requiredFullScreenMode, defaultsSliderMode, requiredSliderMode ) {
-    "use strict";
-    var jGalleryId = 1;
-    
-    angular.module( 'jgallery' ).directive( 'jgallery', ['$timeout', '$filter', function( $timeout, $filter ) {        
+angular.module( 'jgallery' ).directive( 'jgallery', [
+    'defaults',
+    'defaultsFullScreenMode',
+    'requiredFullScreenMode',
+    'defaultsSliderMode',
+    'requiredSliderMode',
+    '$timeout',
+    '$filter',
+    '$document',
+    function( defaults, defaultsFullScreenMode, requiredFullScreenMode, defaultsSliderMode, requiredSliderMode, $timeout, $filter, $document ) {      
+        var jGalleryId = 1;
+
         return {
             transclude: true,
             scope: true,
             link: function( scope, element, attrs ) {
                 var id = scope.id = jGalleryId++;
                 var options;
-                window.scope = scope;
-        
+
                 var overrideOptions = function() {
                     scope.options = options = angular.copy( defaults );
                     try {
@@ -27,24 +33,24 @@
                         }                    
                     } catch( e ) {};
                 };
-                
+
                 var issetActivePhoto = function() {
                     return scope.activePhoto && scope.activePhoto.id;
                 };
-                
+
                 scope.setAlbumAsActive = function( albumId ) {
                     scope.activeAlbum = $filter( 'filter' )( scope.albums, { id: albumId } )[0];
                     scope.showPhoto( scope.activeAlbum.photos[0] );
                 };
-                
+
                 scope.showPhoto = function( photo ) {
                     scope.activePhoto = angular.extend( {}, scope.activePhoto, photo );
                     scope.isVisible = true;
                 };
-                
+
                 scope.goToPrevPhoto = function() {
                     var prevKey;
-                    
+
                     angular.forEach( scope.activeAlbum.photos, function( photo, key ) {
                         if ( photo.id === scope.activePhoto.id && scope.activeAlbum.photos[key-1] ) {
                             prevKey = key - 1;
@@ -54,10 +60,10 @@
                         scope.showPhoto( scope.activeAlbum.photos[prevKey] );
                     }
                 };
-                
+
                 scope.goToNextPhoto = function() {
                     var nextKey;
-                    
+
                     angular.forEach( scope.activeAlbum.photos, function( photo, key ) {
                         if ( photo.id === scope.activePhoto.id && scope.activeAlbum.photos[key+1] ) {
                             nextKey = key + 1;
@@ -67,7 +73,7 @@
                         scope.showPhoto( scope.activeAlbum.photos[nextKey] );
                     }
                 };
-                
+
                 angular.element( element ).attr( 'data-jgallery-id', id );
                 overrideOptions();
                 if ( options.autostart ) {
@@ -89,21 +95,18 @@
                 scope.$watch( 'options.mode', function( mode ) {
                     scope.isSlider = mode === 'slider';
                 } );
-//                attrs.$observe( 'jgallery', function() {
-//                    overrideOptions();
-//                } );
-                angular.element( document.getElementsByTagName( 'head' ) ).append( '<style type="text/css" class="colours" data-jgallery-id="' + id + '"></style>' );
+                angular.element( $document.find( 'head' ) ).append( '<style type="text/css" class="colours" data-jgallery-id="' + id + '"></style>' );
             },
             controller: ['$scope', function( $scope ) {
                 var albums = $scope.albums = [];
-                    
+
                 this.addAlbum = function( album ) {
                     if ( ! album.title ) {
                         album.title = 'Album ' + album.id;
                     }
                     albums.push( album );
                 };
-                
+
                 this.showPhoto = function( photo ) {
                     $scope.showPhoto( photo );
                     $timeout( function() {
@@ -113,5 +116,5 @@
             }],
             templateUrl: '../../templates/jgallery.html'
         };
-    }] );
-} )( document, angular, defaults, defaultsFullScreenMode, requiredFullScreenMode, defaultsSliderMode, requiredSliderMode );
+    }
+] );

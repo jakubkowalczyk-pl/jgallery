@@ -1,4 +1,4 @@
-angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$window', '$timeout', function( $window, $timeout ) {        
+angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$timeout', function( $timeout ) {        
      return {
          require: '^jgallery',
          link: function( scope, element, attrs ) {
@@ -14,7 +14,6 @@ angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$window', '$timeout
                     var photo = scope.activePhoto;
                     var preview = scope.preview;
 
-                    console.log(preview.clientWidth,photo.width,preview.clientHeight,photo.height);
                     if ( preview.clientWidth === photo.width || preview.clientHeight === photo.height ) {
                         options.zoomSize = 'fit';
                     }
