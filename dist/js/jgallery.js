@@ -4,7 +4,7 @@
 *
 * Released under the MIT license
 *
-* Date: 2015-02-25
+* Date: 2015-04-01
 */
 ( function( angular ) {
     "use strict";
@@ -111,40 +111,56 @@ angular.module( 'jgallery' ).factory( 'requiredSliderMode', function() {
 angular.module('jgallery').run(['$templateCache', function($templateCache) {
   'use strict';
 
+  $templateCache.put('../../templates/draggable-nav.html',
+    "<div class=zoom-nav ng-class=\"{hide: ! draggableNavIsVisible && ! draggingInProgress}\"><img jgallery-draggable-img ng-src=\"{{ activePhoto.href }}\" class=bg><div jgallery-draggable-nav-crop class=crop ng-style=\"{\r" +
+    "\n" +
+    "        width: preview.clientWidth / img.width * nav.width  + 'px',\r" +
+    "\n" +
+    "        height: preview.clientHeight / img.height * nav.height  + 'px',\r" +
+    "\n" +
+    "        'margin-left': - parseInt( img.style.marginLeft ) / img.width * nav.width + 'px',\r" +
+    "\n" +
+    "        'margin-top': - img.height / img.height * parseInt( img.style.marginTop ) / img.height * nav.height + 'px',\r" +
+    "\n" +
+    "        'border-color': options.backgroundColor\r" +
+    "\n" +
+    "    }\"><img ng-src=\"{{ activePhoto.href }}\" ng-style=\"{\r" +
+    "\n" +
+    "            'margin-left': parseInt( img.style.marginLeft ) / img.width * nav.width + 'px',\r" +
+    "\n" +
+    "            'margin-top': img.height / img.height * parseInt( img.style.marginTop ) / img.height * nav.height + 'px',\r" +
+    "\n" +
+    "        }\"></div></div>"
+  );
+
+
   $templateCache.put('../../templates/jgallery.html',
-    "<div ng-transclude ng-hide=\"options.mode !== 'full-screen' && isVisible\"></div><div class=\"jgallery jgallery-{{ options.mode }}\" data-jgallery-id=\"{{ id }}\" ng-show=isVisible ng-style=\"{\r" +
-    "\n" +
-    "        background: options.backgroundColor,\r" +
-    "\n" +
-    "        color: options.textColor,\r" +
-    "\n" +
-    "        'text-shadow': '0 0 1px ' + options.backgroundColor,\r" +
-    "\n" +
-    "        width: options.mode != 'full-screen' ? options.width : 'inherit',\r" +
-    "\n" +
-    "        height: options.mode != 'full-screen' ? options.height : 'inherit'\r" +
-    "\n" +
+    "<div ng-transclude ng-hide=\"options.mode !== 'full-screen' && isVisible\"></div><div class=\"jgallery jgallery-{{ options.mode }}\" data-jgallery-id=\"{{ id }}\" ng-show=isVisible ng-style=\"{\n" +
+    "        background: options.backgroundColor,\n" +
+    "        color: options.textColor,\n" +
+    "        'text-shadow': '0 0 1px ' + options.backgroundColor,\n" +
+    "        width: options.mode != 'full-screen' ? options.width : 'inherit',\n" +
+    "        height: options.mode != 'full-screen' ? options.height : 'inherit'\n" +
     "     }\"><div jgallery-thumbnails ng-hide=\"thumbnailsIsHidden && ! thumbnailsIsFullScreen\" class=\"jgallery-thumbnails jgallery-thumbnails-{{ options.thumbnailsPosition }} {{ options.thumbType }}\" style=\"{{ thumbnailsIsVertical ? 'width: ' + thumbWidth : 'height: ' + thumbHeight }}px; background: {{ options.backgroundColor }}\" ng-class=\"{'full-screen': thumbnailsIsFullScreen}\"></div><div data-jgallery-preview></div></div>"
   );
 
 
   $templateCache.put('../../templates/preview.html',
-    "<div class=zoom-container ng-style=\"{\r" +
-    "\n" +
-    "        'left': ! isSlider && ! thumbnailsIsHidden && options.thumbnailsPosition === 'left' ? thumbnails.clientWidth + 'px' : 0,\r" +
-    "\n" +
-    "        'right': ! isSlider && ! thumbnailsIsHidden && options.thumbnailsPosition == 'right' ? thumbnails.clientWidth + 'px' : 0,\r" +
-    "\n" +
-    "        'top': ! isSlider && ! thumbnailsIsHidden && options.thumbnailsPosition == 'top' ? thumbnails.clientHeight + 'px' : 0,\r" +
-    "\n" +
-    "        'bottom': ! isSlider && ! thumbnailsIsHidden && options.thumbnailsPosition == 'bottom' ? 40 + thumbnails.clientHeight + 'px' : '40px',\r" +
-    "\n" +
-    "        'background': options.backgroundColorAlternative\r" +
-    "\n" +
-    "    }\"><div class=\"zoom before pt-perspective\"><img ng-src=\"{{ activePhoto.href }}\" ng-style=activePhoto.style></div><div class=\"drag-nav hide\"></div><span class=\"fa fa-chevron-left prev jgallery-btn jgallery-btn-large\" ng-class=\"{hidden: ! hasPrevPhoto}\" ng-click=goToPrevPhoto()></span> <span class=\"fa fa-chevron-right next jgallery-btn jgallery-btn-large\" ng-class=\"{hidden: ! hasNextPhoto}\" ng-click=goToNextPhoto()></span> <span class=progress></span><div class=nav><span jgallery-btn class=\"fa resize fa-search jgallery-btn jgallery-btn-small\" data-tooltip-position=\"bottom right\" data-tooltip=\"{{ options.tooltipZoom }}\" ng-class=\"{\r" +
-    "\n" +
-    "                'fa-search-plus': options.zoomSize == 'fit' \r" +
-    "\n" +
+    "<div class=zoom-container ng-style=\"{\n" +
+    "        'left': ! isSlider && ! thumbnailsIsHidden && options.thumbnailsPosition === 'left' ? thumbnails.clientWidth + 'px' : 0,\n" +
+    "        'right': ! isSlider && ! thumbnailsIsHidden && options.thumbnailsPosition == 'right' ? thumbnails.clientWidth + 'px' : 0,\n" +
+    "        'top': ! isSlider && ! thumbnailsIsHidden && options.thumbnailsPosition == 'top' ? thumbnails.clientHeight + 'px' : 0,\n" +
+    "        'bottom': ! isSlider && ! thumbnailsIsHidden && options.thumbnailsPosition == 'bottom' ? 40 + thumbnails.clientHeight + 'px' : '40px',\n" +
+    "        'background': options.backgroundColorAlternative\n" +
+    "    }\"><div class=\"zoom before pt-perspective\" jgallery-draggable-container><img ng-src=\"{{ activePhoto.href }}\" ng-style=activePhoto.style jgallery-draggable-element=\"{{ canDrag }}\" jgallery-draggable-element-on-start=startDragCallback() jgallery-draggable-element-on-stop=stopDragCallback() jgallery-mousedown-prevent-default><div jgallery-draggable-nav></div></div><span class=\"fa fa-chevron-left prev jgallery-btn jgallery-btn-large\" ng-class=\"{hidden: ! hasPrevPhoto}\" ng-click=goToPrevPhoto() ng-style=\"{\n" +
+    "                'background': options.backgroundColor\n" +
+    "          }\"></span> <span class=\"fa fa-chevron-right next jgallery-btn jgallery-btn-large\" ng-class=\"{hidden: ! hasNextPhoto}\" ng-click=goToNextPhoto() ng-style=\"{\n" +
+    "                'background': options.backgroundColor\n" +
+    "          }\"></span> <span class=progress></span><div class=nav ng-style=\"{\n" +
+    "            'background': options.backgroundColor\n" +
+    "        }\"><span jgallery-btn class=\"fa resize fa-search jgallery-btn jgallery-btn-small\" data-tooltip-position=\"bottom right\" data-tooltip=\"{{ options.tooltipZoom }}\" ng-class=\"{\n" +
+    "                'fa-search-plus': canZoomIn,\n" +
+    "                'fa-search-minus': canZoomOut\n" +
     "              }\" ng-click=changeZoomSize()></span> <span jgallery-btn class=\"fa change-mode jgallery-btn jgallery-btn-small\" data-tooltip-position=\"bottom right\" data-tooltip=\"{{ options.tooltipFullScreen }}\" ng-show=options.canChangeMode ng-click=\"options.mode = options.mode == 'standard' ? 'full-screen' : 'standard'\" ng-class=\"{'fa-expand': options.mode == 'standard', 'fa-compress': options.mode != 'standard'}\"></span> <span jgallery-btn class=\"fa fa-times jgallery-close jgallery-btn jgallery-btn-small\" data-tooltip-position=\"bottom right\" data-tooltip=\"{{ options.tooltipClose }}\" ng-show=options.canClose ng-click=\"isVisible = false\"></span></div><div class=nav-bottom style=\"background: {{ options.backgroundColor }}; box-shadow: 0 0 5px rgba( 0, 0, 0, .3 )\" ng-hide=thumbnailsIsFullScreen><div class=icons><span jgallery-btn class=\"fa fa-th full-screen jgallery-btn jgallery-btn-small\" data-tooltip=\"{{ options.tooltipSeeAllPhotos }}\" ng-click=\"thumbnailsIsFullScreen = ! thumbnailsIsFullScreen\"></span> <span jgallery-btn class=\"fa minimalize-thumbnails jgallery-btn jgallery-btn-small\" data-tooltip=\"{{ options.tooltipToggleThumbnails }}\" ng-class=\"{'fa-ellipsis-h': !thumbnailsIsVertical, 'fa-ellipsis-v': thumbnailsIsVertical, inactive: thumbnailsIsHidden}\" ng-click=\"thumbnailsIsHidden = ! thumbnailsIsHidden;\"></span> <span jgallery-btn class=\"fa fa-list-ul change-album jgallery-btn jgallery-btn-small\" ng-class=\"{inactive: ! hasManyAlbums, active: albumsDropdownIsVisible}\" ng-click=\"albumsDropdownIsVisible = ! albumsDropdownIsVisible\" tooltip=\"{{ options.tooltipSeeOtherAlbums }}\"><span class=\"menu jgallery-btn\" style=\"background: {{ options.backgroundColor }}; box-shadow: 0 0 20px {{ options.color }}\"><span class=item ng-repeat=\"album in albums\" ng-click=\"setAlbumAsActive( album.id )\">{{ album.title }}</span></span> <span class=title>{{ activeAlbum.title }}</span></span></div><div class=\"title before\"></div></div></div>"
   );
 
@@ -155,16 +171,11 @@ angular.module('jgallery').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('../../templates/thumbnails.html',
-    "<div jgallery-scrollable><div ng-repeat=\"album in albums\" class=album ng-class=\"{'active': album.id == activeAlbum.id}\" style=\"{{ thumbnailsIsVertical ? '' : 'width: ' + album.photos.length * thumbWidth + 'px' }}\"><a ng-repeat=\"photo in album.photos\" ng-click=\"$event.preventDefault(); $parent.$parent.$parent.$parent.showPhoto( photo ); $parent.$parent.$parent.$parent.thumbnailsIsFullScreen = false;\" ng-href=\"{{ isSlider ? photo.src : photo.href }}\" ng-attr-link=\"{{ isSlider ? photo.href : undefined }}\" ng-attr-target=\"{{ isSlider ? photo.target : undefined }}\" style=\"width: {{ thumbWidth }}px; height: {{ thumbHeight }}px; font-size: {{ thumbHeight }}px\"><img ng-src=\"{{ photo.src }}\" ng-attr-alt=\"{{ photo.title }}\" ng-attr-data-jgallery-bg-color=\"{{ photo.bgColor }}\" ng-attr-data-jgallery-text-color=\"{{ photo.textColor }}\" ng-class=\"{\r" +
-    "\n" +
-    "                     'thumb-vertical': photo.thumbWidth / photo.thumbHeight < options.thumbWidth / options.thumbHeight,\r" +
-    "\n" +
-    "                     'thumb-horizontal': photo.thumbWidth / photo.thumbHeight >= options.thumbWidth / options.thumbHeight,\r" +
-    "\n" +
-    "                     'thumb-on-full-screen-vertical': photo.thumbWidth / photo.thumbHeight < options.thumbWidthOnFullScreen / options.thumbHeightOnFullScreen,\r" +
-    "\n" +
-    "                     'thumb-on-full-screen-horizontal': photo.thumbWidth / photo.thumbHeight >= options.thumbWidthOnFullScreen / options.thumbHeightOnFullScreen\r" +
-    "\n" +
+    "<div jgallery-scrollable><div ng-repeat=\"album in albums\" class=album ng-class=\"{'active': album.id == activeAlbum.id}\" style=\"{{ thumbnailsIsVertical ? '' : 'width: ' + album.photos.length * thumbWidth + 'px' }}\"><a ng-repeat=\"photo in album.photos\" ng-click=\"$event.preventDefault(); $parent.$parent.$parent.$parent.showPhoto( photo ); $parent.$parent.$parent.$parent.thumbnailsIsFullScreen = false;\" ng-href=\"{{ isSlider ? photo.src : photo.href }}\" ng-attr-link=\"{{ isSlider ? photo.href : undefined }}\" ng-attr-target=\"{{ isSlider ? photo.target : undefined }}\" style=\"width: {{ thumbWidth }}px; height: {{ thumbHeight }}px; font-size: {{ thumbHeight }}px\"><img ng-src=\"{{ photo.src }}\" ng-attr-alt=\"{{ photo.title }}\" ng-attr-data-jgallery-bg-color=\"{{ photo.bgColor }}\" ng-attr-data-jgallery-text-color=\"{{ photo.textColor }}\" ng-class=\"{\n" +
+    "                     'thumb-vertical': photo.thumbWidth / photo.thumbHeight < options.thumbWidth / options.thumbHeight,\n" +
+    "                     'thumb-horizontal': photo.thumbWidth / photo.thumbHeight >= options.thumbWidth / options.thumbHeight,\n" +
+    "                     'thumb-on-full-screen-vertical': photo.thumbWidth / photo.thumbHeight < options.thumbWidthOnFullScreen / options.thumbHeightOnFullScreen,\n" +
+    "                     'thumb-on-full-screen-horizontal': photo.thumbWidth / photo.thumbHeight >= options.thumbWidthOnFullScreen / options.thumbHeightOnFullScreen\n" +
     "                 }\"></a></div></div>"
   );
 
@@ -194,6 +205,127 @@ angular.module( 'jgallery' ).directive( 'jgalleryAlbum', function() {
         }]
     };
 } );
+angular.module( 'jgallery' ).directive( 'jgalleryDraggableContainer', function() {
+    var calculateDiffX = function( childRect, containerRect ) {
+        var left = Math.max( childRect.left - containerRect.left, 0 );
+
+        if ( left ) {
+            return - left;
+        }
+        return Math.max( - childRect.left - childRect.width + containerRect.left + containerRect.width, 0 );
+    };
+    
+    var calculateDiffY = function( childRect, containerRect ) {
+        var top = Math.max( childRect.top - containerRect.top, 0 );
+
+        if ( top ) {
+            return - top;
+        }
+        return Math.max( - childRect.top - childRect.height + containerRect.top + containerRect.height, 0 );
+    };
+    
+    return {
+        controller: ['$scope', '$element', function( $scope, $element ) {
+            $scope.$on( 'jgallery:draggableElement:move', function( event, element ) {
+                $scope.$broadcast( 'jgallery:draggableContainer:change', element );
+            } );
+            this.pullEdge = function( element ) {
+                var childRect = element[0].getBoundingClientRect();
+                var containerRect = $element[0].getBoundingClientRect();
+                
+                element.css( {
+                    'margin-top': containerRect.height < childRect.height ? parseInt( element.css('margin-top') ) + calculateDiffY( childRect, containerRect ) + 'px' : '0',
+                    'margin-left': containerRect.width < childRect.width ? parseInt( element.css('margin-left') ) + calculateDiffX( childRect, containerRect ) + 'px' : '0'
+                } );
+                $scope.$broadcast( 'jgallery:draggableContainer:change', element );
+            };
+        }]
+    };
+} );
+angular.module( 'jgallery' ).directive( 'jgalleryDraggableElement', function() {  
+    return {
+        require: '?^jgalleryDraggableContainer',
+        scope: {
+            start: '&jgalleryDraggableElementOnStart',
+            stop: '&jgalleryDraggableElementOnStop'
+        },
+        link: function( scope, element, attrs, jgalleryDraggableContainerController ) {
+            var el = angular.element( element );
+            var initialX;
+            var initialY;
+            var translateX;
+            var translateY;
+            
+            var start = function( $event ) {
+                initialX = $event.pageX;
+                initialY = $event.pageY;
+                translateX = parseInt( el.css( 'margin-left' ) );
+                translateY = parseInt( el.css( 'margin-top' ) );
+                el.bind( 'mousemove', move ).bind( 'mouseup mouseleave', stop );
+                scope.start();
+            };
+            
+            var move = function( $event ) {
+                el.css( {
+                    'margin-left': translateX + $event.pageX - initialX + 'px',
+                    'margin-top': translateY + $event.pageY - initialY + 'px'
+                } );
+                scope.$emit( 'jgallery:draggableElement:move', el );
+            };
+            
+            var stop = function() {
+                if ( jgalleryDraggableContainerController ) {
+                    jgalleryDraggableContainerController.pullEdge( el );
+                }
+                el.unbind( 'mousemove', move ).unbind( 'mouseup mouseleave', stop );
+                scope.stop();
+            };
+            
+            attrs.$observe( 'jgalleryDraggableElement', function( jgalleryDraggableElement ) {
+                if ( jgalleryDraggableElement === 'true' ) {
+                    el.bind( 'mousedown', start );
+                }
+                else {
+                    el.unbind( 'mousedown', start );                    
+                }
+            } );
+        }
+    };
+} );
+//angular.module( 'jgallery' ).directive( 'jgalleryDraggableNavCrop', ['$timeout', function( $timeout ) {  
+//    return {
+//        require: '^jgalleryDraggableNav',
+//        scope: true,
+//        link: function( scope, element, attrs, jgalleryDraggableNavControler ) {
+//        }
+//    };
+//}] );
+angular.module( 'jgallery' ).directive( 'jgalleryDraggableImg', ['$timeout', function( $timeout ) {  
+    return {
+        require: '^jgalleryDraggableContainer',
+        link: function( scope, element, attrs, jgalleryDraggableNavControler ) {
+            scope.nav = element[0];
+        }
+    };
+}] );
+angular.module( 'jgallery' ).directive( 'jgalleryDraggableNav', ['$timeout', function( $timeout ) {  
+    return {
+        require: '^jgalleryDraggableContainer',
+        scope: true,
+        controller: ['$scope', '$element', function( $scope, $element ) {
+            $scope.$watch( 'options.mode', function() {
+                $timeout( function() {
+                    $scope.$apply();
+                } );
+            } );
+            $scope.$on( 'jgallery:draggableContainer:change', function( event, element ) {
+                $scope.img = element[0];
+                $scope.$apply();
+            } );
+        }],
+        templateUrl: '../../templates/draggable-nav.html'
+    };
+}] );
 angular.module( 'jgallery' ).directive( 'jgallery', [
     'defaults',
     'defaultsFullScreenMode',
@@ -203,7 +335,8 @@ angular.module( 'jgallery' ).directive( 'jgallery', [
     '$timeout',
     '$filter',
     '$document',
-    function( defaults, defaultsFullScreenMode, requiredFullScreenMode, defaultsSliderMode, requiredSliderMode, $timeout, $filter, $document ) {      
+    '$window',
+    function( defaults, defaultsFullScreenMode, requiredFullScreenMode, defaultsSliderMode, requiredSliderMode, $timeout, $filter, $document, $window ) {      
         var jGalleryId = 1;
 
         return {
@@ -212,7 +345,7 @@ angular.module( 'jgallery' ).directive( 'jgallery', [
             link: function( scope, element, attrs ) {
                 var id = scope.id = jGalleryId++;
                 var options;
-
+                $window.scope = scope;
                 var overrideOptions = function() {
                     scope.options = options = angular.copy( defaults );
                     try {
@@ -240,7 +373,7 @@ angular.module( 'jgallery' ).directive( 'jgallery', [
                 };
 
                 scope.showPhoto = function( photo ) {
-                    scope.activePhoto = angular.extend( {}, scope.activePhoto, photo );
+                    scope.activePhoto = photo;
                     scope.isVisible = true;
                 };
 
@@ -291,6 +424,9 @@ angular.module( 'jgallery' ).directive( 'jgallery', [
                 scope.$watch( 'options.mode', function( mode ) {
                     scope.isSlider = mode === 'slider';
                 } );
+                angular.element( $window ).bind( 'resize', function() {
+                    scope.$apply();
+                } );
                 angular.element( $document.find( 'head' ) ).append( '<style type="text/css" class="colours" data-jgallery-id="' + id + '"></style>' );
             },
             controller: ['$scope', function( $scope ) {
@@ -314,12 +450,21 @@ angular.module( 'jgallery' ).directive( 'jgallery', [
         };
     }
 ] );
+angular.module( 'jgallery' ).directive( 'jgalleryMousedownPreventDefault', function() {  
+    return {
+        link: function( scope, element ) {
+            var el = angular.element( element );
+
+            el.bind( 'mousedown', function( $event ) {
+                $event.preventDefault();
+            } );
+        }
+    };
+} );
 angular.module( 'jgallery' ).directive( 'jgalleryPhoto', function() {
    var photoId = 1;
 
    return {
-       scope: {
-       },
        require: ['^jgalleryAlbum', '^jgallery'],
        link: function( scope, element, attrs, controllers ) {    
            var img;
@@ -345,13 +490,18 @@ angular.module( 'jgallery' ).directive( 'jgalleryPhoto', function() {
                var img = new Image();
 
                thumb.onload = function() {
+                   photo.thumb = thumb;
                    photo.thumbWidth = thumb.width;
                    photo.thumbHeight = thumb.height;
+                   photo.thumbIsVertical = thumb.thumbWidth < thumb.thumbHeight;
                    photo.id = photoId++;
                    albumController.addPhoto( photo );
                    img.onload = function() {
+                       photo.element = img;
                        photo.width = img.width;
                        photo.height = img.height;
+                       photo.isVertical = thumb.width < thumb.height;
+                       scope.$apply();
                    };
                    img.src = photo.href;
                };
@@ -393,17 +543,17 @@ angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$timeout', function
          require: '^jgallery',
          link: function( scope, element, attrs ) {
              var options = scope.options;
+             var preview = scope.preview = element[0].childNodes[0];
              
-             scope.preview = element[0].childNodes[0];
+             scope.parseInt = parseInt;
              
              scope.changeZoomSize = function() {
+                var photo = scope.activePhoto;
+                
                 if ( options.zoomSize === 'fit' ) {
                     options.zoomSize = 'fill';
                 }
                 else if ( options.zoomSize === 'fill' ) {
-                    var photo = scope.activePhoto;
-                    var preview = scope.preview;
-
                     if ( preview.clientWidth === photo.width || preview.clientHeight === photo.height ) {
                         options.zoomSize = 'fit';
                     }
@@ -413,38 +563,124 @@ angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$timeout', function
                 }
                 else {
                     options.zoomSize = 'fit';
-//                        scope.canZoomIn = true;
-//                        scope.canZoomOut = false;
                 }
             };
             
-            scope.$watch( 'options.zoomSize', function( zoomSize ) {
-                try {
-                    scope.activePhoto.style;
-                } catch( e ) {
-                    scope.activePhoto = {
-                        style: {}
-                    };
+            scope.startDragCallback = function() {
+                scope.draggingInProgress = true;
+                scope.$apply();
+            };
+            
+            scope.stopDragCallback = function() {
+                scope.draggingInProgress = false;
+                scope.$apply();
+            };
+            
+            scope.$watchGroup( ['options.zoomSize', 'activePhoto.width', 'activePhoto.height', 'preview.clientWidth', 'preview.clientHeight'], function() {
+                var zoomSize = scope.options.zoomSize;
+                var photo = scope.activePhoto;
+                
+                if ( ! photo ) {
+                    return;
                 }
                 if ( zoomSize === 'fill' ) {
-                    scope.activePhoto.style['min-width'] = '100%';
-                    scope.activePhoto.style['min-height'] = '100%';
-                    scope.activePhoto.style['max-width'] = 'none';
-                    scope.activePhoto.style['max-height'] = 'none';
+                    if ( preview.clientWidth < photo.width && preview.clientHeight < photo.height ) {
+                        scope.canZoomIn = true;
+                        scope.canZoomOut = false;
+                        scope.draggableNavIsVisible = false;
+                    }
+                    else {
+                        scope.canZoomIn = false;
+                        scope.canZoomOut = true;
+                        scope.draggableNavIsVisible = false;
+                    }
+                    scope.canDrag = true;
                 }
-                else if ( zoomSize === 'fit' ) {
-                    scope.activePhoto.style['min-width'] = '0';
-                    scope.activePhoto.style['min-height'] = '0';
-                    scope.activePhoto.style['max-width'] = '100%';
-                    scope.activePhoto.style['max-height'] = '100%';                       
+                else if ( zoomSize === 'original' ) {
+                    if ( preview.clientWidth < photo.width || preview.clientHeight < photo.height ) {
+                        scope.canZoomIn = false;
+                        scope.canZoomOut = true;
+                        scope.canDrag = true;
+                        scope.draggableNavIsVisible = true;
+                    }
+                    else {
+                        scope.canZoomIn = true;
+                        scope.canZoomOut = false;
+                        scope.canDrag = false;
+                        scope.draggableNavIsVisible = false;
+                    }
                 }
                 else {
-                    scope.activePhoto.style['min-width'] = '0';
-                    scope.activePhoto.style['min-height'] = '0';
-                    scope.activePhoto.style['max-width'] = 'none';
-                    scope.activePhoto.style['max-height'] = 'none';
+                    scope.canZoomIn = true;
+                    scope.canZoomOut = false;
+                    scope.canDrag = false;
+                    scope.draggableNavIsVisible = false;
                 }
             } );
+            
+            scope.$watchGroup( ['options.zoomSize', 'activePhoto.width', 'activePhoto.height', 'preview.clientWidth', 'preview.clientHeight'], function() {
+                var zoomSize = scope.options.zoomSize;
+                var photo;
+                var isVertical;
+                
+                if ( ! scope.activePhoto ) {
+                    scope.activePhoto = { style: {} };
+                }
+                else if ( ! scope.activePhoto.style ) {
+                    scope.activePhoto.style = {};
+                }
+                photo = scope.activePhoto;
+                isVertical = ( photo.width / photo.height ) < ( preview.clientWidth / preview.clientHeight );
+                if ( zoomSize === 'fill' ) {
+                    if ( isVertical ) {
+                        angular.extend( photo.style, {
+                            width: '100%',
+                            height: 'auto',
+                            'max-width': 'none',
+                            'max-height': 'none'                            
+                        } );
+                    }
+                    else {
+                        angular.extend( photo.style, {
+                            width: 'auto',
+                            height: '100%',
+                            'max-width': 'none',
+                            'max-height': 'none'
+                        } );                        
+                    }
+                }
+                else if ( zoomSize === 'fit' ) {
+                    if ( isVertical ) {
+                        angular.extend( photo.style, {
+                            width: 'auto',
+                            height: '100%',
+                            'max-width': '100%',
+                            'max-height': 'none'
+                        } );
+                    }
+                    else {
+                        angular.extend( photo.style, {
+                            width: '100%',
+                            height: 'auto',
+                            'max-width': 'none',
+                            'max-height': '100%'
+                        } );                        
+                    }
+                }
+                else {
+                    angular.extend( photo.style, {
+                        width: 'auto',
+                        height: 'auto',
+                        'max-width': 'none',
+                        'max-height': 'none'
+                    } );
+                }
+                angular.extend( photo.style, {
+                    'margin-top': '0',
+                    'margin-left': '0'
+                } );
+            } );
+            
             scope.$watchGroup( ['activePhoto', 'activePhoto + activeAlbum.photos'], function() {
                 angular.forEach( scope.albums, function( album ) {
                     angular.forEach( album.photos, function( photo, key ) {
@@ -455,6 +691,7 @@ angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$timeout', function
                     } );
                 } );
             } );
+            
             scope.$watch( 'thumbnailsIsHidden + thumbnailsIsFullScreen', function() {
                 if ( ! scope.thumbnailsIsHidden || ! scope.thumbnailsIsFullScreen ) {
                     $timeout( function() {

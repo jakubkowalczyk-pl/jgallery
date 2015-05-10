@@ -3,17 +3,17 @@ angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$timeout', function
          require: '^jgallery',
          link: function( scope, element, attrs ) {
              var options = scope.options;
+             var preview = scope.preview = element[0].childNodes[0];
              
-             scope.preview = element[0].childNodes[0];
+             scope.parseInt = parseInt;
              
              scope.changeZoomSize = function() {
+                var photo = scope.activePhoto;
+                
                 if ( options.zoomSize === 'fit' ) {
                     options.zoomSize = 'fill';
                 }
                 else if ( options.zoomSize === 'fill' ) {
-                    var photo = scope.activePhoto;
-                    var preview = scope.preview;
-
                     if ( preview.clientWidth === photo.width || preview.clientHeight === photo.height ) {
                         options.zoomSize = 'fit';
                     }
@@ -23,38 +23,124 @@ angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$timeout', function
                 }
                 else {
                     options.zoomSize = 'fit';
-//                        scope.canZoomIn = true;
-//                        scope.canZoomOut = false;
                 }
             };
             
-            scope.$watch( 'options.zoomSize', function( zoomSize ) {
-                try {
-                    scope.activePhoto.style;
-                } catch( e ) {
-                    scope.activePhoto = {
-                        style: {}
-                    };
+            scope.startDragCallback = function() {
+                scope.draggingInProgress = true;
+                scope.$apply();
+            };
+            
+            scope.stopDragCallback = function() {
+                scope.draggingInProgress = false;
+                scope.$apply();
+            };
+            
+            scope.$watchGroup( ['options.zoomSize', 'activePhoto.width', 'activePhoto.height', 'preview.clientWidth', 'preview.clientHeight'], function() {
+                var zoomSize = scope.options.zoomSize;
+                var photo = scope.activePhoto;
+                
+                if ( ! photo ) {
+                    return;
                 }
                 if ( zoomSize === 'fill' ) {
-                    scope.activePhoto.style['min-width'] = '100%';
-                    scope.activePhoto.style['min-height'] = '100%';
-                    scope.activePhoto.style['max-width'] = 'none';
-                    scope.activePhoto.style['max-height'] = 'none';
+                    if ( preview.clientWidth < photo.width && preview.clientHeight < photo.height ) {
+                        scope.canZoomIn = true;
+                        scope.canZoomOut = false;
+                        scope.draggableNavIsVisible = false;
+                    }
+                    else {
+                        scope.canZoomIn = false;
+                        scope.canZoomOut = true;
+                        scope.draggableNavIsVisible = false;
+                    }
+                    scope.canDrag = true;
                 }
-                else if ( zoomSize === 'fit' ) {
-                    scope.activePhoto.style['min-width'] = '0';
-                    scope.activePhoto.style['min-height'] = '0';
-                    scope.activePhoto.style['max-width'] = '100%';
-                    scope.activePhoto.style['max-height'] = '100%';                       
+                else if ( zoomSize === 'original' ) {
+                    if ( preview.clientWidth < photo.width || preview.clientHeight < photo.height ) {
+                        scope.canZoomIn = false;
+                        scope.canZoomOut = true;
+                        scope.canDrag = true;
+                        scope.draggableNavIsVisible = true;
+                    }
+                    else {
+                        scope.canZoomIn = true;
+                        scope.canZoomOut = false;
+                        scope.canDrag = false;
+                        scope.draggableNavIsVisible = false;
+                    }
                 }
                 else {
-                    scope.activePhoto.style['min-width'] = '0';
-                    scope.activePhoto.style['min-height'] = '0';
-                    scope.activePhoto.style['max-width'] = 'none';
-                    scope.activePhoto.style['max-height'] = 'none';
+                    scope.canZoomIn = true;
+                    scope.canZoomOut = false;
+                    scope.canDrag = false;
+                    scope.draggableNavIsVisible = false;
                 }
             } );
+            
+            scope.$watchGroup( ['options.zoomSize', 'activePhoto.width', 'activePhoto.height', 'preview.clientWidth', 'preview.clientHeight'], function() {
+                var zoomSize = scope.options.zoomSize;
+                var photo;
+                var isVertical;
+                
+                if ( ! scope.activePhoto ) {
+                    scope.activePhoto = { style: {} };
+                }
+                else if ( ! scope.activePhoto.style ) {
+                    scope.activePhoto.style = {};
+                }
+                photo = scope.activePhoto;
+                isVertical = ( photo.width / photo.height ) < ( preview.clientWidth / preview.clientHeight );
+                if ( zoomSize === 'fill' ) {
+                    if ( isVertical ) {
+                        angular.extend( photo.style, {
+                            width: '100%',
+                            height: 'auto',
+                            'max-width': 'none',
+                            'max-height': 'none'                            
+                        } );
+                    }
+                    else {
+                        angular.extend( photo.style, {
+                            width: 'auto',
+                            height: '100%',
+                            'max-width': 'none',
+                            'max-height': 'none'
+                        } );                        
+                    }
+                }
+                else if ( zoomSize === 'fit' ) {
+                    if ( isVertical ) {
+                        angular.extend( photo.style, {
+                            width: 'auto',
+                            height: '100%',
+                            'max-width': '100%',
+                            'max-height': 'none'
+                        } );
+                    }
+                    else {
+                        angular.extend( photo.style, {
+                            width: '100%',
+                            height: 'auto',
+                            'max-width': 'none',
+                            'max-height': '100%'
+                        } );                        
+                    }
+                }
+                else {
+                    angular.extend( photo.style, {
+                        width: 'auto',
+                        height: 'auto',
+                        'max-width': 'none',
+                        'max-height': 'none'
+                    } );
+                }
+                angular.extend( photo.style, {
+                    'margin-top': '0',
+                    'margin-left': '0'
+                } );
+            } );
+            
             scope.$watchGroup( ['activePhoto', 'activePhoto + activeAlbum.photos'], function() {
                 angular.forEach( scope.albums, function( album ) {
                     angular.forEach( album.photos, function( photo, key ) {
@@ -65,6 +151,7 @@ angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$timeout', function
                     } );
                 } );
             } );
+            
             scope.$watch( 'thumbnailsIsHidden + thumbnailsIsFullScreen', function() {
                 if ( ! scope.thumbnailsIsHidden || ! scope.thumbnailsIsFullScreen ) {
                     $timeout( function() {

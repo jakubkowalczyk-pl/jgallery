@@ -2,8 +2,6 @@ angular.module( 'jgallery' ).directive( 'jgalleryPhoto', function() {
    var photoId = 1;
 
    return {
-       scope: {
-       },
        require: ['^jgalleryAlbum', '^jgallery'],
        link: function( scope, element, attrs, controllers ) {    
            var img;
@@ -29,13 +27,18 @@ angular.module( 'jgallery' ).directive( 'jgalleryPhoto', function() {
                var img = new Image();
 
                thumb.onload = function() {
+                   photo.thumb = thumb;
                    photo.thumbWidth = thumb.width;
                    photo.thumbHeight = thumb.height;
+                   photo.thumbIsVertical = thumb.thumbWidth < thumb.thumbHeight;
                    photo.id = photoId++;
                    albumController.addPhoto( photo );
                    img.onload = function() {
+                       photo.element = img;
                        photo.width = img.width;
                        photo.height = img.height;
+                       photo.isVertical = thumb.width < thumb.height;
+                       scope.$apply();
                    };
                    img.src = photo.href;
                };

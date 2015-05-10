@@ -5,25 +5,39 @@
         'bottom': ! isSlider && ! thumbnailsIsHidden && options.thumbnailsPosition == 'bottom' ? 40 + thumbnails.clientHeight + 'px' : '40px',
         'background': options.backgroundColorAlternative
     }">
-    <div class="zoom before pt-perspective">
-        <img ng-src="{{ activePhoto.href }}" ng-style="activePhoto.style">
+    <div class="zoom before pt-perspective" jgallery-draggable-container>
+        <img ng-src="{{ activePhoto.href }}" ng-style="activePhoto.style"
+             jgallery-draggable-element="{{ canDrag }}"
+             jgallery-draggable-element-on-start="startDragCallback()"
+             jgallery-draggable-element-on-stop="stopDragCallback()"
+             jgallery-mousedown-prevent-default>
+        <div jgallery-draggable-nav></div>
     </div>
-    <div class="drag-nav hide"></div>
     <span class="fa fa-chevron-left prev jgallery-btn jgallery-btn-large"
           ng-class="{hidden: ! hasPrevPhoto}"
           ng-click="goToPrevPhoto()"
+          ng-style="{
+                'background': options.backgroundColor
+          }"
     ></span>
     <span class="fa fa-chevron-right next jgallery-btn jgallery-btn-large"
           ng-class="{hidden: ! hasNextPhoto}"
           ng-click="goToNextPhoto()"
+          ng-style="{
+                'background': options.backgroundColor
+          }"
     ></span>
     <span class="progress"></span>
-    <div class="nav">
+    <div class="nav"
+        ng-style="{
+            'background': options.backgroundColor
+        }">
         <span jgallery-btn
               class="fa resize fa-search jgallery-btn jgallery-btn-small"
               data-tooltip-position="bottom right" data-tooltip="{{ options.tooltipZoom }}"
               ng-class="{
-                'fa-search-plus': options.zoomSize == 'fit' 
+                'fa-search-plus': canZoomIn,
+                'fa-search-minus': canZoomOut
               }"
               ng-click="changeZoomSize()"
         ></span>

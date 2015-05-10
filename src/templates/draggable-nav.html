@@ -1,0 +1,15 @@
+<div class="zoom-nav" ng-class="{hide: ! draggableNavIsVisible && ! draggingInProgress}">
+    <img jgallery-draggable-img ng-src="{{ activePhoto.href }}" class="bg">
+    <div jgallery-draggable-nav-crop class="crop" ng-style="{
+        width: preview.clientWidth / img.width * nav.width  + 'px',
+        height: preview.clientHeight / img.height * nav.height  + 'px',
+        'margin-left': - parseInt( img.style.marginLeft ) / img.width * nav.width + 'px',
+        'margin-top': - img.height / img.height * parseInt( img.style.marginTop ) / img.height * nav.height + 'px',
+        'border-color': options.backgroundColor
+    }">
+        <img ng-src="{{ activePhoto.href }}" ng-style="{
+            'margin-left': parseInt( img.style.marginLeft ) / img.width * nav.width + 'px',
+            'margin-top': img.height / img.height * parseInt( img.style.marginTop ) / img.height * nav.height + 'px',
+        }">
+    </div>
+</div>

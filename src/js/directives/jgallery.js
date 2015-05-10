@@ -7,7 +7,8 @@ angular.module( 'jgallery' ).directive( 'jgallery', [
     '$timeout',
     '$filter',
     '$document',
-    function( defaults, defaultsFullScreenMode, requiredFullScreenMode, defaultsSliderMode, requiredSliderMode, $timeout, $filter, $document ) {      
+    '$window',
+    function( defaults, defaultsFullScreenMode, requiredFullScreenMode, defaultsSliderMode, requiredSliderMode, $timeout, $filter, $document, $window ) {      
         var jGalleryId = 1;
 
         return {
@@ -16,7 +17,7 @@ angular.module( 'jgallery' ).directive( 'jgallery', [
             link: function( scope, element, attrs ) {
                 var id = scope.id = jGalleryId++;
                 var options;
-
+                $window.scope = scope;
                 var overrideOptions = function() {
                     scope.options = options = angular.copy( defaults );
                     try {
@@ -44,7 +45,7 @@ angular.module( 'jgallery' ).directive( 'jgallery', [
                 };
 
                 scope.showPhoto = function( photo ) {
-                    scope.activePhoto = angular.extend( {}, scope.activePhoto, photo );
+                    scope.activePhoto = photo;
                     scope.isVisible = true;
                 };
 
@@ -94,6 +95,9 @@ angular.module( 'jgallery' ).directive( 'jgallery', [
                 } );
                 scope.$watch( 'options.mode', function( mode ) {
                     scope.isSlider = mode === 'slider';
+                } );
+                angular.element( $window ).bind( 'resize', function() {
+                    scope.$apply();
                 } );
                 angular.element( $document.find( 'head' ) ).append( '<style type="text/css" class="colours" data-jgallery-id="' + id + '"></style>' );
             },
