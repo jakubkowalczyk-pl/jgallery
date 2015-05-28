@@ -1,6 +1,11 @@
 angular.module('jgallery').run(['$templateCache', function($templateCache) {
   'use strict';
 
+  $templateCache.put('../../templates/animation.html',
+    "<div class=jgallery-animation-container><div ng-repeat=\"row in rows\" class=row><div ng-repeat=\"col in cols\" class=item><div ng-transclude></div></div></div></div>"
+  );
+
+
   $templateCache.put('../../templates/draggable-nav.html',
     "<div class=zoom-nav ng-class=\"{hide: ! draggableNavIsVisible && ! draggingInProgress}\"><img jgallery-draggable-img ng-src=\"{{ activePhoto.href }}\" class=bg><div jgallery-draggable-nav-crop class=crop ng-style=\"{\r" +
     "\n" +
@@ -42,7 +47,7 @@ angular.module('jgallery').run(['$templateCache', function($templateCache) {
     "        'top': ! isSlider && ! thumbnailsIsHidden && options.thumbnailsPosition == 'top' ? thumbnails.clientHeight + 'px' : 0,\n" +
     "        'bottom': ! isSlider && ! thumbnailsIsHidden && options.thumbnailsPosition == 'bottom' ? 40 + thumbnails.clientHeight + 'px' : '40px',\n" +
     "        'background': options.backgroundColorAlternative\n" +
-    "    }\"><div class=\"zoom before pt-perspective\" jgallery-draggable-container><img ng-src=\"{{ activePhoto.href }}\" ng-style=activePhoto.style jgallery-draggable-element=\"{{ canDrag }}\" jgallery-draggable-element-on-start=startDragCallback() jgallery-draggable-element-on-stop=stopDragCallback() jgallery-mousedown-prevent-default><div jgallery-draggable-nav></div></div><span class=\"fa fa-chevron-left prev jgallery-btn jgallery-btn-large\" ng-class=\"{hidden: ! hasPrevPhoto}\" ng-click=goToPrevPhoto() ng-style=\"{\n" +
+    "    }\"><div class=\"zoom before pt-perspective\" jgallery-draggable-container><jgallery-animation rows=2 cols=2><img ng-src=\"{{ activePhoto.href }}\" ng-style=activePhoto.style jgallery-draggable-element=\"{{ canDrag }}\" jgallery-draggable-element-on-start=startDragCallback() jgallery-draggable-element-on-stop=stopDragCallback() jgallery-mousedown-prevent-default></jgallery-animation><div jgallery-draggable-nav></div></div><span class=\"fa fa-chevron-left prev jgallery-btn jgallery-btn-large\" ng-class=\"{hidden: ! hasPrevPhoto}\" ng-click=goToPrevPhoto() ng-style=\"{\n" +
     "                'background': options.backgroundColor\n" +
     "          }\"></span> <span class=\"fa fa-chevron-right next jgallery-btn jgallery-btn-large\" ng-class=\"{hidden: ! hasNextPhoto}\" ng-click=goToNextPhoto() ng-style=\"{\n" +
     "                'background': options.backgroundColor\n" +

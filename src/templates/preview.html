@@ -6,11 +6,13 @@
         'background': options.backgroundColorAlternative
     }">
     <div class="zoom before pt-perspective" jgallery-draggable-container>
-        <img ng-src="{{ activePhoto.href }}" ng-style="activePhoto.style"
-             jgallery-draggable-element="{{ canDrag }}"
-             jgallery-draggable-element-on-start="startDragCallback()"
-             jgallery-draggable-element-on-stop="stopDragCallback()"
-             jgallery-mousedown-prevent-default>
+        <jgallery-animation rows="2" cols="2">
+            <img ng-src="{{ activePhoto.href }}" ng-style="activePhoto.style"
+                 jgallery-draggable-element="{{ canDrag }}"
+                 jgallery-draggable-element-on-start="startDragCallback()"
+                 jgallery-draggable-element-on-stop="stopDragCallback()"
+                 jgallery-mousedown-prevent-default>
+        </jgallery-animation>
         <div jgallery-draggable-nav></div>
     </div>
     <span class="fa fa-chevron-left prev jgallery-btn jgallery-btn-large"

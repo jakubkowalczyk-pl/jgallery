@@ -3510,7 +3510,17 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 .jgallery .zoom .jgallery-container.pt-page-current:not(.pt-page-prev) {
   z-index: 3;
 }
-.jgallery .zoom > img {
+.jgallery .zoom .jgallery-animation-container {
+  font-size: 0;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+}
+.jgallery .zoom .jgallery-animation-container img {
   -webkit-transform: translateX( -50% ) translateY( -50% );
   -moz-transform: translateX( -50% ) translateY( -50% );
   transform: translateX( -50% ) translateY( -50% );
@@ -3518,6 +3528,14 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
   left: 50%;
   position: absolute;
   z-index: 1;
+}
+.jgallery .zoom .jgallery-animation-container .row {
+  flex-grow: 1;
+  display: flex;
+}
+.jgallery .zoom .jgallery-animation-container .item {
+  flex-grow: 1;
+  position: relative;
 }
 .jgallery .zoom.is-link {
   cursor: pointer;
