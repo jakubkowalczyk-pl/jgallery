@@ -1788,7 +1788,7 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             } );
         },
 
-        isLoaded: function( $a ) {
+        isAddedToLoad: function( $a ) {
             return this.$element.find( 'img' ).filter( '[src="' + $a.attr( 'href' ) + '"]' ).length > 0;
         },
 
@@ -1894,13 +1894,13 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             //preload images next prev
             var $nexta=$a.next();
             if ($nexta.length>0){
-                if ( ! self.isLoaded( $nexta ) ) {
+                if ( ! self.isAddedToLoad( $nexta ) ) {
                     this.appendPhoto( $nexta );
                 }
             }
             var $preva=$a.prev();
             if ($preva.length>0){
-                if ( ! self.isLoaded( $preva ) ) {
+                if ( ! self.isAddedToLoad( $preva ) ) {
                     this.appendPhoto( $preva );
                 }
             }
@@ -1965,7 +1965,7 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             if ( this.jGallery.options.title ) {
                 this.$title.addClass( 'after fade' );
             }
-            booIsLoaded = self.isLoaded( $a );
+            booIsLoaded = self.isAddedToLoad( $a );
             if ( ! booIsLoaded ) {
                 if ( self.jGallery.options.preloadAll && ! self.booLoadedAll ) {
                     this.appendAllPhotos();
@@ -2006,7 +2006,7 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             }                
             this.thumbnails.$a.each( function() {
                 var $a = $( this );
-                if ( ! self.isLoaded( $a ) ) {
+                if ( ! self.isAddedToLoad( $a ) ) {
                     self.$element.find( '.pt-part' ).append( '<div class="jgallery-container pt-page"><div class="pt-item"><img src="' + $a.attr( 'href' ) + '" /></div></div>' );
                 }
             } );
