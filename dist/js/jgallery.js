@@ -4,7 +4,7 @@
 *
 * Released under the MIT license
 *
-* Date: 2015-02-11
+* Date: 2015-07-01
 */
 ( function() {
     "use strict";
@@ -1499,11 +1499,17 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
                         stopDrag();
                     }
                 } );
+                if ( self.jGallery.options.zoomSize === 'fill' ) {
+                    self.$dragNav.removeClass( 'hide' ).addClass( 'show' );
+                }
                 drag( 0, 0 );
             };
 
             var stopDrag = function() {
                 self.$element.off( 'mousemove touchmove' );
+                if ( self.jGallery.options.zoomSize === 'fill' ) {
+                    self.$dragNav.removeClass( 'show' ).addClass( 'hide' );
+                }
                 self.draggedHorizontal = draggedHorizontal;
                 self.draggedVertical = draggedVertical;
             };
