@@ -1406,6 +1406,8 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
                         }
                     }
                 }
+            } ).on( 'mouseleave', function() {
+                translate( 0 );
             } );
         },
 
