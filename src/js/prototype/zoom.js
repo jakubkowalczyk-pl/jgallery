@@ -473,6 +473,18 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             return this.$element.find( 'img' ).filter( '[src="' + $a.attr( 'href' ) + '"]' ).length > 0;
         },
 
+        isLoaded: function( $a ) {
+            var img = this.$element.find( 'img' ).filter( '[src="' + $a.attr( 'href' ) + '"]' ).get( 0 );
+            
+            if ( img ) {
+                return this.imgIsLoaded( img );               
+            }
+        },
+
+        imgIsLoaded: function( img ) {
+            return img.complete && img.naturalWidth > 0;         
+        },
+
         refreshNav: function() {
             var $thumbActive = this.thumbnails.getElement().find( 'div.active a.active' );
 
@@ -646,12 +658,12 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             if ( this.jGallery.options.title ) {
                 this.$title.addClass( 'after fade' );
             }
-            booIsLoaded = self.isAddedToLoad( $a );
+            booIsLoaded = self.isLoaded( $a );
             if ( ! booIsLoaded ) {
                 if ( self.jGallery.options.preloadAll && ! self.booLoadedAll ) {
                     this.appendAllPhotos();
                 }
-                else {
+                else if ( ! this.isAddedToLoad( $a ) ) {
                     this.appendPhoto( $a );
                 }
             }
@@ -717,7 +729,13 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
                 start: function() {
                 },
                 success: function() {
-                    $zoom.find( 'img' ).addClass( 'loaded' );
+                    $zoom.find( 'img' ).each( function() {
+                        var $this = $( this );
+                        
+                        if ( self.imgIsLoaded( $this.get( 0 ) ) ) {
+                            $this.addClass( 'loaded' );
+                        }
+                    } );
                     self.$container.overlay( {'hide': true, 'hideLoader': true} );
                     self.showPhotoSuccess( $imgThumb, options );
                 },
