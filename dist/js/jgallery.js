@@ -375,33 +375,29 @@ var jLoader = ( function( overlay ) {
 
             function check() {
                 var boolComplete = true;
-                var intI = 0;
                 var intComplete = 0;
                 var intPercent;
 
                 $images.each( function() {
-                     intI++;
-                     if ( $( this )[0].complete ) {
+                     if ( $( this )[0].complete && $( this )[0].naturalWidth > 0 ) {
                          intComplete++;
                      }
                      else {
                          boolComplete = false;
                      }
-                     if ( intI === intCount ) {
-                         intPercent = parseInt( intComplete * 100 / intCount );
-                         options.progress( {
-                             percent: intPercent
-                         } );
-                         if ( boolComplete ) {
-                             clearTimeout( timeout );
-                             $tmp.remove();
-                             options.success();
-                         }
-                         else {
-                             timeout = setTimeout( check, options.interval );
-                         }
-                     }
                 } );
+                intPercent = parseInt( intComplete * 100 / intCount );
+                options.progress( {
+                    percent: intPercent
+                } );
+                if ( boolComplete ) {
+                    clearTimeout( timeout );
+                    $tmp.remove();
+                    options.success();
+                }
+                else {
+                    timeout = setTimeout( check, options.interval );
+                }
             }
 
             $this.append( '<div class="jLoaderTmp" style="position: absolute; width: 0; height: 0; line-height: 0; font-size: 0; visibility: hidden; overflow: hidden; z-index: -1;"></div>' );
