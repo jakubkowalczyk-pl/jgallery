@@ -6,7 +6,7 @@
         'background': options.backgroundColorAlternative
     }">
     <div class="zoom before pt-perspective" jgallery-draggable-container>
-        <jgallery-animation rows="2" cols="2">
+        <jgallery-animation rows="{{ options.transitionRows }}" cols="{{ options.transitionCols }}">
             <img ng-src="{{ activePhoto.href }}" ng-style="activePhoto.style"
                  jgallery-draggable-element="{{ canDrag }}"
                  jgallery-draggable-element-on-start="startDragCallback()"

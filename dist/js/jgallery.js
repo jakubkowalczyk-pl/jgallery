@@ -4,7 +4,7 @@
 *
 * Released under the MIT license
 *
-* Date: 2015-05-28
+* Date: 2015-07-09
 */
 ( function( angular ) {
     "use strict";
@@ -112,29 +112,20 @@ angular.module('jgallery').run(['$templateCache', function($templateCache) {
   'use strict';
 
   $templateCache.put('../../templates/animation.html',
-    "<div class=jgallery-animation-container><div ng-repeat=\"row in rows\" class=row><div ng-repeat=\"col in cols\" class=item><div ng-transclude></div></div></div></div>"
+    "<div class=jgallery-animation-container><div ng-repeat=\"row in [rows] | jgalleryRange\" class=row><div ng-repeat=\"col in [cols] | jgalleryRange\" class=item><div ng-transclude style=\"transform: translate({{-100*(col+1-(1+parseInt(cols))/2)}}%, {{-100*(row+1-(1+parseInt(rows))/2)}}%)\"></div></div></div></div>"
   );
 
 
   $templateCache.put('../../templates/draggable-nav.html',
-    "<div class=zoom-nav ng-class=\"{hide: ! draggableNavIsVisible && ! draggingInProgress}\"><img jgallery-draggable-img ng-src=\"{{ activePhoto.href }}\" class=bg><div jgallery-draggable-nav-crop class=crop ng-style=\"{\r" +
-    "\n" +
-    "        width: preview.clientWidth / img.width * nav.width  + 'px',\r" +
-    "\n" +
-    "        height: preview.clientHeight / img.height * nav.height  + 'px',\r" +
-    "\n" +
-    "        'margin-left': - parseInt( img.style.marginLeft ) / img.width * nav.width + 'px',\r" +
-    "\n" +
-    "        'margin-top': - img.height / img.height * parseInt( img.style.marginTop ) / img.height * nav.height + 'px',\r" +
-    "\n" +
-    "        'border-color': options.backgroundColor\r" +
-    "\n" +
-    "    }\"><img ng-src=\"{{ activePhoto.href }}\" ng-style=\"{\r" +
-    "\n" +
-    "            'margin-left': parseInt( img.style.marginLeft ) / img.width * nav.width + 'px',\r" +
-    "\n" +
-    "            'margin-top': img.height / img.height * parseInt( img.style.marginTop ) / img.height * nav.height + 'px',\r" +
-    "\n" +
+    "<div class=zoom-nav ng-class=\"{hide: ! draggableNavIsVisible && ! draggingInProgress}\"><img jgallery-draggable-img ng-src=\"{{ activePhoto.href }}\" class=bg><div jgallery-draggable-nav-crop class=crop ng-style=\"{\n" +
+    "        width: preview.clientWidth / img.width * nav.width  + 'px',\n" +
+    "        height: preview.clientHeight / img.height * nav.height  + 'px',\n" +
+    "        'margin-left': - parseInt( img.style.marginLeft ) / img.width * nav.width + 'px',\n" +
+    "        'margin-top': - img.height / img.height * parseInt( img.style.marginTop ) / img.height * nav.height + 'px',\n" +
+    "        'border-color': options.backgroundColor\n" +
+    "    }\"><img ng-src=\"{{ activePhoto.href }}\" ng-style=\"{\n" +
+    "            'margin-left': parseInt( img.style.marginLeft ) / img.width * nav.width + 'px',\n" +
+    "            'margin-top': img.height / img.height * parseInt( img.style.marginTop ) / img.height * nav.height + 'px',\n" +
     "        }\"></div></div>"
   );
 
@@ -157,7 +148,7 @@ angular.module('jgallery').run(['$templateCache', function($templateCache) {
     "        'top': ! isSlider && ! thumbnailsIsHidden && options.thumbnailsPosition == 'top' ? thumbnails.clientHeight + 'px' : 0,\n" +
     "        'bottom': ! isSlider && ! thumbnailsIsHidden && options.thumbnailsPosition == 'bottom' ? 40 + thumbnails.clientHeight + 'px' : '40px',\n" +
     "        'background': options.backgroundColorAlternative\n" +
-    "    }\"><div class=\"zoom before pt-perspective\" jgallery-draggable-container><jgallery-animation rows=2 cols=2><img ng-src=\"{{ activePhoto.href }}\" ng-style=activePhoto.style jgallery-draggable-element=\"{{ canDrag }}\" jgallery-draggable-element-on-start=startDragCallback() jgallery-draggable-element-on-stop=stopDragCallback() jgallery-mousedown-prevent-default></jgallery-animation><div jgallery-draggable-nav></div></div><span class=\"fa fa-chevron-left prev jgallery-btn jgallery-btn-large\" ng-class=\"{hidden: ! hasPrevPhoto}\" ng-click=goToPrevPhoto() ng-style=\"{\n" +
+    "    }\"><div class=\"zoom before pt-perspective\" jgallery-draggable-container><jgallery-animation rows=\"{{ options.transitionRows }}\" cols=\"{{ options.transitionCols }}\"><img ng-src=\"{{ activePhoto.href }}\" ng-style=activePhoto.style jgallery-draggable-element=\"{{ canDrag }}\" jgallery-draggable-element-on-start=startDragCallback() jgallery-draggable-element-on-stop=stopDragCallback() jgallery-mousedown-prevent-default></jgallery-animation><div jgallery-draggable-nav></div></div><span class=\"fa fa-chevron-left prev jgallery-btn jgallery-btn-large\" ng-class=\"{hidden: ! hasPrevPhoto}\" ng-click=goToPrevPhoto() ng-style=\"{\n" +
     "                'background': options.backgroundColor\n" +
     "          }\"></span> <span class=\"fa fa-chevron-right next jgallery-btn jgallery-btn-large\" ng-class=\"{hidden: ! hasNextPhoto}\" ng-click=goToNextPhoto() ng-style=\"{\n" +
     "                'background': options.backgroundColor\n" +
@@ -186,6 +177,27 @@ angular.module('jgallery').run(['$templateCache', function($templateCache) {
 
 }]);
 
+angular.module( 'jgallery' ).filter('jgalleryRange', function() {
+    return function(input) {
+        var lowBound, highBound;
+        switch (input.length) {
+        case 1:
+            lowBound = 0;
+            highBound = parseInt(input[0]) - 1;
+            break;
+        case 2:
+            lowBound = parseInt(input[0]);
+            highBound = parseInt(input[1]);
+            break;
+        default:
+            return input;
+        }
+        var result = [];
+        for (var i = lowBound; i <= highBound; i++)
+            result.push(i);
+        return result;
+    };
+});
 angular.module( 'jgallery' ).directive( 'jgalleryAlbum', function() {  
     var albumId = 1;
 
@@ -219,9 +231,7 @@ angular.module( 'jgallery' ).directive( 'jgalleryAnimation', ['$timeout', functi
         transclude: true,
         templateUrl: '../../templates/animation.html',
         link: function(scope){
-            scope.cols = new Array(+scope.cols);
-            scope.rows = new Array(+scope.rows);
-            scope.$apply();
+            scope.parseInt = parseInt;
         }
     };
 }] );
@@ -365,7 +375,6 @@ angular.module( 'jgallery' ).directive( 'jgallery', [
             link: function( scope, element, attrs ) {
                 var id = scope.id = jGalleryId++;
                 var options;
-                $window.scope = scope;
                 var overrideOptions = function() {
                     scope.options = options = angular.copy( defaults );
                     try {
@@ -654,7 +663,7 @@ angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$timeout', function
                 if ( zoomSize === 'fill' ) {
                     if ( isVertical ) {
                         angular.extend( photo.style, {
-                            width: '100%',
+                            width: 100 * options.transitionCols + '%',
                             height: 'auto',
                             'max-width': 'none',
                             'max-height': 'none'                            
@@ -663,7 +672,7 @@ angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$timeout', function
                     else {
                         angular.extend( photo.style, {
                             width: 'auto',
-                            height: '100%',
+                            height: 100 * options.transitionRows + '%',
                             'max-width': 'none',
                             'max-height': 'none'
                         } );                        
@@ -673,17 +682,17 @@ angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$timeout', function
                     if ( isVertical ) {
                         angular.extend( photo.style, {
                             width: 'auto',
-                            height: '100%',
-                            'max-width': '100%',
+                            height: 100 * options.transitionRows + '%',
+                            'max-width': 100 * options.transitionCols + '%',
                             'max-height': 'none'
                         } );
                     }
                     else {
                         angular.extend( photo.style, {
-                            width: '100%',
+                            width: 100 * options.transitionCols + '%',
                             height: 'auto',
                             'max-width': 'none',
-                            'max-height': '100%'
+                            'max-height': 100 * options.transitionRows + '%'
                         } );                        
                     }
                 }

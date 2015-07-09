@@ -7,9 +7,7 @@ angular.module( 'jgallery' ).directive( 'jgalleryAnimation', ['$timeout', functi
         transclude: true,
         templateUrl: '../../templates/animation.html',
         link: function(scope){
-            scope.cols = new Array(+scope.cols);
-            scope.rows = new Array(+scope.rows);
-            scope.$apply();
+            scope.parseInt = parseInt;
         }
     };
 }] );

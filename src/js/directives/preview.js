@@ -94,7 +94,7 @@ angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$timeout', function
                 if ( zoomSize === 'fill' ) {
                     if ( isVertical ) {
                         angular.extend( photo.style, {
-                            width: '100%',
+                            width: 100 * options.transitionCols + '%',
                             height: 'auto',
                             'max-width': 'none',
                             'max-height': 'none'                            
@@ -103,7 +103,7 @@ angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$timeout', function
                     else {
                         angular.extend( photo.style, {
                             width: 'auto',
-                            height: '100%',
+                            height: 100 * options.transitionRows + '%',
                             'max-width': 'none',
                             'max-height': 'none'
                         } );                        
@@ -113,17 +113,17 @@ angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$timeout', function
                     if ( isVertical ) {
                         angular.extend( photo.style, {
                             width: 'auto',
-                            height: '100%',
-                            'max-width': '100%',
+                            height: 100 * options.transitionRows + '%',
+                            'max-width': 100 * options.transitionCols + '%',
                             'max-height': 'none'
                         } );
                     }
                     else {
                         angular.extend( photo.style, {
-                            width: '100%',
+                            width: 100 * options.transitionCols + '%',
                             height: 'auto',
                             'max-width': 'none',
-                            'max-height': '100%'
+                            'max-height': 100 * options.transitionRows + '%'
                         } );                        
                     }
                 }

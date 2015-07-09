@@ -17,7 +17,6 @@ angular.module( 'jgallery' ).directive( 'jgallery', [
             link: function( scope, element, attrs ) {
                 var id = scope.id = jGalleryId++;
                 var options;
-                $window.scope = scope;
                 var overrideOptions = function() {
                     scope.options = options = angular.copy( defaults );
                     try {

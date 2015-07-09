@@ -9,7 +9,7 @@
     <script type="text/javascript" src="js/jgallery.js"></script>
 </head>
 <body data-ng-app="jgallery" style="max-width: 900px; margin: 0 auto; height: auto; background: #ccc;overflow:hidden">
-<div data-jgallery>
+<div data-jgallery="{{ {transitionRows: 2, transitionCols: 2} }}">
     <div data-jgallery-album="Album 1">
         <a href="images/large/1.jpg" data-jgallery-photo><img src="images/thumbs/1.jpg" alt="Photo 1" /></a>
         <a href="images/large/2.jpg" data-jgallery-photo><img src="images/thumbs/2.jpg" alt="Photo 2" /></a>

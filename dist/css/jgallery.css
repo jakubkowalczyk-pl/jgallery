@@ -3535,7 +3535,15 @@ body.overlayContainer > .overlay .imageLoaderPositionAbsolute {
 }
 .jgallery .zoom .jgallery-animation-container .item {
   flex-grow: 1;
+  overflow: hidden;
   position: relative;
+}
+.jgallery .zoom .jgallery-animation-container [ng-transclude] {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
 }
 .jgallery .zoom.is-link {
   cursor: pointer;
