@@ -1,4 +1,4 @@
-angular.module( 'jgallery' ).factory( 'defaultsSliderMode', function() {
+angular.module( 'jgallery' ).factory( 'jgallery.defaultsSliderMode', function() {
     return {
         width: '940px',
         height: '360px',

@@ -1,4 +1,4 @@
-angular.module( 'jgallery' ).factory( 'requiredSliderMode', function() {
+angular.module( 'jgallery' ).factory( 'jgallery.requiredSliderMode', function() {
     return {
         autostart: true,
         canClose: false,

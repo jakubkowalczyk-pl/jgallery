@@ -7,7 +7,7 @@
     }">
     <div class="zoom before pt-perspective" jgallery-draggable-container>
         <jgallery-animation rows="{{ options.transitionRows }}" cols="{{ options.transitionCols }}">
-            <img ng-src="{{ activePhoto.href }}" ng-style="activePhoto.style"
+            <img ng-src="{{ gallery.activeAlbum.activePhoto.href }}" ng-style="gallery.activeAlbum.activePhoto.style"
                  jgallery-draggable-element="{{ canDrag }}"
                  jgallery-draggable-element-on-start="startDragCallback()"
                  jgallery-draggable-element-on-stop="stopDragCallback()"
@@ -16,14 +16,14 @@
         <div jgallery-draggable-nav></div>
     </div>
     <span class="fa fa-chevron-left prev jgallery-btn jgallery-btn-large"
-          ng-class="{hidden: ! hasPrevPhoto}"
+          ng-class="{hidden: ! gallery.activeAlbum.hasPrevPhoto}"
           ng-click="goToPrevPhoto()"
           ng-style="{
                 'background': options.backgroundColor
           }"
     ></span>
     <span class="fa fa-chevron-right next jgallery-btn jgallery-btn-large"
-          ng-class="{hidden: ! hasNextPhoto}"
+          ng-class="{hidden: ! gallery.activeAlbum.hasNextPhoto}"
           ng-click="goToNextPhoto()"
           ng-style="{
                 'background': options.backgroundColor
@@ -56,7 +56,7 @@
               data-tooltip-position="bottom right"
               data-tooltip="{{ options.tooltipClose }}"
               ng-show="options.canClose"
-              ng-click="isVisible = false"
+              ng-click="gallery.isVisible = false"
         ></span>
     </div>
     <div class="nav-bottom"
@@ -81,12 +81,12 @@
                   tooltip="{{ options.tooltipSeeOtherAlbums }}">
                 <span class="menu jgallery-btn"
                       style="background: {{ options.backgroundColor }}; box-shadow: 0 0 20px {{ options.color }}">
-                    <span class="item" ng-repeat="album in albums.albums" ng-click="setAlbumAsActive( album.id )">
+                    <span class="item" ng-repeat="album in gallery.albums" ng-click="gallery.setAlbumAsActive( album.id )">
                         {{ album.title }}
                     </span>
                 </span>
                 <span class="title">
-                    {{ activeAlbum.title }}
+                    {{ gallery.activeAlbum.title }}
                 </span>
             </span>
         </div>

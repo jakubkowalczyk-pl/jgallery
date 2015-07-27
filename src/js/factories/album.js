@@ -19,6 +19,18 @@ angular.module('jgallery').factory('jgallery.album', function(){
              * @type {Photo[]}
              */
             this.photos = [];
+            /**
+             * @type {Photo|undefined}
+             */
+            this.activePhoto;
+            /**
+             * @type {Boolean}
+             */
+            this.hasPrevPhoto = false;
+            /**
+             * @type {Boolean}
+             */
+            this.hasNextPhoto = false;
         };
     
     Album.prototype = {
@@ -29,6 +41,26 @@ angular.module('jgallery').factory('jgallery.album', function(){
          */
         addPhoto: function(photo){
             this.photos.push(photo);
+            this.checkNextAndPrevPhotos();
+        },
+        
+        /**
+         * @param {Photo} photo
+         */
+        setActivePhoto: function(photo){
+            this.activePhoto = photo;
+            this.checkNextAndPrevPhotos();
+        },
+            
+        checkNextAndPrevPhotos: function(){
+            var album = this;                
+
+            angular.forEach( this.photos, function( photo, key ) {
+                if ( album.activePhoto && photo.id === album.activePhoto.id ) {
+                    album.hasPrevPhoto = key > 0;
+                    album.hasNextPhoto = key < album.photos.length - 1;
+                }
+            } );
         }
     };
     

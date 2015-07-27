@@ -1,4 +1,4 @@
-angular.module( 'jgallery' ).factory( 'defaults', function() {
+angular.module( 'jgallery' ).factory( 'jgallery.defaults', function() {
     return {
         autostart: true, // Boolean; If set as 'true' jGallery will be started automatically after loading the document(only for full-screen or standard mode).; [ true, false ]
         autostartAtImage: 1, // Number; Number of image which will be loaded by autostart(only when 'autostart' parameter set as 'true').; ; [ 1, 2, 3 ]

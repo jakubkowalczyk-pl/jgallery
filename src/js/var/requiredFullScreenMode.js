@@ -1,3 +1,3 @@
-angular.module( 'jgallery' ).factory( 'requiredFullScreenMode', function() {
+angular.module( 'jgallery' ).factory( 'jgallery.requiredFullScreenMode', function() {
     return {};
 } );

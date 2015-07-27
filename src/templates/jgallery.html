@@ -1,6 +1,6 @@
-<div ng-transclude ng-hide="options.mode !== 'full-screen' && isVisible"></div>
-<div class="jgallery jgallery-{{ options.mode }}" data-jgallery-id="{{ id }}"
-     ng-show="isVisible"
+<div ng-transclude ng-hide="options.mode !== 'full-screen' && gallery.isVisible"></div>
+<div class="jgallery jgallery-{{ options.mode }}" data-jgallery-id="{{ gallery.id }}"
+     ng-show="gallery.isVisible"
      ng-style="{
         background: options.backgroundColor,
         color: options.textColor,

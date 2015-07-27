@@ -1,10 +1,10 @@
 <div jgallery-scrollable>
-    <div ng-repeat="album in albums.albums"
+    <div ng-repeat="album in gallery.albums"
          class="album"
-         ng-class="{'active': album.id == activeAlbum.id}"
+         ng-class="{'active': album.id == gallery.activeAlbum.id}"
          style="{{ thumbnailsIsVertical ? '' : 'width: ' + album.photos.length * thumbWidth + 'px' }}">
         <a ng-repeat="photo in album.photos"
-           ng-click="$event.preventDefault(); $parent.$parent.$parent.$parent.showPhoto( photo ); $parent.$parent.$parent.$parent.thumbnailsIsFullScreen = false;"
+           ng-click="$event.preventDefault(); $parent.$parent.$parent.$parent.gallery.showPhoto( photo ); $parent.$parent.$parent.$parent.thumbnailsIsFullScreen = false;"
            ng-href="{{ isSlider ? photo.src : photo.href }}"
            ng-attr-link="{{ isSlider ? photo.href : undefined }}"
            ng-attr-target="{{ isSlider ? photo.target : undefined }}"

@@ -8,7 +8,7 @@ angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$timeout', function
              scope.parseInt = parseInt;
              
              scope.changeZoomSize = function() {
-                var photo = scope.activePhoto;
+                var photo = scope.gallery.activeAlbum.activePhoto;
                 
                 if ( options.zoomSize === 'fit' ) {
                     options.zoomSize = 'fill';
@@ -36,9 +36,9 @@ angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$timeout', function
                 scope.$apply();
             };
             
-            scope.$watchGroup( ['options.zoomSize', 'activePhoto.width', 'activePhoto.height', 'preview.clientWidth', 'preview.clientHeight'], function() {
+            scope.$watchGroup( ['options.zoomSize', 'gallery.activeAlbum.activePhoto.width', 'gallery.activeAlbum.activePhoto.height', 'preview.clientWidth', 'preview.clientHeight'], function() {
                 var zoomSize = scope.options.zoomSize;
-                var photo = scope.activePhoto;
+                var photo = scope.gallery.activeAlbum.activePhoto;
                 
                 if ( ! photo ) {
                     return;
@@ -78,18 +78,18 @@ angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$timeout', function
                 }
             } );
             
-            scope.$watchGroup( ['options.zoomSize', 'activePhoto.width', 'activePhoto.height', 'preview.clientWidth', 'preview.clientHeight'], function() {
+            scope.$watchGroup( ['options.zoomSize', 'gallery.activeAlbum.activePhoto.width', 'gallery.activeAlbum.activePhoto.height', 'preview.clientWidth', 'preview.clientHeight'], function() {
                 var zoomSize = scope.options.zoomSize;
                 var photo;
                 var isVertical;
                 
-                if ( ! scope.activePhoto ) {
-                    scope.activePhoto = { style: {} };
+                if ( ! scope.gallery.activeAlbum.activePhoto ) {
+                    scope.gallery.activeAlbum.activePhoto = { style: {} };
                 }
-                else if ( ! scope.activePhoto.style ) {
-                    scope.activePhoto.style = {};
+                else if ( ! scope.gallery.activeAlbum.activePhoto.style ) {
+                    scope.gallery.activeAlbum.activePhoto.style = {};
                 }
-                photo = scope.activePhoto;
+                photo = scope.gallery.activeAlbum.activePhoto;
                 isVertical = ( photo.width / photo.height ) < ( preview.clientWidth / preview.clientHeight );
                 if ( zoomSize === 'fill' ) {
                     if ( isVertical ) {
@@ -138,17 +138,6 @@ angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$timeout', function
                 angular.extend( photo.style, {
                     'margin-top': '0',
                     'margin-left': '0'
-                } );
-            } );
-            
-            scope.$watchGroup( ['activePhoto', 'activePhoto + activeAlbum.photos'], function() {
-                angular.forEach( scope.albums.albums, function( album ) {
-                    angular.forEach( album.photos, function( photo, key ) {
-                        if ( photo.id === scope.activePhoto.id ) {
-                            scope.hasPrevPhoto = key > 0;
-                            scope.hasNextPhoto = key < album.photos.length - 1;
-                        }
-                    } );
                 } );
             } );
             
