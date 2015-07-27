@@ -1,5 +1,5 @@
 <div jgallery-scrollable>
-    <div ng-repeat="album in albums"
+    <div ng-repeat="album in albums.albums"
          class="album"
          ng-class="{'active': album.id == activeAlbum.id}"
          style="{{ thumbnailsIsVertical ? '' : 'width: ' + album.photos.length * thumbWidth + 'px' }}">

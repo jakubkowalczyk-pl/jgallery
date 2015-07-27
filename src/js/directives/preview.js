@@ -142,7 +142,7 @@ angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$timeout', function
             } );
             
             scope.$watchGroup( ['activePhoto', 'activePhoto + activeAlbum.photos'], function() {
-                angular.forEach( scope.albums, function( album ) {
+                angular.forEach( scope.albums.albums, function( album ) {
                     angular.forEach( album.photos, function( photo, key ) {
                         if ( photo.id === scope.activePhoto.id ) {
                             scope.hasPrevPhoto = key > 0;

@@ -4,11 +4,12 @@ angular.module( 'jgallery' ).directive( 'jgallery', [
     'requiredFullScreenMode',
     'defaultsSliderMode',
     'requiredSliderMode',
+    'jgallery.albums',
     '$timeout',
     '$filter',
     '$document',
     '$window',
-    function( defaults, defaultsFullScreenMode, requiredFullScreenMode, defaultsSliderMode, requiredSliderMode, $timeout, $filter, $document, $window ) {      
+    function( defaults, defaultsFullScreenMode, requiredFullScreenMode, defaultsSliderMode, requiredSliderMode, Albums, $timeout, $filter, $document, $window ) {      
         var jGalleryId = 1;
 
         return {
@@ -39,7 +40,7 @@ angular.module( 'jgallery' ).directive( 'jgallery', [
                 };
 
                 scope.setAlbumAsActive = function( albumId ) {
-                    scope.activeAlbum = $filter( 'filter' )( scope.albums, { id: albumId } )[0];
+                    scope.activeAlbum = $filter( 'filter' )( scope.albums.albums, { id: albumId } )[0];
                     scope.showPhoto( scope.activeAlbum.photos[0] );
                 };
 
@@ -84,7 +85,7 @@ angular.module( 'jgallery' ).directive( 'jgallery', [
                 } );
                 scope.$watch( 'options.autostartAtAlbum + albums', function() {
                     if ( ! scope.activeAlbum ) {
-                        scope.activeAlbum = scope.albums[options.autostartAtAlbum - 1];
+                        scope.activeAlbum = scope.albums.albums[options.autostartAtAlbum - 1];
                     }
                 } );
                 scope.$watch( 'options.autostartAtImage + activeAlbum.photos', function() {
@@ -101,13 +102,10 @@ angular.module( 'jgallery' ).directive( 'jgallery', [
                 angular.element( $document.find( 'head' ) ).append( '<style type="text/css" class="colours" data-jgallery-id="' + id + '"></style>' );
             },
             controller: ['$scope', function( $scope ) {
-                var albums = $scope.albums = [];
+                var albums = $scope.albums = new Albums();
 
                 this.addAlbum = function( album ) {
-                    if ( ! album.title ) {
-                        album.title = 'Album ' + album.id;
-                    }
-                    albums.push( album );
+                    albums.add(album);
                 };
 
                 this.showPhoto = function( photo ) {

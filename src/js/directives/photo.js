@@ -1,11 +1,11 @@
-angular.module( 'jgallery' ).directive( 'jgalleryPhoto', function() {
+angular.module( 'jgallery' ).directive( 'jgalleryPhoto', ['jgallery.photo', function(Photo) {
    var photoId = 1;
 
    return {
        require: ['^jgalleryAlbum', '^jgallery'],
        link: function( scope, element, attrs, controllers ) {    
            var img;
-           var photo = {};
+           var photo = new Photo();
            var albumController = controllers[0];
            var galleryController = controllers[1];
 
@@ -28,16 +28,11 @@ angular.module( 'jgallery' ).directive( 'jgalleryPhoto', function() {
 
                thumb.onload = function() {
                    photo.thumb = thumb;
-                   photo.thumbWidth = thumb.width;
-                   photo.thumbHeight = thumb.height;
-                   photo.thumbIsVertical = thumb.thumbWidth < thumb.thumbHeight;
-                   photo.id = photoId++;
+                   photo.setThumbSize(thumb.width, thumb.height);
                    albumController.addPhoto( photo );
                    img.onload = function() {
                        photo.element = img;
-                       photo.width = img.width;
-                       photo.height = img.height;
-                       photo.isVertical = thumb.width < thumb.height;
+                       photo.setSize(img.width, img.height);
                        scope.$apply();
                    };
                    img.src = photo.href;
@@ -74,4 +69,4 @@ angular.module( 'jgallery' ).directive( 'jgalleryPhoto', function() {
            } );
        }
    };
-} );
+}] );

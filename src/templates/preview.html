@@ -81,7 +81,7 @@
                   tooltip="{{ options.tooltipSeeOtherAlbums }}">
                 <span class="menu jgallery-btn"
                       style="background: {{ options.backgroundColor }}; box-shadow: 0 0 20px {{ options.color }}">
-                    <span class="item" ng-repeat="album in albums" ng-click="setAlbumAsActive( album.id )">
+                    <span class="item" ng-repeat="album in albums.albums" ng-click="setAlbumAsActive( album.id )">
                         {{ album.title }}
                     </span>
                 </span>

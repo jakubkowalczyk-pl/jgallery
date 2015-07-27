@@ -4,7 +4,7 @@
 *
 * Released under the MIT license
 *
-* Date: 2015-07-09
+* Date: 2015-07-27
 */
 ( function( angular ) {
     "use strict";
@@ -157,7 +157,7 @@ angular.module('jgallery').run(['$templateCache', function($templateCache) {
     "        }\"><span jgallery-btn class=\"fa resize fa-search jgallery-btn jgallery-btn-small\" data-tooltip-position=\"bottom right\" data-tooltip=\"{{ options.tooltipZoom }}\" ng-class=\"{\n" +
     "                'fa-search-plus': canZoomIn,\n" +
     "                'fa-search-minus': canZoomOut\n" +
-    "              }\" ng-click=changeZoomSize()></span> <span jgallery-btn class=\"fa change-mode jgallery-btn jgallery-btn-small\" data-tooltip-position=\"bottom right\" data-tooltip=\"{{ options.tooltipFullScreen }}\" ng-show=options.canChangeMode ng-click=\"options.mode = options.mode == 'standard' ? 'full-screen' : 'standard'\" ng-class=\"{'fa-expand': options.mode == 'standard', 'fa-compress': options.mode != 'standard'}\"></span> <span jgallery-btn class=\"fa fa-times jgallery-close jgallery-btn jgallery-btn-small\" data-tooltip-position=\"bottom right\" data-tooltip=\"{{ options.tooltipClose }}\" ng-show=options.canClose ng-click=\"isVisible = false\"></span></div><div class=nav-bottom style=\"background: {{ options.backgroundColor }}; box-shadow: 0 0 5px rgba( 0, 0, 0, .3 )\" ng-hide=thumbnailsIsFullScreen><div class=icons><span jgallery-btn class=\"fa fa-th full-screen jgallery-btn jgallery-btn-small\" data-tooltip=\"{{ options.tooltipSeeAllPhotos }}\" ng-click=\"thumbnailsIsFullScreen = ! thumbnailsIsFullScreen\"></span> <span jgallery-btn class=\"fa minimalize-thumbnails jgallery-btn jgallery-btn-small\" data-tooltip=\"{{ options.tooltipToggleThumbnails }}\" ng-class=\"{'fa-ellipsis-h': !thumbnailsIsVertical, 'fa-ellipsis-v': thumbnailsIsVertical, inactive: thumbnailsIsHidden}\" ng-click=\"thumbnailsIsHidden = ! thumbnailsIsHidden;\"></span> <span jgallery-btn class=\"fa fa-list-ul change-album jgallery-btn jgallery-btn-small\" ng-class=\"{inactive: ! hasManyAlbums, active: albumsDropdownIsVisible}\" ng-click=\"albumsDropdownIsVisible = ! albumsDropdownIsVisible\" tooltip=\"{{ options.tooltipSeeOtherAlbums }}\"><span class=\"menu jgallery-btn\" style=\"background: {{ options.backgroundColor }}; box-shadow: 0 0 20px {{ options.color }}\"><span class=item ng-repeat=\"album in albums\" ng-click=\"setAlbumAsActive( album.id )\">{{ album.title }}</span></span> <span class=title>{{ activeAlbum.title }}</span></span></div><div class=\"title before\"></div></div></div>"
+    "              }\" ng-click=changeZoomSize()></span> <span jgallery-btn class=\"fa change-mode jgallery-btn jgallery-btn-small\" data-tooltip-position=\"bottom right\" data-tooltip=\"{{ options.tooltipFullScreen }}\" ng-show=options.canChangeMode ng-click=\"options.mode = options.mode == 'standard' ? 'full-screen' : 'standard'\" ng-class=\"{'fa-expand': options.mode == 'standard', 'fa-compress': options.mode != 'standard'}\"></span> <span jgallery-btn class=\"fa fa-times jgallery-close jgallery-btn jgallery-btn-small\" data-tooltip-position=\"bottom right\" data-tooltip=\"{{ options.tooltipClose }}\" ng-show=options.canClose ng-click=\"isVisible = false\"></span></div><div class=nav-bottom style=\"background: {{ options.backgroundColor }}; box-shadow: 0 0 5px rgba( 0, 0, 0, .3 )\" ng-hide=thumbnailsIsFullScreen><div class=icons><span jgallery-btn class=\"fa fa-th full-screen jgallery-btn jgallery-btn-small\" data-tooltip=\"{{ options.tooltipSeeAllPhotos }}\" ng-click=\"thumbnailsIsFullScreen = ! thumbnailsIsFullScreen\"></span> <span jgallery-btn class=\"fa minimalize-thumbnails jgallery-btn jgallery-btn-small\" data-tooltip=\"{{ options.tooltipToggleThumbnails }}\" ng-class=\"{'fa-ellipsis-h': !thumbnailsIsVertical, 'fa-ellipsis-v': thumbnailsIsVertical, inactive: thumbnailsIsHidden}\" ng-click=\"thumbnailsIsHidden = ! thumbnailsIsHidden;\"></span> <span jgallery-btn class=\"fa fa-list-ul change-album jgallery-btn jgallery-btn-small\" ng-class=\"{inactive: ! hasManyAlbums, active: albumsDropdownIsVisible}\" ng-click=\"albumsDropdownIsVisible = ! albumsDropdownIsVisible\" tooltip=\"{{ options.tooltipSeeOtherAlbums }}\"><span class=\"menu jgallery-btn\" style=\"background: {{ options.backgroundColor }}; box-shadow: 0 0 20px {{ options.color }}\"><span class=item ng-repeat=\"album in albums.albums\" ng-click=\"setAlbumAsActive( album.id )\">{{ album.title }}</span></span> <span class=title>{{ activeAlbum.title }}</span></span></div><div class=\"title before\"></div></div></div>"
   );
 
 
@@ -167,7 +167,7 @@ angular.module('jgallery').run(['$templateCache', function($templateCache) {
 
 
   $templateCache.put('../../templates/thumbnails.html',
-    "<div jgallery-scrollable><div ng-repeat=\"album in albums\" class=album ng-class=\"{'active': album.id == activeAlbum.id}\" style=\"{{ thumbnailsIsVertical ? '' : 'width: ' + album.photos.length * thumbWidth + 'px' }}\"><a ng-repeat=\"photo in album.photos\" ng-click=\"$event.preventDefault(); $parent.$parent.$parent.$parent.showPhoto( photo ); $parent.$parent.$parent.$parent.thumbnailsIsFullScreen = false;\" ng-href=\"{{ isSlider ? photo.src : photo.href }}\" ng-attr-link=\"{{ isSlider ? photo.href : undefined }}\" ng-attr-target=\"{{ isSlider ? photo.target : undefined }}\" style=\"width: {{ thumbWidth }}px; height: {{ thumbHeight }}px; font-size: {{ thumbHeight }}px\"><img ng-src=\"{{ photo.src }}\" ng-attr-alt=\"{{ photo.title }}\" ng-attr-data-jgallery-bg-color=\"{{ photo.bgColor }}\" ng-attr-data-jgallery-text-color=\"{{ photo.textColor }}\" ng-class=\"{\n" +
+    "<div jgallery-scrollable><div ng-repeat=\"album in albums.albums\" class=album ng-class=\"{'active': album.id == activeAlbum.id}\" style=\"{{ thumbnailsIsVertical ? '' : 'width: ' + album.photos.length * thumbWidth + 'px' }}\"><a ng-repeat=\"photo in album.photos\" ng-click=\"$event.preventDefault(); $parent.$parent.$parent.$parent.showPhoto( photo ); $parent.$parent.$parent.$parent.thumbnailsIsFullScreen = false;\" ng-href=\"{{ isSlider ? photo.src : photo.href }}\" ng-attr-link=\"{{ isSlider ? photo.href : undefined }}\" ng-attr-target=\"{{ isSlider ? photo.target : undefined }}\" style=\"width: {{ thumbWidth }}px; height: {{ thumbHeight }}px; font-size: {{ thumbHeight }}px\"><img ng-src=\"{{ photo.src }}\" ng-attr-alt=\"{{ photo.title }}\" ng-attr-data-jgallery-bg-color=\"{{ photo.bgColor }}\" ng-attr-data-jgallery-text-color=\"{{ photo.textColor }}\" ng-class=\"{\n" +
     "                     'thumb-vertical': photo.thumbWidth / photo.thumbHeight < options.thumbWidth / options.thumbHeight,\n" +
     "                     'thumb-horizontal': photo.thumbWidth / photo.thumbHeight >= options.thumbWidth / options.thumbHeight,\n" +
     "                     'thumb-on-full-screen-vertical': photo.thumbWidth / photo.thumbHeight < options.thumbWidthOnFullScreen / options.thumbHeightOnFullScreen,\n" +
@@ -198,9 +198,163 @@ angular.module( 'jgallery' ).filter('jgalleryRange', function() {
         return result;
     };
 });
-angular.module( 'jgallery' ).directive( 'jgalleryAlbum', function() {  
-    var albumId = 1;
-
+angular.module('jgallery').factory('jgallery.album', function(){
+    
+    var currentId = 1,
+    
+        /**
+         * @constructor
+         * @returns {Album}
+         */
+        Album = function(){
+            /**
+             * @type {Number}
+             */
+            this.id = currentId++;
+            /**
+             * @type {String}
+             */
+            this.title;
+            /**
+             * @type {Photo[]}
+             */
+            this.photos = [];
+        };
+    
+    Album.prototype = {
+        constructor: Album,
+        
+        /**
+         * @param {Photo} photo
+         */
+        addPhoto: function(photo){
+            this.photos.push(photo);
+        }
+    };
+    
+    return Album;
+    
+});
+angular.module('jgallery').factory('jgallery.albums', function(){
+    var Albums = function(){
+        /**
+         * @type {Array}
+         */
+        this.albums = [];
+    };
+    
+    Albums.prototype = {
+        constructor: Albums,
+        
+        /**
+         * @param {Album} album
+         */
+        add: function(album){
+            if(!album.title){
+                album.title = 'Album ' + album.id;
+            }
+            this.albums.push(album);
+        }
+    };
+    
+    return Albums;
+});
+angular.module('jgallery').factory('jgallery.photo', function(){
+    
+    var currentId = 1,
+    
+        /**
+         * @constructor
+         * @returns {Photo}
+         */
+        Photo = function(){
+            /**
+             * @type {Number}
+             */
+            this.id = currentId++;
+            /**
+             * Href attribute of anchor containing this photo
+             * @type {String}
+             */
+            this.href = '';
+            /**
+             * Target attribute of anchor containing this photo
+             * @type {String}
+             */
+            this.target = '';
+            /**
+             * Source path
+             * @type {String}
+             */
+            this.src = '';
+            /**
+             * @type {String}
+             */
+            this.bgColor = '';
+            /**
+             * @type {String}
+             */
+            this.textColor = '';
+            /**
+             * Large photo
+             * @type {HTMLImageElement}
+             */
+            this.element = '';
+            /**
+             * @type {Number}
+             */
+            this.width = 0;
+            /**
+             * @type {Number}
+             */
+            this.height = 0;
+            /**
+             * Thumbnail
+             * @type {HTMLImageElement}
+             */
+            this.thumb = '';
+            /**
+             * @type {Number}
+             */
+            this.thumbWidth = 0;
+            /**
+             * @type {Number}
+             */
+            this.thumbHeight = 0;
+            /**
+             * @type {Boolean}
+             */
+            this.thumbIsVertical = false;
+        };
+    
+    Photo.prototype = {
+        constructor: Photo,
+        
+        /**
+         * @param {Number} width
+         * @param {Number} height
+         */
+        setSize: function(width, height){
+            this.width = width;
+            this.height = height;
+            this.isVertical = this.width < this.height;
+        },
+        
+        /**
+         * @param {Number} width
+         * @param {Number} height
+         */
+        setThumbSize: function(width, height){
+            this.thumbWidth = width;
+            this.thumbHeight = height;
+            this.thumbIsVertical = this.thumbWidth < this.thumbHeight;
+        }
+    };
+    
+    return Photo;
+    
+});
+angular.module( 'jgallery' ).directive( 'jgalleryAlbum', ['jgallery.album', function(Album) {  
     return {
         scope: {},
         require: '^jgallery',
@@ -209,19 +363,16 @@ angular.module( 'jgallery' ).directive( 'jgalleryAlbum', function() {
             jgalleryController.addAlbum( scope.album );
         },
         controller: ['$scope', function( $scope ){
-            $scope.album = {
-                id: albumId++
-            };
-            var photos = $scope.album.photos = [];
+            $scope.album = new Album();
 
             this.addPhoto = function( photo ) {
                 $scope.$parent.$apply( function() {
-                    photos.push( photo );
+                    $scope.album.addPhoto( photo );
                 } );
             };
         }]
     };
-} );
+}] );
 angular.module( 'jgallery' ).directive( 'jgalleryAnimation', ['$timeout', function( $timeout ) {  
     return {
         scope: {
@@ -362,11 +513,12 @@ angular.module( 'jgallery' ).directive( 'jgallery', [
     'requiredFullScreenMode',
     'defaultsSliderMode',
     'requiredSliderMode',
+    'jgallery.albums',
     '$timeout',
     '$filter',
     '$document',
     '$window',
-    function( defaults, defaultsFullScreenMode, requiredFullScreenMode, defaultsSliderMode, requiredSliderMode, $timeout, $filter, $document, $window ) {      
+    function( defaults, defaultsFullScreenMode, requiredFullScreenMode, defaultsSliderMode, requiredSliderMode, Albums, $timeout, $filter, $document, $window ) {      
         var jGalleryId = 1;
 
         return {
@@ -397,7 +549,7 @@ angular.module( 'jgallery' ).directive( 'jgallery', [
                 };
 
                 scope.setAlbumAsActive = function( albumId ) {
-                    scope.activeAlbum = $filter( 'filter' )( scope.albums, { id: albumId } )[0];
+                    scope.activeAlbum = $filter( 'filter' )( scope.albums.albums, { id: albumId } )[0];
                     scope.showPhoto( scope.activeAlbum.photos[0] );
                 };
 
@@ -442,7 +594,7 @@ angular.module( 'jgallery' ).directive( 'jgallery', [
                 } );
                 scope.$watch( 'options.autostartAtAlbum + albums', function() {
                     if ( ! scope.activeAlbum ) {
-                        scope.activeAlbum = scope.albums[options.autostartAtAlbum - 1];
+                        scope.activeAlbum = scope.albums.albums[options.autostartAtAlbum - 1];
                     }
                 } );
                 scope.$watch( 'options.autostartAtImage + activeAlbum.photos', function() {
@@ -459,13 +611,10 @@ angular.module( 'jgallery' ).directive( 'jgallery', [
                 angular.element( $document.find( 'head' ) ).append( '<style type="text/css" class="colours" data-jgallery-id="' + id + '"></style>' );
             },
             controller: ['$scope', function( $scope ) {
-                var albums = $scope.albums = [];
+                var albums = $scope.albums = new Albums();
 
                 this.addAlbum = function( album ) {
-                    if ( ! album.title ) {
-                        album.title = 'Album ' + album.id;
-                    }
-                    albums.push( album );
+                    albums.add(album);
                 };
 
                 this.showPhoto = function( photo ) {
@@ -490,14 +639,14 @@ angular.module( 'jgallery' ).directive( 'jgalleryMousedownPreventDefault', funct
         }
     };
 } );
-angular.module( 'jgallery' ).directive( 'jgalleryPhoto', function() {
+angular.module( 'jgallery' ).directive( 'jgalleryPhoto', ['jgallery.photo', function(Photo) {
    var photoId = 1;
 
    return {
        require: ['^jgalleryAlbum', '^jgallery'],
        link: function( scope, element, attrs, controllers ) {    
            var img;
-           var photo = {};
+           var photo = new Photo();
            var albumController = controllers[0];
            var galleryController = controllers[1];
 
@@ -520,16 +669,11 @@ angular.module( 'jgallery' ).directive( 'jgalleryPhoto', function() {
 
                thumb.onload = function() {
                    photo.thumb = thumb;
-                   photo.thumbWidth = thumb.width;
-                   photo.thumbHeight = thumb.height;
-                   photo.thumbIsVertical = thumb.thumbWidth < thumb.thumbHeight;
-                   photo.id = photoId++;
+                   photo.setThumbSize(thumb.width, thumb.height);
                    albumController.addPhoto( photo );
                    img.onload = function() {
                        photo.element = img;
-                       photo.width = img.width;
-                       photo.height = img.height;
-                       photo.isVertical = thumb.width < thumb.height;
+                       photo.setSize(img.width, img.height);
                        scope.$apply();
                    };
                    img.src = photo.href;
@@ -566,7 +710,7 @@ angular.module( 'jgallery' ).directive( 'jgalleryPhoto', function() {
            } );
        }
    };
-} );
+}] );
 angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$timeout', function( $timeout ) {        
      return {
          require: '^jgallery',
@@ -711,7 +855,7 @@ angular.module( 'jgallery' ).directive( 'jgalleryPreview', ['$timeout', function
             } );
             
             scope.$watchGroup( ['activePhoto', 'activePhoto + activeAlbum.photos'], function() {
-                angular.forEach( scope.albums, function( album ) {
+                angular.forEach( scope.albums.albums, function( album ) {
                     angular.forEach( album.photos, function( photo, key ) {
                         if ( photo.id === scope.activePhoto.id ) {
                             scope.hasPrevPhoto = key > 0;

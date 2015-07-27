@@ -1,6 +1,4 @@
-angular.module( 'jgallery' ).directive( 'jgalleryAlbum', function() {  
-    var albumId = 1;
-
+angular.module( 'jgallery' ).directive( 'jgalleryAlbum', ['jgallery.album', function(Album) {  
     return {
         scope: {},
         require: '^jgallery',
@@ -9,16 +7,13 @@ angular.module( 'jgallery' ).directive( 'jgalleryAlbum', function() {
             jgalleryController.addAlbum( scope.album );
         },
         controller: ['$scope', function( $scope ){
-            $scope.album = {
-                id: albumId++
-            };
-            var photos = $scope.album.photos = [];
+            $scope.album = new Album();
 
             this.addPhoto = function( photo ) {
                 $scope.$parent.$apply( function() {
-                    photos.push( photo );
+                    $scope.album.addPhoto( photo );
                 } );
             };
         }]
     };
-} );
+}] );

@@ -57,6 +57,7 @@ module.exports = function( grunt ) {
 //                'src/js/jgallery.js',
                 'src/templates/template.js',
                 'src/js/filters/*.js',
+                'src/js/factories/*.js',
                 'src/js/directives/*.js',
                 'src/js/end.frag.js'
             ];
