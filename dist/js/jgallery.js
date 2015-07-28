@@ -4,7 +4,7 @@
 *
 * Released under the MIT license
 *
-* Date: 2015-07-02
+* Date: 2015-07-28
 */
 ( function() {
     "use strict";
