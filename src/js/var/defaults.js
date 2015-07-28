@@ -52,10 +52,10 @@ var defaults = {
     transitionWaveDirection: 'forward', // String; Direction of animation(only when 'transitionCols' > 1 or 'transitionRows' > 1).; [ 'forward', 'backward' ]
     width: '100%', // String; Width of jGallery container(only for standard or slider mode).
     zoomSize: 'fit', // String; Size of zoomed photo(only for full-screen or standard mode).; [ 'fit', 'original', 'fill' ]
-    afterLoadPhoto: function() {}, // Function; Custom function that will be called after loading photo.; ; [ function(link, thumbnail) { console.log( link, thumbnail ); } ]
-    beforeLoadPhoto: function() {}, // Function; Custom function that will be called before loading photo.; ; [ function(link, thumbnail) { console.log( link, thumbnail ); } ]
+    afterLoadPhoto: function() {}, // Function; Custom function that will be called after loading photo.; ; [ function(link, thumbnail) { console.log( link, thumbnail ) } ]
+    beforeLoadPhoto: function() {}, // Function; Custom function that will be called before loading photo.; ; [ function(link, thumbnail) { console.log( link, thumbnail ) } ]
     closeGallery: function() {}, // Function; Custom function that will be called after hiding jGallery.; ; [ function() { alert( 'closeGallery' ) } ]
     initGallery: function() {}, // Function; Custom function that will be called before initialization of jGallery.; ; [ function() { alert( 'initGallery' ) } ]
     showGallery: function() {}, // Function; Custom function that will be called after showing jGallery.; ; [ function() { alert( 'showGallery' ) } ]
-    showPhoto: function() {} // Function; Custom function that will be called before showing photo.; ; [ function(link, thumbnail) { console.log( link, thumbnail ); } ]
+    showPhoto: function() {} // Function; Custom function that will be called before showing photo.; ; [ function(link, thumbnail) { console.log( link, thumbnail ) } ]
 };
