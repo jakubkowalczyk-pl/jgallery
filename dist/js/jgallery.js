@@ -62,12 +62,12 @@ var defaults = {
     transitionWaveDirection: 'forward', // String; Direction of animation(only when 'transitionCols' > 1 or 'transitionRows' > 1).; [ 'forward', 'backward' ]
     width: '100%', // String; Width of jGallery container(only for standard or slider mode).
     zoomSize: 'fit', // String; Size of zoomed photo(only for full-screen or standard mode).; [ 'fit', 'original', 'fill' ]
-    afterLoadPhoto: function() {}, // Function; Custom function that will be called after loading photo.; ; [ function() { alert( 'afterLoadPhoto' ) } ]
-    beforeLoadPhoto: function() {}, // Function; Custom function that will be called before loading photo.; ; [ function() { alert( 'beforeLoadPhoto' ) } ]
+    afterLoadPhoto: function() {}, // Function; Custom function that will be called after loading photo.; ; [ function(link, thumbnail) { alert( 'afterLoadPhoto' ); console.log( link, thumbnail ); } ]
+    beforeLoadPhoto: function() {}, // Function; Custom function that will be called before loading photo.; ; [ function(link, thumbnail) { alert( 'beforeLoadPhoto' ); console.log( link, thumbnail ); } ]
     closeGallery: function() {}, // Function; Custom function that will be called after hiding jGallery.; ; [ function() { alert( 'closeGallery' ) } ]
     initGallery: function() {}, // Function; Custom function that will be called before initialization of jGallery.; ; [ function() { alert( 'initGallery' ) } ]
     showGallery: function() {}, // Function; Custom function that will be called after showing jGallery.; ; [ function() { alert( 'showGallery' ) } ]
-    showPhoto: function() {} // Function; Custom function that will be called before showing photo.; ; [ function() { alert( 'showPhoto' ) } ]
+    showPhoto: function() {} // Function; Custom function that will be called before showing photo.; ; [ function(link, thumbnail) { alert( 'showPhoto' ); console.log( link, thumbnail ); } ]
 };
 var defaultsFullScreenMode = {};
 var defaultsSliderMode = {
@@ -1938,7 +1938,7 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
                 this.advancedAnimation.setShowEffect( transition[1] );
             }
             this.$element.find( '.pt-page.init' ).remove();
-            this.jGallery.options.showPhoto();
+            this.jGallery.options.showPhoto( $a, $imgThumb );
             if ( this.jGallery.$element.is( ':not(:visible)' ) ) {
                 this.jGallery.show();
             }
@@ -1993,11 +1993,11 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             if ( ! booIsLoaded || ( self.jGallery.options.preloadAll && ! self.booLoadedAll ) ) {
                 self.booLoadedAll = true;
                 self.$container.overlay( {'show': true, 'showLoader': true, 'showProgress': self.jGallery.options.preloadAll, 'resetProgress': self.jGallery.options.preloadAll } );
-                self.jGallery.options.beforeLoadPhoto();
+                self.jGallery.options.beforeLoadPhoto( $a, $imgThumb );
                 self.loadPhoto( self.$element, $a, options );
             }
             else {
-                self.showPhotoSuccess( $imgThumb, options );
+                self.showPhotoSuccess( $a, $imgThumb, options );
             }
         },
 
@@ -2054,7 +2054,7 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
                         }
                     } );
                     self.$container.overlay( {'hide': true, 'hideLoader': true} );
-                    self.showPhotoSuccess( $imgThumb, options );
+                    self.showPhotoSuccess( $a, $imgThumb, options );
                 },
                 progress: function( data ) {
                     if ( ! self.jGallery.options.preloadAll ) {
@@ -2066,7 +2066,7 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             } );
         },
 
-        showPhotoSuccess: function( $imgThumb, options ) {
+        showPhotoSuccess: function( $a, $imgThumb, options ) {
             var image;
             var $active = this.$element.find( 'img.active' );
 
@@ -2099,7 +2099,7 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             if ( this.booSlideshowPlayed ) {
                 this.slideshowSetTimeout();
             }
-            this.jGallery.options.afterLoadPhoto();
+            this.jGallery.options.afterLoadPhoto( $a, $imgThumb );
             this.booLoadingInProgress = false;
             if ( this.jGallery.options.autostart && this.jGallery.options.slideshowAutostart && this.jGallery.options.slideshow ) {
                 this.jGallery.options.slideshowAutostart = false;
