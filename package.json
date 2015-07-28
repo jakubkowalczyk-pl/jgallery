@@ -2,7 +2,7 @@
     "name": "jgallery",
     "title": "jGallery - Mobile friendly, flexible jQuery photo gallery with albums, preloader and swipe events",
     "description": "Mobile friendly, flexible jQuery photo gallery with albums, preloader and swipe events.",
-    "version": "v1.5.4",
+    "version": "v1.5.5",
     "keywords": ["jgallery", "albums", "gallery", "preloader", "free", "transitions", "slider", "lightbox", "zoom", "swipe", "mobile"],
     "author": {
         "name": "Jakub Kowalczyk",
