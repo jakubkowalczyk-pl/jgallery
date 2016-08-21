@@ -30,9 +30,6 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
         } );
         this.update();
         this.enableDrag();
-        if ( this.jGallery.options.swipeEvents ) {
-            this.initSwipeEvents();
-        }
     };
 
     Zoom.prototype = {
@@ -48,52 +45,6 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
                 this.jGallery.options.showEffect = transition[ 1 ];
             }
             this.initAdvancedAnimation();  
-        },
-        
-        initSwipeEvents: function() {
-            if ( ! $.fn.swipe ) {
-                return;
-            }
-            
-            var $zoom = this.$element;
-            var self = this;
-            var draggedHorizontal;
-            var translate = function( distance ) {
-                $zoom.css( {
-                    "-webkit-transform": 'translateX(' + distance +  'px)',
-                    "transform": 'translateX(' + distance +  'px)'
-                } );
-            };
-            
-            $zoom.swipe( {
-                swipeStatus: function ( event, phase, direction, distance ) {
-                    if ( phase === 'start' ) {
-                        draggedHorizontal = self.draggedHorizontal;
-                    }
-                    if ( ! draggedHorizontal ) {
-                        return;
-                    }
-                    if ( phase === "move" && ( direction === "left" || direction === "right" ) ) {
-                        if ( direction === "left" ) {
-                            translate( - distance );
-                        } else if ( direction === "right" ) {
-                            translate( distance );
-                        }
-                    } else if ( phase === "cancel" ) {
-                        translate( 0 );
-                    } else if ( phase === "end" ) {
-                        if ( direction === "left" ) {
-                            self.showNextPhoto();
-                            translate( 0 );
-                        } else if ( direction === "right" ) {
-                            self.showPrevPhoto();
-                            translate( 0 );
-                        }
-                    }
-                }
-            } ).on( 'mouseleave', function() {
-                translate( 0 );
-            } );
         },
 
         initAdvancedAnimation: function() {
@@ -132,55 +83,32 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
                 this.showDragNav();
             }
         },
-        
-        refreshDragged: function() {
-            var $img = this.$element.find( 'img.active' );
-            
-            if ( $img.width() <= this.$element.outerWidth() ) {
-                this.draggedHorizontal = true;
-            }
-            else {
-                this.draggedHorizontal = false;
-            }            
-            if ( $img.height() <= this.$element.outerHeight() ) {
-                this.draggedVertical = true;
-            }
-            else {
-                this.draggedVertical = false;
-            }
-        },
 
         enableDrag: function() {
-            if ( ! this.jGallery.options.draggableZoom ) {
-                return;
-            }
             var self = this;
             var startMarginLeft;
             var startMarginTop;
-            var draggedHorizontal;
-            var draggedVertical;
+            var startX;
+            var startY;
+            var point;
+            var $img;
+            
+            var calcDraggedX = function() {
+                return parseInt( startMarginLeft ) - parseInt( $img.css( 'margin-left' ) );
+            };
 
             var startDrag = function( event ) {
-                var startX = event.pageX;
-                var startY = event.pageY;
-                var $img = self.$element.find( 'img.active' );
-
+                startX = event.pageX;
+                startY = event.pageY;
+                point = event;
+                $img = self.$element.find( 'img.active' );
                 startMarginLeft = $img.css( 'margin-left' );
                 startMarginTop = $img.css( 'margin-top' );
                 self.$element.on( {
-                    mousemove: function( event ) { 
-                        drag( event.pageX - startX, event.pageY - startY );
-                    },
-                    touchmove: function( event ) { 
-                        event = event.originalEvent.touches[0];                        
-                        drag( event.pageX - startX, event.pageY - startY );
-                    },
-                    mouseleave: function() {
-                        stopDrag();
-                    },
-                    touchend: function() {
-                        stopDrag();
-                    }
+                    mousemove: move,
+                    touchmove: move,
+                    mouseleave: stopDrag,
+                    touchend: stopDrag
                 } );
                 if ( self.jGallery.options.zoomSize === 'fill' ) {
                     self.$dragNav.removeClass( 'hide' ).addClass( 'show' );
@@ -189,14 +117,48 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             };
 
             var stopDrag = function() {
-                self.$element.off( 'mousemove touchmove' );
+                var draggedX = calcDraggedX();
+                var moveX = startX - point.pageX;
+                
+                self.$element.off( 'mousemove touchmove mouseleave touchend' );
                 if ( self.jGallery.options.zoomSize === 'fill' ) {
                     self.$dragNav.removeClass( 'show' ).addClass( 'hide' );
                 }
-                self.draggedHorizontal = draggedHorizontal;
-                self.draggedVertical = draggedVertical;
+                if ( self.jGallery.options.swipeEvents && draggedX === 0 ) {
+                    if ( moveX > 0 ) {
+                        self.showNextPhoto();
+                    }
+                    else if ( moveX < 0 ) {
+                        self.showPrevPhoto();
+                    }
+                }
+            };
+            
+            var move = function( event ) {
+                point = event.type === 'touchmove' ? event.originalEvent.touches[0] : event;
+                var distance = {
+                    x: point.pageX - startX,
+                    y: point.pageY - startY
+                };
+                var dragged = {};
+
+                if ( self.jGallery.options.draggableZoom ) {
+                    dragged = drag( distance.x, distance.y );
+                }
+                if ( (Math.abs(distance.y) > Math.abs(distance.x)) && dragged.y ) {
+                    event.preventDefault();
+                }
+                else if ( (Math.abs(distance.x) >= Math.abs(distance.y)) && dragged.x ) {
+                    event.preventDefault();
+                }
             };
 
+            /**
+             * 
+             * @param {number} x
+             * @param {number} y
+             * @returns {{ x: boolean, y: boolean }}
+             */
             var drag = function( x, y ) {
                 var marginLeft = parseFloat( parseFloat( startMarginLeft ) + x );
                 var marginTop = parseFloat( parseFloat( startMarginTop ) + y );
@@ -210,46 +172,42 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
                 var $lastParent = $last.parent();
                 var $dragNavCrop = self.$dragNavCrop;
                 var dragNavCropPosition = $dragNavCrop.position();
+                var canDrag = {
+                    x: firstPositionLeft + marginLeft < 0 && lastPosition.left + $last.width() + marginLeft > $lastParent.outerWidth(),
+                    y: firstPositionTop + marginTop < 0 && lastPosition.top + $last.height() + marginTop > $lastParent.outerHeight()
+                };
 
-                if ( firstPositionLeft + marginLeft < 0 && lastPosition.left + $last.width() + marginLeft > $lastParent.outerWidth() ) {
+                if ( canDrag.x ) {
                     $img.css( {
                         'margin-left': marginLeft
                     } );
                     $dragNavCrop.css( {
                         left: - ( firstPositionLeft + marginLeft ) / $img.width() * 100 + '%'
                     } );
-                    draggedHorizontal = false;
                 }
-                else {
-                    draggedHorizontal = true;
-                }
-                if ( firstPositionTop + marginTop < 0 && lastPosition.top + $last.height() + marginTop > $lastParent.outerHeight() ) {
+                if ( canDrag.y ) {
                     $img.css( {
                         'margin-top': marginTop
                     } );
                     $dragNavCrop.css( {
                         top: - ( firstPositionTop + marginTop ) / $img.height() * 100 + '%'
                     } );
-                    draggedVertical = false;
-                }
-                else {
-                    draggedVertical = true;                    
                 }
                 self.$dragNavCropImg.css( {
                     'margin-left': - dragNavCropPosition.left,
                     'margin-top': - dragNavCropPosition.top
                 } );
+                
+                return canDrag;
             };
 
             this.refreshDragNavCropSize();
             this.$element.css( 'cursor', 'move' ).on( {
                 mousedown: function( event ) {
-                    event.preventDefault();
                     startDrag( event );
                     self.slideshowPause();
                 },
                 touchstart: function( event ) {
-                    event.preventDefault();
                     startDrag( event.originalEvent.touches[0] );
                     self.slideshowPause();
                 },
@@ -296,7 +254,6 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             if ( this.jGallery.options.draggableZoom ) {
                 this.refreshDragNavCropSize();
                 this.refreshDragNavVisibility();
-                this.refreshDragged();
             }
             this.$element.addClass( 'visible' );
         },
