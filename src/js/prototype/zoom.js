@@ -193,10 +193,12 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
                         top: - ( firstPositionTop + marginTop ) / $img.height() * 100 + '%'
                     } );
                 }
-                self.$dragNavCropImg.css( {
-                    'margin-left': - dragNavCropPosition.left,
-                    'margin-top': - dragNavCropPosition.top
-                } );
+                if ( dragNavCropPosition ) {
+                    self.$dragNavCropImg.css( {
+                        'margin-left': - dragNavCropPosition.left,
+                        'margin-top': - dragNavCropPosition.top
+                    } );
+                }
                 
                 return canDrag;
             };
