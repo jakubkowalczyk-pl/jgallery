@@ -63,21 +63,17 @@ var ThumbnailsGenerator = ( function( outerHtml, jLoader ) {
 
         insertImage: function( $this, $container ) {
             var $a = $();
-            var $parent;
+            var $parent = $this.parent();
+            var $img = $this.is( 'img' ) ? $this : $this.find( 'img' ).eq( 0 );
             
-            if ( $this.is( 'a' ) ) {
-                $a = $container.append( '<a href="' + $this.attr( 'href' ) + '">' + this.generateImgTag( $this.find( 'img' ).eq( 0 ) ).outerHtml() + '</a>' ).children( ':last-child' );
-            }
-            else if ( $this.is( 'img' ) ) {
-                $a = $container.append( $( '<a href="' + $this.attr( 'src' ) + '">' + this.generateImgTag( $this ).outerHtml() + '</a>' ) ).children( ':last-child' );
-                $parent = $this.parent();
-                if ( this.isSlider && $parent.is( 'a' ) ) {
-                    $a.attr( 'link', $parent.attr( 'href' ) );
-                    if ( $parent.is( '[target]' ) ) {
-                        $a.attr( 'target', $parent.attr( 'target' ) );
-                    }
-                }
-            }
+            $a = $container.append( (new Thumb({
+                url: $this.is( 'img' ) && this.isSlider && $parent.is( 'a' ) ? $parent.attr( 'href' ) : $this.attr( 'href' ),
+                target: $this.is( 'img' ) && this.isSlider && $parent.is( 'a' ) && $parent.is( '[target]' ) ? $parent.attr( 'target' ) : undefined,
+                thumbUrl: $img.attr( 'src' ),
+                title: $img.attr( 'alt' ),
+                bgColor: $img.attr( 'data-jgallery-bg-color' ),
+                textColor: $img.attr( 'data-jgallery-text-color' )
+            })).render() ).children( ':last-child' );
             $a.jLoader( {
                 start: function() {
                     $a.overlay( {
@@ -94,22 +90,6 @@ var ThumbnailsGenerator = ( function( outerHtml, jLoader ) {
                 }
             } );
             $container.children( ':last-child' ).attr( 'data-jgallery-photo-id', this.intI++ ).attr( 'data-jgallery-number', this.intNo++ );
-        },
-
-        generateImgTag: function( $img ) {
-            var $newImg = $( '<img src="' + $img.attr( 'src' ) + '" />' );
-
-            if ( $img.is( '[alt]' ) ) {
-                $newImg.attr( 'alt', $img.attr( 'alt' ) );
-            }
-            if ( $img.is( '[data-jgallery-bg-color]' ) ) {
-                $newImg.attr( 'data-jgallery-bg-color', $img.attr( 'data-jgallery-bg-color' ) );
-            }
-            if ( $img.is( '[data-jgallery-text-color]' ) ) {
-                $newImg.attr( 'data-jgallery-text-color', $img.attr( 'data-jgallery-text-color' ) );
-            }
-
-            return $newImg;
         },
 
         refreshThumbsSize: function() {
