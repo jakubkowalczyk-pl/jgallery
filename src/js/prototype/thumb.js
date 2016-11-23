@@ -4,6 +4,7 @@ var Thumb = (function() {
     var Thumb = function(data) {
         $.extend(this, {
             url: '',
+            link: '',
             target: '',
             thumbUrl: '',
             title: '',
@@ -30,18 +31,22 @@ var Thumb = (function() {
         },
         
         render: function() {
-            var element = '<a href="' + this.url + '">' + this.generateImgTag({
+            var $element = $('<a href="' + this.url + '">' + this.generateImgTag({
                 src: this.thumbUrl,
                 bgColor: this.bgColor,
                 textColor: this.textColor,
                 alt: this.title
-            }).outerHtml() + '</a>';
+            }).outerHtml() + '</a>');
             
             if (this.target) {
-                element.attr('target', this.target);
+                $element.attr('target', this.target);
             }
             
-            return element;
+            if (this.link) {
+                $element.attr('link', this.link);
+            }
+            
+            return $element;
         }
     };
     

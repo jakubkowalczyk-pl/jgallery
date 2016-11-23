@@ -17,7 +17,8 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
         this.intId = jGalleryId;
         this.$this.attr( 'data-jgallery-id', this.intId );
         this.overrideOptions( options ); 
-        this.booIsAlbums = $this.find( '.album:has(a:has(img))' ).length > 1;
+        this.booIsAlbums = (this.options.items && this.options.items[0].images) ||
+                $this.find( '.album:has(a:has(img))' ).length > 1;
         if ( this.options.disabledOnIE8AndOlder && isInternetExplorer8AndOlder() ) {
             return;
         }

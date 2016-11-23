@@ -22,12 +22,35 @@ var ThumbnailsGenerator = ( function( outerHtml, jLoader ) {
 
     ThumbnailsGenerator.prototype = {
         start: function() {
+            this.$thumbnailsContainerInner.html( '' );
+            if (this.jGallery.options.items) {
+                this.processOptions();
+            }
+            else {
+                this.processHtml();
+            }
+            this.refreshThumbsSize();
+        },
+        
+        processOptions: function() {
+            if ( this.booIsAlbums ) {
+                this.jGallery.options.items.forEach(function(item) {
+                    
+                });
+            }
+            else {
+                this.jGallery.options.items.forEach(function(item) {
+                    
+                });
+            }
+        },
+        
+        processHtml: function() {
             var self = this;
             var selector = this.jGallery.isSlider() ? '.album:has(img)' : '.album:has(a:has(img))';
-
+            
             $( 'body' ).append( '<div id="jGalleryTmp" style="position: absolute; top: 0; left: 0; width: 0; height: 0; z-index: -1; overflow: hidden;">' + this.$element.html() + '</div>' );
             this.$tmp = $( '#jGalleryTmp' );
-            this.$thumbnailsContainerInner.html( '' );
             if ( this.booIsAlbums ) {
                 this.$tmp.find( selector ).each( function() {
                     self.insertAlbum( $( this ) );
@@ -37,7 +60,6 @@ var ThumbnailsGenerator = ( function( outerHtml, jLoader ) {
                 this.insertImages( this.$tmp, this.$thumbnailsContainerInner );                    
             }
             this.$tmp.remove();
-            this.refreshThumbsSize();
         },
 
         insertAlbum: function( $this ) {
@@ -67,7 +89,8 @@ var ThumbnailsGenerator = ( function( outerHtml, jLoader ) {
             var $img = $this.is( 'img' ) ? $this : $this.find( 'img' ).eq( 0 );
             
             $a = $container.append( (new Thumb({
-                url: $this.is( 'img' ) && this.isSlider && $parent.is( 'a' ) ? $parent.attr( 'href' ) : $this.attr( 'href' ),
+                url: $this.is( 'img' ) && this.isSlider ? $this.attr( 'src' ) : $this.attr( 'href' ),
+                link: $this.is( 'img' ) && this.isSlider && $parent.is( 'a' ) ? $parent.attr( 'href' ) : undefined,
                 target: $this.is( 'img' ) && this.isSlider && $parent.is( 'a' ) && $parent.is( '[target]' ) ? $parent.attr( 'target' ) : undefined,
                 thumbUrl: $img.attr( 'src' ),
                 title: $img.attr( 'alt' ),

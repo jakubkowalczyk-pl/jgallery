@@ -50,6 +50,7 @@ module.exports = function( grunt ) {
                 'src/js/prototype/advancedAnimation.js',
                 'src/js/prototype/iconChangeAlbum.js',
                 'src/js/prototype/progress.js',
+                'src/js/prototype/thumb.js',
                 'src/js/prototype/thumbnails.js',
                 'src/js/prototype/thumbnailsGenerator.js',
                 'src/js/prototype/zoom.js',
