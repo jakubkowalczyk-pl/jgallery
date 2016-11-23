@@ -84,11 +84,11 @@ var ThumbnailsGenerator = ( function( outerHtml, jLoader ) {
         },
 
         insertImage: function( $this, $container ) {
-            var $a = $();
             var $parent = $this.parent();
             var $img = $this.is( 'img' ) ? $this : $this.find( 'img' ).eq( 0 );
-            
-            $a = $container.append( (new Thumb({
+            var thumb = new Thumb({
+                photoId: this.intI++,
+                number: this.intNo++,
                 url: $this.is( 'img' ) && this.isSlider ? $this.attr( 'src' ) : $this.attr( 'href' ),
                 link: $this.is( 'img' ) && this.isSlider && $parent.is( 'a' ) ? $parent.attr( 'href' ) : undefined,
                 target: $this.is( 'img' ) && this.isSlider && $parent.is( 'a' ) && $parent.is( '[target]' ) ? $parent.attr( 'target' ) : undefined,
@@ -96,23 +96,10 @@ var ThumbnailsGenerator = ( function( outerHtml, jLoader ) {
                 title: $img.attr( 'alt' ),
                 bgColor: $img.attr( 'data-jgallery-bg-color' ),
                 textColor: $img.attr( 'data-jgallery-text-color' )
-            })).render() ).children( ':last-child' );
-            $a.jLoader( {
-                start: function() {
-                    $a.overlay( {
-                        fadeIn: false,
-                        fadeOut: false,
-                        show: true,
-                        showLoader: true
-                    } );
-                },
-                success: function() {
-                    $a.overlay( {
-                        hide: true
-                    } );
-                }
-            } );
-            $container.children( ':last-child' ).attr( 'data-jgallery-photo-id', this.intI++ ).attr( 'data-jgallery-number', this.intNo++ );
+            });
+            
+            $container.append( thumb.render() ).children( ':last-child' );
+            thumb.preload();
         },
 
         refreshThumbsSize: function() {

@@ -3,6 +3,8 @@ var Thumb = (function() {
     
     var Thumb = function(data) {
         $.extend(this, {
+            photoId: 0,
+            number: 0,
             url: '',
             link: '',
             target: '',
@@ -30,8 +32,28 @@ var Thumb = (function() {
             return $newImg;
         },
         
+        preload: function() {
+            var $element = this.$element;
+            
+            $element.jLoader( {
+                start: function() {
+                    $element.overlay( {
+                        fadeIn: false,
+                        fadeOut: false,
+                        show: true,
+                        showLoader: true
+                    } );
+                },
+                success: function() {
+                    $element.overlay( {
+                        hide: true
+                    } );
+                }
+            } );
+        },
+        
         render: function() {
-            var $element = $('<a href="' + this.url + '">' + this.generateImgTag({
+            var $element = this.$element = $('<a href="' + this.url + '">' + this.generateImgTag({
                 src: this.thumbUrl,
                 bgColor: this.bgColor,
                 textColor: this.textColor,
@@ -45,6 +67,8 @@ var Thumb = (function() {
             if (this.link) {
                 $element.attr('link', this.link);
             }
+            
+            $element.attr( 'data-jgallery-photo-id', this.photoId ).attr( 'data-jgallery-number', this.number );
             
             return $element;
         }
