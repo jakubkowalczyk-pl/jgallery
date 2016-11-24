@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8" />
+    <title>Different background and text colours for each photo</title>
+    <link rel="stylesheet" type="text/css" media="all" href="css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="css/jgallery.min.css?v=1.5.0" />
+    <script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/jgallery.min.js?v=1.5.0"></script>
+    <script type="text/javascript" src="js/tinycolor-0.9.16.min.js"></script>
+    <script type="text/javascript" src="js/touchswipe.min.js"></script>
+</head>
+<body style="width: 900px; margin: 100px auto; height: auto;">
+<script type="text/javascript">
+$( function() {
+    $( '#gallery' ).jGallery({
+        items: [
+            {
+                url: 'images/large/1.jpg',
+                thumbUrl: 'images/thumbs/1.jpg',
+                title: 'Photo1',
+                bgColor: '#3E3E3E',
+                textColor: '#FFFFFF'
+            },
+            {
+                url: 'images/large/2.jpg',
+                thumbUrl: 'images/thumbs/2.jpg',
+                title: 'Photo2',
+                bgColor: '#010301',
+                textColor: '#CDE897'
+            },
+            {
+                url: 'images/large/3.jpg',
+                thumbUrl: 'images/thumbs/3.jpg',
+                title: 'Photo3',
+                bgColor: '#EAF037',
+                textColor: '#21408A'
+            }
+        ]
+    });
+} );
+</script>
+<div id="gallery">
+</div>
+</body>
+</html>

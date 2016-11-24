@@ -1,10 +1,10 @@
 /*!
-* jgallery 1.5.6
+* jgallery 1.6.0
 * http://jgallery.jakubkowalczyk.pl/
 *
 * Released under the MIT license
 *
-* Date: 2016-11-23
+* Date: 2016-11-24
 */
 ( function() {
     "use strict";
@@ -1289,14 +1289,30 @@ var ThumbnailsGenerator = ( function( outerHtml, jLoader ) {
         
         processOptions: function() {
             if ( this.booIsAlbums ) {
-                this.jGallery.options.items.forEach(function(item) {
+                this.jGallery.options.items.forEach(function(album) {
+                    var $album = this.$thumbnailsContainerInner.append( '<div class="album" data-jgallery-album-title="' + album.title + '"></div>' ).children( ':last-child' );
                     
-                });
+                    this.intNo = 1;
+                    album.images.forEach(function(item) {
+                        processImage.call(this, item, $album);
+                    }, this);
+                }, this);
             }
             else {
+                this.intNo = 1;
                 this.jGallery.options.items.forEach(function(item) {
-                    
-                });
+                    processImage.call(this, item, this.$thumbnailsContainerInner);
+                }, this);
+            }
+            
+            function processImage(item, $container) {
+                var thumb = new Thumb($.extend({
+                    photoId: this.intI++,
+                    number: this.intNo++
+                }, item));
+
+                $container.append( thumb.render() );
+                thumb.preload();
             }
         },
         
@@ -1353,7 +1369,7 @@ var ThumbnailsGenerator = ( function( outerHtml, jLoader ) {
                 textColor: $img.attr( 'data-jgallery-text-color' )
             });
             
-            $container.append( thumb.render() ).children( ':last-child' );
+            $container.append( thumb.render() );
             thumb.preload();
         },
 
@@ -2394,7 +2410,9 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
         },
 
         show: function() {
-            this.$this.hide();
+            if (!this.options.items) {
+                this.$this.hide();
+            }
             $window.on( 'resize', { jGallery: this }, this.windowOnResize );
             if ( this.options.mode === 'full-screen' ) {
                 this.bodyOverflowBeforeShow = $body.css( 'overflow' );
@@ -2767,7 +2785,10 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
                     var options = self.options; 
                     var mode = options.mode;     
 
-                    if ( mode === 'full-screen' ) {
+                    if ( options.items ) {
+                        self.$jgallery = self.$this.append( html ).children(':last-child');                        
+                    }
+                    else if ( mode === 'full-screen' ) {
                         self.$jgallery = self.$this.after( html ).next();
                     }
                     else {

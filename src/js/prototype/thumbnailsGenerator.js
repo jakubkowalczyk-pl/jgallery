@@ -34,14 +34,30 @@ var ThumbnailsGenerator = ( function( outerHtml, jLoader ) {
         
         processOptions: function() {
             if ( this.booIsAlbums ) {
-                this.jGallery.options.items.forEach(function(item) {
+                this.jGallery.options.items.forEach(function(album) {
+                    var $album = this.$thumbnailsContainerInner.append( '<div class="album" data-jgallery-album-title="' + album.title + '"></div>' ).children( ':last-child' );
                     
-                });
+                    this.intNo = 1;
+                    album.images.forEach(function(item) {
+                        processImage.call(this, item, $album);
+                    }, this);
+                }, this);
             }
             else {
+                this.intNo = 1;
                 this.jGallery.options.items.forEach(function(item) {
-                    
-                });
+                    processImage.call(this, item, this.$thumbnailsContainerInner);
+                }, this);
+            }
+            
+            function processImage(item, $container) {
+                var thumb = new Thumb($.extend({
+                    photoId: this.intI++,
+                    number: this.intNo++
+                }, item));
+
+                $container.append( thumb.render() );
+                thumb.preload();
             }
         },
         
@@ -98,7 +114,7 @@ var ThumbnailsGenerator = ( function( outerHtml, jLoader ) {
                 textColor: $img.attr( 'data-jgallery-text-color' )
             });
             
-            $container.append( thumb.render() ).children( ':last-child' );
+            $container.append( thumb.render() );
             thumb.preload();
         },
 

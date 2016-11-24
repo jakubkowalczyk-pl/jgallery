@@ -149,7 +149,9 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
         },
 
         show: function() {
-            this.$this.hide();
+            if (!this.options.items) {
+                this.$this.hide();
+            }
             $window.on( 'resize', { jGallery: this }, this.windowOnResize );
             if ( this.options.mode === 'full-screen' ) {
                 this.bodyOverflowBeforeShow = $body.css( 'overflow' );
@@ -522,7 +524,10 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
                     var options = self.options; 
                     var mode = options.mode;     
 
-                    if ( mode === 'full-screen' ) {
+                    if ( options.items ) {
+                        self.$jgallery = self.$this.append( html ).children(':last-child');                        
+                    }
+                    else if ( mode === 'full-screen' ) {
                         self.$jgallery = self.$this.after( html ).next();
                     }
                     else {
