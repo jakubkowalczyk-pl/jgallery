@@ -1,10 +1,10 @@
 /*!
-* jgallery 1.6.0
+* jgallery 1.6.1
 * http://jgallery.jakubkowalczyk.pl/
 *
 * Released under the MIT license
 *
-* Date: 2016-11-24
+* Date: 2017-02-04
 */
 ( function() {
     "use strict";
@@ -2232,7 +2232,6 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             $body.css( {
                 overflow: 'hidden'
             } );
-            this.jGallery.$this.show();
             this.jGallery.$element.removeClass( 'jgallery-standard' ).addClass( 'jgallery-full-screen' ).css( {
                 width: 'auto',
                 height: 'auto'
@@ -2246,7 +2245,6 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             $body.css( {
                 overflow: 'visible'
             } );
-            this.jGallery.$this.hide();
             this.jGallery.$element.removeClass( 'jgallery-full-screen' ).addClass( 'jgallery-standard' ).css( {
                 width: this.jGallery.options.width,
                 height: this.jGallery.options.height
