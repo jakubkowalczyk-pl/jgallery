@@ -204,7 +204,11 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
             };
 
             this.refreshDragNavCropSize();
-            this.$element.css( 'cursor', 'move' ).on( {
+            if (this.jGallery.options.draggableZoom) {
+                this.refreshCursor();
+                window.addEventListener('resize', this.refreshCursor.bind(this));
+            }
+            this.$element.on( {
                 mousedown: function( event ) {
                     startDrag( event );
                     self.slideshowPause();
@@ -220,6 +224,24 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
                     stopDrag();
                 }
             } );
+        },
+        
+        refreshCursor: function() {            
+            this.$element.get(0).style.cursor = this.canDrag() ? 'move' : 'default';
+        },
+        
+        canDrag: function() {
+            var container = this.$element.get(0);
+            var img = container.querySelector('img.active');
+            
+            return (
+                img &&
+                this.jGallery.options.draggableZoom &&
+                (
+                    img.clientWidth > container.clientWidth ||
+                    img.clientHeight > container.clientHeight
+                )
+            );
         },
 
         refreshContainerSize: function () {
@@ -258,6 +280,7 @@ var Zoom = ( function( jLoader, overlay, historyPushState, jGalleryTransitions, 
                 this.refreshDragNavVisibility();
             }
             this.$element.addClass( 'visible' );
+            this.refreshCursor();
         },
 
         refreshDragNavCropSize: function() { 
