@@ -2323,6 +2323,9 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
                                     self.zoom.refreshSize();
                                     return;
                                 }
+                                else if (self.isFullScreenMode() && !self.canClose()) {
+                                    self.zoom.changeMode();
+                                }
                                 self.hide();
                             }
                             if ( event.which === 37 ) {
@@ -2341,6 +2344,14 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
     };
 
     JGallery.prototype = {
+        isFullScreenMode: function() {
+            return this.options.mode === 'full-screen';
+        },
+        
+        canClose: function() {
+            return this.options.canClose;
+        },
+        
         template: {
             html: '<div class="jgallery" style="display: none;">\
                         <div class="jgallery-thumbnails hidden">\
