@@ -1,10 +1,10 @@
 /*!
-* jgallery 1.6.1
+* jgallery 1.6.2
 * http://jgallery.jakubkowalczyk.pl/
 *
 * Released under the MIT license
 *
-* Date: 2017-05-07
+* Date: 2017-05-08
 */
 ( function() {
     "use strict";
