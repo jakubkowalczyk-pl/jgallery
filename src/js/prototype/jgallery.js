@@ -48,10 +48,12 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
                             }
                             if ( event.which === 37 ) {
                                 event.preventDefault();
+                                self.zoom.slideshowStop();
                                 self.zoom.showPrevPhoto();
                             }
                             if ( event.which === 39 ) {
                                 event.preventDefault();
+                                self.zoom.slideshowStop();
                                 self.zoom.showNextPhoto();
                             }
                         }

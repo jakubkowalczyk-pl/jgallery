@@ -237,6 +237,7 @@ var Thumbnails = ( function( jLoader ) {
                 this.zoom.showPhoto( $album.find( 'a' ).eq( 0 ) );
             }
             this.showThumbsForActiveAlbum();
+            this.zoom.slideshowStop();
         },
 
         _initSquare: function() {

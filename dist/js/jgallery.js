@@ -4,7 +4,7 @@
 *
 * Released under the MIT license
 *
-* Date: 2017-05-08
+* Date: 2017-10-26
 */
 ( function() {
     "use strict";
@@ -1103,6 +1103,7 @@ var Thumbnails = ( function( jLoader ) {
                 this.zoom.showPhoto( $album.find( 'a' ).eq( 0 ) );
             }
             this.showThumbsForActiveAlbum();
+            this.zoom.slideshowStop();
         },
 
         _initSquare: function() {
@@ -2330,10 +2331,12 @@ var JGallery = ( function( outerHtml, historyPushState, isInternetExplorer, isIn
                             }
                             if ( event.which === 37 ) {
                                 event.preventDefault();
+                                self.zoom.slideshowStop();
                                 self.zoom.showPrevPhoto();
                             }
                             if ( event.which === 39 ) {
                                 event.preventDefault();
+                                self.zoom.slideshowStop();
                                 self.zoom.showNextPhoto();
                             }
                         }
