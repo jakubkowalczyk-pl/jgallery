@@ -1,5 +1,5 @@
 /*!
-* jgallery 1.6.3
+* jgallery 1.6.4
 * http://jgallery.jakubkowalczyk.pl/
 *
 * Released under the MIT license
