@@ -11,8 +11,23 @@ module.exports = {
     extensions: ['.ts', '.js']
   },
   module: {
-    loaders: [
-      { test: /\.tsx?$/, loader: 'ts-loader', exclude: /node_modules/ }
+    rules: [
+      { test: /\.ts$/, use: ['ts-loader'], exclude: /node_modules/ },
+      { test: /\.scss$/, use: [
+        {
+          loader: 'style-loader'
+        },
+        {
+          loader: 'css-loader',
+          options: {
+            modules: true,
+            localIdentName: '[path][name]__[local]--[hash:base64:5]'
+          }
+        },
+        {
+          loader: "sass-loader"
+        }
+      ], exclude: /node_modules/ }
     ]
   }
 };

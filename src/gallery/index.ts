@@ -2,6 +2,7 @@ import createElement from '../utils/create-element';
 import View from '../view';
 import Album from '../album';
 import Thumbnails from '../thumbnails';
+import * as css from './gallery.scss';
 
 export default class Gallery extends View {    
     private albums: Album[];
@@ -12,7 +13,7 @@ export default class Gallery extends View {
         this.albums = albums;
         this.thumbnails = new Thumbnails();
         this.thumbnails.setAlbum(this.albums[0]);
-        this.element = createElement('<div class="jgallery"></div>');
+        this.element = createElement('<div class="' + css.gallery + '"></div>');
         this.element.appendChild(this.thumbnails.getElement());
     }
 }
