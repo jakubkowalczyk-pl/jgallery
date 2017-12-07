@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8" />
+    <title>Slider with links</title>
+    <script type="text/javascript" src="assets/bundle.js"></script>
+</head>
+<body style="width: 900px; margin: 100px auto; height: auto;">
+<div id="gallery">
+</div>
+<script type="text/javascript">
+document.body.appendChild((new JGallery([
+    {
+        title: 'Album 1',
+        items: [
+            {
+                url: 'images/large/1.jpg',
+                link: 'http://jgallery.jakubkowalczyk.pl',
+                title: 'Photo1'
+            },
+            {
+                url: 'images/large/2.jpg',
+                link: 'http://jgallery.jakubkowalczyk.pl',
+                title: 'Photo2'
+            },
+            {
+                url: 'images/large/3.jpg',
+                link: 'http://jgallery.jakubkowalczyk.pl',
+                title: 'Photo3'
+            }
+        ]
+    }
+], {
+    mode: 'full-screen'
+})).getElement());
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8" />
+    <title>Albums</title>
+    <script type="text/javascript" src="assets/bundle.js"></script>
+</head>
+<body style="width: 900px; margin: 100px auto; height: auto;">
+<script type="text/javascript">
+document.body.appendChild((new JGallery([
+    {
+        title: 'Album 1',
+        items: [
+            {
+                url: 'images/large/1.jpg',
+                thumbUrl: 'images/thumbs/1.jpg',
+                title: 'Photo1'
+            },
+            {
+                url: 'images/large/2.jpg',
+                thumbUrl: 'images/thumbs/2.jpg',
+                title: 'Photo2'
+            },
+            {
+                url: 'images/large/3.jpg',
+                thumbUrl: 'images/thumbs/3.jpg',
+                title: 'Photo3'
+            }
+        ]
+    },
+
+    {
+        title: 'Album 2',
+        items: [
+            {
+                url: 'images/large/4.jpg',
+                thumbUrl: 'images/thumbs/4.jpg',
+                title: 'Photo4'
+            },
+            {
+                url: 'images/large/5.jpg',
+                thumbUrl: 'images/thumbs/5.jpg',
+                title: 'Photo5'
+            },
+            {
+                url: 'images/large/6.jpg',
+                thumbUrl: 'images/thumbs/6.jpg',
+                title: 'Photo6'
+            }
+        ]
+    }
+])).getElement());
+</script>
+</body>
+</html>
