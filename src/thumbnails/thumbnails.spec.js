@@ -1,7 +1,7 @@
 import assert from 'assert';
 import Thumbnails from './';
 
-const thumbnails = new Thumbnails();
+const thumbnails = new Thumbnails({});
 
 thumbnails.setAlbum({
     title: 'Album 1',

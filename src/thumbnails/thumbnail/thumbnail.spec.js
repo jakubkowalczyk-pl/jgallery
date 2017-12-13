@@ -2,9 +2,11 @@ import assert from 'assert';
 import Thumbnail from './';
 
 const thumbnail = new Thumbnail({
-    url: 'images/large/1.jpg',
-    thumbUrl: 'images/thumbs/1.jpg',
-    title: 'Photo1'
+    item: {
+        url: 'images/large/1.jpg',
+        thumbUrl: 'images/thumbs/1.jpg',
+        title: 'Photo1'
+    }
 });
 
 describe('Thumbnail class', function() {

@@ -10,7 +10,7 @@ export default class Thumbnails extends View {
     private items: Array<Thumbnail>;
     private thumbOnClick: Function;
     
-    constructor({ thumbOnClick }: Params) {
+    constructor({ thumbOnClick = () => {} }: Params) {
         super();
         this.element = createElement('<div class="' + css.thumbnails + '"></div>');
         this.thumbOnClick = thumbOnClick;
