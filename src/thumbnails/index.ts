@@ -3,6 +3,7 @@ import View from '../view';
 import Album from '../album';
 import AlbumItem from '../album-item';
 import Thumbnail from './thumbnail';
+import * as css from './thumbnails.scss';
 
 export default class Thumbnails extends View {
     private album: Album;
@@ -10,7 +11,7 @@ export default class Thumbnails extends View {
     
     constructor() {
         super();
-        this.element = createElement('<div></div>');
+        this.element = createElement('<div class="' + css.thumbnails + '"></div>');
     }
     
     setAlbum(album: Album) {
