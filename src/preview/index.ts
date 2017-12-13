@@ -1,16 +1,19 @@
 import createElement from '../utils/create-element';
+import AlbumItem from '../album-item';
 import View from '../view';
+import * as css from './preview.scss';
 
 export default class Preview extends View {
-    private content: HTMLElement;
+    private item: AlbumItem;
     
     constructor() {
         super();
         this.element = createElement('<div/>');
-        this.content = createElement('<div/>');
     }
     
-    setContent(content: HTMLElement) {
-        this.content = content;
+    setItem(item: AlbumItem) {
+        this.item = item;
+        this.element.innerHTML = '';
+        this.element.appendChild(createElement('<img class="' + css.img + '" src="' + item.url + '">'));
     }
 }

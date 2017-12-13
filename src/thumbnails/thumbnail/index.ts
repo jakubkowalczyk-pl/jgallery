@@ -3,20 +3,24 @@ import AlbumItem from '../../album-item';
 import createElement from '../../utils/create-element';
 import * as css from './thumbnail.scss';
 
-export default class Thumbnail extends View {
-    private link: string;
-    private src: string;
-    private title: string;
-    
-    constructor(item: AlbumItem) {
+export default class Thumbnail extends View {    
+    constructor({ item, onClick }: Params) {
         super();
-        this.link = item.url;
-        this.src = item.thumbUrl;
-        this.title = item.title;
         this.element = createElement(''+
-            '<a href="' + this.link + '" class="'+ css.thumbnail +'">'+
-                '<img src="' + this.src + '" alt="' + this.title + '" class="'+ css.img +'"/>'+
+            '<a href="' + item.url + '" class="'+ css.thumbnail +'">'+
+                '<img src="' + item.thumbUrl + '" alt="' + item.title + '" class="'+ css.img +'"/>'+
             '</a>'
         );
+        this.element.addEventListener('click', (event: Event) => {
+            onClick({
+                item,
+                event
+            });
+        });
     }
+}
+
+interface Params {
+    item: AlbumItem,
+    onClick: Function
 }
