@@ -1,4 +1,17 @@
 .gallery {
-    height: 80vh;
+    height: 100vh;
     background: #eee;
+    overflow: hidden;
+    position: relative;
+}
+
+.thumbnails {
+    position: absolute;
+    
+    &Bottom {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.5));
+    }
 }

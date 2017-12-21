@@ -10,6 +10,7 @@ export default class Gallery extends View {
     private albums: Album[];
     private thumbnails: Thumbnails;
     private preview: Preview;
+    private thumbnailsElement: HTMLElement;
     
     constructor(albums: Array<Album>) {
         super();
@@ -23,8 +24,10 @@ export default class Gallery extends View {
         });
         this.thumbnails.setAlbum(this.albums[0]);
         this.element = createElement('<div class="' + css.gallery + '"></div>');
+        this.thumbnailsElement = createElement('<div class="' + css.thumbnails + ' ' + css.thumbnailsBottom + '"></div>');
         this.element.appendChild(this.preview.getElement());
-        this.element.appendChild(this.thumbnails.getElement());
+        this.thumbnailsElement.appendChild(this.thumbnails.getElement());
+        this.element.appendChild(this.thumbnailsElement);
     }
 }
 
