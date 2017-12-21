@@ -33,7 +33,7 @@ describe('JGallery class', function() {
         const element = gallery.getElement();
         
         assert.equal(element.querySelectorAll(
-            '[class*="__thumbnails--"]'
+            '[class*="gallery__thumbnails--"]'
         ).length, 1);
     });
 });
