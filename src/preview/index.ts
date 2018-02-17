@@ -1,4 +1,4 @@
-import createElement from '../utils/create-element';
+import createElement from '../utils/create-element/index';
 import AlbumItem from '../album-item';
 import View from '../view';
 import * as css from './preview.scss';

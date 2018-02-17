@@ -1,6 +1,6 @@
 import 'mocha';
 import 'assert';
-import Gallery from './';
+import Gallery from './index';
 
 const gallery: Gallery = new Gallery([
     {

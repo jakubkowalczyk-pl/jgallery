@@ -2,7 +2,7 @@ import createElement from '../utils/create-element/index'
 import View from '../view';
 import Album from '../album';
 import AlbumItem from '../album-item';
-import Thumbnail from './thumbnail';
+import Thumbnail from './thumbnail/index';
 import * as css from './thumbnails.scss';
 
 export default class Thumbnails extends View {

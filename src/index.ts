@@ -1,4 +1,4 @@
-import Gallery from './gallery';
+import Gallery from './gallery/index';
 import Album from './album';
 
 if (typeof window !== 'undefined') {
