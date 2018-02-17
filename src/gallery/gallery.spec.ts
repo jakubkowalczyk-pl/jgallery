@@ -1,7 +1,8 @@
-import assert from 'assert';
+import 'mocha';
+import 'assert';
 import Gallery from './';
 
-const gallery = new Gallery([
+const gallery: Gallery = new Gallery([
     {
         title: 'Album 1',
         items: [
@@ -24,13 +25,13 @@ const gallery = new Gallery([
     }
 ]);
 
-describe('JGallery class', function() {
-    it('gallery.getElement() should retruns HTMLElement', () => {
+describe('JGallery class', function(): void {
+    it('gallery.getElement() should retruns HTMLElement', (): void => {
         assert.equal(gallery.getElement() instanceof HTMLElement, true);
     });
     
-    it('gallery should contains thumbnails', () => {
-        const element = gallery.getElement();
+    it('gallery should contains thumbnails', (): void => {
+        const element: HTMLElement = gallery.getElement();
         
         assert.equal(element.querySelectorAll(
             '[class*="gallery__thumbnails--"]'

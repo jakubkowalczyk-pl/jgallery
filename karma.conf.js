@@ -10,36 +10,32 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['mocha'],
+    frameworks: ['mocha', 'karma-typescript'],
 
 
     // list of files / patterns to load in the browser
     files: [
-        '**/*.spec.js'
+        '**/*.ts'
     ],
 
 
     // list of files to exclude
     exclude: [
+        '**/*.scss.ts',
+        '**/*.scss.d.ts'
     ],
 
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-        "**/*.spec.js": ["webpack"]
+        "**/*.ts": ["karma-typescript"]
     },
-    
-    webpack: require("./webpack.config.js"),
-    webpackMiddleware: {
-        stats: "errors-only"
-    },
-
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
+    reporters: ['progress', "karma-typescript"],
 
 
     // web server port
