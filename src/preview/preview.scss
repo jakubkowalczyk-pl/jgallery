@@ -1,3 +1,10 @@
+.container {
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
 .img {
     max-width: 100%;
     display: block;
