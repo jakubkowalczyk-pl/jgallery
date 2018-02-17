@@ -7,11 +7,22 @@
 
 .thumbnails {
     position: absolute;
-    
+
     &Bottom {
+        transform: translateY(33%);
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.5));
+        background: rgba(0,0,0,.75);
+
+        &:before {
+            top: -100%;
+            left: 0;
+            right: 0;
+            bottom: 100%;
+            background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.75));
+            content: "";
+            position: absolute;
+        }
     }
 }
