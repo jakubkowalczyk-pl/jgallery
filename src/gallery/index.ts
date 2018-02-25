@@ -29,6 +29,10 @@ export default class Gallery extends View {
         this.thumbnailsElement.appendChild(this.thumbnails.getElement());
         this.element.appendChild(this.thumbnailsElement);
     }
+
+    static createElement(html: string) {
+        return createElement(html);
+    }
 }
 
 interface ThumbOnClickParams {

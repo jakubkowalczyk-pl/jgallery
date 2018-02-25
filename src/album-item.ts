@@ -1,5 +1,7 @@
 export default interface AlbumItem {
-    url: string,
-    thumbUrl: string,
-    title: string
+    url?: string,
+    element?: HTMLElement;
+    thumbUrl?: string,
+    thumbElement?: HTMLElement;
+    title?: string
 }

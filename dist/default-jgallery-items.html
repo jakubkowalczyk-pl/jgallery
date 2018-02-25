@@ -9,23 +9,24 @@
 <div id="gallery">
 </div>
 <script type="text/javascript">
+var createElement = JGallery.createElement;
 document.body.appendChild((new JGallery([
     {
         title: 'Album 1',
         items: [
             {
-                url: 'images/large/1.jpg',
-                thumbUrl: 'images/thumbs/1.jpg',
+                element: createElement(`<img src="images/large/1.jpg" />`),
+                thumbElement: createElement(`<img src="images/thumbs/1.jpg" />`),
                 title: 'Photo1'
             },
             {
-                url: 'images/large/2.jpg',
-                thumbUrl: 'images/thumbs/2.jpg',
+                element: createElement(`<img src="images/large/2.jpg" />`),
+                thumbElement: createElement(`<img src="images/thumbs/2.jpg" />`),
                 title: 'Photo2'
             },
             {
-                url: 'images/large/3.jpg',
-                thumbUrl: 'images/thumbs/3.jpg',
+                element: createElement(`<img src="images/large/3.jpg" />`),
+                thumbElement: createElement(`<img src="images/thumbs/3.jpg" />`),
                 title: 'Photo3'
             }
         ]

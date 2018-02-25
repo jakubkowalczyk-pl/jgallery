@@ -15,12 +15,19 @@ export default class Preview extends View {
     
     setItem(item: AlbumItem) {
         const { element } = this;
+        const content: HTMLElement = createElement(
+            item.element ?
+            item.element.outerHTML :
+            `<img src="${item.url}"/>`
+        );
 
         this.item = item;
         element.innerHTML = '';
         element.appendChild((new Loading).getElement());
-        load(item.thumbUrl).then(() => {
-            element.innerHTML = (`<img class="${css.img}" src="${item.url}">`);
+
+        load(content).then(() => {
+            element.innerHTML = '';
+            element.appendChild(content);
         });
     }
 }
