@@ -5,7 +5,7 @@
     <title>jGallery</title>
     <script type="text/javascript" src="assets/bundle.js"></script>
 </head>
-<body style="margin:0">
+<body style="margin:0; font-family: sans-serif;">
 <div id="gallery">
 </div>
 <script type="text/javascript">
@@ -28,6 +28,16 @@ document.body.appendChild((new JGallery([
                 element: createElement(`<img src="images/large/3.jpg" />`),
                 thumbElement: createElement(`<img src="images/thumbs/3.jpg" />`),
                 title: 'Photo3'
+            },
+            {
+                element: createElement(`<div class="slide" style="padding: 60px; font-size: 2em; line-height: 1.5;">Morbi cursus rutrum turpis, nec iaculis enim bibendum eget. Donec elementum pretium risus ut sollicitudin. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce auctor quam tortor, sit amet tristique est faucibus a. Mauris a tellus ultrices sapien consequat porttitor. Vivamus vel metus sed massa pulvinar consequat non ut nunc. Vestibulum et metus in quam cursus condimentum ut a mauris. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed dapibus ultricies dui, placerat aliquam ligula elementum nec. Morbi in imperdiet metus. Etiam feugiat mattis nulla ac egestas. Praesent rhoncus fermentum semper. Sed ultrices aliquet feugiat.</div>`),
+                thumbElement: createElement(`<span>HTML</span>`),
+                title: 'HTML'
+            },
+            {
+                element: createElement(`<video src="SampleVideo_1280x720_1mb.mp4" loop autoplay/>`),
+                thumbElement: createElement(`<span>Video</span>`),
+                title: 'Video'
             }
         ]
     }
