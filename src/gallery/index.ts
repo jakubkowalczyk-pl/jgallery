@@ -1,22 +1,28 @@
 import createElement from '../utils/create-element/index';
 import View from '../view';
+import Canvas from '../canvas/index';
+import fadeOut from '../canvas/animations/fade-out';
+import fadeIn from '../canvas/animations/fade-in';
+import Loading from '../loading/index'
 import Album from '../album';
 import Preview from '../preview/index';
 import Thumbnails from '../thumbnails/index';
 import AlbumItem from '../album-item';
 import * as css from './gallery.scss';
 
-export default class Gallery extends View {    
+export default class Gallery extends View {
     private albums: Album[];
     private thumbnails: Thumbnails;
     private preview: Preview;
     private thumbnailsElement: HTMLElement;
-    private transitionCanvas: HTMLCanvasElement;
-    
+    private transitionCanvas: Canvas;
+    private loading: Loading;
+
     constructor(albums: Array<Album>) {
         super();
         this.albums = albums;
         this.preview = new Preview;
+        this.loading = new Loading;
         this.thumbOnClick = this.thumbOnClick.bind(this);
         this.thumbnails = new Thumbnails({ thumbOnClick: this.thumbOnClick });
         this.thumbnails.setAlbum(this.albums[0]);
@@ -25,33 +31,51 @@ export default class Gallery extends View {
         this.element.appendChild(this.preview.getElement());
         this.thumbnailsElement.appendChild(this.thumbnails.getElement());
         this.element.appendChild(this.thumbnailsElement);
-        this.transitionCanvas = <HTMLCanvasElement>createElement(`<canvas/>`);
+        this.transitionCanvas = new Canvas({
+            width: this.element.clientWidth,
+            height: this.element.clientHeight
+        });
+        this.loading.getElement().classList.add(css.loading);
+        this.transitionCanvas.element.classList.add(css.transitionCanvas);
+        window.addEventListener('resize', () => this.refreshTransitionCanvasDimensions());
+        requestAnimationFrame(() => this.refreshTransitionCanvasDimensions());
     }
-    
+
     static createElement(html: string): HTMLElement {
         return createElement(html);
     }
-    
-    private thumbOnClick(item: AlbumItem) {
-        const { preview } = this;
-        const element = preview.getElement();
-        
-        hideEffect({
-            width: element.clientWidth,
-            height: element.clientHeight,
-            canvas: this.transitionCanvas
-        }).then(() => preview.setItem(item));
+
+    private showTransitionCanvas(): void {
+        this.element.appendChild(this.transitionCanvas.element);
     }
-}
 
-interface Params {
-    width: number;
-    height: number;
-    canvas: HTMLCanvasElement;
-}
+    private hideTransitionCanvas(): void {
+        this.element.removeChild(this.transitionCanvas.element);
+    }
 
-const hideEffect = ({ width, height, canvas }: Params): Promise<void> => {
-    return new Promise(resolve => {
-        resolve();
-    });
+    private refreshTransitionCanvasDimensions(): void {
+        this.transitionCanvas.setDimensions(this.element.clientWidth, this.element.clientHeight);
+        this.transitionCanvas.render();
+    }
+
+    private showLoading(): void {
+        this.element.appendChild(this.loading.getElement());
+    }
+
+    private hideLoading(): void {
+        this.element.removeChild(this.loading.getElement());
+    }
+
+    private thumbOnClick(item: AlbumItem) {
+        this.showTransitionCanvas();
+        this.transitionCanvas.render();
+        fadeIn(this.transitionCanvas)
+            .then(() => this.showLoading())
+            .then(() => this.preview.setItem(item))
+            .then(() => this.hideLoading())
+            .then(() => this.transitionCanvas.clearLayers())
+            .then(() => fadeOut(this.transitionCanvas))
+            .then(() => this.transitionCanvas.clearLayers())
+            .then(() => this.hideTransitionCanvas());
+    }
 }
