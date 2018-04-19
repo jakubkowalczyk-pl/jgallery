@@ -2,18 +2,17 @@ import createElement from '../utils/create-element/index';
 import load from '../utils/load/index';
 import AlbumItem from '../album-item';
 import View from '../view';
-import Loading from '../loading/index';
 import * as css from './preview.scss';
 
 export default class Preview extends View {
     private item: AlbumItem;
-    
+
     constructor() {
         super();
         this.element = createElement(`<div class="${css.container}"/>`);
     }
-    
-    setItem(item: AlbumItem) {
+
+    setItem(item: AlbumItem): Promise<void> {
         const { element } = this;
         const content: HTMLElement = createElement(
             item.element ?
@@ -23,9 +22,8 @@ export default class Preview extends View {
 
         this.item = item;
         element.innerHTML = '';
-        element.appendChild((new Loading).getElement());
 
-        load(content).then(() => {
+        return load(content).then(() => {
             element.innerHTML = '';
             element.appendChild(content);
         });

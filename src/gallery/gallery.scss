@@ -8,6 +8,7 @@
 
 .thumbnails {
     position: absolute;
+    z-index: 1;
 
     &Bottom {
         transform: translateY(33%);
@@ -25,4 +26,19 @@
             position: absolute;
         }
     }
+}
+
+.transitionCanvas {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+}
+
+.loading {
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    position: absolute;
 }

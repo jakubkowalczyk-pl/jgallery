@@ -2,13 +2,17 @@ import createElement from '../utils/create-element/index'
 import View from '../view';
 import Album from '../album';
 import AlbumItem from '../album-item';
-import Thumbnail from './thumbnail/index';
+import Thumbnail, {ThumbOnClick} from './thumbnail/index';
 import * as css from './thumbnails.scss';
+
+interface Params {
+    thumbOnClick: ThumbOnClick
+}
 
 export default class Thumbnails extends View {
     private album: Album;
     private items: Array<Thumbnail>;
-    private thumbOnClick: Function;
+    private thumbOnClick: ThumbOnClick;
     
     constructor({ thumbOnClick = () => {} }: Params) {
         super();
@@ -27,8 +31,4 @@ export default class Thumbnails extends View {
             this.element.appendChild(item.getElement());
         });
     }
-}
-
-interface Params {
-    thumbOnClick: Function;
 }
