@@ -12,26 +12,43 @@ import * as css from './gallery.scss';
 
 export default class Gallery extends View {
     private albums: Album[];
+    private album: Album;
+    private item: AlbumItem;
     private thumbnails: Thumbnails;
     private preview: Preview;
     private thumbnailsElement: HTMLElement;
+    private left: HTMLElement;
+    private right: HTMLElement;
     private transitionCanvas: Canvas;
     private loading: Loading;
 
     constructor(albums: Array<Album>) {
         super();
         this.albums = albums;
+        this.album = albums[0];
         this.preview = new Preview;
         this.loading = new Loading;
-        this.thumbOnClick = this.thumbOnClick.bind(this);
-        this.thumbnails = new Thumbnails({ thumbOnClick: this.thumbOnClick });
+        this.goToItem = this.goToItem.bind(this);
+        this.next = this.next.bind(this);
+        this.prev = this.prev.bind(this);
+        this.thumbnails = new Thumbnails({ thumbOnClick: this.goToItem });
         this.thumbnails.setAlbum(this.albums[0]);
         this.element = createElement(`<div class="${css.gallery}"></div>`);
         this.thumbnailsElement = createElement(`<div class="${css.thumbnails} ${css.thumbnailsBottom}"></div>`);
+        this.left = createElement(`
+            <div style="left: 0; width: 50%; top: 0; bottom: 0; position: absolute; cursor: pointer;"></div>
+        `);
+        this.left.addEventListener('click', this.prev);
+        this.right = createElement(`
+            <div style="right: 0; width: 50%; top: 0; bottom: 0; position: absolute; cursor: pointer;"></div>
+        `);
+        this.right.addEventListener('click', this.next);
         this.element.appendChild(this.preview.getElement());
         this.thumbnailsElement.appendChild(this.thumbnails.getElement());
         this.element.appendChild(this.thumbnailsElement);
         this.loading.getElement().classList.add(css.loading);
+        this.element.appendChild(this.left);
+        this.element.appendChild(this.right);
         window.addEventListener('resize', () => this.refreshTransitionCanvasDimensions());
         requestAnimationFrame(() => {
             this.transitionCanvas = new Canvas({
@@ -39,11 +56,38 @@ export default class Gallery extends View {
                 height: this.element.clientHeight
             });
             this.transitionCanvas.element.classList.add(css.transitionCanvas);
+            this.goToItem(this.album.items[0]);
         });
     }
 
     static createElement(html: string): HTMLElement {
         return createElement(html);
+    }
+
+    private next(): void {
+        const { album, item } = this;
+        const { items } = album;
+        const next = items[items.indexOf(item)+1];
+
+        if (next) {
+            this.goToItem(next);
+        }
+        else {
+            this.goToItem(items[0]);
+        }
+    }
+
+    private prev(): void {
+        const { album, item } = this;
+        const { items } = album;
+        const prev = items[items.indexOf(item)-1];
+
+        if (prev) {
+            this.goToItem(prev);
+        }
+        else {
+            this.goToItem(items[items.length-1]);
+        }
     }
 
     private showTransitionCanvas(): void {
@@ -67,9 +111,9 @@ export default class Gallery extends View {
         this.element.removeChild(this.loading.getElement());
     }
 
-    private thumbOnClick(item: AlbumItem) {
+    private goToItem(item: AlbumItem) {
         this.showTransitionCanvas();
-        fadeIn(this.transitionCanvas)
+        (this.item ? fadeIn(this.transitionCanvas) : Promise.resolve())
             .then(() => this.showLoading())
             .then(() => this.preview.setItem(item))
             .then(() => this.hideLoading())
@@ -77,5 +121,6 @@ export default class Gallery extends View {
             .then(() => fadeOut(this.transitionCanvas))
             .then(() => this.transitionCanvas.clearLayers())
             .then(() => this.hideTransitionCanvas());
+        this.item = item;
     }
 }
