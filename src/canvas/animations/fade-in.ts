@@ -13,17 +13,16 @@ const fadeIn: CanvasAnimation = (canvas: Canvas) => {
         });
 
         canvas.addLayers([layer]);
-        (new Animation({
+        canvas.addAnimations([new Animation({
             initialValue: 0,
             finalValue: 1,
             onChange: value => {
                 layer.alpha = value;
-                canvas.render();
             },
             onComplete: () => {
                 resolve();
             }
-        })).start();
+        })]);
     });
 };
 

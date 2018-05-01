@@ -36,19 +36,11 @@ export default class Animation {
         this.onComplete = onComplete;
         this.currentTime = 0;
         this.onChange = onChange;
-        this.start = this.start.bind(this);
         this.inProgress = true;
         this.completed = false;
     }
 
-    start() {
-        this.next();
-        if (!this.completed) {
-            requestAnimationFrame(this.start);
-        }
-    }
-
-    private next(): void {
+    goToNextFrame(): void {
         this.currentTime += 16/this.duration;
         this.currentValue = this.initialValue + (this.finalValue - this.initialValue) * this.easingFunction(this.currentTime);
         if (this.currentTime < 1) {
@@ -73,6 +65,6 @@ export default class Animation {
     }
 
     cancel(): void {
-        this.next = () => {};
+        this.goToNextFrame = () => {};
     }
 }

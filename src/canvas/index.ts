@@ -1,5 +1,6 @@
 import createElement from '../utils/create-element/index';
-import Animations from './animations';
+import Animations from '../animations';
+import Animation from '../animation';
 import Layer from './layer';
 import Path from './path';
 import Circle from './circle';
@@ -16,20 +17,23 @@ class Canvas extends Layer {
     element: HTMLCanvasElement;
 
     private animations: Animations;
-    private rendering: boolean;
     private ctx: CanvasRenderingContext2D | null;
 
     constructor({ width, height }: Params) {
         super({});
         this.layers = [];
-        this.animations = new Animations;
+        this.animations = new Animations({
+            onChange: () => {
+                this.clear();
+                this.draw();
+            }
+        });
         this.translateX = 0;
         this.translateY = 0;
         this.element = <HTMLCanvasElement>createElement('<canvas></canvas>');
         this.element.width = width;
         this.element.height = height;
         this.ctx = this.element.getContext("2d");
-        window.addEventListener('resize', this.onWindowResize.bind(this));
     }
 
     setDimensions(width: number, height: number): void {
@@ -49,11 +53,14 @@ class Canvas extends Layer {
         return this.layers.indexOf(layer) > -1;
     }
 
+    addAnimations(animations: Animation[]) {
+        this.animations.add(animations);
+    }
+
     addLayers(layers: Array<Layer>): void {
         layers.forEach(layer => {
             if (!this.containsLayer(layer)) {
                 this.layers.push(layer);
-                addListeners(layer);
             }
         });
     }
@@ -62,35 +69,12 @@ class Canvas extends Layer {
         layers.forEach(layer => {
             if (this.containsLayer(layer)) {
                 this.layers.splice(this.layers.indexOf(layer), 1);
-                removeListeners(layer);
             }
         });
     }
 
     clearLayers() {
-        this.layers.forEach(layer => {
-            removeListeners(layer);
-        });
         this.layers.length = 0;
-    }
-
-    activateRendering() {
-        if (!this.rendering) {
-            this.render();
-        }
-    }
-
-    render() {
-        this.rendering = true;
-        this.animations.render();
-        this.clear();
-        this.draw();
-        if (this.animations.count()) {
-            requestAnimationFrame(this.render);
-        }
-        else {
-            this.rendering = false;
-        }
     }
 
     redraw() {
@@ -98,11 +82,8 @@ class Canvas extends Layer {
         this.draw();
     }
 
-    onWindowResize() {
-    }
-
     private getLayersRecursive(): Array<Layer> {
-        return [...getLayersRecursive(this)];
+        return getLayersRecursive(this);
     }
 
     applyPathMask(path = new Path([])): void {
@@ -184,15 +165,5 @@ const getLayersRecursive = (layer: Layer): Array<Layer> => {
         return [...layers, ...getLayersRecursive(layer)];
     }, [])];
 }
-
-const addListeners = (layer: Layer) => {
-    window.addEventListener('resize', layer.onWindowResize);
-    layer.layers.forEach(layer => addListeners(layer));
-};
-
-const removeListeners = (layer: Layer) => {
-    window.removeEventListener('resize', layer.onWindowResize);
-    layer.layers.forEach(layer => removeListeners(layer));
-};
 
 export default Canvas;

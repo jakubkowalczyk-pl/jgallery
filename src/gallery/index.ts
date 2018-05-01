@@ -31,14 +31,15 @@ export default class Gallery extends View {
         this.element.appendChild(this.preview.getElement());
         this.thumbnailsElement.appendChild(this.thumbnails.getElement());
         this.element.appendChild(this.thumbnailsElement);
-        this.transitionCanvas = new Canvas({
-            width: this.element.clientWidth,
-            height: this.element.clientHeight
-        });
         this.loading.getElement().classList.add(css.loading);
-        this.transitionCanvas.element.classList.add(css.transitionCanvas);
         window.addEventListener('resize', () => this.refreshTransitionCanvasDimensions());
-        requestAnimationFrame(() => this.refreshTransitionCanvasDimensions());
+        requestAnimationFrame(() => {
+            this.transitionCanvas = new Canvas({
+                width: this.element.clientWidth,
+                height: this.element.clientHeight
+            });
+            this.transitionCanvas.element.classList.add(css.transitionCanvas);
+        });
     }
 
     static createElement(html: string): HTMLElement {
@@ -55,7 +56,7 @@ export default class Gallery extends View {
 
     private refreshTransitionCanvasDimensions(): void {
         this.transitionCanvas.setDimensions(this.element.clientWidth, this.element.clientHeight);
-        this.transitionCanvas.render();
+        this.transitionCanvas.redraw();
     }
 
     private showLoading(): void {
@@ -68,7 +69,6 @@ export default class Gallery extends View {
 
     private thumbOnClick(item: AlbumItem) {
         this.showTransitionCanvas();
-        this.transitionCanvas.render();
         fadeIn(this.transitionCanvas)
             .then(() => this.showLoading())
             .then(() => this.preview.setItem(item))

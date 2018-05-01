@@ -25,7 +25,6 @@ export default class Layer {
         this.fillStyle = fillStyle;
         this.alpha = alpha;
         this.layers = [];
-        this.onWindowResize = this.onWindowResize.bind(this);
     }
 
     add(layer: Layer): void {
@@ -43,9 +42,5 @@ export default class Layer {
 
     clearLayers(): void {
         this.layers.length = 0;
-    }
-
-    onWindowResize(): void {
-
     }
 }
