@@ -3,7 +3,6 @@ import View from '../view';
 import Album from '../album';
 import AlbumItem from '../album-item';
 import Thumbnail, {ThumbOnClick} from './thumbnail/index';
-import * as css from './thumbnails.scss';
 
 interface Params {
     thumbOnClick: ThumbOnClick
@@ -13,22 +12,39 @@ export default class Thumbnails extends View {
     private album: Album;
     private items: Array<Thumbnail>;
     private thumbOnClick: ThumbOnClick;
-    
+    private content: HTMLElement;
+
     constructor({ thumbOnClick = () => {} }: Params) {
         super();
-        this.element = createElement('<div class="' + css.thumbnails + '"></div>');
+        this.element = createElement('<div></div>', {
+            style: {
+                display: 'flex',
+                overflow: 'auto',
+            }
+        });
+        this.content = createElement('<div></div>', {
+            style: {
+                margin: '0 auto',
+                padding: '15px',
+                textAlign: 'center',
+                flexDirection: 'row',
+                display: 'flex',
+                justifyContent: 'center',
+            }
+        });
+        this.element.appendChild(this.content);
         this.thumbOnClick = thumbOnClick;
     }
-    
+
     setAlbum(album: Album) {
         this.album = album;
         this.items = album.items.map((item: AlbumItem) => new Thumbnail({
             item,
             onClick: this.thumbOnClick
         }));
-        this.element.innerHTML = '';
+        this.content.innerHTML = '';
         this.items.forEach((item: Thumbnail) => {
-            this.element.appendChild(item.getElement());
+            this.content.appendChild(item.getElement());
         });
     }
 }

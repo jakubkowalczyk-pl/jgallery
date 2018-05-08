@@ -6,12 +6,25 @@
     position: relative;
 }
 
+.gallery ::-webkit-scrollbar {
+    height: 1em;
+    background: transparent;
+    top: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+}
+
+.gallery *::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,.6);
+    border-radius: .5em;
+}
+
 .thumbnails {
     position: absolute;
     z-index: 1;
 
     &Bottom {
-        transform: translateY(33%);
         left: 0;
         right: 0;
         bottom: 0;
@@ -23,6 +36,7 @@
             bottom: 0;
             background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.75) 50%);
             content: "";
+            z-index: -1;
             position: absolute;
         }
     }
