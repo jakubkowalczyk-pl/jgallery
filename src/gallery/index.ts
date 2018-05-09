@@ -6,7 +6,7 @@ import fadeIn from '../canvas/animations/fade-in';
 import Loading from '../loading/index'
 import Album from '../album';
 import Preview from '../preview/index';
-import Thumbnails from '../thumbnails/index';
+import Controls from '../controls/index';
 import AlbumItem from '../album-item';
 import * as css from './gallery.scss';
 
@@ -14,11 +14,11 @@ export default class Gallery extends Component {
     private albums: Album[];
     private album: Album;
     private item: AlbumItem;
-    private thumbnails: Thumbnails;
     private preview: Preview;
-    private thumbnailsElement: HTMLElement;
+    private controlsWrapper: HTMLElement;
     private left: HTMLElement;
     private right: HTMLElement;
+    private controls: Controls;
     private transitionCanvas: Canvas;
     private loading: Loading;
 
@@ -31,10 +31,20 @@ export default class Gallery extends Component {
         this.goToItem = this.goToItem.bind(this);
         this.next = this.next.bind(this);
         this.prev = this.prev.bind(this);
-        this.thumbnails = new Thumbnails({ thumbOnClick: this.goToItem });
-        this.thumbnails.setAlbum(this.albums[0]);
+        this.controls = new Controls({
+            albums,
+            thumbOnClick: this.goToItem,
+            albumOnChange: value => {
+                this.album = albums[value];
+                this.goToItem(this.album.items[0]);
+            },
+        });
         this.element = createElement(`<div class="${css.gallery}"></div>`);
-        this.thumbnailsElement = createElement(`<div class="${css.thumbnails} ${css.thumbnailsBottom}"></div>`);
+        this.controlsWrapper = createElement(`<div class="${css.thumbnails} ${css.thumbnailsBottom}"></div>`, {
+            style: {
+                textAlign: 'center'
+            }
+        });
         this.left = createElement(`
             <div style="left: 0; width: 50%; top: 0; bottom: 0; position: absolute; cursor: pointer;"></div>
         `);
@@ -44,8 +54,8 @@ export default class Gallery extends Component {
         `);
         this.right.addEventListener('click', this.next);
         this.element.appendChild(this.preview.getElement());
-        this.thumbnailsElement.appendChild(this.thumbnails.getElement());
-        this.element.appendChild(this.thumbnailsElement);
+        this.controlsWrapper.appendChild(this.controls.getElement());
+        this.element.appendChild(this.controlsWrapper);
         this.loading.getElement().classList.add(css.loading);
         this.element.appendChild(this.left);
         this.element.appendChild(this.right);
