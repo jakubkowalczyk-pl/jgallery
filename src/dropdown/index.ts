@@ -21,8 +21,10 @@ export default class Dropdown extends Component {
             this.element.style.backgroundColor = '#000';
         });
         this.element.addEventListener('change', () => {
-            this.element.style.backgroundColor = 'transparent';
             onChange(+(<HTMLSelectElement>this.element).value);
+        });
+        this.element.addEventListener('blur', () => {
+            this.element.style.backgroundColor = 'transparent';
         });
     }
 }
