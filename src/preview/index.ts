@@ -1,10 +1,10 @@
 import createElement from '../utils/create-element/index';
 import load from '../utils/load/index';
 import AlbumItem from '../album-item';
-import View from '../view';
+import Component from '../component';
 import * as css from './preview.scss';
 
-export default class Preview extends View {
+export default class Preview extends Component {
     private item: AlbumItem;
 
     constructor() {

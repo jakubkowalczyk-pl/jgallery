@@ -1,5 +1,5 @@
 import createElement from '../utils/create-element/index'
-import View from '../view';
+import Component from '../component';
 import Album from '../album';
 import AlbumItem from '../album-item';
 import Thumbnail, {ThumbOnClick} from './thumbnail/index';
@@ -8,7 +8,7 @@ interface Params {
     thumbOnClick: ThumbOnClick
 }
 
-export default class Thumbnails extends View {
+export default class Thumbnails extends Component {
     private album: Album;
     private items: Array<Thumbnail>;
     private thumbOnClick: ThumbOnClick;

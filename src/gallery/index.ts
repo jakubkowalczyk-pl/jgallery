@@ -1,5 +1,5 @@
 import createElement from '../utils/create-element/index';
-import View from '../view';
+import Component from '../component';
 import Canvas from '../canvas/index';
 import fadeOut from '../canvas/animations/fade-out';
 import fadeIn from '../canvas/animations/fade-in';
@@ -10,7 +10,7 @@ import Thumbnails from '../thumbnails/index';
 import AlbumItem from '../album-item';
 import * as css from './gallery.scss';
 
-export default class Gallery extends View {
+export default class Gallery extends Component {
     private albums: Album[];
     private album: Album;
     private item: AlbumItem;

@@ -1,4 +1,4 @@
-export default abstract class View {
+export default abstract class Component {
     protected element: HTMLElement;
     
     getElement(): HTMLElement {

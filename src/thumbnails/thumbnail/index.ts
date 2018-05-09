@@ -1,4 +1,4 @@
-import View from '../../view';
+import Component from '../../component';
 import AlbumItem from '../../album-item';
 import Loading from '../../loading/index';
 import createElement from '../../utils/create-element/index';
@@ -13,7 +13,7 @@ interface Params {
     onClick: ThumbOnClick
 }
 
-export default class Thumbnail extends View {
+export default class Thumbnail extends Component {
     constructor({ item, onClick }: Params) {
         super();
 
