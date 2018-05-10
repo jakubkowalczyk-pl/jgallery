@@ -13,7 +13,7 @@ interface Params {
 export default class Dropdown extends Component {
     constructor({ items, onChange = () => {} }: Params) {
         super();
-        this.element = createElement(`<select style="padding: 10px; background: #000; font-size: 1em; color: #fff; border: 0; outline: none;"></select>`);
+        this.element = createElement(`<select style="padding: 10px; background: #000; font-size: 1em; color: #fff; border: 0; outline: none; vertical-align: middle;"></select>`);
         items.forEach((item, i) => this.element.appendChild(createElement(
             `<option value="${i}">${item}</option>`
         )));
