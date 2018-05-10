@@ -1,9 +1,11 @@
 .gallery {
     height: 100vh;
-    background: #333;
+    background: #000;
     color: #fff;
     overflow: hidden;
     position: relative;
+    flex-direction: column;
+    display: flex;
 }
 
 .gallery ::-webkit-scrollbar {
@@ -16,30 +18,7 @@
 }
 
 .gallery *::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,.6);
-    border-radius: .5em;
-}
-
-.thumbnails {
-    position: absolute;
-    z-index: 1;
-
-    &Bottom {
-        left: 0;
-        right: 0;
-        bottom: 0;
-
-        &:before {
-            top: -100%;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.75) 50%);
-            content: "";
-            z-index: -1;
-            position: absolute;
-        }
-    }
+    background: #333;
 }
 
 .transitionCanvas {

@@ -13,18 +13,12 @@ interface Params {
 export default class Dropdown extends Component {
     constructor({ items, onChange = () => {} }: Params) {
         super();
-        this.element = createElement(`<select style="background: transparent; color: #fff; border: 0; outline: none;"></select>`);
+        this.element = createElement(`<select style="padding: 10px; background: #000; font-size: 1em; color: #fff; border: 0; outline: none;"></select>`);
         items.forEach((item, i) => this.element.appendChild(createElement(
             `<option value="${i}">${item}</option>`
         )));
-        this.element.addEventListener('focus', () => {
-            this.element.style.backgroundColor = '#000';
-        });
         this.element.addEventListener('change', () => {
             onChange(+(<HTMLSelectElement>this.element).value);
-        });
-        this.element.addEventListener('blur', () => {
-            this.element.style.backgroundColor = 'transparent';
         });
     }
 }

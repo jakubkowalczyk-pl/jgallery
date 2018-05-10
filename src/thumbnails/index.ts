@@ -25,7 +25,7 @@ export default class Thumbnails extends Component {
         this.content = createElement('<div></div>', {
             style: {
                 margin: '0 auto',
-                padding: '15px',
+                padding: '5px',
                 textAlign: 'center',
                 flexDirection: 'row',
                 display: 'flex',

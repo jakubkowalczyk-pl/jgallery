@@ -40,9 +40,11 @@ export default class Gallery extends Component {
             },
         });
         this.element = createElement(`<div class="${css.gallery}"></div>`);
-        this.controlsWrapper = createElement(`<div class="${css.thumbnails} ${css.thumbnailsBottom}"></div>`, {
+        this.controlsWrapper = createElement(`<div></div>`, {
             style: {
-                textAlign: 'center'
+                padding: '5px',
+                position: 'relative',
+                zIndex: '1',
             }
         });
         this.left = createElement(`
