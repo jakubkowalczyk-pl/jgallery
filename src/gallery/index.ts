@@ -38,6 +38,9 @@ export default class Gallery extends Component {
                 this.album = albums[value];
                 this.goToItem(this.album.items[0]);
             },
+            thumbnailsFullScreenOnToggle: fullScreen => {
+                this.preview.getElement().style.height = fullScreen ? '0' : 'auto';
+            },
         });
         this.element = createElement(`<div class="${css.gallery}"></div>`);
         this.controlsWrapper = createElement(`<div></div>`, {
