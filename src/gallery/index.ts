@@ -3,63 +3,47 @@ import Component from '../component';
 import Canvas from '../canvas/index';
 import fadeOut from '../canvas/animations/fade-out';
 import fadeIn from '../canvas/animations/fade-in';
+import {iconEllipsisHorizontal, iconGrid} from '../icons';
 import Loading from '../loading/index'
 import Album from '../album';
+import Dropdown from '../dropdown/index';
+import Thumbnails from '../thumbnails/index';
 import Preview from '../preview/index';
-import Controls from '../controls/index';
 import AlbumItem from '../album-item';
 import * as css from './gallery.scss';
-
-const previewHeight = '100%';
 
 export default class Gallery extends Component {
     private albums: Album[];
     private album: Album;
     private item: AlbumItem;
     private preview: Preview;
-    private controlsWrapper: HTMLElement;
+    private controlsElement: HTMLElement;
     private left: HTMLElement;
     private right: HTMLElement;
-    private controls: Controls;
     private transitionCanvas: Canvas;
     private loading: Loading;
+    private thumbnails: Thumbnails;
+    private dropdown: Dropdown;
+    private toggleThumbnailsIcon: HTMLElement;
+    private toggleFullScreenThumbnailsIcon: HTMLElement;
+    private thumbnailsVisible: boolean;
+    private fullScreenThumbnails: boolean;
+
 
     constructor(albums: Array<Album>) {
         super();
         this.albums = albums;
         this.album = albums[0];
         this.preview = new Preview;
-        this.preview.getElement().style.height = previewHeight;
+        this.preview.appendStyle({
+            flex: '1',
+        });
         this.loading = new Loading;
         this.goToItem = this.goToItem.bind(this);
         this.next = this.next.bind(this);
         this.prev = this.prev.bind(this);
-        this.controls = new Controls({
-            albums,
-            thumbOnClick: item => {
-                if (this.controls.fullScreenThumbnails) {
-                    this.controls.disableFullScreenThumbnails();
-                }
-                this.goToItem(item);
-            },
-            albumOnChange: value => {
-                this.album = albums[value];
-                this.goToItem(this.album.items[0]);
-            },
-            thumbnailsFullScreenOnToggle: fullScreen => {
-                const { thumbnails } = this.controls;
+        this.controlsElement = createElement(`<div></div>`, {
 
-                this.preview.getElement().style.height = fullScreen ? '0' : previewHeight;
-                fullScreen ? thumbnails.enableWrap() : thumbnails.disableWrap();
-            },
-        });
-        this.element = createElement(`<div class="${css.gallery}"></div>`);
-        this.controlsWrapper = createElement(`<div></div>`, {
-            style: {
-                padding: '5px',
-                position: 'relative',
-                zIndex: '1',
-            }
         });
         this.left = createElement(`
             <div style="left: 0; width: 50%; top: 0; bottom: 0; position: absolute; cursor: pointer;"></div>
@@ -69,12 +53,54 @@ export default class Gallery extends Component {
             <div style="right: 0; width: 50%; top: 0; bottom: 0; position: absolute; cursor: pointer;"></div>
         `);
         this.right.addEventListener('click', this.next);
-        this.element.appendChild(this.preview.getElement());
-        this.controlsWrapper.appendChild(this.controls.getElement());
-        this.element.appendChild(this.controlsWrapper);
         this.loading.getElement().classList.add(css.loading);
-        this.element.appendChild(this.left);
-        this.element.appendChild(this.right);
+        this.thumbnailsVisible = true;
+        this.thumbnails = new Thumbnails({ thumbOnClick: item => {
+            if (this.fullScreenThumbnails) {
+                this.disableFullScreenThumbnails();
+            }
+            this.goToItem(item);
+        } });
+        this.thumbnails.appendStyle({
+            position: 'relative',
+            zIndex: '1',
+        });
+        this.thumbnails.setAlbum(this.album);
+        this.toggleThumbnailsIcon = iconEllipsisHorizontal({ margin: '0 10px' });
+        this.toggleThumbnailsIcon.addEventListener('click', () => this.toggleThumbnails());
+        this.toggleThumbnailsIcon.style.fontSize = '2em';
+        this.toggleFullScreenThumbnailsIcon = iconGrid({ margin: '0 10px' });
+        this.toggleFullScreenThumbnailsIcon.addEventListener('click', () => this.toggleFullScreenThumbnails());
+        this.toggleFullScreenThumbnailsIcon.style.fontSize = '2em';
+        this.dropdown = new Dropdown({
+            items: albums.map(album => album.title),
+            onChange: value => {
+                this.thumbnails.setAlbum(albums[value]);
+                this.album = albums[value];
+                this.goToItem(this.album.items[0]);
+            }
+        });
+        this.controlsElement = createElement(`<div></div>`, {
+            style: {
+                padding: '5px',
+                position: 'relative',
+                zIndex: '1',
+            },
+            children: [
+                this.toggleFullScreenThumbnailsIcon,
+                this.toggleThumbnailsIcon,
+                this.dropdown.getElement(),
+            ]
+        });
+        this.element = createElement(`<div class="${css.gallery}"></div>`, {
+            children: [
+                this.preview.getElement(),
+                this.controlsElement,
+                this.thumbnails.getElement(),
+                this.left,
+                this.right
+            ]
+        });
         window.addEventListener('resize', () => this.refreshTransitionCanvasDimensions());
         requestAnimationFrame(() => {
             this.transitionCanvas = new Canvas({
@@ -148,5 +174,35 @@ export default class Gallery extends Component {
             .then(() => this.transitionCanvas.clearLayers())
             .then(() => this.hideTransitionCanvas());
         this.item = item;
+    }
+
+    private disableFullScreenThumbnails() {
+        this.fullScreenThumbnails = false;
+        this.thumbnails.disableWrap();
+    }
+
+    private toggleFullScreenThumbnails() {
+        this.fullScreenThumbnails ? this.disableFullScreenThumbnails() : this.enableFullScreenThumbnails();
+    }
+
+    private enableFullScreenThumbnails() {
+        this.fullScreenThumbnails = true;
+        this.showThumbnails();
+        this.thumbnails.enableWrap();
+    }
+
+    private hideThumbnails() {
+        this.thumbnailsVisible = false;
+        this.element.removeChild(this.thumbnails.getElement());
+        this.disableFullScreenThumbnails();
+    }
+
+    private toggleThumbnails() {
+        this.thumbnailsVisible ? this.hideThumbnails() : this.showThumbnails();
+    }
+
+    private showThumbnails() {
+        this.thumbnailsVisible = true;
+        this.element.appendChild(this.thumbnails.getElement());
     }
 }
