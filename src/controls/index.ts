@@ -18,13 +18,14 @@ interface Params {
 }
 
 export default class Controls extends Component {
-    private thumbnails: Thumbnails;
+    thumbnails: Thumbnails;
+    fullScreenThumbnails: boolean;
+
     private dropdown: Dropdown;
     private album: Album;
     private toggleThumbnailsIcon: HTMLElement;
     private toggleFullScreenThumbnailsIcon: HTMLElement;
     private thumbnailsVisible: boolean;
-    private fullScreenThumbnails: boolean;
     private thumbnailsFullScreenOnToggle: ThumbnailsFullScreenOnToggle;
 
     constructor({
@@ -62,19 +63,33 @@ export default class Controls extends Component {
         });
     }
 
-    private toggleThumbnails() {
-        this.thumbnailsVisible = !this.thumbnailsVisible;
-
-        if (this.thumbnailsVisible) {
-            this.element.appendChild(this.thumbnails.getElement());
-        }
-        else {
-            this.element.removeChild(this.thumbnails.getElement());
-        }
+    disableFullScreenThumbnails() {
+        this.fullScreenThumbnails = false;
+        this.thumbnailsFullScreenOnToggle(this.fullScreenThumbnails);
     }
 
     private toggleFullScreenThumbnails() {
-        this.fullScreenThumbnails = !this.fullScreenThumbnails;
+        this.fullScreenThumbnails ? this.disableFullScreenThumbnails() : this.enableFullScreenThumbnails();
+    }
+
+    private enableFullScreenThumbnails() {
+        this.fullScreenThumbnails = true;
+        this.showThumbnails();
         this.thumbnailsFullScreenOnToggle(this.fullScreenThumbnails);
+    }
+
+    private hideThumbnails() {
+        this.thumbnailsVisible = false;
+        this.element.removeChild(this.thumbnails.getElement());
+        this.disableFullScreenThumbnails();
+    }
+
+    private toggleThumbnails() {
+        this.thumbnailsVisible ? this.hideThumbnails() : this.showThumbnails();
+    }
+
+    private showThumbnails() {
+        this.thumbnailsVisible = true;
+        this.element.appendChild(this.thumbnails.getElement());
     }
 }

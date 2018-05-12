@@ -10,6 +10,8 @@ import Controls from '../controls/index';
 import AlbumItem from '../album-item';
 import * as css from './gallery.scss';
 
+const previewHeight = '100%';
+
 export default class Gallery extends Component {
     private albums: Album[];
     private album: Album;
@@ -27,19 +29,28 @@ export default class Gallery extends Component {
         this.albums = albums;
         this.album = albums[0];
         this.preview = new Preview;
+        this.preview.getElement().style.height = previewHeight;
         this.loading = new Loading;
         this.goToItem = this.goToItem.bind(this);
         this.next = this.next.bind(this);
         this.prev = this.prev.bind(this);
         this.controls = new Controls({
             albums,
-            thumbOnClick: this.goToItem,
+            thumbOnClick: item => {
+                if (this.controls.fullScreenThumbnails) {
+                    this.controls.disableFullScreenThumbnails();
+                }
+                this.goToItem(item);
+            },
             albumOnChange: value => {
                 this.album = albums[value];
                 this.goToItem(this.album.items[0]);
             },
             thumbnailsFullScreenOnToggle: fullScreen => {
-                this.preview.getElement().style.height = fullScreen ? '0' : 'auto';
+                const { thumbnails } = this.controls;
+
+                this.preview.getElement().style.height = fullScreen ? '0' : previewHeight;
+                fullScreen ? thumbnails.enableWrap() : thumbnails.disableWrap();
             },
         });
         this.element = createElement(`<div class="${css.gallery}"></div>`);

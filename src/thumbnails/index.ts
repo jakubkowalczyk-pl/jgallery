@@ -27,7 +27,6 @@ export default class Thumbnails extends Component {
                 margin: '0 auto',
                 padding: '5px',
                 textAlign: 'center',
-                flexDirection: 'row',
                 display: 'flex',
                 justifyContent: 'center',
             }
@@ -46,5 +45,13 @@ export default class Thumbnails extends Component {
         this.items.forEach((item: Thumbnail) => {
             this.content.appendChild(item.getElement());
         });
+    }
+
+    enableWrap() {
+        this.content.style.flexWrap = 'wrap';
+    }
+
+    disableWrap() {
+        this.content.style.flexWrap = 'initial';
     }
 }
