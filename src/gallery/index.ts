@@ -3,7 +3,7 @@ import Component from '../component';
 import Canvas from '../canvas/index';
 import fadeOut from '../canvas/animations/fade-out';
 import fadeIn from '../canvas/animations/fade-in';
-import {iconEllipsisHorizontal, iconGrid} from '../icons';
+import {iconEllipsisHorizontal, iconGrid, iconPlay} from '../icons';
 import Loading from '../loading/index'
 import Album from '../album';
 import Dropdown from '../dropdown/index';
@@ -11,6 +11,8 @@ import Thumbnails from '../thumbnails/index';
 import Preview from '../preview/index';
 import AlbumItem from '../album-item';
 import * as css from './gallery.scss';
+
+const iconStyle = { padding: '.25em .5em', fontSize: '1.5em' };
 
 export default class Gallery extends Component {
     private albums: Album[];
@@ -25,6 +27,7 @@ export default class Gallery extends Component {
     private thumbnails: Thumbnails;
     private dropdown: Dropdown;
     private toggleThumbnailsIcon: HTMLElement;
+    private playSlideshowIcon: HTMLElement;
     private toggleFullScreenThumbnailsIcon: HTMLElement;
     private thumbnailsVisible: boolean;
     private fullScreenThumbnails: boolean;
@@ -66,12 +69,12 @@ export default class Gallery extends Component {
             zIndex: '1',
         });
         this.thumbnails.setAlbum(this.album);
-        this.toggleThumbnailsIcon = iconEllipsisHorizontal({ margin: '0 10px' });
+        this.playSlideshowIcon = iconPlay(iconStyle);
+        this.playSlideshowIcon.addEventListener('click', () => {});
+        this.toggleThumbnailsIcon = iconEllipsisHorizontal(iconStyle);
         this.toggleThumbnailsIcon.addEventListener('click', () => this.toggleThumbnails());
-        this.toggleThumbnailsIcon.style.fontSize = '2em';
-        this.toggleFullScreenThumbnailsIcon = iconGrid({ margin: '0 10px' });
+        this.toggleFullScreenThumbnailsIcon = iconGrid(iconStyle);
         this.toggleFullScreenThumbnailsIcon.addEventListener('click', () => this.toggleFullScreenThumbnails());
-        this.toggleFullScreenThumbnailsIcon.style.fontSize = '2em';
         this.dropdown = new Dropdown({
             items: albums.map(album => album.title),
             onChange: value => {
@@ -87,6 +90,7 @@ export default class Gallery extends Component {
                 zIndex: '1',
             },
             children: [
+                this.playSlideshowIcon,
                 this.toggleFullScreenThumbnailsIcon,
                 this.toggleThumbnailsIcon,
                 this.dropdown.getElement(),

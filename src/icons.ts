@@ -15,6 +15,20 @@ const dot = (style: Partial<CSSStyleDeclaration> = {}) => createElement(
     { style }
 );
 
+export const iconPlay = (style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span></span>`, {
+    style: {
+        ...defaultIconStyle,
+        ...style,
+    },
+    children: [createElement(`<span></span>`, {
+        style: {
+            border: 'solid',
+            borderColor: 'transparent transparent transparent #fff',
+            borderWidth: '.4em 0 .4em .7em',
+        }
+    })]
+});
+
 export const iconEllipsisHorizontal = (style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span></span>`, {
     style: {
         ...defaultIconStyle,
