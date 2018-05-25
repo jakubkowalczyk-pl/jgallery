@@ -20,12 +20,12 @@ export default class Animation {
     currentValue: number;
     finalValue: number;
     currentTime: number;
-    inProgress: boolean;
     completed: boolean;
     onChange: OnChange;
     onComplete: OnComplete;
     duration: number;
     easingFunction: (t: number) => number;
+    private animationFrame: number;
 
     constructor({ initialValue = 0, finalValue = 0, onChange = () => {}, onComplete = () => {}, duration = 1000, easingFunction = t => 1+(--t)*t*t*t*t }: Params) {
         this.initialValue = initialValue;
@@ -36,7 +36,29 @@ export default class Animation {
         this.onComplete = onComplete;
         this.currentTime = 0;
         this.onChange = onChange;
-        this.inProgress = true;
+        this.completed = false;
+        this.start = this.start.bind(this);
+    }
+
+    start() {
+        this.goToNextFrame();
+        if (!this.completed) {
+            this.animationFrame = requestAnimationFrame(this.start);
+        }
+    }
+
+    pause() {
+        cancelAnimationFrame(this.animationFrame);
+    }
+
+    setValue(value: number) {
+        this.currentValue = value;
+    }
+
+    reset() {
+        this.pause();
+        this.currentTime = 0;
+        this.currentValue = this.initialValue;
         this.completed = false;
     }
 
@@ -49,7 +71,6 @@ export default class Animation {
         else {
             this.currentValue = this.finalValue;
             this.onChange(this.currentValue);
-            this.inProgress = false;
             this.completed = true;
             this.onComplete();
         }

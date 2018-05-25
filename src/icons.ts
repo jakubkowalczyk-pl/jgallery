@@ -37,6 +37,15 @@ export const iconEllipsisHorizontal = (style: Partial<CSSStyleDeclaration> =  {}
     children: [dot({ fontSize: '.2em' }), dot({ fontSize: '.2em' }), dot({ fontSize: '.2em' })]
 });
 
+export const iconPause = (style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span></span>`, {
+    style: {
+        ...defaultIconStyle,
+        justifyContent: 'space-between',
+        ...style,
+    },
+    children: [dot({ width: '.35em', height: '.9em' }), dot({ width: '.35em', height: '.9em' })]
+});
+
 export const iconGrid = (style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span></span>`, {
     style: {
         ...defaultIconStyle,
