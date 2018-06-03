@@ -1,7 +1,9 @@
 .gallery {
     height: 100vh;
+    padding: 10px;
     background: #000;
     color: #fff;
+    box-sizing: border-box;
     position: relative;
     flex-direction: column;
     display: flex;
@@ -17,7 +19,7 @@
 }
 
 .gallery *::-webkit-scrollbar-thumb {
-    background: #333;
+    background: #fff;
 }
 
 .transitionCanvas {

@@ -27,7 +27,8 @@ export default class Thumbnail extends Component {
             style: {
                 width: '100px',
                 height: '100px',
-                margin: '1px',
+                marginRight: '5px',
+                marginBottom: '5px',
                 color: '#fff',
                 overflow: 'hidden',
                 cursor: 'pointer',

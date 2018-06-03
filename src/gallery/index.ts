@@ -117,7 +117,7 @@ export default class Gallery extends Component {
         });
         this.controlsElement = createElement(`<div></div>`, {
             style: {
-                padding: '5px',
+                padding: '10px',
                 position: 'relative',
                 zIndex: '1',
             },
