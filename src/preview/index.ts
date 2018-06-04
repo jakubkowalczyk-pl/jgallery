@@ -3,10 +3,12 @@ import load from '../utils/load/index';
 import AlbumItem from '../album-item';
 import Component from '../component';
 
+type Size = 'contain' | 'cover' | 'auto';
+
 export default class Preview extends Component {
     public hasImage: boolean;
+    public size: Size;
     private item: AlbumItem;
-    private size: 'contain' | 'cover';
 
     constructor() {
         super();
@@ -19,24 +21,6 @@ export default class Preview extends Component {
                 display: 'flex',
             }
         });
-    }
-
-    isCover() {
-        return this.size === 'cover';
-    }
-
-    cover() {
-        this.size = 'cover';
-        if (this.hasImage) {
-            (<HTMLElement>this.element.firstChild).style.backgroundSize = this.size;
-        }
-    }
-
-    contain() {
-        this.size = 'contain';
-        if (this.hasImage) {
-            (<HTMLElement>this.element.firstChild).style.backgroundSize = this.size;
-        }
     }
 
     setItem(item: AlbumItem): Promise<void> {
@@ -60,5 +44,12 @@ export default class Preview extends Component {
             element.innerHTML = '';
             element.appendChild(content);
         });
+    }
+
+    setSize(size: Size) {
+        this.size = size;
+        if (this.hasImage) {
+            (<HTMLElement>this.element.firstChild).style.backgroundSize = this.size;
+        }
     }
 }

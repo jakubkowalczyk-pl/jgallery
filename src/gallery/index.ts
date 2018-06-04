@@ -275,11 +275,15 @@ export default class Gallery extends Component {
     private changePreviewSize() {
         const { preview } = this;
 
-        if (preview.isCover()) {
-            preview.contain();
-        }
-        else {
-            preview.cover();
+        switch (preview.size) {
+            case 'cover':
+                preview.setSize('auto');
+                break;
+            case 'auto':
+                preview.setSize('contain');
+                break;
+            default:
+                preview.setSize('cover');
         }
     }
 }
