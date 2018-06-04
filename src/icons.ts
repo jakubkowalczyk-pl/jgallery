@@ -29,6 +29,22 @@ export const iconPlay = (style: Partial<CSSStyleDeclaration> =  {}) => createEle
     })]
 });
 
+export const iconScreen = (style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span></span>`, {
+    style: {
+        ...defaultIconStyle,
+        ...style,
+    },
+    children: [createElement(`<span></span>`, {
+        style: {
+            width: '1em',
+            height: '.8em',
+            border: 'solid #fff',
+            borderWidth: '.2em .1em',
+            boxSizing: 'border-box',
+        }
+    })]
+});
+
 export const iconEllipsisHorizontal = (style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span></span>`, {
     style: {
         ...defaultIconStyle,

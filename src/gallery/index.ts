@@ -3,7 +3,7 @@ import Component from '../component';
 import Canvas from '../canvas/index';
 import fadeOut from '../canvas/animations/fade-out';
 import fadeIn from '../canvas/animations/fade-in';
-import {iconEllipsisHorizontal, iconGrid, iconPlay, iconPause} from '../icons';
+import {iconEllipsisHorizontal, iconGrid, iconPlay, iconPause, iconScreen} from '../icons';
 import Loading from '../loading/index'
 import Album from '../album';
 import ProgressBar from '../progress-bar';
@@ -31,6 +31,7 @@ export default class Gallery extends Component {
     private toggleThumbnailsIcon: HTMLElement;
     private playSlideshowIcon: HTMLElement;
     private pauseSlideshowIcon: HTMLElement;
+    private changePreviewSizeIcon: HTMLElement;
     private slideshowRunning: boolean;
     private toggleFullScreenThumbnailsIcon: HTMLElement;
     private thumbnailsVisible: boolean;
@@ -88,6 +89,8 @@ export default class Gallery extends Component {
         this.toggleThumbnailsIcon.addEventListener('click', () => this.toggleThumbnails());
         this.toggleFullScreenThumbnailsIcon = iconGrid(iconStyle);
         this.toggleFullScreenThumbnailsIcon.addEventListener('click', () => this.toggleFullScreenThumbnails());
+        this.changePreviewSizeIcon = iconScreen(iconStyle);
+        this.changePreviewSizeIcon.addEventListener('click', () => this.changePreviewSize());
         this.dropdown = new Dropdown({
             items: albums.map(album => album.title),
             onChange: value => {
@@ -126,6 +129,7 @@ export default class Gallery extends Component {
                 this.progressBar.getElement(),
                 this.toggleFullScreenThumbnailsIcon,
                 this.toggleThumbnailsIcon,
+                this.changePreviewSizeIcon,
                 this.dropdown.getElement(),
             ]
         });
@@ -202,14 +206,15 @@ export default class Gallery extends Component {
 
     private async goToItem(item: AlbumItem) {
         this.showTransitionCanvas();
-        await (this.item ? fadeIn(this.transitionCanvas) : Promise.resolve())
-            .then(() => this.showLoading())
-            .then(() => this.preview.setItem(item))
-            .then(() => this.hideLoading())
-            .then(() => this.transitionCanvas.clearLayers())
-            .then(() => fadeOut(this.transitionCanvas))
-            .then(() => this.transitionCanvas.clearLayers())
-            .then(() => this.hideTransitionCanvas());
+        this.item && await fadeIn(this.transitionCanvas);
+        this.showLoading();
+        await this.preview.setItem(item);
+        this.changePreviewSizeIcon.style.display = this.preview.hasImage ? 'inline-flex' : 'none';
+        this.hideLoading();
+        this.transitionCanvas.clearLayers();
+        await fadeOut(this.transitionCanvas);
+        this.transitionCanvas.clearLayers();
+        this.hideTransitionCanvas();
         this.item = item;
     }
 
@@ -265,5 +270,16 @@ export default class Gallery extends Component {
     private stopSlideshow() {
         this.pauseSlideshow();
         this.progressBar.reset();
+    }
+
+    private changePreviewSize() {
+        const { preview } = this;
+
+        if (preview.isCover()) {
+            preview.contain();
+        }
+        else {
+            preview.cover();
+        }
     }
 }
