@@ -6,6 +6,7 @@
     box-sizing: border-box;
     position: relative;
     flex-direction: column;
+    user-select: none;
     display: flex;
 }
 

@@ -11,6 +11,7 @@ import Dropdown from '../dropdown/index';
 import Thumbnails from '../thumbnails/index';
 import Preview from '../preview/index';
 import AlbumItem from '../album-item';
+import Swipe from '../swipe';
 import * as css from './gallery.scss';
 
 const iconStyle = { padding: '.25em .5em', fontSize: '1.5em' };
@@ -20,6 +21,7 @@ export default class Gallery extends Component {
     private album: Album;
     private item: AlbumItem;
     private preview: Preview;
+    private previewElement: HTMLElement;
     private controlsElement: HTMLElement;
     private left: HTMLElement;
     private right: HTMLElement;
@@ -42,10 +44,6 @@ export default class Gallery extends Component {
         this.slideshowRunning = false;
         this.albums = albums;
         this.album = albums[0];
-        this.preview = new Preview;
-        this.preview.appendStyle({
-            flex: '1',
-        });
         this.loading = new Loading;
         this.goToItem = this.goToItem.bind(this);
         this.next = this.next.bind(this);
@@ -67,6 +65,19 @@ export default class Gallery extends Component {
             this.next();
             this.stopSlideshow();
         });
+        this.preview = new Preview;
+        this.previewElement = createElement(`<div></div>`, {
+            style: {
+                flex: '1',
+                display: 'flex',
+            },
+            children: [this.preview.getElement(), this.left, this.right]
+        });
+        (new Swipe({
+            element: this.previewElement,
+            onSwipeLeft: this.prev,
+            onSwipeRight: this.next,
+        })).activate()
         this.loading.getElement().classList.add(css.loading);
         this.thumbnailsVisible = true;
         this.thumbnails = new Thumbnails({ thumbOnClick: item => {
@@ -135,11 +146,9 @@ export default class Gallery extends Component {
         });
         this.element = createElement(`<div class="${css.gallery}"></div>`, {
             children: [
-                this.preview.getElement(),
+                this.previewElement,
                 this.controlsElement,
                 this.thumbnails.getElement(),
-                this.left,
-                this.right
             ]
         });
         window.addEventListener('resize', () => this.refreshTransitionCanvasDimensions());
@@ -170,16 +179,16 @@ export default class Gallery extends Component {
         }
     }
 
-    private prev(): void {
+    private async prev(): Promise<void> {
         const { album, item } = this;
         const { items } = album;
         const prev = items[items.indexOf(item)-1];
 
         if (prev) {
-            this.goToItem(prev);
+            await this.goToItem(prev);
         }
         else {
-            this.goToItem(items[items.length-1]);
+            await this.goToItem(items[items.length-1]);
         }
     }
 

@@ -19,6 +19,7 @@ export default class Preview extends Component {
                 justifyContent: 'center',
                 overflow: 'hidden',
                 display: 'flex',
+                flex: '1',
             }
         });
     }
@@ -29,10 +30,10 @@ export default class Preview extends Component {
             item.element ?
             item.element.outerHTML :
             `<div style="
-                width: 100%;
                 height: 100%;
                 background: center center url(${item.url}) no-repeat;
                 background-size: ${this.size};
+                flex: 1;
             "/>`
         );
 
