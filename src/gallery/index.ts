@@ -75,8 +75,8 @@ export default class Gallery extends Component {
         });
         (new Swipe({
             element: this.previewElement,
-            onSwipeLeft: this.prev,
-            onSwipeRight: this.next,
+            onSwipeLeft: this.next,
+            onSwipeRight: this.prev,
         })).activate()
         this.loading.getElement().classList.add(css.loading);
         this.thumbnailsVisible = true;
