@@ -24,7 +24,7 @@ export default class Preview extends Component {
         });
     }
 
-    setItem(item: AlbumItem): Promise<void> {
+    async setItem(item: AlbumItem): Promise<void> {
         const { element } = this;
         const content: HTMLElement = createElement(
             item.element ?
@@ -40,11 +40,8 @@ export default class Preview extends Component {
         this.hasImage = !item.element;
         this.item = item;
         element.innerHTML = '';
-
-        return load(content).then(() => {
-            element.innerHTML = '';
-            element.appendChild(content);
-        });
+        await load(this.hasImage ? item.url : content);
+        element.appendChild(content);
     }
 
     setSize(size: Size) {

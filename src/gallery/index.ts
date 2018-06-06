@@ -70,6 +70,7 @@ export default class Gallery extends Component {
             style: {
                 flex: '1',
                 display: 'flex',
+                position: 'relative',
             },
             children: [this.preview.getElement(), this.left, this.right]
         });
@@ -78,7 +79,13 @@ export default class Gallery extends Component {
             onSwipeLeft: this.next,
             onSwipeRight: this.prev,
         })).activate()
-        this.loading.getElement().classList.add(css.loading);
+        this.loading.appendStyle({
+            top: '50%',
+            left: '50%',
+            transform: 'translateX(-50%) translateY(-50%)',
+            position: 'absolute',
+            zIndex: '1',
+        })
         this.thumbnailsVisible = true;
         this.thumbnails = new Thumbnails({ thumbOnClick: item => {
             this.stopSlideshow();
@@ -206,11 +213,11 @@ export default class Gallery extends Component {
     }
 
     private showLoading(): void {
-        this.element.appendChild(this.loading.getElement());
+        this.previewElement.appendChild(this.loading.getElement());
     }
 
     private hideLoading(): void {
-        this.element.removeChild(this.loading.getElement());
+        this.previewElement.removeChild(this.loading.getElement());
     }
 
     private async goToItem(item: AlbumItem) {
