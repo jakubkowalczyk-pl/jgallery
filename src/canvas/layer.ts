@@ -3,6 +3,8 @@ export interface Params {
     height?: number;
     translateX?: number;
     translateY?: number;
+    centerX?: number;
+    centerY?: number;
     fillStyle?: string;
     alpha?: number;
 }
@@ -12,16 +14,20 @@ export default class Layer {
     height: number;
     translateX: number;
     translateY: number;
+    centerX: number;
+    centerY: number;
     fillStyle: string;
     alpha: number;
     mask: Layer;
     layers: Layer[];
 
-    constructor({ width = 0, height = 0, translateX = 0, translateY = 0, fillStyle = '', alpha = 1 }: Params) {
+    constructor({ width = 0, height = 0, translateX = 0, translateY = 0, centerX = 0, centerY = 0, fillStyle = '', alpha = 1 }: Params) {
         this.width = width;
         this.height = height;
         this.translateX = translateX;
         this.translateY = translateY;
+        this.centerX = centerX;
+        this.centerY = centerY;
         this.fillStyle = fillStyle;
         this.alpha = alpha;
         this.layers = [];

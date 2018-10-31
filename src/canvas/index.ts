@@ -128,8 +128,8 @@ class Canvas extends Layer {
     drawLayer({ layer = new Layer({}), translateX = 0, translateY = 0 }) {
         const { ctx } = this;
 
-        translateX += layer.translateX;
-        translateY += layer.translateY;
+        translateX += layer.translateX + layer.centerX * layer.width;
+        translateY += layer.translateY + layer.centerY * layer.height;
         ctx.globalAlpha = layer.alpha;
         if (layer.mask instanceof Path) {
             this.applyPathMask(layer.mask);
