@@ -3,5 +3,6 @@ export default interface AlbumItem {
     element?: HTMLElement;
     thumbUrl?: string,
     thumbElement?: HTMLElement;
-    title?: string
+    title?: string,
+    hash?: string,
 }

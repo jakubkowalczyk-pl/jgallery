@@ -15,6 +15,10 @@ import * as css from './gallery.scss';
 
 const iconStyle = { padding: '.25em .5em', fontSize: '1.5em' };
 
+interface Params {
+    browserHistory?: boolean;
+}
+
 export default class Gallery extends Component {
     private albums: Album[];
     private album: Album;
@@ -38,8 +42,9 @@ export default class Gallery extends Component {
     private thumbnailsVisible: boolean;
     private fullScreenThumbnails: boolean;
 
-    constructor(albums: Array<Album>) {
+    constructor(albums: Array<Album>, params: Params = {}) {
         super();
+        params = { browserHistory: true, ...params };
         this.slideshowRunning = false;
         this.albums = albums;
         this.album = albums[0];
@@ -164,12 +169,37 @@ export default class Gallery extends Component {
                 height: this.element.clientHeight
             });
             this.transitionCanvas.element.classList.add(css.transitionCanvas);
-            this.goToItem(this.album.items[0]);
+            if (params.browserHistory) {
+                const goToItem = this.goToItem.bind(this);
+                const onhashchange = window.onhashchange || (() => {});
+                const goToItemByCurrentHash = () => goToItem(this.findItemByHash(location.hash.replace('#','')));
+
+                window.onhashchange = (event) => {
+                    (<any>onhashchange)(event);
+                    goToItemByCurrentHash();
+                };
+                this.goToItem = async (item) => {
+                    history.pushState({ jgallery: true }, '', `#${item.hash}`);
+                    goToItem(item);
+                };
+                goToItemByCurrentHash();
+            }
+            else {
+                this.goToItem(this.album.items[0]);
+            }
         });
     }
 
     static createElement(html: string): HTMLElement {
         return createElement(html);
+    }
+
+    private getItems(): AlbumItem[] {
+        return this.albums.reduce((items, album) => [...items, ...album.items], []);
+    }
+
+    private findItemByHash(hash: string): AlbumItem | undefined {
+        return this.getItems().find(item => item.hash === hash);
     }
 
     private async next(): Promise<void> {

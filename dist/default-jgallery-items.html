@@ -42,11 +42,11 @@ items = [...items,...items,...items,...items,...items,...items,...items,...items
 document.body.appendChild((new JGallery([
     {
         title: 'Album 1',
-        items
+        items: items.map((item, i) => ({...item, hash: `Album1_Photo${i}`})),
     },
     {
         title: 'Album 2',
-        items: items.slice(0, 3)
+        items: items.slice(0, 3).map((item, i) => ({...item, hash: `Album2_Photo${i}`})),
     }
 ])).getElement());
 </script>
