@@ -10,6 +10,11 @@ export default class Loading extends Component {
                 <span class="${css.circle}"></span>
                 <span class="${css.circle}"></span>
                 <span class="${css.circle}"></span>
+                <span class="${css.circle}"></span>
+                <span class="${css.circle}"></span>
+                <span class="${css.circle}"></span>
+                <span class="${css.circle}"></span>
+                <span class="${css.circle}"></span>
             </span>
         `);
     }

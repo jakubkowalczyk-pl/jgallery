@@ -1,35 +1,38 @@
 .container {
-    display: inline-block;
+    display: inline-flex;
 }
 
 .circle {
     width: 1em;
     height: 1em;
-    margin: .125em;
-    border-radius: 100%;
     background: #fff;
     animation: circle .5s linear infinite alternate;
-    opacity: .4;
-    transform: scale(.4);
     display: inline-block;
 }
 
-.circle:nth-child(2) {
-    animation-delay: -.167s;
+.circle:nth-child(3),
+.circle:nth-child(6) {
+    animation-delay: -.125s;
 }
 
-.circle:nth-child(3) {
-    animation-delay: -.330s;
+.circle:nth-child(2),
+.circle:nth-child(7) {
+    animation-delay: -.250s;
+}
+
+.circle:nth-child(1),
+.circle:nth-child(8) {
+    animation-delay: -.375s;
 }
 
 @keyframes circle {
     0% {
-        transform: scale(.4);
-        opacity: .1;
+        transform: scaleX(0);
+        opacity: 1;
     }
-    
+
     100% {
-        transform: scale(1.2);
+        transform: scaleX(1);
         opacity: 1;
     }
 }

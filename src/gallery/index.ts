@@ -200,11 +200,11 @@ export default class Gallery extends Component {
     }
 
     private showTransitionCanvas(): void {
-        this.element.appendChild(this.transitionCanvas.element);
+        this.previewElement.appendChild(this.transitionCanvas.element);
     }
 
     private hideTransitionCanvas(): void {
-        this.element.removeChild(this.transitionCanvas.element);
+        this.previewElement.removeChild(this.transitionCanvas.element);
     }
 
     private refreshTransitionCanvasDimensions(): void {
@@ -228,7 +228,7 @@ export default class Gallery extends Component {
         this.changePreviewSizeIcon.style.display = this.preview.hasImage ? 'inline-flex' : 'none';
         this.hideLoading();
         this.transitionCanvas.clearLayers();
-        await fadeOut(this.transitionCanvas);
+        await fadeIn(this.transitionCanvas, { reverse: true });
         this.transitionCanvas.clearLayers();
         this.hideTransitionCanvas();
         this.item = item;
