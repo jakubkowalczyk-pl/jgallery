@@ -1,7 +1,6 @@
 import createElement from '../utils/create-element/index';
 import Component from '../component';
 import Canvas from '../canvas/index';
-import fadeOut from '../canvas/animations/fade-out';
 import fadeIn from '../canvas/animations/fade-in';
 import {iconEllipsisHorizontal, iconGrid, iconPlay, iconPause, iconScreen} from '../icons';
 import Loading from '../loading/index'
