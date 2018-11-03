@@ -39,7 +39,7 @@ export default class Thumbnail extends Component {
                 position: 'relative',
             }
         });
-        this.element.appendChild((new Loading).getElement());
+        this.element.appendChild((new Loading({ style: { fontSize: '.5em'} })).getElement());
         this.element.addEventListener('click', () => onClick(item));
         load(content).then(() => {
             this.element.innerHTML = '';
