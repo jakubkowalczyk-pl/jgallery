@@ -172,7 +172,9 @@ export default class Gallery extends Component {
             if (params.browserHistory) {
                 const goToItem = this.goToItem.bind(this);
                 const onhashchange = window.onhashchange || (() => {});
-                const goToItemByCurrentHash = () => goToItem(this.findItemByHash(location.hash.replace('#','')));
+                const goToItemByCurrentHash = () => goToItem(
+                    this.findItemByHash(location.hash.replace('#','')) || this.album.items[0]
+                );
 
                 window.onhashchange = (event) => {
                     (<any>onhashchange)(event);
