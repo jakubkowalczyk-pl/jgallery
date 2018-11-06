@@ -15,10 +15,11 @@ export default class Thumbnails extends Component {
     private item: Thumbnail;
     private thumbOnClick: ThumbOnClick;
     private content: HTMLElement;
-    private scrollAnimation: Animation;
+    private scrollAnimations: Array<Animation>;
 
     constructor({ thumbOnClick = () => {} }: Params) {
         super();
+        this.scrollAnimations = [];
         this.element = createElement('<div></div>', {
             style: {
                 display: 'flex',
@@ -58,21 +59,30 @@ export default class Thumbnails extends Component {
 
     enableWrap() {
         this.content.style.flexWrap = 'wrap';
+        this.scrollToActiveItem();
     }
 
     disableWrap() {
         this.content.style.flexWrap = 'initial';
+        this.scrollToActiveItem();
     }
 
-    private scrollToActiveItem() {
+    scrollToActiveItem() {
         const element = this.item.getElement();
 
-        this.scrollAnimation && this.scrollAnimation.cancel();
-        this.scrollAnimation = new Animation({
-            initialValue: this.element.scrollLeft,
-            finalValue: element.offsetLeft + element.clientWidth/2 - this.element.clientWidth/2,
-            onChange: value => this.element.scrollLeft = value,
-        });
-        this.scrollAnimation.start();
+        this.scrollAnimations.forEach(animation => animation.cancel());
+        this.scrollAnimations = [
+            new Animation({
+                initialValue: this.element.scrollLeft,
+                finalValue: element.offsetLeft + element.clientWidth/2 - this.element.clientWidth/2,
+                onChange: value => this.element.scrollLeft = value,
+            }),
+            new Animation({
+                initialValue: this.element.scrollTop,
+                finalValue: element.offsetTop + element.clientHeight/2 - this.element.clientHeight/2,
+                onChange: value => this.element.scrollTop = value,
+            }),
+        ];
+        this.scrollAnimations.forEach(animation => animation.start());
     }
 }

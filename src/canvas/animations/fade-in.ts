@@ -23,7 +23,6 @@ const fadeIn = (canvas: Canvas, params: Params = {}) => {
 
         canvas.addLayers(layers);
         canvas.addAnimations([new Animation({
-            duration: 500,
             initialValue: +params.reverse - 0,
             finalValue: 1 - +params.reverse,
             onChange: value => {

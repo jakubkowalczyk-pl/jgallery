@@ -295,6 +295,7 @@ export default class Gallery extends Component {
     private showThumbnails() {
         this.thumbnailsVisible = true;
         this.element.appendChild(this.thumbnails.getElement());
+        this.thumbnails.scrollToActiveItem();
     }
 
     private playSlideshow() {

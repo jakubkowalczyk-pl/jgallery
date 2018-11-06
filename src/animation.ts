@@ -27,7 +27,7 @@ export default class Animation {
     easingFunction: (t: number) => number;
     private animationFrame: number;
 
-    constructor({ initialValue = 0, finalValue = 0, onChange = () => {}, onComplete = () => {}, duration = 1000, easingFunction = t => 1+(--t)*t*t*t*t }: Params) {
+    constructor({ initialValue = 0, finalValue = 0, onChange = () => {}, onComplete = () => {}, duration = 500, easingFunction = t => 1+(--t)*t*t*t*t }: Params) {
         this.initialValue = initialValue;
         this.currentValue = initialValue;
         this.finalValue = finalValue;
