@@ -1,5 +1,6 @@
 import createElement from '../utils/create-element/index'
 import Component from '../component';
+import Animation from '../animation';
 import Album from '../album';
 import AlbumItem from '../album-item';
 import Thumbnail, {ThumbOnClick} from './thumbnail/index';
@@ -14,6 +15,7 @@ export default class Thumbnails extends Component {
     private item: Thumbnail;
     private thumbOnClick: ThumbOnClick;
     private content: HTMLElement;
+    private scrollAnimation: Animation;
 
     constructor({ thumbOnClick = () => {} }: Params) {
         super();
@@ -51,6 +53,7 @@ export default class Thumbnails extends Component {
         this.item && this.item.appendStyle({ border: 'none' });
         this.item = this.items[index];
         this.item.appendStyle({ border: '2px solid #fff' });
+        this.scrollToActiveItem();
     }
 
     enableWrap() {
@@ -59,5 +62,17 @@ export default class Thumbnails extends Component {
 
     disableWrap() {
         this.content.style.flexWrap = 'initial';
+    }
+
+    private scrollToActiveItem() {
+        const element = this.item.getElement();
+
+        this.scrollAnimation && this.scrollAnimation.cancel();
+        this.scrollAnimation = new Animation({
+            initialValue: this.element.scrollLeft,
+            finalValue: element.offsetLeft + element.clientWidth/2 - this.element.clientWidth/2,
+            onChange: value => this.element.scrollLeft = value,
+        });
+        this.scrollAnimation.start();
     }
 }
