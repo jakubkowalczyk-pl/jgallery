@@ -35,6 +35,7 @@ export default class Thumbnail extends Component {
                 alignItems: 'center',
                 justifyContent: 'center',
                 display: 'inline-flex',
+                boxSizing: 'border-box',
                 flex: '0 0 100px',
                 position: 'relative',
             }

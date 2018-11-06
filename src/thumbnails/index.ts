@@ -11,6 +11,7 @@ interface Params {
 export default class Thumbnails extends Component {
     private album: Album;
     private items: Array<Thumbnail>;
+    private item: Thumbnail;
     private thumbOnClick: ThumbOnClick;
     private content: HTMLElement;
 
@@ -44,6 +45,12 @@ export default class Thumbnails extends Component {
         this.items.forEach((item: Thumbnail) => {
             this.content.appendChild(item.getElement());
         });
+    }
+
+    setActive(index: number) {
+        this.item && this.item.appendStyle({ border: 'none' });
+        this.item = this.items[index];
+        this.item.appendStyle({ border: '2px solid #fff' });
     }
 
     enableWrap() {

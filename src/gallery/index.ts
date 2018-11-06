@@ -252,6 +252,7 @@ export default class Gallery extends Component {
     }
 
     private async goToItem(item: AlbumItem) {
+        this.thumbnails.setActive(this.album.items.indexOf(item));
         this.showTransitionCanvas();
         this.item && await fadeIn(this.transitionCanvas);
         this.showLoading();
