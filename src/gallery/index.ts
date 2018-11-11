@@ -15,7 +15,7 @@ import AlbumItem from '../album-item';
 import Swipe from '../swipe';
 import * as css from './gallery.scss';
 
-const iconStyle = { padding: '.25em .5em', fontSize: '1.5em' };
+const iconStyle = { padding: '.25em .5em' };
 
 export interface Params {
     browserHistory?: boolean;

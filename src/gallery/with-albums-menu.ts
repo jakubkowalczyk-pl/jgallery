@@ -6,7 +6,8 @@ const withAlbumsMenu: GalleryDecorator = (constructor) =>
     class extends constructor {
         constructor(albums: AlbumItem[], params: Params) {
             super(albums, params);
-            this.appendControlsElements([new Dropdown({
+
+            const element = new Dropdown({
                 items: this.albums.map(album => album.title),
                 onChange: value => {
                     this.stopSlideshow();
@@ -14,7 +15,11 @@ const withAlbumsMenu: GalleryDecorator = (constructor) =>
                     this.album = this.albums[value];
                     this.goToItem(this.album.items[0]);
                 }
-            }).getElement()]);
+            }).getElement();
+
+            element.style.fontSize = '.8em';
+
+            this.appendControlsElements([element]);
         }
     };
 

@@ -62,16 +62,20 @@ export const iconPause = (style: Partial<CSSStyleDeclaration> =  {}) => createEl
     children: [dot({ width: '.35em', height: '.9em' }), dot({ width: '.35em', height: '.9em' })]
 });
 
-export const iconGrid = (style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span></span>`, {
-    style: {
-        ...defaultIconStyle,
-        height: 'auto',
-        flexWrap: 'wrap',
-        ...style,
-    },
-    children: [
-        dot({ fontSize: '.2em' }), dot({ fontSize: '.2em' }), dot({ fontSize: '.2em' }),
-        dot({ fontSize: '.2em' }), dot({ fontSize: '.2em' }), dot({ fontSize: '.2em' }),
-        dot({ fontSize: '.2em' }), dot({ fontSize: '.2em' }), dot({ fontSize: '.2em' }),
-    ]
-});
+export const iconGrid = (style: Partial<CSSStyleDeclaration> =  {}) => {
+    const dotStyle = { width: '.2em', height: '.2em' };
+
+    return createElement(`<span></span>`, {
+        style: {
+            ...defaultIconStyle,
+            height: 'auto',
+            flexWrap: 'wrap',
+            ...style,
+        },
+        children: [
+            dot(dotStyle), dot(dotStyle), dot(dotStyle),
+            dot(dotStyle), dot(dotStyle), dot(dotStyle),
+            dot(dotStyle), dot(dotStyle), dot(dotStyle),
+        ]
+    });
+};

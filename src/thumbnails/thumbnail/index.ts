@@ -25,8 +25,8 @@ export default class Thumbnail extends Component {
 
         this.element = createElement(`<span></span>`, {
             style: {
-                width: '100px',
-                height: '100px',
+                width: '64px',
+                height: '64px',
                 marginRight: '5px',
                 marginBottom: '5px',
                 color: '#fff',
@@ -36,7 +36,7 @@ export default class Thumbnail extends Component {
                 justifyContent: 'center',
                 display: 'inline-flex',
                 boxSizing: 'border-box',
-                flex: '0 0 100px',
+                flex: '0 0 64px',
                 position: 'relative',
             }
         });
