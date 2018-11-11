@@ -314,4 +314,8 @@ export class Gallery extends Component {
     }
 }
 
-export default withAlbumsMenu(withPreviewSizeChanger(Gallery));
+const compose = (decorators: Function[], constructor) => {
+    return decorators.reduce((constructor, decorator) => decorator(constructor), constructor);
+};
+
+export default compose([withPreviewSizeChanger, withAlbumsMenu], Gallery);
