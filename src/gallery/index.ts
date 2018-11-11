@@ -2,11 +2,12 @@ import createElement from '../utils/create-element/index';
 import Component from '../component';
 import Canvas from '../canvas/index';
 import fadeIn from '../canvas/animations/fade-in';
-import {iconEllipsisHorizontal, iconGrid, iconPlay, iconPause, iconScreen} from '../icons';
+import {iconEllipsisHorizontal, iconGrid, iconPlay, iconPause} from '../icons';
 import Loading from '../loading/index'
 import Album from '../album';
 import ProgressBar from '../progress-bar';
 import withAlbumsMenu from './with-albums-menu';
+import withPreviewSizeChanger from './with-preview-size-changer';
 import Thumbnails from '../thumbnails/index';
 import Preview from '../preview/index';
 import AlbumItem from '../album-item';
@@ -23,7 +24,7 @@ export class Gallery extends Component {
     protected albums: Album[];
     protected album: Album;
     private item: AlbumItem;
-    private preview: Preview;
+    protected preview: Preview;
     private previewElement: HTMLElement;
     private controlsElement: HTMLElement;
     private left: HTMLElement;
@@ -35,7 +36,6 @@ export class Gallery extends Component {
     private toggleThumbnailsIcon: HTMLElement;
     private playSlideshowIcon: HTMLElement;
     private pauseSlideshowIcon: HTMLElement;
-    private changePreviewSizeIcon: HTMLElement;
     private slideshowRunning: boolean;
     private toggleFullScreenThumbnailsIcon: HTMLElement;
     private thumbnailsVisible: boolean;
@@ -110,8 +110,6 @@ export class Gallery extends Component {
         this.toggleThumbnailsIcon.addEventListener('click', () => this.toggleThumbnails());
         this.toggleFullScreenThumbnailsIcon = iconGrid(iconStyle);
         this.toggleFullScreenThumbnailsIcon.addEventListener('click', () => this.toggleFullScreenThumbnails());
-        this.changePreviewSizeIcon = iconScreen(iconStyle);
-        this.changePreviewSizeIcon.addEventListener('click', () => this.changePreviewSize());
         this.progressBar = new ProgressBar({
             duration: 4000,
             onEnd: async () => {
@@ -141,7 +139,6 @@ export class Gallery extends Component {
                 this.progressBar.getElement(),
                 this.toggleFullScreenThumbnailsIcon,
                 this.toggleThumbnailsIcon,
-                this.changePreviewSizeIcon,
             ]
         });
         this.element = createElement(`<div class="${css.gallery}"></div>`, {
@@ -186,7 +183,10 @@ export class Gallery extends Component {
     }
 
     protected appendControlsElements(elements: HTMLElement[]) {
-        elements.forEach(element => this.controlsElement.appendChild(element));
+        elements.forEach(element => {
+            Object.assign(element.style, iconStyle);
+            this.controlsElement.appendChild(element);
+        });
     }
 
     private getItems(): AlbumItem[] {
@@ -250,7 +250,6 @@ export class Gallery extends Component {
         this.item && await fadeIn(this.transitionCanvas);
         this.showLoading();
         await this.preview.setItem(item);
-        this.changePreviewSizeIcon.style.display = this.preview.hasImage ? 'inline-flex' : 'none';
         this.hideLoading();
         this.transitionCanvas.clearLayers();
         await fadeIn(this.transitionCanvas, { reverse: true });
@@ -313,21 +312,6 @@ export class Gallery extends Component {
         this.pauseSlideshow();
         this.progressBar.reset();
     }
-
-    private changePreviewSize() {
-        const { preview } = this;
-
-        switch (preview.size) {
-            case 'cover':
-                preview.setSize('auto');
-                break;
-            case 'auto':
-                preview.setSize('contain');
-                break;
-            default:
-                preview.setSize('cover');
-        }
-    }
 }
 
-export default withAlbumsMenu(Gallery);
+export default withAlbumsMenu(withPreviewSizeChanger(Gallery));
