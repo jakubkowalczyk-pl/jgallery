@@ -17,7 +17,7 @@ import * as css from './gallery.scss';
 
 const iconStyle = { padding: '.25em .5em', fontSize: '1.5em' };
 
-interface Params {
+export interface Params {
     browserHistory?: boolean;
 }
 
@@ -160,7 +160,7 @@ export class Gallery extends Component {
     }
 
     static create(albums: Array<Album>, params: Params = {}): Gallery {
-        const decorators = [withPreviewSizeChanger, withAlbumsMenu];
+        const decorators: GalleryDecorator[] = [withPreviewSizeChanger, withAlbumsMenu];
 
         params = { browserHistory: true, ...params };
 
@@ -315,7 +315,11 @@ export class Gallery extends Component {
     }
 }
 
-const compose = (decorators: Function[], constructor) => {
+export type GalleryConstructor = (new (albums: AlbumItem[], params: Params) => Gallery);
+
+export type GalleryDecorator = (constructor: GalleryConstructor) => GalleryConstructor;
+
+const compose = (decorators: GalleryDecorator[], constructor: GalleryConstructor) => {
     return decorators.reduce((constructor, decorator) => decorator(constructor), constructor);
 };
 

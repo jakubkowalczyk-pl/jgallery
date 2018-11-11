@@ -1,9 +1,10 @@
-import {Gallery} from './index';
+import {GalleryDecorator, Params} from './index';
+import AlbumItem from "../album-item";
 
-export default <T extends {new(...args:any[]):Gallery}>(constructor: T) =>
+const withBrowserHistory: GalleryDecorator = (constructor) =>
     class extends constructor {
-        constructor(...args: any[]) {
-            super(...args);
+        constructor(albums: AlbumItem[], params: Params) {
+            super(albums, params);
 
             const goToItem = this.goToItem.bind(this);
             const onhashchange = window.onhashchange || (() => {});
@@ -21,3 +22,5 @@ export default <T extends {new(...args:any[]):Gallery}>(constructor: T) =>
             });
         }
     };
+
+export default withBrowserHistory;

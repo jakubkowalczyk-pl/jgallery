@@ -1,12 +1,13 @@
-import {Gallery} from './index';
+import {GalleryDecorator, Params} from './index';
 import {iconScreen} from "../icons";
+import AlbumItem from "../album-item";
 
-export default <T extends {new(...args:any[]):Gallery}>(constructor: T) =>
+const withPreviewSizeChanger: GalleryDecorator = (constructor) =>
     class extends constructor {
         private changePreviewSizeIcon: HTMLElement;
 
-        constructor(...args: any[]) {
-            super(...args);
+        constructor(albums: AlbumItem[], params: Params) {
+            super(albums, params);
             this.changePreviewSizeIcon = iconScreen();
             this.changePreviewSizeIcon.addEventListener('click', () => this.changePreviewSize());
             this.appendControlsElements([this.changePreviewSizeIcon]);
@@ -35,3 +36,5 @@ export default <T extends {new(...args:any[]):Gallery}>(constructor: T) =>
             }
         }
     };
+
+export default withPreviewSizeChanger;
