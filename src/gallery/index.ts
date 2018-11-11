@@ -178,6 +178,10 @@ export class Gallery extends Component {
         });
     }
 
+    static create(albums: Array<Album>, params: Params = {}): Gallery {
+        return new Gallery(albums, params);
+    }
+
     static createElement(html: string): HTMLElement {
         return createElement(html);
     }
