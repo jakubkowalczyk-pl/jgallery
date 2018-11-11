@@ -2,7 +2,7 @@ import 'mocha';
 import 'assert';
 import Gallery from './index';
 
-const gallery: Gallery = new Gallery([
+const gallery = new Gallery([
     {
         title: 'Album 1',
         items: [

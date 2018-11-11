@@ -6,7 +6,7 @@ import {iconEllipsisHorizontal, iconGrid, iconPlay, iconPause, iconScreen} from 
 import Loading from '../loading/index'
 import Album from '../album';
 import ProgressBar from '../progress-bar';
-import Dropdown from '../dropdown/index';
+import withAlbumsMenu from './with-albums-menu';
 import Thumbnails from '../thumbnails/index';
 import Preview from '../preview/index';
 import AlbumItem from '../album-item';
@@ -19,9 +19,9 @@ interface Params {
     browserHistory?: boolean;
 }
 
-export default class Gallery extends Component {
-    private albums: Album[];
-    private album: Album;
+export class Gallery extends Component {
+    protected albums: Album[];
+    protected album: Album;
     private item: AlbumItem;
     private preview: Preview;
     private previewElement: HTMLElement;
@@ -31,8 +31,7 @@ export default class Gallery extends Component {
     private progressBar: ProgressBar;
     private transitionCanvas: Canvas;
     private loading: Loading;
-    private thumbnails: Thumbnails;
-    private dropdown: Dropdown;
+    protected thumbnails: Thumbnails;
     private toggleThumbnailsIcon: HTMLElement;
     private playSlideshowIcon: HTMLElement;
     private pauseSlideshowIcon: HTMLElement;
@@ -113,15 +112,6 @@ export default class Gallery extends Component {
         this.toggleFullScreenThumbnailsIcon.addEventListener('click', () => this.toggleFullScreenThumbnails());
         this.changePreviewSizeIcon = iconScreen(iconStyle);
         this.changePreviewSizeIcon.addEventListener('click', () => this.changePreviewSize());
-        this.dropdown = new Dropdown({
-            items: albums.map(album => album.title),
-            onChange: value => {
-                this.stopSlideshow();
-                this.thumbnails.setAlbum(albums[value]);
-                this.album = albums[value];
-                this.goToItem(this.album.items[0]);
-            }
-        });
         this.progressBar = new ProgressBar({
             duration: 4000,
             onEnd: async () => {
@@ -152,7 +142,6 @@ export default class Gallery extends Component {
                 this.toggleFullScreenThumbnailsIcon,
                 this.toggleThumbnailsIcon,
                 this.changePreviewSizeIcon,
-                this.dropdown.getElement(),
             ]
         });
         this.element = createElement(`<div class="${css.gallery}"></div>`, {
@@ -194,6 +183,10 @@ export default class Gallery extends Component {
 
     static createElement(html: string): HTMLElement {
         return createElement(html);
+    }
+
+    protected appendControlsElements(elements: HTMLElement[]) {
+        elements.forEach(element => this.controlsElement.appendChild(element));
     }
 
     private getItems(): AlbumItem[] {
@@ -251,7 +244,7 @@ export default class Gallery extends Component {
         this.previewElement.removeChild(this.loading.getElement());
     }
 
-    private async goToItem(item: AlbumItem) {
+    protected async goToItem(item: AlbumItem) {
         this.thumbnails.setActive(this.album.items.indexOf(item));
         this.showTransitionCanvas();
         this.item && await fadeIn(this.transitionCanvas);
@@ -316,7 +309,7 @@ export default class Gallery extends Component {
         }
     }
 
-    private stopSlideshow() {
+    protected stopSlideshow() {
         this.pauseSlideshow();
         this.progressBar.reset();
     }
@@ -336,3 +329,5 @@ export default class Gallery extends Component {
         }
     }
 }
+
+export default withAlbumsMenu(Gallery);
