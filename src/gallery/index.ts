@@ -8,6 +8,7 @@ import Album from '../album';
 import ProgressBar from '../progress-bar';
 import withAlbumsMenu from './with-albums-menu';
 import withPreviewSizeChanger from './with-preview-size-changer';
+import withBrowserHistory from './with-browser-history';
 import Thumbnails from '../thumbnails/index';
 import Preview from '../preview/index';
 import AlbumItem from '../album-item';
@@ -43,7 +44,6 @@ export class Gallery extends Component {
 
     constructor(albums: Array<Album>, params: Params = {}) {
         super();
-        params = { browserHistory: true, ...params };
         this.slideshowRunning = false;
         this.albums = albums;
         this.album = albums[0];
@@ -155,35 +155,32 @@ export class Gallery extends Component {
                 height: this.element.clientHeight
             });
             this.transitionCanvas.element.classList.add(css.transitionCanvas);
-            if (params.browserHistory) {
-                const goToItem = this.goToItem.bind(this);
-                const onhashchange = window.onhashchange || (() => {});
-                const goToItemByCurrentHash = () => goToItem(
-                    this.findItemByHash(location.hash.replace('#','')) || this.album.items[0]
-                );
-
-                window.onhashchange = (event) => {
-                    (<any>onhashchange)(event);
-                    goToItemByCurrentHash();
-                };
-                this.goToItem = async (item) => {
-                    history.pushState({ jgallery: true }, '', `#${item.hash}`);
-                    goToItem(item);
-                };
-                goToItemByCurrentHash();
-            }
-            else {
-                this.goToItem(this.album.items[0]);
-            }
+            this.goToItemByCurrentHash();
         });
     }
 
     static create(albums: Array<Album>, params: Params = {}): Gallery {
-        return new Gallery(albums, params);
+        const decorators = [withPreviewSizeChanger, withAlbumsMenu];
+
+        params = { browserHistory: true, ...params };
+
+        if (params.browserHistory) decorators.push(withBrowserHistory);
+
+        return new (compose(decorators, Gallery))(albums, params);
     }
 
     static createElement(html: string): HTMLElement {
         return createElement(html);
+    }
+
+    protected goToItemByCurrentHash() {
+        return this.goToItem(
+            this.findItemByCurrentHash()
+        );
+    }
+
+    protected findItemByCurrentHash(): AlbumItem {
+        return this.findItemByHash(location.hash.replace('#','')) || this.album.items[0];
     }
 
     protected appendControlsElements(elements: HTMLElement[]) {
@@ -322,4 +319,4 @@ const compose = (decorators: Function[], constructor) => {
     return decorators.reduce((constructor, decorator) => decorator(constructor), constructor);
 };
 
-export default compose([withPreviewSizeChanger, withAlbumsMenu], Gallery);
+export default Gallery;
