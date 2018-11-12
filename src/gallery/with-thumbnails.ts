@@ -10,15 +10,15 @@ const withThumbnails: GalleryDecorator = (constructor) =>
         private toggleFullScreenThumbnailsIcon: HTMLElement;
         private thumbnailsVisible: boolean;
         private fullScreenThumbnails: boolean;
-        private stopSlideshow: Function | undefined;
+        private stopSlideShow: Function | undefined;
 
         constructor(albums: AlbumItem[], params: Params) {
             super(albums, params);
 
             this.thumbnailsVisible = true;
             this.thumbnails = new Thumbnails({ thumbOnClick: item => {
-                if (this.stopSlideshow) {
-                    this.stopSlideshow();
+                if (this.stopSlideShow) {
+                    this.stopSlideShow();
                 }
                 if (this.fullScreenThumbnails) {
                     this.disableFullScreenThumbnails();
@@ -63,8 +63,8 @@ const withThumbnails: GalleryDecorator = (constructor) =>
         }
 
         protected enableFullScreenThumbnails() {
-            if (this.stopSlideshow) {
-                this.stopSlideshow();
+            if (this.stopSlideShow) {
+                this.stopSlideShow();
             }
             this.fullScreenThumbnails = true;
             this.showThumbnails();

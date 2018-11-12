@@ -7,18 +7,18 @@ import {iconPause, iconPlay} from "../icons";
 const withSlideShow: GalleryDecorator = (constructor) =>
     class extends constructor {
         private slideShowIcons: HTMLElement;
-        private playSlideshowIcon: HTMLElement;
-        private pauseSlideshowIcon: HTMLElement;
+        private playSlideShowIcon: HTMLElement;
+        private pauseSlideShowIcon: HTMLElement;
         private slideShowRunning: boolean;
         private progressBar: ProgressBar;
         
         constructor(albums: AlbumItem[], params: Params) {
             super(albums, params);
             this.slideShowRunning = false;
-            this.playSlideshowIcon = iconPlay();
-            this.playSlideshowIcon.addEventListener('click', () => this.playSlideshow());
-            this.pauseSlideshowIcon = iconPause();
-            this.pauseSlideshowIcon.addEventListener('click', () => this.pauseSlideshow());
+            this.playSlideShowIcon = iconPlay();
+            this.playSlideShowIcon.addEventListener('click', () => this.playSlideShow());
+            this.pauseSlideShowIcon = iconPause();
+            this.pauseSlideShowIcon.addEventListener('click', () => this.pauseSlideShow());
             this.progressBar = new ProgressBar({
                 duration: 4000,
                 onEnd: async () => {
@@ -37,9 +37,9 @@ const withSlideShow: GalleryDecorator = (constructor) =>
                     right: '0',
                 },
             });
-            [this.left, this.right].forEach(element => element.addEventListener('click', () => this.stopSlideshow()));
+            [this.left, this.right].forEach(element => element.addEventListener('click', () => this.stopSlideShow()));
             this.slideShowIcons = createElement('<span/>', {
-                children: [this.playSlideshowIcon]
+                children: [this.playSlideShowIcon]
             });
             this.appendControlsElements([
                 this.slideShowIcons,
@@ -48,29 +48,29 @@ const withSlideShow: GalleryDecorator = (constructor) =>
             this.progressBar.getElement().style.padding = '0';
         }
 
-        private playSlideshow() {
+        private playSlideShow() {
             if (!this.slideShowRunning) {
-                this.slideShowIcons.replaceChild(this.pauseSlideshowIcon, this.playSlideshowIcon);
+                this.slideShowIcons.replaceChild(this.pauseSlideShowIcon, this.playSlideShowIcon);
                 this.progressBar.start();
                 this.slideShowRunning = true;
             }
         }
 
-        private pauseSlideshow() {
+        private pauseSlideShow() {
             if (this.slideShowRunning) {
-                this.slideShowIcons.replaceChild(this.playSlideshowIcon, this.pauseSlideshowIcon);
+                this.slideShowIcons.replaceChild(this.playSlideShowIcon, this.pauseSlideShowIcon);
                 this.progressBar.pause();
                 this.slideShowRunning = false;
             }
         }
 
         protected async goToAlbum(value: number) {
-            this.stopSlideshow();
+            this.stopSlideShow();
             return super.goToAlbum(value);
         }
 
-        protected stopSlideshow() {
-            this.pauseSlideshow();
+        protected stopSlideShow() {
+            this.pauseSlideShow();
             this.progressBar.reset();
         }
     };
