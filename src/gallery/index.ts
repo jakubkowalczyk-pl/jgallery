@@ -2,17 +2,14 @@ import createElement from '../utils/create-element/index';
 import Component from '../component';
 import Canvas from '../canvas/index';
 import fadeIn from '../canvas/animations/fade-in';
-import {iconEllipsisHorizontal, iconGrid} from '../icons';
 import Loading from '../loading/index'
 import Album from '../album';
 import withAlbumsMenu from './with-albums-menu';
 import withPreviewSizeChanger from './with-preview-size-changer';
 import withBrowserHistory from './with-browser-history';
-import Thumbnails from '../thumbnails/index';
 import Preview from '../preview/index';
 import AlbumItem from '../album-item';
 import Swipe from '../swipe';
-import * as css from './gallery.scss';
 import withSlideShow from "./with-slideshow";
 import withThumbnails from "./with-thumbnails";
 
@@ -87,11 +84,23 @@ export class Gallery extends Component {
                 zIndex: '1',
             },
         });
-        this.element = createElement(`<div class="${css.gallery}"></div>`, {
+        this.element = createElement(`
+            <div class="j-gallery"></div>`, {
             children: [
                 this.previewElement,
                 this.controlsElement,
-            ]
+            ],
+            style: {
+                height: '100vh',
+                padding: '10px',
+                background: '#000',
+                color: '#fff',
+                boxSizing: 'border-box',
+                position: 'relative',
+                flexDirection: 'column',
+                userSelect: 'none',
+                display: 'flex',
+            },
         });
         window.addEventListener('resize', () => this.refreshTransitionCanvasDimensions());
         requestAnimationFrame(() => {
@@ -99,7 +108,13 @@ export class Gallery extends Component {
                 width: this.element.clientWidth,
                 height: this.element.clientHeight
             });
-            this.transitionCanvas.element.classList.add(css.transitionCanvas);
+            Object.assign(this.transitionCanvas.element.style, {
+                width: '100%',
+                height: '100%',
+                top: '0',
+                left: '0',
+                position: 'absolute',
+            });
             this.goToItemByCurrentHash();
         });
     }
@@ -222,3 +237,22 @@ const compose = (decorators: GalleryDecorator[], constructor: GalleryConstructor
 };
 
 export default Gallery;
+
+const style = document.createElement('style');
+style.innerHTML = `
+    .j-gallery ::-webkit-scrollbar {
+        height: 1em;
+        background: transparent;
+        top: 0;
+        left: 0;
+        right: 0;
+        position: absolute;
+    }
+    
+    .j-gallery *::-webkit-scrollbar-thumb {
+        background: #ffffff44;
+    }
+`;
+if (typeof document !== 'undefined') {
+    document.querySelector('head').appendChild(style);
+}
