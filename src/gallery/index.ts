@@ -2,10 +2,9 @@ import createElement from '../utils/create-element/index';
 import Component from '../component';
 import Canvas from '../canvas/index';
 import fadeIn from '../canvas/animations/fade-in';
-import {iconEllipsisHorizontal, iconGrid, iconPlay, iconPause} from '../icons';
+import {iconEllipsisHorizontal, iconGrid} from '../icons';
 import Loading from '../loading/index'
 import Album from '../album';
-import ProgressBar from '../progress-bar';
 import withAlbumsMenu from './with-albums-menu';
 import withPreviewSizeChanger from './with-preview-size-changer';
 import withBrowserHistory from './with-browser-history';
@@ -14,11 +13,13 @@ import Preview from '../preview/index';
 import AlbumItem from '../album-item';
 import Swipe from '../swipe';
 import * as css from './gallery.scss';
+import withSlideShow from "./with-slideshow";
 
 const iconStyle = { padding: '.25em .5em' };
 
 export interface Params {
     browserHistory?: boolean;
+    slideShow?: true,
 }
 
 export class Gallery extends Component {
@@ -28,23 +29,18 @@ export class Gallery extends Component {
     protected preview: Preview;
     private previewElement: HTMLElement;
     private controlsElement: HTMLElement;
-    private left: HTMLElement;
-    private right: HTMLElement;
-    private progressBar: ProgressBar;
+    protected left: HTMLElement;
+    protected right: HTMLElement;
     private transitionCanvas: Canvas;
     private loading: Loading;
     protected thumbnails: Thumbnails;
     private toggleThumbnailsIcon: HTMLElement;
-    private playSlideshowIcon: HTMLElement;
-    private pauseSlideshowIcon: HTMLElement;
-    private slideshowRunning: boolean;
     private toggleFullScreenThumbnailsIcon: HTMLElement;
     private thumbnailsVisible: boolean;
     private fullScreenThumbnails: boolean;
 
     constructor(albums: Array<Album>, params: Params = {}) {
         super();
-        this.slideshowRunning = false;
         this.albums = albums;
         this.album = albums[0];
         this.loading = new Loading;
@@ -59,14 +55,12 @@ export class Gallery extends Component {
         `);
         this.left.addEventListener('click', () => {
             this.prev();
-            this.stopSlideshow();
         });
         this.right = createElement(`
             <div style="right: 0; width: 50%; top: 0; bottom: 0; position: absolute; cursor: pointer;"></div>
         `);
         this.right.addEventListener('click', () => {
             this.next();
-            this.stopSlideshow();
         });
         this.preview = new Preview;
         this.previewElement = createElement(`<div></div>`, {
@@ -91,7 +85,6 @@ export class Gallery extends Component {
         })
         this.thumbnailsVisible = true;
         this.thumbnails = new Thumbnails({ thumbOnClick: item => {
-            this.stopSlideshow();
             if (this.fullScreenThumbnails) {
                 this.disableFullScreenThumbnails();
             }
@@ -102,32 +95,10 @@ export class Gallery extends Component {
             zIndex: '1',
         });
         this.thumbnails.setAlbum(this.album);
-        this.playSlideshowIcon = iconPlay(iconStyle);
-        this.playSlideshowIcon.addEventListener('click', () => this.playSlideshow());
-        this.pauseSlideshowIcon = iconPause(iconStyle);
-        this.pauseSlideshowIcon.addEventListener('click', () => this.pauseSlideshow());
         this.toggleThumbnailsIcon = iconEllipsisHorizontal(iconStyle);
         this.toggleThumbnailsIcon.addEventListener('click', () => this.toggleThumbnails());
         this.toggleFullScreenThumbnailsIcon = iconGrid(iconStyle);
         this.toggleFullScreenThumbnailsIcon.addEventListener('click', () => this.toggleFullScreenThumbnails());
-        this.progressBar = new ProgressBar({
-            duration: 4000,
-            onEnd: async () => {
-                this.progressBar.pause();
-                this.progressBar.setValue(0);
-                await this.next();
-                this.progressBar.reset();
-                if (this.slideshowRunning) {
-                    this.progressBar.start();
-                }
-            },
-            style: {
-                position: 'absolute',
-                top: '2px',
-                left: '0',
-                right: '0',
-            },
-        });
         this.controlsElement = createElement(`<div></div>`, {
             style: {
                 padding: '10px',
@@ -135,8 +106,6 @@ export class Gallery extends Component {
                 zIndex: '1',
             },
             children: [
-                this.playSlideshowIcon,
-                this.progressBar.getElement(),
                 this.toggleFullScreenThumbnailsIcon,
                 this.toggleThumbnailsIcon,
             ]
@@ -160,11 +129,14 @@ export class Gallery extends Component {
     }
 
     static create(albums: Array<Album>, params: Params = {}): Gallery {
-        const decorators: GalleryDecorator[] = [withPreviewSizeChanger, withAlbumsMenu];
+        const decorators: GalleryDecorator[] = [];
 
-        params = { browserHistory: true, ...params };
+        params = { browserHistory: true, slideShow: true, ...params };
 
         if (params.browserHistory) decorators.push(withBrowserHistory);
+        if (params.slideShow) decorators.push(withSlideShow);
+
+        decorators.push(withPreviewSizeChanger, withAlbumsMenu);
 
         return new (compose(decorators, Gallery))(albums, params);
     }
@@ -198,7 +170,7 @@ export class Gallery extends Component {
         return this.getItems().find(item => item.hash === hash);
     }
 
-    private async next(): Promise<void> {
+    protected async next(): Promise<void> {
         const { album, item } = this;
         const { items } = album;
         const next = items[items.indexOf(item)+1];
@@ -259,6 +231,12 @@ export class Gallery extends Component {
         this.item = item;
     }
 
+    protected async goToAlbum(value: number) {
+        this.thumbnails.setAlbum(this.albums[value]);
+        this.album = this.albums[value];
+        return this.goToItem(this.album.items[0]);
+    }
+
     private disableFullScreenThumbnails() {
         this.fullScreenThumbnails = false;
         this.thumbnails.disableWrap();
@@ -268,8 +246,7 @@ export class Gallery extends Component {
         this.fullScreenThumbnails ? this.disableFullScreenThumbnails() : this.enableFullScreenThumbnails();
     }
 
-    private enableFullScreenThumbnails() {
-        this.stopSlideshow();
+    protected enableFullScreenThumbnails() {
         this.fullScreenThumbnails = true;
         this.showThumbnails();
         this.thumbnails.enableWrap();
@@ -289,29 +266,6 @@ export class Gallery extends Component {
         this.thumbnailsVisible = true;
         this.element.appendChild(this.thumbnails.getElement());
         this.thumbnails.scrollToActiveItem();
-    }
-
-    private playSlideshow() {
-        if (!this.slideshowRunning) {
-            this.controlsElement.insertBefore(this.pauseSlideshowIcon, this.playSlideshowIcon);
-            this.controlsElement.removeChild(this.playSlideshowIcon);
-            this.progressBar.start();
-            this.slideshowRunning = true;
-        }
-    }
-
-    private pauseSlideshow() {
-        if (this.slideshowRunning) {
-            this.controlsElement.insertBefore(this.playSlideshowIcon, this.pauseSlideshowIcon);
-            this.controlsElement.removeChild(this.pauseSlideshowIcon);
-            this.progressBar.pause();
-            this.slideshowRunning = false;
-        }
-    }
-
-    protected stopSlideshow() {
-        this.pauseSlideshow();
-        this.progressBar.reset();
     }
 }
 

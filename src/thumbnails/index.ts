@@ -38,11 +38,20 @@ export default class Thumbnails extends Component {
         this.thumbOnClick = thumbOnClick;
     }
 
+    addThumbClickListener(fn: Function) {
+        const { thumbOnClick } = this;
+
+        this.thumbOnClick = (...args) => {
+            thumbOnClick(...args);
+            fn(...args);
+        };
+    }
+
     setAlbum(album: Album) {
         this.album = album;
         this.items = album.items.map((item: AlbumItem) => new Thumbnail({
             item,
-            onClick: this.thumbOnClick
+            onClick: item => this.thumbOnClick(item),
         }));
         this.content.innerHTML = '';
         this.items.forEach((item: Thumbnail) => {

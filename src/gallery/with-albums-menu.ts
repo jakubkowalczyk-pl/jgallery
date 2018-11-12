@@ -10,10 +10,7 @@ const withAlbumsMenu: GalleryDecorator = (constructor) =>
             const element = new Dropdown({
                 items: this.albums.map(album => album.title),
                 onChange: value => {
-                    this.stopSlideshow();
-                    this.thumbnails.setAlbum(this.albums[value]);
-                    this.album = this.albums[value];
-                    this.goToItem(this.album.items[0]);
+                    this.goToAlbum(value);
                 }
             }).getElement();
 
