@@ -14,7 +14,7 @@ const withPreviewSizeChanger: GalleryDecorator = (constructor) =>
         }
 
         protected async goToItem(...args: any[]) {
-            const result = super.goToItem.call(this, ...args);
+            const result = await super.goToItem.call(this, ...args);
 
             this.changePreviewSizeIcon.style.display = this.preview.hasImage ? 'inline-flex' : 'none';
 
