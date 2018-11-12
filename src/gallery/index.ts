@@ -14,10 +14,12 @@ import AlbumItem from '../album-item';
 import Swipe from '../swipe';
 import * as css from './gallery.scss';
 import withSlideShow from "./with-slideshow";
+import withThumbnails from "./with-thumbnails";
 
 const iconStyle = { padding: '.25em .5em' };
 
 export interface Params {
+    thumbnails?: boolean;
     browserHistory?: boolean;
     slideShow?: true,
 }
@@ -33,11 +35,6 @@ export class Gallery extends Component {
     protected right: HTMLElement;
     private transitionCanvas: Canvas;
     private loading: Loading;
-    protected thumbnails: Thumbnails;
-    private toggleThumbnailsIcon: HTMLElement;
-    private toggleFullScreenThumbnailsIcon: HTMLElement;
-    private thumbnailsVisible: boolean;
-    private fullScreenThumbnails: boolean;
 
     constructor(albums: Array<Album>, params: Params = {}) {
         super();
@@ -83,38 +80,17 @@ export class Gallery extends Component {
             position: 'absolute',
             zIndex: '1',
         })
-        this.thumbnailsVisible = true;
-        this.thumbnails = new Thumbnails({ thumbOnClick: item => {
-            if (this.fullScreenThumbnails) {
-                this.disableFullScreenThumbnails();
-            }
-            this.goToItem(item);
-        } });
-        this.thumbnails.appendStyle({
-            position: 'relative',
-            zIndex: '1',
-        });
-        this.thumbnails.setAlbum(this.album);
-        this.toggleThumbnailsIcon = iconEllipsisHorizontal(iconStyle);
-        this.toggleThumbnailsIcon.addEventListener('click', () => this.toggleThumbnails());
-        this.toggleFullScreenThumbnailsIcon = iconGrid(iconStyle);
-        this.toggleFullScreenThumbnailsIcon.addEventListener('click', () => this.toggleFullScreenThumbnails());
         this.controlsElement = createElement(`<div></div>`, {
             style: {
                 padding: '10px',
                 position: 'relative',
                 zIndex: '1',
             },
-            children: [
-                this.toggleFullScreenThumbnailsIcon,
-                this.toggleThumbnailsIcon,
-            ]
         });
         this.element = createElement(`<div class="${css.gallery}"></div>`, {
             children: [
                 this.previewElement,
                 this.controlsElement,
-                this.thumbnails.getElement(),
             ]
         });
         window.addEventListener('resize', () => this.refreshTransitionCanvasDimensions());
@@ -131,10 +107,11 @@ export class Gallery extends Component {
     static create(albums: Array<Album>, params: Params = {}): Gallery {
         const decorators: GalleryDecorator[] = [];
 
-        params = { browserHistory: true, slideShow: true, ...params };
+        params = { browserHistory: true, slideShow: true, thumbnails: true, ...params };
 
         if (params.browserHistory) decorators.push(withBrowserHistory);
         if (params.slideShow) decorators.push(withSlideShow);
+        if (params.thumbnails) decorators.push(withThumbnails);
 
         decorators.push(withPreviewSizeChanger, withAlbumsMenu);
 
@@ -218,7 +195,6 @@ export class Gallery extends Component {
     }
 
     protected async goToItem(item: AlbumItem) {
-        this.thumbnails.setActive(this.album.items.indexOf(item));
         this.showTransitionCanvas();
         this.item && await fadeIn(this.transitionCanvas);
         this.showLoading();
@@ -232,40 +208,8 @@ export class Gallery extends Component {
     }
 
     protected async goToAlbum(value: number) {
-        this.thumbnails.setAlbum(this.albums[value]);
         this.album = this.albums[value];
         return this.goToItem(this.album.items[0]);
-    }
-
-    private disableFullScreenThumbnails() {
-        this.fullScreenThumbnails = false;
-        this.thumbnails.disableWrap();
-    }
-
-    private toggleFullScreenThumbnails() {
-        this.fullScreenThumbnails ? this.disableFullScreenThumbnails() : this.enableFullScreenThumbnails();
-    }
-
-    protected enableFullScreenThumbnails() {
-        this.fullScreenThumbnails = true;
-        this.showThumbnails();
-        this.thumbnails.enableWrap();
-    }
-
-    private hideThumbnails() {
-        this.thumbnailsVisible = false;
-        this.element.removeChild(this.thumbnails.getElement());
-        this.disableFullScreenThumbnails();
-    }
-
-    private toggleThumbnails() {
-        this.thumbnailsVisible ? this.hideThumbnails() : this.showThumbnails();
-    }
-
-    private showThumbnails() {
-        this.thumbnailsVisible = true;
-        this.element.appendChild(this.thumbnails.getElement());
-        this.thumbnails.scrollToActiveItem();
     }
 }
 

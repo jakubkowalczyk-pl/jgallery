@@ -38,7 +38,6 @@ const withSlideShow: GalleryDecorator = (constructor) =>
                 },
             });
             [this.left, this.right].forEach(element => element.addEventListener('click', () => this.stopSlideshow()));
-            this.thumbnails.addThumbClickListener(() => this.stopSlideshow());
             this.slideShowIcons = createElement('<span/>', {
                 children: [this.playSlideshowIcon]
             });
@@ -73,11 +72,6 @@ const withSlideShow: GalleryDecorator = (constructor) =>
         protected stopSlideshow() {
             this.pauseSlideshow();
             this.progressBar.reset();
-        }
-
-        protected enableFullScreenThumbnails() {
-            this.stopSlideshow();
-            return super.enableFullScreenThumbnails()
         }
     };
 
