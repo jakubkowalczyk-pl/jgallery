@@ -14,8 +14,6 @@ const withAlbumsMenu: GalleryDecorator = (constructor) =>
                 }
             }).getElement();
 
-            element.style.fontSize = '.8em';
-
             this.appendControlsElements([element]);
         }
     };

@@ -13,7 +13,7 @@ import Swipe from '../swipe';
 import withSlideShow from "./with-slideshow";
 import withThumbnails from "./with-thumbnails";
 
-const iconStyle = { padding: '.25em .5em' };
+const iconStyle = { padding: '.25em .5em', fontSize: '1.2em' };
 
 export interface Params {
     thumbnails?: boolean;
@@ -248,7 +248,7 @@ style.innerHTML = `
         right: 0;
         position: absolute;
     }
-    
+
     .j-gallery *::-webkit-scrollbar-thumb {
         background: #ffffff44;
     }

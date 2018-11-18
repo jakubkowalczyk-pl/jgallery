@@ -11,7 +11,7 @@ const defaultIconStyle: Partial<CSSStyleDeclaration> = {
 };
 
 const dot = (style: Partial<CSSStyleDeclaration> = {}) => createElement(
-    `<span style="width: 1em; height: 1em; display: inline-block; background: #fff; margin: 1px"></span>`,
+    `<span style="width: 4px; height: 4px; display: inline-block; background: #fff; margin: 1px"></span>`,
     { style }
 );
 
@@ -50,7 +50,7 @@ export const iconEllipsisHorizontal = (style: Partial<CSSStyleDeclaration> =  {}
         ...defaultIconStyle,
         ...style,
     },
-    children: [dot({ fontSize: '.2em' }), dot({ fontSize: '.2em' }), dot({ fontSize: '.2em' })]
+    children: [dot(), dot(), dot()]
 });
 
 export const iconPause = (style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span></span>`, {
@@ -63,8 +63,6 @@ export const iconPause = (style: Partial<CSSStyleDeclaration> =  {}) => createEl
 });
 
 export const iconGrid = (style: Partial<CSSStyleDeclaration> =  {}) => {
-    const dotStyle = { width: '.2em', height: '.2em' };
-
     return createElement(`<span></span>`, {
         style: {
             ...defaultIconStyle,
@@ -73,9 +71,9 @@ export const iconGrid = (style: Partial<CSSStyleDeclaration> =  {}) => {
             ...style,
         },
         children: [
-            dot(dotStyle), dot(dotStyle), dot(dotStyle),
-            dot(dotStyle), dot(dotStyle), dot(dotStyle),
-            dot(dotStyle), dot(dotStyle), dot(dotStyle),
+            dot(), dot(), dot(),
+            dot(), dot(), dot(),
+            dot(), dot(), dot(),
         ]
     });
 };
