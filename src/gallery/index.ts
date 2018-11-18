@@ -138,9 +138,16 @@ export class Gallery extends Component {
     }
 
     protected goToItemByCurrentHash() {
-        return this.goToItem(
-            this.findItemByCurrentHash()
+        const item = this.findItemByCurrentHash();
+
+        return this.goToAlbum(
+            this.albums.indexOf(this.findAlbumByAlbumItem(item)),
+            item,
         );
+    }
+
+    private findAlbumByAlbumItem(item: AlbumItem) {
+        return this.albums.find(album => !!album.items.includes(item));
     }
 
     protected findItemByCurrentHash(): AlbumItem {
@@ -222,9 +229,9 @@ export class Gallery extends Component {
         this.item = item;
     }
 
-    protected async goToAlbum(value: number) {
+    protected async goToAlbum(value: number, item?: AlbumItem) {
         this.album = this.albums[value];
-        return this.goToItem(this.album.items[0]);
+        return this.goToItem(item || this.album.items[0]);
     }
 }
 

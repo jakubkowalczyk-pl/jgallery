@@ -7,14 +7,17 @@ const withAlbumsMenu: GalleryDecorator = (constructor) =>
         constructor(albums: AlbumItem[], params: Params) {
             super(albums, params);
 
-            const element = new Dropdown({
+            const dropdown = new Dropdown({
                 items: this.albums.map(album => album.title),
                 onChange: value => {
                     this.goToAlbum(value);
                 }
-            }).getElement();
+            });
 
-            this.appendControlsElements([element]);
+            this.appendControlsElements([dropdown.getElement()]);
+            requestAnimationFrame(() => {
+                dropdown.setActive(this.albums.indexOf(this.album));
+            });
         }
     };
 

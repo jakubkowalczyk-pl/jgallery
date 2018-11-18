@@ -11,7 +11,7 @@ const loadImg = (src: string) => new Promise<void>((resolve, reject) => {
 });
 
 const loadElement = (element: HTMLElement) => Promise.all<void>(
-    [element, ...element.querySelectorAll('*')]
+    [element, Array.from(element.querySelectorAll('*'))]
         .reduce<Promise<void>[]>((paths, element: HTMLElement) => {
             if (element instanceof Image) {
                 paths.push(loadImg(element.getAttribute('src')));
