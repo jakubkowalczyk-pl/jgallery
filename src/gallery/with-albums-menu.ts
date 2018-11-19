@@ -9,6 +9,8 @@ const withAlbumsMenu: GalleryDecorator = (constructor) =>
 
             const dropdown = new Dropdown({
                 items: this.albums.map(album => album.title),
+                textColor: params.textColor,
+                backgroundColor: params.backgroundColor,
                 onChange: value => {
                     this.goToAlbum(value);
                 }

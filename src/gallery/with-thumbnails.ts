@@ -16,23 +16,26 @@ const withThumbnails: GalleryDecorator = (constructor) =>
             super(albums, params);
 
             this.thumbnailsVisible = true;
-            this.thumbnails = new Thumbnails({ thumbOnClick: item => {
-                if (this.stopSlideShow) {
-                    this.stopSlideShow();
+            this.thumbnails = new Thumbnails({
+                textColor: params.textColor,
+                thumbOnClick: item => {
+                    if (this.stopSlideShow) {
+                        this.stopSlideShow();
+                    }
+                    if (this.fullScreenThumbnails) {
+                        this.disableFullScreenThumbnails();
+                    }
+                    this.goToItem(item);
                 }
-                if (this.fullScreenThumbnails) {
-                    this.disableFullScreenThumbnails();
-                }
-                this.goToItem(item);
-            } });
+            });
             this.thumbnails.appendStyle({
                 position: 'relative',
                 zIndex: '1',
             });
             this.thumbnails.setAlbum(this.album);
-            this.toggleThumbnailsIcon = iconEllipsisHorizontal();
+            this.toggleThumbnailsIcon = iconEllipsisHorizontal({ color: params.textColor });
             this.toggleThumbnailsIcon.addEventListener('click', () => this.toggleThumbnails());
-            this.toggleFullScreenThumbnailsIcon = iconGrid();
+            this.toggleFullScreenThumbnailsIcon = iconGrid({ color: params.textColor });
             this.toggleFullScreenThumbnailsIcon.addEventListener('click', () => this.toggleFullScreenThumbnails());
             this.appendControlsElements([
                 this.toggleFullScreenThumbnailsIcon,

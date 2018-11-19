@@ -11,16 +11,17 @@ const withSlideShow: GalleryDecorator = (constructor) =>
         private pauseSlideShowIcon: HTMLElement;
         private slideShowRunning: boolean;
         private progressBar: ProgressBar;
-        
+
         constructor(albums: AlbumItem[], params: Params) {
             super(albums, params);
             this.slideShowRunning = false;
-            this.playSlideShowIcon = iconPlay();
+            this.playSlideShowIcon = iconPlay({ color: params.textColor });
             this.playSlideShowIcon.addEventListener('click', () => this.playSlideShow());
-            this.pauseSlideShowIcon = iconPause();
+            this.pauseSlideShowIcon = iconPause({ color: params.textColor });
             this.pauseSlideShowIcon.addEventListener('click', () => this.pauseSlideShow());
             this.progressBar = new ProgressBar({
                 duration: 4000,
+                color: params.textColor,
                 onEnd: async () => {
                     this.progressBar.pause();
                     this.progressBar.setValue(0);

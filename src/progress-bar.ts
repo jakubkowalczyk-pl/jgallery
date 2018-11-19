@@ -5,6 +5,7 @@ import Animation from './animation';
 interface Params {
     duration: number;
     onEnd: () => any;
+    color: string;
     style?: Partial<CSSStyleDeclaration>;
 }
 
@@ -14,7 +15,7 @@ export default class ProgressBar extends Component {
     private duration: number;
     private onEnd: () => any;
 
-    constructor({ duration, onEnd, style = {} }: Params) {
+    constructor({ duration, onEnd, color, style = {} }: Params) {
         super();
         this.duration = duration;
         this.onEnd = onEnd;
@@ -23,7 +24,7 @@ export default class ProgressBar extends Component {
         `);
         this.appendStyle({
             height: '1px',
-            background: '#fff',
+            background: color,
             ...style,
         });
         this.animation = new Animation({

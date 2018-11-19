@@ -10,11 +10,12 @@ export interface ThumbOnClick {
 
 interface Params {
     item: AlbumItem,
+    textColor: string;
     onClick: ThumbOnClick
 }
 
 export default class Thumbnail extends Component {
-    constructor({ item, onClick }: Params) {
+    constructor({ item, onClick, textColor }: Params) {
         super();
 
         const content: HTMLElement = createElement(
@@ -29,7 +30,7 @@ export default class Thumbnail extends Component {
                 height: '64px',
                 marginRight: '5px',
                 marginBottom: '5px',
-                color: '#fff',
+                color: textColor,
                 overflow: 'hidden',
                 cursor: 'pointer',
                 alignItems: 'center',
@@ -40,7 +41,7 @@ export default class Thumbnail extends Component {
                 position: 'relative',
             }
         });
-        this.element.appendChild((new Loading({ style: { fontSize: '.5em'} })).getElement());
+        this.element.appendChild((new Loading({ style: { fontSize: '.5em'}, color: textColor })).getElement());
         this.element.addEventListener('click', () => onClick(item));
         load(content).then(() => {
             this.element.innerHTML = '';

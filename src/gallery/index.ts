@@ -18,7 +18,9 @@ const iconStyle = { padding: '.25em .5em', fontSize: '1.2em' };
 export interface Params {
     thumbnails?: boolean;
     browserHistory?: boolean;
-    slideShow?: true,
+    slideShow?: true;
+    backgroundColor?: string;
+    textColor?: string;
 }
 
 export class Gallery extends Component {
@@ -32,12 +34,14 @@ export class Gallery extends Component {
     protected right: HTMLElement;
     private transitionCanvas: Canvas;
     private loading: Loading;
+    private params: Params;
 
     constructor(albums: Array<Album>, params: Params = {}) {
         super();
+        this.params = params;
         this.albums = albums;
         this.album = albums[0];
-        this.loading = new Loading;
+        this.loading = new Loading({ color: params.textColor });
         this.goToItem = this.goToItem.bind(this);
         this.next = this.next.bind(this);
         this.prev = this.prev.bind(this);
@@ -93,8 +97,8 @@ export class Gallery extends Component {
             style: {
                 height: '100vh',
                 padding: '10px',
-                background: '#000',
-                color: '#fff',
+                background: params.backgroundColor,
+                color: params.textColor,
                 boxSizing: 'border-box',
                 position: 'relative',
                 flexDirection: 'column',
@@ -122,7 +126,7 @@ export class Gallery extends Component {
     static create(albums: Array<Album>, params: Params = {}): Gallery {
         const decorators: GalleryDecorator[] = [];
 
-        params = { browserHistory: true, slideShow: true, thumbnails: true, ...params };
+        params = { browserHistory: true, slideShow: true, thumbnails: true, backgroundColor: '#000', textColor: '#fff', ...params };
 
         if (params.browserHistory) decorators.push(withBrowserHistory);
         if (params.slideShow) decorators.push(withSlideShow);
@@ -218,12 +222,12 @@ export class Gallery extends Component {
 
     protected async goToItem(item: AlbumItem) {
         this.showTransitionCanvas();
-        this.item && await fadeIn(this.transitionCanvas);
+        this.item && await fadeIn(this.transitionCanvas, {backgroundColor: this.params.backgroundColor});
         this.showLoading();
         await this.preview.setItem(item);
         this.hideLoading();
         this.transitionCanvas.clearLayers();
-        await fadeIn(this.transitionCanvas, { reverse: true });
+        await fadeIn(this.transitionCanvas, {reverse: true, backgroundColor: this.params.backgroundColor });
         this.transitionCanvas.clearLayers();
         this.hideTransitionCanvas();
         this.item = item;

@@ -3,10 +3,11 @@ import Canvas from '../index';
 import Layer from '../layer';
 
 interface Params {
+    backgroundColor: string;
     reverse?: boolean;
 }
 
-const fadeIn = (canvas: Canvas, params: Params = {}) => {
+const fadeIn = (canvas: Canvas, params: Params = { backgroundColor: '#000' }) => {
     params = {reverse: false, ...params};
 
     return new Promise(resolve => {
@@ -17,7 +18,7 @@ const fadeIn = (canvas: Canvas, params: Params = {}) => {
                 translateX: x + 10,
                 centerX: -.5,
                 height: canvas.element.height,
-                fillStyle: 'black',
+                fillStyle: params.backgroundColor,
             }));
         }
 

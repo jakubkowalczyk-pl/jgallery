@@ -8,7 +8,7 @@ const withPreviewSizeChanger: GalleryDecorator = (constructor) =>
 
         constructor(albums: AlbumItem[], params: Params) {
             super(albums, params);
-            this.changePreviewSizeIcon = iconScreen();
+            this.changePreviewSizeIcon = iconScreen({ color: params.textColor });
             this.changePreviewSizeIcon.addEventListener('click', () => this.changePreviewSize());
             this.appendControlsElements([this.changePreviewSizeIcon]);
         }

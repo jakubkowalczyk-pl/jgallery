@@ -11,11 +11,11 @@ const defaultIconStyle: Partial<CSSStyleDeclaration> = {
 };
 
 const dot = (style: Partial<CSSStyleDeclaration> = {}) => createElement(
-    `<span style="width: 4px; height: 4px; display: inline-block; background: #fff; margin: 1px"></span>`,
+    `<span style="width: 4px; height: 4px; display: inline-block; margin: 1px"></span>`,
     { style }
 );
 
-export const iconPlay = (style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span></span>`, {
+export const iconPlay = ({color}:{color:string}, style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span></span>`, {
     style: {
         ...defaultIconStyle,
         ...style,
@@ -23,13 +23,13 @@ export const iconPlay = (style: Partial<CSSStyleDeclaration> =  {}) => createEle
     children: [createElement(`<span></span>`, {
         style: {
             border: 'solid',
-            borderColor: 'transparent transparent transparent #fff',
+            borderColor: `transparent transparent transparent ${color}`,
             borderWidth: '.4em 0 .4em .7em',
         }
     })]
 });
 
-export const iconScreen = (style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span></span>`, {
+export const iconScreen = ({color}:{color:string}, style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span></span>`, {
     style: {
         ...defaultIconStyle,
         ...style,
@@ -38,31 +38,31 @@ export const iconScreen = (style: Partial<CSSStyleDeclaration> =  {}) => createE
         style: {
             width: '1em',
             height: '.8em',
-            border: 'solid #fff',
+            border: `solid ${color}`,
             borderWidth: '.2em .1em',
             boxSizing: 'border-box',
         }
     })]
 });
 
-export const iconEllipsisHorizontal = (style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span></span>`, {
+export const iconEllipsisHorizontal = ({color}:{color:string}, style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span></span>`, {
     style: {
         ...defaultIconStyle,
         ...style,
     },
-    children: [dot(), dot(), dot()]
+    children: [dot({background: color}), dot({background: color}), dot({background: color})]
 });
 
-export const iconPause = (style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span></span>`, {
+export const iconPause = ({color}:{color:string}, style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span></span>`, {
     style: {
         ...defaultIconStyle,
         justifyContent: 'space-between',
         ...style,
     },
-    children: [dot({ width: '.35em', height: '.9em' }), dot({ width: '.35em', height: '.9em' })]
+    children: [dot({ width: '.35em', height: '.9em', background: color }), dot({ width: '.35em', height: '.9em', background: color })]
 });
 
-export const iconGrid = (style: Partial<CSSStyleDeclaration> =  {}) => {
+export const iconGrid = ({color}:{color:string}, style: Partial<CSSStyleDeclaration> =  {}) => {
     return createElement(`<span></span>`, {
         style: {
             ...defaultIconStyle,
@@ -71,9 +71,9 @@ export const iconGrid = (style: Partial<CSSStyleDeclaration> =  {}) => {
             ...style,
         },
         children: [
-            dot(), dot(), dot(),
-            dot(), dot(), dot(),
-            dot(), dot(), dot(),
+            dot({background: color}), dot({background: color}), dot({background: color}),
+            dot({background: color}), dot({background: color}), dot({background: color}),
+            dot({background: color}), dot({background: color}), dot({background: color}),
         ]
     });
 };

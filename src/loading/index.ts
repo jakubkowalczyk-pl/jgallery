@@ -2,27 +2,31 @@ import createElement from '../utils/create-element/index';
 import Component from '../component';
 
 interface Params {
+    color: string;
     style?: Partial<CSSStyleDeclaration>;
 }
 
 export default class Loading extends Component {
-    constructor(params: Params = {}) {
+    constructor(params: Params = { color: '#fff' }) {
         super();
         params = { style: {}, ...params };
+
+        const { color } = params;
+
         this.element = createElement(`
             <span style="display: inline-flex">
             </span>
         `, {
             style: params.style,
             children: [
-                item({ animationDelay: '-.375s' }),
-                item({ animationDelay: '-.250s' }),
-                item({ animationDelay: '-.125s' }),
-                item(),
-                item(),
-                item({ animationDelay: '-.125s' }),
-                item({ animationDelay: '-.250s' }),
-                item({ animationDelay: '-.375s' }),
+                item({ animationDelay: '-.375s', background: color }),
+                item({ animationDelay: '-.250s', background: color }),
+                item({ animationDelay: '-.125s', background: color }),
+                item({ background: color }),
+                item({ background: color }),
+                item({ animationDelay: '-.125s', background: color }),
+                item({ animationDelay: '-.250s', background: color }),
+                item({ animationDelay: '-.375s', background: color }),
             ],
         });
     }
@@ -33,7 +37,6 @@ const item = (style: Partial<CSSStyleDeclaration> = {}) => {
         style: {
             width: '1em',
             height: '1em',
-            background: '#fff',
             animation: 'jGalleryLoading .5s linear infinite alternate',
             display: 'inline-block',
             ...style,
@@ -49,7 +52,7 @@ style.innerHTML = `
             transform: scaleX(0);
             opacity: 1;
         }
-    
+
         100% {
             transform: scaleX(1);
             opacity: 1;
