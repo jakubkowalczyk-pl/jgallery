@@ -26,6 +26,7 @@ export interface Params {
     autostartAtAlbum?: number;
     autostartAtItem?: number;
     canMinimalizeThumbnails?: boolean;
+    canChangePreviewSize?: boolean;
 }
 
 const defaults: Params = {
@@ -37,6 +38,7 @@ const defaults: Params = {
     autostartAtAlbum: 1,
     autostartAtItem: 1,
     canMinimalizeThumbnails: true,
+    canChangePreviewSize: true,
 }
 
 export class Gallery extends Component {
@@ -165,8 +167,8 @@ export class Gallery extends Component {
         if (params.browserHistory) decorators.push(withBrowserHistory);
         if (params.slideShow) decorators.push(withSlideShow);
         if (params.thumbnails) decorators.push(withThumbnails);
-
-        decorators.push(withPreviewSizeChanger, withAlbumsMenu);
+        if (params.canChangePreviewSize) decorators.push(withPreviewSizeChanger);
+        if (albums.length > 1) decorators.push(withAlbumsMenu);
 
         return new (compose(decorators, Gallery))(albums, params);
     }
