@@ -15,6 +15,8 @@ import withThumbnails from "./with-thumbnails";
 
 const iconStyle = { padding: '.25em .5em', fontSize: '1.2em' };
 
+let id = 1;
+
 export interface Params {
     thumbnails?: boolean;
     browserHistory?: boolean;
@@ -45,6 +47,24 @@ export class Gallery extends Component {
         this.goToItem = this.goToItem.bind(this);
         this.next = this.next.bind(this);
         this.prev = this.prev.bind(this);
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .j-gallery-${id} ::-webkit-scrollbar {
+                height: 1em;
+                background: transparent;
+                top: 0;
+                left: 0;
+                right: 0;
+                position: absolute;
+            }
+
+            .j-gallery-${id} *::-webkit-scrollbar-thumb {
+                background: ${params.textColor};
+            }
+        `;
+        if (typeof document !== 'undefined') {
+            document.querySelector('head').appendChild(style);
+        }
         this.controlsElement = createElement(`<div></div>`, {
 
         });
@@ -89,7 +109,7 @@ export class Gallery extends Component {
             },
         });
         this.element = createElement(`
-            <div class="j-gallery"></div>`, {
+            <div class="j-gallery j-gallery-${id++}"></div>`, {
             children: [
                 this.previewElement,
                 this.controlsElement,
@@ -248,22 +268,3 @@ const compose = (decorators: GalleryDecorator[], constructor: GalleryConstructor
 };
 
 export default Gallery;
-
-const style = document.createElement('style');
-style.innerHTML = `
-    .j-gallery ::-webkit-scrollbar {
-        height: 1em;
-        background: transparent;
-        top: 0;
-        left: 0;
-        right: 0;
-        position: absolute;
-    }
-
-    .j-gallery *::-webkit-scrollbar-thumb {
-        background: #ffffff44;
-    }
-`;
-if (typeof document !== 'undefined') {
-    document.querySelector('head').appendChild(style);
-}
