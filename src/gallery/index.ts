@@ -27,6 +27,7 @@ export interface Params {
     autostartAtItem?: number;
     canMinimalizeThumbnails?: boolean;
     canChangePreviewSize?: boolean;
+    thumbnailsVisible?: boolean;
 }
 
 const defaults: Params = {
@@ -39,6 +40,7 @@ const defaults: Params = {
     autostartAtItem: 1,
     canMinimalizeThumbnails: true,
     canChangePreviewSize: true,
+    thumbnailsVisible: true,
 }
 
 export class Gallery extends Component {

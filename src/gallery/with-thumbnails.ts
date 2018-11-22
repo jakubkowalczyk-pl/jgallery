@@ -43,7 +43,9 @@ const withThumbnails: GalleryDecorator = (constructor) =>
                     this.toggleThumbnailsIcon,
                 ]);
             }
-            this.element.appendChild(this.thumbnails.getElement());
+            if (this.params.thumbnailsVisible) {
+                this.element.appendChild(this.thumbnails.getElement());
+            }
         }
 
         protected async goToItem(item: AlbumItem) {
