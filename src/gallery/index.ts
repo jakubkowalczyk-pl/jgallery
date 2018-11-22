@@ -25,6 +25,7 @@ export interface Params {
     textColor?: string;
     autostartAtAlbum?: number;
     autostartAtItem?: number;
+    canMinimalizeThumbnails?: boolean;
 }
 
 const defaults: Params = {
@@ -35,6 +36,7 @@ const defaults: Params = {
     textColor: '#fff',
     autostartAtAlbum: 1,
     autostartAtItem: 1,
+    canMinimalizeThumbnails: true,
 }
 
 export class Gallery extends Component {
@@ -48,7 +50,7 @@ export class Gallery extends Component {
     protected right: HTMLElement;
     private transitionCanvas: Canvas;
     private loading: Loading;
-    private params: Params;
+    protected params: Params;
 
     constructor(albums: Array<Album>, params: Params = {}) {
         super();
