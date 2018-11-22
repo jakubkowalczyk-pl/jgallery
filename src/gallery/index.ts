@@ -23,6 +23,18 @@ export interface Params {
     slideShow?: true;
     backgroundColor?: string;
     textColor?: string;
+    autostartAtAlbum?: number;
+    autostartAtItem?: number;
+}
+
+const defaults: Params = {
+    browserHistory: true,
+    slideShow: true,
+    thumbnails: true,
+    backgroundColor: '#000',
+    textColor: '#fff',
+    autostartAtAlbum: 1,
+    autostartAtItem: 1,
 }
 
 export class Gallery extends Component {
@@ -42,7 +54,7 @@ export class Gallery extends Component {
         super();
         this.params = params;
         this.albums = albums;
-        this.album = albums[0];
+        this.album = albums[params.autostartAtAlbum-1];
         this.loading = new Loading({ color: params.textColor });
         this.goToItem = this.goToItem.bind(this);
         this.next = this.next.bind(this);
@@ -146,7 +158,7 @@ export class Gallery extends Component {
     static create(albums: Array<Album>, params: Params = {}): Gallery {
         const decorators: GalleryDecorator[] = [];
 
-        params = { browserHistory: true, slideShow: true, thumbnails: true, backgroundColor: '#000', textColor: '#fff', ...params };
+        params = { ...defaults, ...params };
 
         if (params.browserHistory) decorators.push(withBrowserHistory);
         if (params.slideShow) decorators.push(withSlideShow);
@@ -175,7 +187,7 @@ export class Gallery extends Component {
     }
 
     protected findItemByCurrentHash(): AlbumItem {
-        return this.findItemByHash(location.hash.replace('#','')) || this.album.items[0];
+        return this.findItemByHash(location.hash.replace('#', '')) || this.album.items[this.params.autostartAtItem-1];
     }
 
     protected appendControlsElements(elements: HTMLElement[]) {

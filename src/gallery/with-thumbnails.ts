@@ -50,10 +50,10 @@ const withThumbnails: GalleryDecorator = (constructor) =>
             return super.goToItem(item);
         }
 
-        protected async goToAlbum(value: number) {
+        protected async goToAlbum(value: number, ...args: any[]) {
             this.thumbnails.setAlbum(this.albums[value]);
 
-            return super.goToAlbum(value);
+            return super.goToAlbum(value, ...args);
         }
 
         private disableFullScreenThumbnails() {

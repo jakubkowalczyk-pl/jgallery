@@ -65,9 +65,9 @@ const withSlideShow: GalleryDecorator = (constructor) =>
             }
         }
 
-        protected async goToAlbum(value: number) {
+        protected async goToAlbum(arg: any, ...args: any[]) {
             this.stopSlideShow();
-            return super.goToAlbum(value);
+            return super.goToAlbum(arg, ...args);
         }
 
         protected stopSlideShow() {
