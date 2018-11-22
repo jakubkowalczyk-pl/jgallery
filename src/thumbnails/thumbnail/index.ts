@@ -21,7 +21,7 @@ export default class Thumbnail extends Component {
         const content: HTMLElement = createElement(
             item.thumbElement ?
             item.thumbElement.outerHTML :
-            `<img src="${item.thumbUrl}"/>`
+            `<img draggable="false" src="${item.thumbUrl}"/>`
         );
 
         this.element = createElement(`<span></span>`, {
