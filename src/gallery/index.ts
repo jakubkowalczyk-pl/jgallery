@@ -21,6 +21,7 @@ export interface Params {
     thumbnails?: boolean;
     browserHistory?: boolean;
     slideShow?: true;
+    slideShowAutoStart?: boolean;
     backgroundColor?: string;
     textColor?: string;
     autostartAtAlbum?: number;
@@ -33,6 +34,7 @@ export interface Params {
 const defaults: Params = {
     browserHistory: true,
     slideShow: true,
+    slideShowAutoStart: false,
     thumbnails: true,
     backgroundColor: '#000',
     textColor: '#fff',
