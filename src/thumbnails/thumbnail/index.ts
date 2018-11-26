@@ -50,4 +50,12 @@ export default class Thumbnail extends Component {
             this.element.appendChild(content);
         });
     }
+
+    setSize({ width, height }: { width: string; height: string }) {
+        Object.assign(this.element.style, {
+            width,
+            height,
+            flexBasis: width,
+        });
+    }
 }

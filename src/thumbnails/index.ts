@@ -69,6 +69,10 @@ export default class Thumbnails extends Component {
         this.scrollToActiveItem();
     }
 
+    setThumbnailSize({ width, height }: { width: string; height: string }) {
+        this.items.forEach(thumbnail => thumbnail.setSize({ width, height }));
+    }
+
     enableWrap() {
         this.content.style.flexWrap = 'wrap';
         this.scrollToActiveItem();

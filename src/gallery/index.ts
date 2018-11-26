@@ -31,6 +31,8 @@ export interface Params {
     thumbnailsVisible?: boolean;
     thumbnailWidth?: string;
     thumbnailHeight?: string;
+    thumbnailWidthOnFullScreen?: string;
+    thumbnailHeightOnFullScreen?: string;
 }
 
 const defaults: Params = {
@@ -47,6 +49,8 @@ const defaults: Params = {
     thumbnailsVisible: true,
     thumbnailWidth: '64px',
     thumbnailHeight: '64px',
+    thumbnailWidthOnFullScreen: '128px',
+    thumbnailHeightOnFullScreen: '128px',
 }
 
 export class Gallery extends Component {

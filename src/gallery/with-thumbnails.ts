@@ -64,6 +64,10 @@ const withThumbnails: GalleryDecorator = (constructor) =>
 
         private disableFullScreenThumbnails() {
             this.fullScreenThumbnails = false;
+            this.thumbnails.setThumbnailSize({
+                width: this.params.thumbnailWidth,
+                height: this.params.thumbnailHeight,
+            });
             this.thumbnails.disableWrap();
         }
 
@@ -76,6 +80,10 @@ const withThumbnails: GalleryDecorator = (constructor) =>
                 this.stopSlideShow();
             }
             this.fullScreenThumbnails = true;
+            this.thumbnails.setThumbnailSize({
+                width: this.params.thumbnailWidthOnFullScreen,
+                height: this.params.thumbnailHeightOnFullScreen,
+            });
             this.showThumbnails();
             this.thumbnails.enableWrap();
         }
