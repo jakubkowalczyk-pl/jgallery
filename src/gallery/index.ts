@@ -29,6 +29,7 @@ export interface Params {
     canMinimalizeThumbnails?: boolean;
     canChangePreviewSize?: boolean;
     thumbnailsVisible?: boolean;
+    thumbnailsFullScreen?: boolean;
     thumbnailWidth?: string;
     thumbnailHeight?: string;
     thumbnailWidthOnFullScreen?: string;
@@ -47,6 +48,7 @@ const defaults: Params = {
     canMinimalizeThumbnails: true,
     canChangePreviewSize: true,
     thumbnailsVisible: true,
+    thumbnailsFullScreen: true,
     thumbnailWidth: '64px',
     thumbnailHeight: '64px',
     thumbnailWidthOnFullScreen: '128px',

@@ -39,7 +39,9 @@ const withThumbnails: GalleryDecorator = (constructor) =>
             this.toggleThumbnailsIcon.addEventListener('click', () => this.toggleThumbnails());
             this.toggleFullScreenThumbnailsIcon = iconGrid({ color: params.textColor });
             this.toggleFullScreenThumbnailsIcon.addEventListener('click', () => this.toggleFullScreenThumbnails());
-            this.appendControlsElements([this.toggleFullScreenThumbnailsIcon]);
+            if (this.params.thumbnailsFullScreen) {
+                this.appendControlsElements([this.toggleFullScreenThumbnailsIcon]);
+            }
             if (this.params.canMinimalizeThumbnails) {
                 this.appendControlsElements([
                     this.toggleThumbnailsIcon,
