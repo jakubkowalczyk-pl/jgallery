@@ -148,19 +148,23 @@ export class Gallery extends Component {
         });
         window.addEventListener('resize', () => this.refreshTransitionCanvasDimensions());
         requestAnimationFrame(() => {
-            this.transitionCanvas = new Canvas({
-                width: this.element.clientWidth,
-                height: this.element.clientHeight
-            });
-            Object.assign(this.transitionCanvas.element.style, {
-                width: '100%',
-                height: '100%',
-                top: '0',
-                left: '0',
-                position: 'absolute',
-            });
-            this.goToItemByCurrentHash();
+            this.initialize();
         });
+    }
+
+    protected initialize() {
+        this.transitionCanvas = new Canvas({
+            width: this.element.clientWidth,
+            height: this.element.clientHeight
+        });
+        Object.assign(this.transitionCanvas.element.style, {
+            width: '100%',
+            height: '100%',
+            top: '0',
+            left: '0',
+            position: 'absolute',
+        });
+        this.goToItemByCurrentHash();
     }
 
     static create(albums: Array<Album>, params: Params = {}): Gallery {

@@ -13,13 +13,18 @@ const withBrowserHistory: GalleryDecorator = (constructor) =>
                 (<any>onhashchange)(event);
                 goToItem(this.findItemByCurrentHash());
             };
-            requestAnimationFrame(() => {
-                this.goToItem = async (item) => {
-                    history.pushState({jgallery: true}, '', `#${item.hash}`);
+        }
 
-                    return goToItem(item);
-                };
-            });
+        protected initialize() {
+            super.initialize();
+
+            const goToItem = this.goToItem.bind(this);
+
+            this.goToItem = async (item) => {
+                history.pushState({jgallery: true}, '', `#${item.hash}`);
+
+                return goToItem(item);
+            };
         }
     };
 

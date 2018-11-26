@@ -4,10 +4,12 @@ import AlbumItem from "../album-item";
 
 const withAlbumsMenu: GalleryDecorator = (constructor) =>
     class extends constructor {
+        private dropdown: Dropdown;
+
         constructor(albums: AlbumItem[], params: Params) {
             super(albums, params);
 
-            const dropdown = new Dropdown({
+            this.dropdown = new Dropdown({
                 items: this.albums.map(album => album.title),
                 textColor: params.textColor,
                 backgroundColor: params.backgroundColor,
@@ -16,10 +18,12 @@ const withAlbumsMenu: GalleryDecorator = (constructor) =>
                 }
             });
 
-            this.appendControlsElements([dropdown.getElement()]);
-            requestAnimationFrame(() => {
-                dropdown.setActive(this.albums.indexOf(this.album));
-            });
+            this.appendControlsElements([this.dropdown.getElement()]);
+        }
+
+        protected initialize() {
+            super.initialize();
+            this.dropdown.setActive(this.albums.indexOf(this.album));
         }
     };
 

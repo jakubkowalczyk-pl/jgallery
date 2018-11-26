@@ -47,8 +47,12 @@ const withSlideShow: GalleryDecorator = (constructor) =>
                 this.progressBar.getElement(),
             ]);
             this.progressBar.getElement().style.padding = '0';
+        }
+
+        protected initialize() {
+            super.initialize();
             if (this.params.slideShowAutoStart) {
-                requestAnimationFrame(() => this.playSlideShow());
+                this.playSlideShow();
             }
         }
 
