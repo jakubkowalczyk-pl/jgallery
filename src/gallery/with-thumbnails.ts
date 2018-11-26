@@ -17,6 +17,8 @@ const withThumbnails: GalleryDecorator = (constructor) =>
 
             this.thumbnailsVisible = true;
             this.thumbnails = new Thumbnails({
+                thumbnailWidth: params.thumbnailWidth,
+                thumbnailHeight: params.thumbnailHeight,
                 textColor: params.textColor,
                 thumbOnClick: item => {
                     if (this.stopSlideShow) {

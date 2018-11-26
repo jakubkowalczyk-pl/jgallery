@@ -7,6 +7,8 @@ import Thumbnail, {ThumbOnClick} from './thumbnail/index';
 
 interface Params {
     textColor: string;
+    thumbnailWidth: string;
+    thumbnailHeight: string;
     thumbOnClick: ThumbOnClick
 }
 
@@ -18,10 +20,14 @@ export default class Thumbnails extends Component {
     private content: HTMLElement;
     private scrollAnimations: Array<Animation>;
     private textColor: string;
+    private thumbnailWidth: string;
+    private thumbnailHeight: string;
 
-    constructor({ thumbOnClick = () => {}, textColor }: Params) {
+    constructor({ thumbOnClick = () => {}, textColor, thumbnailWidth, thumbnailHeight }: Params) {
         super();
         this.textColor = textColor;
+        this.thumbnailWidth = thumbnailWidth;
+        this.thumbnailHeight = thumbnailHeight;
         this.scrollAnimations = [];
         this.element = createElement('<div></div>', {
             style: {
@@ -46,6 +52,8 @@ export default class Thumbnails extends Component {
         this.items = album.items.map((item: AlbumItem) => new Thumbnail({
             item,
             textColor: this.textColor,
+            width: this.thumbnailWidth,
+            height: this.thumbnailHeight,
             onClick: item => this.thumbOnClick(item),
         }));
         this.content.innerHTML = '';

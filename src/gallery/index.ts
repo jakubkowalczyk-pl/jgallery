@@ -29,6 +29,8 @@ export interface Params {
     canMinimalizeThumbnails?: boolean;
     canChangePreviewSize?: boolean;
     thumbnailsVisible?: boolean;
+    thumbnailWidth?: string;
+    thumbnailHeight?: string;
 }
 
 const defaults: Params = {
@@ -43,6 +45,8 @@ const defaults: Params = {
     canMinimalizeThumbnails: true,
     canChangePreviewSize: true,
     thumbnailsVisible: true,
+    thumbnailWidth: '64px',
+    thumbnailHeight: '64px',
 }
 
 export class Gallery extends Component {

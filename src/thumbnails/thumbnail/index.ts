@@ -11,11 +11,13 @@ export interface ThumbOnClick {
 interface Params {
     item: AlbumItem,
     textColor: string;
-    onClick: ThumbOnClick
+    onClick: ThumbOnClick;
+    width: string;
+    height: string;
 }
 
 export default class Thumbnail extends Component {
-    constructor({ item, onClick, textColor }: Params) {
+    constructor({ item, onClick, textColor, width, height }: Params) {
         super();
 
         const content: HTMLElement = createElement(
@@ -26,8 +28,8 @@ export default class Thumbnail extends Component {
 
         this.element = createElement(`<span></span>`, {
             style: {
-                width: '64px',
-                height: '64px',
+                width,
+                height,
                 marginRight: '5px',
                 marginBottom: '5px',
                 color: textColor,
@@ -37,7 +39,7 @@ export default class Thumbnail extends Component {
                 justifyContent: 'center',
                 display: 'inline-flex',
                 boxSizing: 'border-box',
-                flex: '0 0 64px',
+                flex: `0 0 ${width}`,
                 position: 'relative',
             }
         });
