@@ -32,6 +32,8 @@ const withThumbnails: GalleryDecorator = (constructor) =>
             });
             this.thumbnails.appendStyle({
                 position: 'relative',
+                paddingLeft: this.params.thumbnailsPosition === 'right' ? '10px' : '0',
+                paddingRight: this.params.thumbnailsPosition === 'left' ? '10px' : '0',
                 zIndex: '1',
             });
             this.thumbnails.setAlbum(this.album);
@@ -47,8 +49,19 @@ const withThumbnails: GalleryDecorator = (constructor) =>
                     this.toggleThumbnailsIcon,
                 ]);
             }
+        }
+
+        protected initialize() {
+            super.initialize();
             if (this.params.thumbnailsVisible) {
-                this.element.appendChild(this.thumbnails.getElement());
+                this.showThumbnails();
+            }
+            if (['left', 'right'].includes(this.params.thumbnailsPosition)) {
+                this.element.style.flexDirection = 'row';
+                this.thumbnails.setContentStyle({
+                    flexDirection: 'column',
+                    justifyContent: 'flex-start',
+                });
             }
         }
 
@@ -70,6 +83,13 @@ const withThumbnails: GalleryDecorator = (constructor) =>
                 width: this.params.thumbnailWidth,
                 height: this.params.thumbnailHeight,
             });
+            this.previewElement.style.display = 'flex';
+            if (['left', 'right'].includes(this.params.thumbnailsPosition)) {
+                this.thumbnails.setContentStyle({
+                    flexDirection: ['left', 'right'].includes(this.params.thumbnailsPosition) ? 'column' : 'row',
+                });
+                this.thumbnails.getElement().style.flexBasis = 'auto';
+            }
             this.thumbnails.disableWrap();
         }
 
@@ -86,6 +106,13 @@ const withThumbnails: GalleryDecorator = (constructor) =>
                 width: this.params.thumbnailWidthOnFullScreen,
                 height: this.params.thumbnailHeightOnFullScreen,
             });
+            this.previewElement.style.display = 'none';
+            if (['left', 'right'].includes(this.params.thumbnailsPosition)) {
+                this.thumbnails.getElement().style.flexBasis = '100%';
+                this.thumbnails.setContentStyle({
+                    flexDirection: 'row',
+                });
+            }
             this.showThumbnails();
             this.thumbnails.enableWrap();
         }
@@ -102,9 +129,21 @@ const withThumbnails: GalleryDecorator = (constructor) =>
 
         private showThumbnails() {
             this.thumbnailsVisible = true;
-            this.element.appendChild(this.thumbnails.getElement());
+            switch (this.params.thumbnailsPosition) {
+                case 'top':
+                case 'left':
+                    this.element.insertBefore(
+                        this.thumbnails.getElement(),
+                        this.element.firstChild,
+                    );
+                    break;
+                default:
+                    this.element.appendChild(this.thumbnails.getElement());
+            }
             this.thumbnails.scrollToActiveItem();
         }
     };
+
+export type ThumbnailsPosition = 'top' | 'bottom' | 'left' | 'right';
 
 export default withThumbnails;

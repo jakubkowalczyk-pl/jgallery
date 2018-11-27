@@ -11,7 +11,7 @@ import Preview from '../preview/index';
 import AlbumItem from '../album-item';
 import Swipe from '../swipe';
 import withSlideShow from "./with-slideshow";
-import withThumbnails from "./with-thumbnails";
+import withThumbnails, {ThumbnailsPosition} from "./with-thumbnails";
 
 const iconStyle = { padding: '.25em .5em', fontSize: '1.2em' };
 
@@ -29,6 +29,7 @@ export interface Params {
     canMinimalizeThumbnails?: boolean;
     canChangePreviewSize?: boolean;
     thumbnailsVisible?: boolean;
+    thumbnailsPosition?: ThumbnailsPosition;
     thumbnailsFullScreen?: boolean;
     thumbnailWidth?: string;
     thumbnailHeight?: string;
@@ -48,6 +49,7 @@ const defaults: Params = {
     canMinimalizeThumbnails: true,
     canChangePreviewSize: true,
     thumbnailsVisible: true,
+    thumbnailsPosition: 'bottom',
     thumbnailsFullScreen: true,
     thumbnailWidth: '64px',
     thumbnailHeight: '64px',
@@ -60,7 +62,7 @@ export class Gallery extends Component {
     protected album: Album;
     private item: AlbumItem;
     protected preview: Preview;
-    private previewElement: HTMLElement;
+    protected previewElement: HTMLElement;
     private controlsElement: HTMLElement;
     protected left: HTMLElement;
     protected right: HTMLElement;
@@ -110,14 +112,22 @@ export class Gallery extends Component {
         this.right.addEventListener('click', () => {
             this.next();
         });
+        this.controlsElement = createElement(`<div></div>`, {
+            style: {
+                padding: '10px',
+                position: 'relative',
+                zIndex: '1',
+            },
+        });
         this.preview = new Preview;
         this.previewElement = createElement(`<div></div>`, {
             style: {
                 flex: '1',
                 display: 'flex',
+                flexDirection: 'column',
                 position: 'relative',
             },
-            children: [this.preview.getElement(), this.left, this.right]
+            children: [this.preview.getElement(), this.controlsElement, this.left, this.right]
         });
         (new Swipe({
             element: this.previewElement,
@@ -131,18 +141,10 @@ export class Gallery extends Component {
             position: 'absolute',
             zIndex: '1',
         })
-        this.controlsElement = createElement(`<div></div>`, {
-            style: {
-                padding: '10px',
-                position: 'relative',
-                zIndex: '1',
-            },
-        });
         this.element = createElement(`
             <div class="j-gallery j-gallery-${id++}"></div>`, {
             children: [
                 this.previewElement,
-                this.controlsElement,
             ],
             style: {
                 height: '100vh',

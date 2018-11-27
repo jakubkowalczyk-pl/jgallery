@@ -83,6 +83,10 @@ export default class Thumbnails extends Component {
         this.scrollToActiveItem();
     }
 
+    setContentStyle(style: Partial<CSSStyleDeclaration>) {
+        Object.assign(this.content.style, style);
+    }
+
     scrollToActiveItem() {
         const element = this.item.getElement();
 
