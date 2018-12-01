@@ -3,10 +3,11 @@ import createElement from './utils/create-element/index';
 const defaultIconStyle: Partial<CSSStyleDeclaration> = {
     display: 'inline-flex',
     cursor: 'pointer',
-    width: '1em',
-    height: '1em',
+    width: '32px',
+    height: '24px',
     verticalAlign: 'middle',
     alignItems: 'center',
+    boxSizing: 'border-box',
     justifyContent: 'center',
 };
 
@@ -68,6 +69,7 @@ export const iconGrid = ({color}:{color:string}, style: Partial<CSSStyleDeclarat
             ...defaultIconStyle,
             height: 'auto',
             flexWrap: 'wrap',
+            padding: '7px',
             ...style,
         },
         children: [

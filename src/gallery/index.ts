@@ -13,8 +13,6 @@ import Swipe from '../swipe';
 import withSlideShow from "./with-slideshow";
 import withThumbnails, {ThumbnailsPosition} from "./with-thumbnails";
 
-const iconStyle = { padding: '.25em .5em', fontSize: '1.2em' };
-
 let id = 1;
 
 export interface Params {
@@ -66,6 +64,7 @@ export class Gallery extends Component {
     private controlsElement: HTMLElement;
     protected left: HTMLElement;
     protected right: HTMLElement;
+    private title: HTMLElement;
     private transitionCanvas: Canvas;
     private loading: Loading;
     protected params: Params;
@@ -112,12 +111,23 @@ export class Gallery extends Component {
         this.right.addEventListener('click', () => {
             this.next();
         });
+        this.title = createElement('<div></div>', {
+            style: {
+                paddingRight: '10px',
+                order: '1',
+                textAlign: 'right',
+                flexGrow: '1',
+            }
+        });
         this.controlsElement = createElement(`<div></div>`, {
             style: {
-                padding: '10px',
+                padding: '5px 0',
                 position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
                 zIndex: '1',
             },
+            children: [this.title],
         });
         this.preview = new Preview;
         this.previewElement = createElement(`<div></div>`, {
@@ -216,7 +226,7 @@ export class Gallery extends Component {
 
     protected appendControlsElements(elements: HTMLElement[]) {
         elements.forEach(element => {
-            Object.assign(element.style, iconStyle);
+            Object.assign(element.style, { margin: '0 .25em' });
             this.controlsElement.appendChild(element);
         });
     }
@@ -281,6 +291,7 @@ export class Gallery extends Component {
         this.item && await fadeIn(this.transitionCanvas, {backgroundColor: this.params.backgroundColor});
         this.showLoading();
         await this.preview.setItem(item);
+        this.title.innerHTML = item.title || '';
         this.hideLoading();
         this.transitionCanvas.clearLayers();
         await fadeIn(this.transitionCanvas, {reverse: true, backgroundColor: this.params.backgroundColor });
