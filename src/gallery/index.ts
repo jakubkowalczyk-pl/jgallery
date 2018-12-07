@@ -20,6 +20,7 @@ export interface Params {
     browserHistory?: boolean;
     slideShow?: true;
     slideShowAutoStart?: boolean;
+    slideShowInterval?: number;
     backgroundColor?: string;
     textColor?: string;
     autostartAtAlbum?: number;
@@ -33,12 +34,24 @@ export interface Params {
     thumbnailHeight?: string;
     thumbnailWidthOnFullScreen?: string;
     thumbnailHeightOnFullScreen?: string;
+    tooltipChangeSize?: string;
+    tooltipSeeAllItems?: string;
+    tooltipSeeOtherAlbums?: string;
+    tooltipSlideShowStart?: string;
+    tooltipSlideShowPause?: string;
+    tooltipThumbnailsToggle?: string;
+    transitionDuration?: number;
+    onChange?: (p: { album: Album, item: AlbumItem, prevItem: AlbumItem }) => any;
+    itemOnHide?: (p: { album: Album, item: AlbumItem }) => any;
+    itemOnLoad?: (p: { album: Album, item: AlbumItem }) => any;
+    itemOnShow?: (p: { album: Album, item: AlbumItem }) => any;
 }
 
 const defaults: Params = {
     browserHistory: true,
     slideShow: true,
     slideShowAutoStart: false,
+    slideShowInterval: 4000,
     thumbnails: true,
     backgroundColor: '#000',
     textColor: '#fff',
@@ -53,6 +66,17 @@ const defaults: Params = {
     thumbnailHeight: '64px',
     thumbnailWidthOnFullScreen: '128px',
     thumbnailHeightOnFullScreen: '128px',
+    tooltipSeeOtherAlbums: 'See other albums',
+    tooltipChangeSize: 'Change size',
+    tooltipSeeAllItems: 'See all items',
+    tooltipSlideShowStart: 'Start slide show',
+    tooltipSlideShowPause: 'Pause slide show',
+    tooltipThumbnailsToggle: 'Toogle whumbnails',
+    transitionDuration: 500,
+    onChange: () => {},
+    itemOnHide: () => {},
+    itemOnLoad: () => {},
+    itemOnShow: () => {},
 }
 
 export class Gallery extends Component {
@@ -288,13 +312,17 @@ export class Gallery extends Component {
 
     protected async goToItem(item: AlbumItem) {
         this.showTransitionCanvas();
-        this.item && await fadeIn(this.transitionCanvas, {backgroundColor: this.params.backgroundColor});
+        this.params.onChange({ prevItem: this.item, item, album: this.album });
+        this.item && await fadeIn(this.transitionCanvas, {backgroundColor: this.params.backgroundColor, duration: this.params.transitionDuration});
         this.showLoading();
+        this.params.itemOnHide({ item: this.item, album: this.album });
         await this.preview.setItem(item);
+        this.params.itemOnLoad({ item, album: this.album });
         this.title.innerHTML = item.title || '';
         this.hideLoading();
         this.transitionCanvas.clearLayers();
-        await fadeIn(this.transitionCanvas, {reverse: true, backgroundColor: this.params.backgroundColor });
+        await fadeIn(this.transitionCanvas, {reverse: true, backgroundColor: this.params.backgroundColor, duration: this.params.transitionDuration });
+        this.params.itemOnShow({ item, album: this.album });
         this.transitionCanvas.clearLayers();
         this.hideTransitionCanvas();
         this.item = item;

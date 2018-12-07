@@ -57,7 +57,7 @@ export const iconEllipsisHorizontal = ({color}:{color:string}, style: Partial<CS
 export const iconPause = ({color}:{color:string}, style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span></span>`, {
     style: {
         ...defaultIconStyle,
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         ...style,
     },
     children: [dot({ width: '.35em', height: '.9em', background: color }), dot({ width: '.35em', height: '.9em', background: color })]

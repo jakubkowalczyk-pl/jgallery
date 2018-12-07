@@ -2,6 +2,7 @@ import {GalleryDecorator, Params} from './index';
 import AlbumItem from "../album-item";
 import Thumbnails from "../thumbnails/index";
 import {iconEllipsisHorizontal, iconGrid} from "../icons";
+import withTooltip from "../utils/with-tooltip";
 
 const withThumbnails: GalleryDecorator = (constructor) =>
     class extends constructor {
@@ -34,12 +35,25 @@ const withThumbnails: GalleryDecorator = (constructor) =>
                 position: 'relative',
                 paddingLeft: this.params.thumbnailsPosition === 'right' ? '10px' : '0',
                 paddingRight: this.params.thumbnailsPosition === 'left' ? '10px' : '0',
-                zIndex: '1',
             });
             this.thumbnails.setAlbum(this.album);
-            this.toggleThumbnailsIcon = iconEllipsisHorizontal({ color: params.textColor });
+            this.toggleThumbnailsIcon = withTooltip(iconEllipsisHorizontal({ color: params.textColor }), {
+                style: {
+                    color: params.backgroundColor,
+                    background: params.textColor,
+                    transform: 'translateY(-8px)',
+                },
+                content: params.tooltipThumbnailsToggle,
+            });
             this.toggleThumbnailsIcon.addEventListener('click', () => this.toggleThumbnails());
-            this.toggleFullScreenThumbnailsIcon = iconGrid({ color: params.textColor });
+            this.toggleFullScreenThumbnailsIcon = withTooltip(iconGrid({ color: params.textColor }), {
+                style: {
+                    color: params.backgroundColor,
+                    background: params.textColor,
+                    transform: 'translateY(-4px)',
+                },
+                content: params.tooltipSeeAllItems,
+            });
             this.toggleFullScreenThumbnailsIcon.addEventListener('click', () => this.toggleFullScreenThumbnails());
             if (this.params.thumbnailsFullScreen) {
                 this.appendControlsElements([this.toggleFullScreenThumbnailsIcon]);

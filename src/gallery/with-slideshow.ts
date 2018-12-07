@@ -3,6 +3,7 @@ import {GalleryDecorator, Params} from './index';
 import AlbumItem from "../album-item";
 import ProgressBar from "../progress-bar";
 import {iconPause, iconPlay} from "../icons";
+import withTooltip from "../utils/with-tooltip";
 
 const withSlideShow: GalleryDecorator = (constructor) =>
     class extends constructor {
@@ -15,12 +16,26 @@ const withSlideShow: GalleryDecorator = (constructor) =>
         constructor(albums: AlbumItem[], params: Params) {
             super(albums, params);
             this.slideShowRunning = false;
-            this.playSlideShowIcon = iconPlay({ color: params.textColor });
+            this.playSlideShowIcon = withTooltip(iconPlay({ color: params.textColor }), {
+                style: {
+                    color: params.backgroundColor,
+                    background: params.textColor,
+                    transform: 'translateY(-8px)',
+                },
+                content: params.tooltipSlideShowStart,
+            });
             this.playSlideShowIcon.addEventListener('click', () => this.playSlideShow());
-            this.pauseSlideShowIcon = iconPause({ color: params.textColor });
+            this.pauseSlideShowIcon = withTooltip(iconPause({ color: params.textColor }), {
+                style: {
+                    color: params.backgroundColor,
+                    background: params.textColor,
+                    transform: 'translateY(-8px)',
+                },
+                content: params.tooltipSlideShowPause,
+            });
             this.pauseSlideShowIcon.addEventListener('click', () => this.pauseSlideShow());
             this.progressBar = new ProgressBar({
-                duration: 4000,
+                duration: params.slideShowInterval,
                 color: params.textColor,
                 onEnd: async () => {
                     this.progressBar.pause();

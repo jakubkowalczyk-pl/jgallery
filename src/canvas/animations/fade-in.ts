@@ -5,6 +5,7 @@ import Layer from '../layer';
 interface Params {
     backgroundColor: string;
     reverse?: boolean;
+    duration?: number;
 }
 
 const fadeIn = (canvas: Canvas, params: Params = { backgroundColor: '#000' }) => {
@@ -24,8 +25,9 @@ const fadeIn = (canvas: Canvas, params: Params = { backgroundColor: '#000' }) =>
 
         canvas.addLayers(layers);
         canvas.addAnimations([new Animation({
-            initialValue: +params.reverse - 0,
+            initialValue: +params.reverse,
             finalValue: 1 - +params.reverse,
+            duration: params.duration,
             onChange: value => {
                 const halfWidth = canvas.element.width >> 1;
 

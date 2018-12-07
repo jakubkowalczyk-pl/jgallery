@@ -1,6 +1,8 @@
 import Dropdown from "../dropdown/index";
 import {GalleryDecorator, Params} from './index';
 import AlbumItem from "../album-item";
+import withTooltip from "../utils/with-tooltip";
+import createElement from "../utils/create-element";
 
 const withAlbumsMenu: GalleryDecorator = (constructor) =>
     class extends constructor {
@@ -8,6 +10,8 @@ const withAlbumsMenu: GalleryDecorator = (constructor) =>
 
         constructor(albums: AlbumItem[], params: Params) {
             super(albums, params);
+
+            const container = createElement('<span/>');
 
             this.dropdown = new Dropdown({
                 items: this.albums.map(album => album.title),
@@ -18,7 +22,17 @@ const withAlbumsMenu: GalleryDecorator = (constructor) =>
                 }
             });
 
-            this.appendControlsElements([this.dropdown.getElement()]);
+            container.appendChild(this.dropdown.getElement());
+
+            withTooltip(container, {
+                style: {
+                    color: params.backgroundColor,
+                    background: params.textColor,
+                },
+                content: params.tooltipSeeOtherAlbums,
+            });
+
+            this.appendControlsElements([container]);
         }
 
         protected initialize() {

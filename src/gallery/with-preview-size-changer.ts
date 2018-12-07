@@ -1,6 +1,7 @@
 import {GalleryDecorator, Params} from './index';
 import {iconScreen} from "../icons";
 import AlbumItem from "../album-item";
+import withTooltip from "../utils/with-tooltip";
 
 const withPreviewSizeChanger: GalleryDecorator = (constructor) =>
     class extends constructor {
@@ -8,7 +9,14 @@ const withPreviewSizeChanger: GalleryDecorator = (constructor) =>
 
         constructor(albums: AlbumItem[], params: Params) {
             super(albums, params);
-            this.changePreviewSizeIcon = iconScreen({ color: params.textColor });
+            this.changePreviewSizeIcon = withTooltip(iconScreen({ color: params.textColor }), {
+                style: {
+                    color: params.backgroundColor,
+                    background: params.textColor,
+                    transform: 'translateY(-8px)',
+                },
+                content: params.tooltipChangeSize,
+            });
             this.changePreviewSizeIcon.addEventListener('click', () => this.changePreviewSize());
             this.appendControlsElements([this.changePreviewSizeIcon]);
         }
