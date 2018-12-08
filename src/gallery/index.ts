@@ -41,6 +41,7 @@ export interface Params {
     tooltipSlideShowPause?: string;
     tooltipThumbnailsToggle?: string;
     transitionDuration?: number;
+    transitionDetails?: number;
     onChange?: (p: { album: Album, item: AlbumItem, prevItem: AlbumItem }) => any;
     itemOnHide?: (p: { album: Album, item: AlbumItem }) => any;
     itemOnLoad?: (p: { album: Album, item: AlbumItem }) => any;
@@ -73,6 +74,7 @@ const defaults: Params = {
     tooltipSlideShowPause: 'Pause slide show',
     tooltipThumbnailsToggle: 'Toogle whumbnails',
     transitionDuration: 500,
+    transitionDetails: 1,
     onChange: () => {},
     itemOnHide: () => {},
     itemOnLoad: () => {},
@@ -311,9 +313,14 @@ export class Gallery extends Component {
     }
 
     protected async goToItem(item: AlbumItem) {
+        const options = {
+            backgroundColor: this.params.backgroundColor,
+            duration: this.params.transitionDuration,
+            details: this.params.transitionDetails,
+        };
         this.showTransitionCanvas();
         this.params.onChange({ prevItem: this.item, item, album: this.album });
-        this.item && await fadeIn(this.transitionCanvas, {backgroundColor: this.params.backgroundColor, duration: this.params.transitionDuration});
+        this.item && await fadeIn(this.transitionCanvas, options);
         this.showLoading();
         this.params.itemOnHide({ item: this.item, album: this.album });
         await this.preview.setItem(item);
@@ -321,7 +328,7 @@ export class Gallery extends Component {
         this.title.innerHTML = item.title || '';
         this.hideLoading();
         this.transitionCanvas.clearLayers();
-        await fadeIn(this.transitionCanvas, {reverse: true, backgroundColor: this.params.backgroundColor, duration: this.params.transitionDuration });
+        await fadeIn(this.transitionCanvas, {...options, reverse: true});
         this.params.itemOnShow({ item, album: this.album });
         this.transitionCanvas.clearLayers();
         this.hideTransitionCanvas();
