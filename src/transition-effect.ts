@@ -7,6 +7,8 @@ interface Params {
     reverse?: boolean;
     duration?: number;
     details?: number;
+    originX?: number;
+    originY?: number;
     xAxis?: boolean;
     yAxis?: boolean;
 }
@@ -16,6 +18,8 @@ const defaults: Params = {
     backgroundColor: '#000',
     duration: 500,
     details: 1,
+    originX: .5,
+    originY: .5,
     xAxis: true,
     yAxis: true,
 };
@@ -50,15 +54,14 @@ const transitionEffect = (canvas: Canvas, params: Params = {}) => {
             finalValue: 1 - +params.reverse,
             duration: params.duration,
             onChange: value => {
-                const halfWidth = canvas.element.width >> 1;
-                const halfHeight = canvas.element.height >> 1;
+                const { width, height } = canvas.element;
 
                 value *= sliceSize;
                 params.xAxis && layers.forEach(layer => {
-                    layer.width = value + (1-Math.abs(layer.translateX - halfWidth)/halfWidth) * value;
+                    layer.width = value + Math.abs(layer.translateX-width*params.originX)/width * value;
                 });
                 params.yAxis && layers.forEach(layer => {
-                    layer.height = value + (1-Math.abs(layer.translateY - halfHeight)/halfHeight) * value;
+                    layer.height = value + Math.abs(layer.translateY-height*params.originY)/height * value;
                 });
             },
             onComplete: () => {

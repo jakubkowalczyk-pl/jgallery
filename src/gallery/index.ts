@@ -44,6 +44,8 @@ export interface Params {
     transitionDetails?: number;
     transitionXAxis?: boolean;
     transitionYAxis?: boolean;
+    transitionOriginX?: number;
+    transitionOriginY?: number;
     onChange?: (p: { album: Album, item: AlbumItem, prevItem: AlbumItem }) => any;
     itemOnHide?: (p: { album: Album, item: AlbumItem }) => any;
     itemOnLoad?: (p: { album: Album, item: AlbumItem }) => any;
@@ -79,6 +81,8 @@ const defaults: Params = {
     transitionDetails: 1,
     transitionXAxis: true,
     transitionYAxis: false,
+    transitionOriginX: .5,
+    transitionOriginY: .5,
     onChange: () => {},
     itemOnHide: () => {},
     itemOnLoad: () => {},
@@ -323,6 +327,8 @@ export class Gallery extends Component {
             details: this.params.transitionDetails,
             xAxis: this.params.transitionXAxis,
             yAxis: this.params.transitionYAxis,
+            originX: this.params.transitionOriginX,
+            originY: this.params.transitionOriginY,
         };
         this.showTransitionCanvas();
         this.params.onChange({ prevItem: this.item, item, album: this.album });
