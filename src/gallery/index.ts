@@ -1,7 +1,7 @@
 import createElement from '../utils/create-element/index';
 import Component from '../component';
 import Canvas from '../canvas/index';
-import fadeIn from '../canvas/animations/fade-in';
+import transitionEffect from '../transition-effect';
 import Loading from '../loading/index'
 import Album from '../album';
 import withAlbumsMenu from './with-albums-menu';
@@ -42,6 +42,8 @@ export interface Params {
     tooltipThumbnailsToggle?: string;
     transitionDuration?: number;
     transitionDetails?: number;
+    transitionXAxis?: boolean;
+    transitionYAxis?: boolean;
     onChange?: (p: { album: Album, item: AlbumItem, prevItem: AlbumItem }) => any;
     itemOnHide?: (p: { album: Album, item: AlbumItem }) => any;
     itemOnLoad?: (p: { album: Album, item: AlbumItem }) => any;
@@ -75,6 +77,8 @@ const defaults: Params = {
     tooltipThumbnailsToggle: 'Toogle whumbnails',
     transitionDuration: 500,
     transitionDetails: 1,
+    transitionXAxis: true,
+    transitionYAxis: false,
     onChange: () => {},
     itemOnHide: () => {},
     itemOnLoad: () => {},
@@ -317,10 +321,12 @@ export class Gallery extends Component {
             backgroundColor: this.params.backgroundColor,
             duration: this.params.transitionDuration,
             details: this.params.transitionDetails,
+            xAxis: this.params.transitionXAxis,
+            yAxis: this.params.transitionYAxis,
         };
         this.showTransitionCanvas();
         this.params.onChange({ prevItem: this.item, item, album: this.album });
-        this.item && await fadeIn(this.transitionCanvas, options);
+        this.item && await transitionEffect(this.transitionCanvas, options);
         this.showLoading();
         this.params.itemOnHide({ item: this.item, album: this.album });
         await this.preview.setItem(item);
@@ -328,7 +334,7 @@ export class Gallery extends Component {
         this.title.innerHTML = item.title || '';
         this.hideLoading();
         this.transitionCanvas.clearLayers();
-        await fadeIn(this.transitionCanvas, {...options, reverse: true});
+        await transitionEffect(this.transitionCanvas, {...options, reverse: true});
         this.params.itemOnShow({ item, album: this.album });
         this.transitionCanvas.clearLayers();
         this.hideTransitionCanvas();
