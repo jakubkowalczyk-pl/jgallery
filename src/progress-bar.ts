@@ -20,7 +20,7 @@ export default class ProgressBar extends Component {
         this.duration = duration;
         this.onEnd = onEnd;
         this.element = createElement(`
-            <div></div>
+            <div class="j-gallery-progress-bar"></div>
         `);
         this.appendStyle({
             height: '1px',

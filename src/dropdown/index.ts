@@ -17,7 +17,7 @@ export default class Dropdown extends Component {
 
     constructor({ items, backgroundColor, textColor, onChange = () => {} }: Params) {
         super();
-        this.element = createElement(`<select style="padding: 10px; background: ${backgroundColor}; font-size: 1em; color: ${textColor}; border: 0; outline: none; vertical-align: middle;"></select>`);
+        this.element = createElement(`<select class="j-gallery-drop-down" style="padding: 10px; background: ${backgroundColor}; font-size: 1em; color: ${textColor}; border: 0; outline: none; vertical-align: middle;"></select>`);
         this.options = items.map((item, i) => {
             const htmlElement = createElement(
                 `<option value="${i}">${item}</option>`

@@ -15,7 +15,7 @@ export default class Preview extends Component {
     constructor() {
         super();
         this.size = 'cover';
-        this.element = createElement(`<div/>`, {
+        this.element = createElement(`<div class="j-gallery-preview"/>`, {
             style: {
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -31,7 +31,7 @@ export default class Preview extends Component {
         const content: HTMLElement = createElement(
             item.element ?
             item.element.outerHTML :
-            `<div style="
+            `<div class="j-gallery-preview-content" style="
                 height: 100%;
                 background: center center url(${item.url}) no-repeat;
                 background-size: ${this.size};

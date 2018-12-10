@@ -26,7 +26,7 @@ export default class Thumbnail extends Component {
             `<img draggable="false" src="${item.thumbUrl}"/>`
         );
 
-        this.element = createElement(`<span></span>`, {
+        this.element = createElement(`<span class="j-gallery-thumbnail"></span>`, {
             style: {
                 width,
                 height,

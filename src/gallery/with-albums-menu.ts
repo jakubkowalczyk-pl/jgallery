@@ -11,7 +11,7 @@ const withAlbumsMenu: GalleryDecorator = (constructor) =>
         constructor(albums: AlbumItem[], params: Params) {
             super(albums, params);
 
-            const container = createElement('<span/>');
+            const container = createElement('<span class="j-gallery-albums-drop-down"/>');
 
             this.dropdown = new Dropdown({
                 items: this.albums.map(album => album.title),

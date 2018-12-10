@@ -12,11 +12,11 @@ const defaultIconStyle: Partial<CSSStyleDeclaration> = {
 };
 
 const dot = (style: Partial<CSSStyleDeclaration> = {}) => createElement(
-    `<span style="width: 4px; height: 4px; display: inline-block; margin: 1px"></span>`,
+    `<span class="j-gallery-dot-icon" style="width: 4px; height: 4px; display: inline-block; margin: 1px"></span>`,
     { style }
 );
 
-export const iconPlay = ({color}:{color:string}, style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span></span>`, {
+export const iconPlay = ({color}:{color:string}, style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span class="j-gallery-play-icon"></span>`, {
     style: {
         ...defaultIconStyle,
         ...style,
@@ -30,7 +30,7 @@ export const iconPlay = ({color}:{color:string}, style: Partial<CSSStyleDeclarat
     })]
 });
 
-export const iconScreen = ({color}:{color:string}, style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span></span>`, {
+export const iconScreen = ({color}:{color:string}, style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span class="j-gallery-screen-icon"></span>`, {
     style: {
         ...defaultIconStyle,
         ...style,
@@ -46,7 +46,7 @@ export const iconScreen = ({color}:{color:string}, style: Partial<CSSStyleDeclar
     })]
 });
 
-export const iconEllipsisHorizontal = ({color}:{color:string}, style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span></span>`, {
+export const iconEllipsisHorizontal = ({color}:{color:string}, style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span class="j-gallery-ellipsis-horizontal-icon"></span>`, {
     style: {
         ...defaultIconStyle,
         ...style,
@@ -54,7 +54,7 @@ export const iconEllipsisHorizontal = ({color}:{color:string}, style: Partial<CS
     children: [dot({background: color}), dot({background: color}), dot({background: color})]
 });
 
-export const iconPause = ({color}:{color:string}, style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span></span>`, {
+export const iconPause = ({color}:{color:string}, style: Partial<CSSStyleDeclaration> =  {}) => createElement(`<span class="j-gallery-pause-icon"></span>`, {
     style: {
         ...defaultIconStyle,
         justifyContent: 'center',
@@ -64,7 +64,7 @@ export const iconPause = ({color}:{color:string}, style: Partial<CSSStyleDeclara
 });
 
 export const iconGrid = ({color}:{color:string}, style: Partial<CSSStyleDeclaration> =  {}) => {
-    return createElement(`<span></span>`, {
+    return createElement(`<span class="j-gallery-grid-icon"></span>`, {
         style: {
             ...defaultIconStyle,
             height: 'auto',

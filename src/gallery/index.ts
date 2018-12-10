@@ -133,22 +133,19 @@ export class Gallery extends Component {
         if (typeof document !== 'undefined') {
             document.querySelector('head').appendChild(style);
         }
-        this.controlsElement = createElement(`<div></div>`, {
-
-        });
         this.left = createElement(`
-            <div style="left: 0; width: 50%; top: 0; bottom: 0; position: absolute; cursor: pointer;"></div>
+            <div class="j-gallery-left" style="left: 0; width: 50%; top: 0; bottom: 0; position: absolute; cursor: pointer;"></div>
         `);
         this.left.addEventListener('click', () => {
             this.prev();
         });
         this.right = createElement(`
-            <div style="right: 0; width: 50%; top: 0; bottom: 0; position: absolute; cursor: pointer;"></div>
+            <div class="j-gallery-right" style="right: 0; width: 50%; top: 0; bottom: 0; position: absolute; cursor: pointer;"></div>
         `);
         this.right.addEventListener('click', () => {
             this.next();
         });
-        this.title = createElement('<div></div>', {
+        this.title = createElement('<div class="j-gallery-title"></div>', {
             style: {
                 paddingRight: '10px',
                 order: '1',
@@ -156,7 +153,7 @@ export class Gallery extends Component {
                 flexGrow: '1',
             }
         });
-        this.controlsElement = createElement(`<div></div>`, {
+        this.controlsElement = createElement(`<div class="j-gallery-controls"></div>`, {
             style: {
                 padding: '5px 0',
                 position: 'relative',
@@ -167,7 +164,7 @@ export class Gallery extends Component {
             children: [this.title],
         });
         this.preview = new Preview;
-        this.previewElement = createElement(`<div></div>`, {
+        this.previewElement = createElement(`<div class="j-gallery-preview-container"></div>`, {
             style: {
                 flex: '1',
                 display: 'flex',

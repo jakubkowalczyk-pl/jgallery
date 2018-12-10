@@ -29,13 +29,13 @@ export default class Thumbnails extends Component {
         this.thumbnailWidth = thumbnailWidth;
         this.thumbnailHeight = thumbnailHeight;
         this.scrollAnimations = [];
-        this.element = createElement('<div></div>', {
+        this.element = createElement('<div class="j-gallery-thumbnails"></div>', {
             style: {
                 display: 'flex',
                 overflow: 'auto',
             }
         });
-        this.content = createElement('<div></div>', {
+        this.content = createElement('<div class="j-gallery-thumbnails-content"></div>', {
             style: {
                 margin: '0 auto',
                 textAlign: 'center',

@@ -14,7 +14,7 @@ export default class Loading extends Component {
         const { color } = params;
 
         this.element = createElement(`
-            <span style="display: inline-flex">
+            <span class="j-gallery-loading" style="display: inline-flex">
             </span>
         `, {
             style: params.style,

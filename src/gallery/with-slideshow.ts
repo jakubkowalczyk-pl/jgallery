@@ -54,7 +54,7 @@ const withSlideShow: GalleryDecorator = (constructor) =>
                 },
             });
             [this.left, this.right].forEach(element => element.addEventListener('click', () => this.stopSlideShow()));
-            this.slideShowIcons = createElement('<span/>', {
+            this.slideShowIcons = createElement('<span class="j-gallery-slide-show-icon"/>', {
                 children: [this.playSlideShowIcon]
             });
             this.appendControlsElements([

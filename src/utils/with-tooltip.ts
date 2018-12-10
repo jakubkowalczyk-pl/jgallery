@@ -8,7 +8,7 @@ interface Params {
 const withTooltip = <T extends HTMLElement>(element: T, params: Params): T => {
     params = {content: '', style: {}, ...params};
 
-    const tooltip = createElement(`<span>${params.content}</span>`, {
+    const tooltip = createElement(`<span class="j-gallery-tooltip">${params.content}</span>`, {
         style: {
             padding: '.3em .6em',
             left: '0',
