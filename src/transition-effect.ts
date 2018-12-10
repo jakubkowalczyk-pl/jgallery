@@ -1,6 +1,7 @@
 import Animation from './animation';
 import Canvas from './canvas/index';
 import Layer from './canvas/layer';
+import promise from './utils/cancellable-promise';
 
 interface Params {
     backgroundColor?: string;
@@ -31,25 +32,9 @@ const transitionEffect = (canvas: Canvas, params: Params = {}) => {
     const sliceSizeX = params.xAxis ? sliceSize : canvas.element.width;
     const sliceSizeY = params.yAxis ? sliceSize : canvas.element.height;
 
-    return new Promise(resolve => {
+    return promise((resolve, reject, onCancel) => {
         const layers: Layer[] = [];
-
-        for (let x = 0; x < canvas.element.width; x+=sliceSizeX) {
-            for (let y = 0; y < canvas.element.height; y += sliceSizeY) {
-                layers.push(new Layer({
-                    translateX: x + (sliceSizeX >> 1),
-                    centerX: -.5,
-                    height: canvas.element.height,
-                    translateY: y + (sliceSizeY >> 1),
-                    centerY: -.5,
-                    width: canvas.element.width,
-                    fillStyle: params.backgroundColor,
-                }));
-            }
-        }
-
-        canvas.addLayers(layers);
-        canvas.addAnimations([new Animation({
+        const animation = new Animation({
             initialValue: +params.reverse,
             finalValue: 1 - +params.reverse,
             duration: params.duration,
@@ -67,7 +52,25 @@ const transitionEffect = (canvas: Canvas, params: Params = {}) => {
             onComplete: () => {
                 resolve();
             }
-        })]);
+        });
+
+        for (let x = 0; x < canvas.element.width; x+=sliceSizeX) {
+            for (let y = 0; y < canvas.element.height; y += sliceSizeY) {
+                layers.push(new Layer({
+                    translateX: x + (sliceSizeX >> 1),
+                    centerX: -.5,
+                    height: canvas.element.height,
+                    translateY: y + (sliceSizeY >> 1),
+                    centerY: -.5,
+                    width: canvas.element.width,
+                    fillStyle: params.backgroundColor,
+                }));
+            }
+        }
+
+        canvas.addLayers(layers);
+        canvas.addAnimations([animation]);
+        onCancel(() => animation.cancel());
     });
 };
 

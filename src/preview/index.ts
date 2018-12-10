@@ -1,4 +1,6 @@
 import createElement from '../utils/create-element/index';
+import promise from '../utils/cancellable-promise';
+import Queue from '../utils/queue';
 import load from '../utils/load/index';
 import AlbumItem from '../album-item';
 import Component from '../component';
@@ -24,7 +26,7 @@ export default class Preview extends Component {
         });
     }
 
-    async setItem(item: AlbumItem): Promise<void> {
+    setItem(item: AlbumItem) {
         const { element } = this;
         const content: HTMLElement = createElement(
             item.element ?
@@ -40,8 +42,20 @@ export default class Preview extends Component {
         this.hasImage = !item.element;
         this.item = item;
         element.innerHTML = '';
-        await load(this.hasImage ? item.url : content);
-        element.appendChild(content);
+
+        return promise((resolve, reject, onCancel) => {
+            const queue = new Queue(
+                () => load(this.hasImage ? item.url : content),
+                () => {
+                    element.appendChild(content);
+                    resolve();
+                    return Promise.resolve();
+                },
+            );
+
+            queue.run();
+            onCancel(() => queue.cancel());
+        });
     }
 
     setSize(size: Size) {

@@ -10,6 +10,8 @@ import withBrowserHistory from './with-browser-history';
 import Preview from '../preview/index';
 import AlbumItem from '../album-item';
 import Swipe from '../swipe';
+import promise, {CancellablePromise} from '../utils/cancellable-promise';
+import Queue from '../utils/queue';
 import withSlideShow from "./with-slideshow";
 import withThumbnails, {ThumbnailsPosition} from "./with-thumbnails";
 
@@ -102,6 +104,7 @@ export class Gallery extends Component {
     private transitionCanvas: Canvas;
     private loading: Loading;
     protected params: Params;
+    private changingItem: CancellablePromise<void>;
 
     constructor(albums: Array<Album>, params: Params = {}) {
         super();
@@ -304,7 +307,9 @@ export class Gallery extends Component {
     }
 
     private hideTransitionCanvas(): void {
-        this.previewElement.removeChild(this.transitionCanvas.element);
+        if (this.previewElement.contains(this.transitionCanvas.element)) {
+            this.previewElement.removeChild(this.transitionCanvas.element);
+        }
     }
 
     private refreshTransitionCanvasDimensions(): void {
@@ -317,10 +322,12 @@ export class Gallery extends Component {
     }
 
     private hideLoading(): void {
-        this.previewElement.removeChild(this.loading.getElement());
+        if (this.previewElement.contains(this.loading.getElement())) {
+            this.previewElement.removeChild(this.loading.getElement());
+        }
     }
 
-    protected async goToItem(item: AlbumItem) {
+    protected goToItem(item: AlbumItem) {
         const options = {
             backgroundColor: this.params.backgroundColor,
             duration: this.params.transitionDuration,
@@ -330,21 +337,47 @@ export class Gallery extends Component {
             originX: this.params.transitionOriginX,
             originY: this.params.transitionOriginY,
         };
-        this.showTransitionCanvas();
-        this.params.onChange({ prevItem: this.item, item, album: this.album });
-        this.item && await transitionEffect(this.transitionCanvas, options);
-        this.showLoading();
-        this.params.itemOnHide({ item: this.item, album: this.album });
-        await this.preview.setItem(item);
-        this.params.itemOnLoad({ item, album: this.album });
-        this.title.innerHTML = item.title || '';
-        this.hideLoading();
-        this.transitionCanvas.clearLayers();
-        await transitionEffect(this.transitionCanvas, {...options, reverse: true});
-        this.params.itemOnShow({ item, album: this.album });
-        this.transitionCanvas.clearLayers();
-        this.hideTransitionCanvas();
-        this.item = item;
+
+        this.changingItem && this.changingItem.cancel();
+        this.changingItem = promise((resolve, reject, onCancel) => {
+            const queue = new Queue(
+                () => {
+                    this.showTransitionCanvas();
+                    this.params.onChange({ prevItem: this.item, item, album: this.album });
+                    return this.item ? transitionEffect(this.transitionCanvas, options) : Promise.resolve();
+                },
+                () => {
+                    this.showLoading();
+                    this.params.itemOnHide({ item: this.item, album: this.album });
+                    return this.preview.setItem(item);
+                },
+                () => {
+                    this.params.itemOnLoad({ item, album: this.album });
+                    this.title.innerHTML = item.title || '';
+                    this.hideLoading();
+                    this.transitionCanvas.clearLayers();
+                    return transitionEffect(this.transitionCanvas, {...options, reverse: true});
+                },
+                () => {
+                    this.params.itemOnShow({ item, album: this.album });
+                    this.transitionCanvas.clearLayers();
+                    this.hideTransitionCanvas();
+                    this.item = item;
+                    resolve();
+                    return Promise.resolve();
+                },
+            );
+
+            queue.run();
+            onCancel(() => {
+                queue.cancel();
+                this.transitionCanvas.clearLayers();
+                this.hideTransitionCanvas();
+                this.hideLoading();
+            });
+        });
+
+        return this.changingItem;
     }
 
     protected async goToAlbum(value: number, item?: AlbumItem) {
