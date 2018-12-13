@@ -1,5 +1,6 @@
 import Dropdown from "../dropdown/index";
-import {GalleryDecorator, Params} from './index';
+import {GalleryDecorator} from './index';
+import Params from './parameters';
 import AlbumItem from "../album-item";
 import withTooltip from "../utils/with-tooltip";
 import createElement from "../utils/create-element";

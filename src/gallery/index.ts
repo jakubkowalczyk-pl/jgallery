@@ -12,84 +12,12 @@ import AlbumItem from '../album-item';
 import Swipe from '../swipe';
 import promise, {CancellablePromise} from '../utils/cancellable-promise';
 import Queue from '../utils/queue';
+import Params from './parameters';
+import defaults from './defaults';
 import withSlideShow from "./with-slideshow";
 import withThumbnails, {ThumbnailsPosition} from "./with-thumbnails";
 
 let id = 1;
-
-export interface Params {
-    thumbnails?: boolean;
-    browserHistory?: boolean;
-    slideShow?: true;
-    slideShowAutoStart?: boolean;
-    slideShowInterval?: number;
-    backgroundColor?: string;
-    textColor?: string;
-    autostartAtAlbum?: number;
-    autostartAtItem?: number;
-    canMinimalizeThumbnails?: boolean;
-    canChangePreviewSize?: boolean;
-    thumbnailsVisible?: boolean;
-    thumbnailsPosition?: ThumbnailsPosition;
-    thumbnailsFullScreen?: boolean;
-    thumbnailWidth?: string;
-    thumbnailHeight?: string;
-    thumbnailWidthOnFullScreen?: string;
-    thumbnailHeightOnFullScreen?: string;
-    tooltipChangeSize?: string;
-    tooltipSeeAllItems?: string;
-    tooltipSeeOtherAlbums?: string;
-    tooltipSlideShowStart?: string;
-    tooltipSlideShowPause?: string;
-    tooltipThumbnailsToggle?: string;
-    transitionDuration?: number;
-    transitionDetails?: number;
-    transitionXAxis?: boolean;
-    transitionYAxis?: boolean;
-    transitionOriginX?: number;
-    transitionOriginY?: number;
-    onChange?: (p: { album: Album, item: AlbumItem, prevItem: AlbumItem }) => any;
-    itemOnHide?: (p: { album: Album, item: AlbumItem }) => any;
-    itemOnLoad?: (p: { album: Album, item: AlbumItem }) => any;
-    itemOnShow?: (p: { album: Album, item: AlbumItem }) => any;
-}
-
-const defaults: Params = {
-    browserHistory: true,
-    slideShow: true,
-    slideShowAutoStart: false,
-    slideShowInterval: 4000,
-    thumbnails: true,
-    backgroundColor: '#000',
-    textColor: '#fff',
-    autostartAtAlbum: 1,
-    autostartAtItem: 1,
-    canMinimalizeThumbnails: true,
-    canChangePreviewSize: true,
-    thumbnailsVisible: true,
-    thumbnailsPosition: 'bottom',
-    thumbnailsFullScreen: true,
-    thumbnailWidth: '64px',
-    thumbnailHeight: '64px',
-    thumbnailWidthOnFullScreen: '128px',
-    thumbnailHeightOnFullScreen: '128px',
-    tooltipSeeOtherAlbums: 'See other albums',
-    tooltipChangeSize: 'Change size',
-    tooltipSeeAllItems: 'See all items',
-    tooltipSlideShowStart: 'Start slide show',
-    tooltipSlideShowPause: 'Pause slide show',
-    tooltipThumbnailsToggle: 'Toogle whumbnails',
-    transitionDuration: 500,
-    transitionDetails: 1,
-    transitionXAxis: true,
-    transitionYAxis: false,
-    transitionOriginX: .5,
-    transitionOriginY: .5,
-    onChange: () => {},
-    itemOnHide: () => {},
-    itemOnLoad: () => {},
-    itemOnShow: () => {},
-}
 
 export class Gallery extends Component {
     protected albums: Album[];

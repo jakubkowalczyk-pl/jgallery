@@ -1,5 +1,6 @@
 import createElement from '../utils/create-element/index';
-import {GalleryDecorator, Params} from './index';
+import {GalleryDecorator} from './index';
+import Params from './parameters';
 import AlbumItem from "../album-item";
 import ProgressBar from "../progress-bar";
 import {iconPause, iconPlay} from "../icons";

@@ -1,4 +1,5 @@
-import {GalleryDecorator, Params} from './index';
+import {GalleryDecorator} from './index';
+import Params from './parameters';
 import AlbumItem from "../album-item";
 
 const withBrowserHistory: GalleryDecorator = (constructor) =>

@@ -1,4 +1,5 @@
-import {GalleryDecorator, Params} from './index';
+import {GalleryDecorator} from './index';
+import Params from './parameters';
 import AlbumItem from "../album-item";
 import Thumbnails from "../thumbnails/index";
 import {iconEllipsisHorizontal, iconGrid} from "../icons";

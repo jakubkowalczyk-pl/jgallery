@@ -1,0 +1,40 @@
+import Album from '../album';
+import AlbumItem from '../album-item';
+import {ThumbnailsPosition} from "./with-thumbnails";
+
+export default interface Params {
+    thumbnails?: boolean;
+    browserHistory?: boolean;
+    slideShow?: true;
+    slideShowAutoStart?: boolean;
+    slideShowInterval?: number;
+    backgroundColor?: string;
+    textColor?: string;
+    autostartAtAlbum?: number;
+    autostartAtItem?: number;
+    canMinimalizeThumbnails?: boolean;
+    canChangePreviewSize?: boolean;
+    thumbnailsVisible?: boolean;
+    thumbnailsPosition?: ThumbnailsPosition;
+    thumbnailsFullScreen?: boolean;
+    thumbnailWidth?: string;
+    thumbnailHeight?: string;
+    thumbnailWidthOnFullScreen?: string;
+    thumbnailHeightOnFullScreen?: string;
+    tooltipChangeSize?: string;
+    tooltipSeeAllItems?: string;
+    tooltipSeeOtherAlbums?: string;
+    tooltipSlideShowStart?: string;
+    tooltipSlideShowPause?: string;
+    tooltipThumbnailsToggle?: string;
+    transitionDuration?: number;
+    transitionDetails?: number;
+    transitionXAxis?: boolean;
+    transitionYAxis?: boolean;
+    transitionOriginX?: number;
+    transitionOriginY?: number;
+    onChange?: (p: { album: Album, item: AlbumItem, prevItem: AlbumItem }) => any;
+    itemOnHide?: (p: { album: Album, item: AlbumItem }) => any;
+    itemOnLoad?: (p: { album: Album, item: AlbumItem }) => any;
+    itemOnShow?: (p: { album: Album, item: AlbumItem }) => any;
+}
