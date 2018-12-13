@@ -6,8 +6,6 @@ export default abstract class Component {
     }
 
     appendStyle(style: Partial<CSSStyleDeclaration>) {
-        for (let propName in style) {
-            this.element.style[propName] = style[propName];
-        }
+        Object.assign(this.element.style, style);
     }
 }
