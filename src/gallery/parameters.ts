@@ -14,6 +14,7 @@ export default interface Params {
     autostartAtItem?: number;
     canMinimalizeThumbnails?: boolean;
     canChangePreviewSize?: boolean;
+    navigationOnPreviewClick?: boolean;
     thumbnailsVisible?: boolean;
     thumbnailsPosition?: ThumbnailsPosition;
     thumbnailsFullScreen?: boolean;

@@ -12,6 +12,7 @@ const defaults: Params = {
     autostartAtItem: 1,
     canMinimalizeThumbnails: true,
     canChangePreviewSize: true,
+    navigationOnPreviewClick: true,
     thumbnailsVisible: true,
     thumbnailsPosition: 'bottom',
     thumbnailsFullScreen: true,

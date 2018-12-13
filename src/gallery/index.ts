@@ -15,7 +15,8 @@ import Queue from '../utils/queue';
 import Params from './parameters';
 import defaults from './defaults';
 import withSlideShow from "./with-slideshow";
-import withThumbnails, {ThumbnailsPosition} from "./with-thumbnails";
+import withThumbnails from "./with-thumbnails";
+import withNavigationOnPreviewClick from './with-navigation-on-preview-click';
 
 let id = 1;
 
@@ -61,18 +62,6 @@ export class Gallery extends Component {
         if (typeof document !== 'undefined') {
             document.querySelector('head').appendChild(style);
         }
-        this.left = createElement(`
-            <div class="j-gallery-left" style="left: 0; width: 50%; top: 0; bottom: 0; position: absolute; cursor: pointer;"></div>
-        `);
-        this.left.addEventListener('click', () => {
-            this.prev();
-        });
-        this.right = createElement(`
-            <div class="j-gallery-right" style="right: 0; width: 50%; top: 0; bottom: 0; position: absolute; cursor: pointer;"></div>
-        `);
-        this.right.addEventListener('click', () => {
-            this.next();
-        });
         this.title = createElement('<div class="j-gallery-title"></div>', {
             style: {
                 paddingRight: '10px',
@@ -99,7 +88,7 @@ export class Gallery extends Component {
                 flexDirection: 'column',
                 position: 'relative',
             },
-            children: [this.preview.getElement(), this.controlsElement, this.left, this.right]
+            children: [this.preview.getElement(), this.controlsElement]
         });
         (new Swipe({
             element: this.previewElement,
@@ -156,6 +145,7 @@ export class Gallery extends Component {
 
         params = { ...defaults, ...params };
 
+        if (params.navigationOnPreviewClick) decorators.push(withNavigationOnPreviewClick);
         if (params.browserHistory) decorators.push(withBrowserHistory);
         if (params.slideShow) decorators.push(withSlideShow);
         if (params.thumbnails) decorators.push(withThumbnails);
@@ -214,7 +204,7 @@ export class Gallery extends Component {
         }
     }
 
-    private async prev(): Promise<void> {
+    protected async prev(): Promise<void> {
         const { album, item } = this;
         const { items } = album;
         const prev = items[items.indexOf(item)-1];
