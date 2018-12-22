@@ -14,7 +14,7 @@ export default interface Params {
     itemOnShow?: (p: { album: Album, item: AlbumItem }) => any; // Custom function that will be called after show item.; ; [ function() { console.log("called") } ]
     navigationOnPreviewClick?: boolean; // If set as 'true', clicking in preview area will change active item(to next if click on right side, or previous if click on left side).; [ true, false ]
     onChange?: (p: { album: Album, item: AlbumItem, prevItem: AlbumItem }) => any; // Custom function that will be called before change (hide) item.; ; [ function() { console.log("called") } ]
-    slideShow?: true; // If set as 'true', option slideshow is enabled.; [ true, false ]
+    slideShow?: boolean; // If set as 'true', option slideshow is enabled.; [ true, false ]
     slideShowAutoStart?: boolean; // Boolean; If set as 'true', slideshow will be started immediately after initializing jGallery(only when 'slideshow' has been set as true).; [ true, false ]
     slideShowInterval?: number; // Time (in ms) between change of photos for slideshow(only when 'slideshow' has been set as true).; [ '3s', '6s', '10s' ]
     textColor?: string; // Color of text and icons.; ; [ '#000000', 'rgb(0,153,221)' ]
