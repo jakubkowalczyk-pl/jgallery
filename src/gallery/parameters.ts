@@ -3,39 +3,39 @@ import AlbumItem from '../album-item';
 import {ThumbnailsPosition} from "./with-thumbnails";
 
 export default interface Params {
-    thumbnails?: boolean;
-    browserHistory?: boolean;
-    slideShow?: true;
-    slideShowAutoStart?: boolean;
-    slideShowInterval?: number;
-    backgroundColor?: string;
-    textColor?: string;
-    autostartAtAlbum?: number;
-    autostartAtItem?: number;
-    canMinimalizeThumbnails?: boolean;
-    canChangePreviewSize?: boolean;
-    navigationOnPreviewClick?: boolean;
-    thumbnailsVisible?: boolean;
-    thumbnailsPosition?: ThumbnailsPosition;
-    thumbnailsFullScreen?: boolean;
-    thumbnailWidth?: string;
-    thumbnailHeight?: string;
-    thumbnailWidthOnFullScreen?: string;
-    thumbnailHeightOnFullScreen?: string;
-    tooltipChangeSize?: string;
-    tooltipSeeAllItems?: string;
-    tooltipSeeOtherAlbums?: string;
-    tooltipSlideShowStart?: string;
-    tooltipSlideShowPause?: string;
-    tooltipThumbnailsToggle?: string;
-    transitionDuration?: number;
-    transitionDetails?: number;
-    transitionXAxis?: boolean;
-    transitionYAxis?: boolean;
-    transitionOriginX?: number;
-    transitionOriginY?: number;
-    onChange?: (p: { album: Album, item: AlbumItem, prevItem: AlbumItem }) => any;
-    itemOnHide?: (p: { album: Album, item: AlbumItem }) => any;
-    itemOnLoad?: (p: { album: Album, item: AlbumItem }) => any;
-    itemOnShow?: (p: { album: Album, item: AlbumItem }) => any;
+    autostartAtAlbum?: number; // Index of album which will be loaded by autostart.; ; [ 1, 2, 3 ]
+    autostartAtItem?: number; // Index of item which will be loaded by autostart.; ; [ 1, 2, 3 ]
+    backgroundColor?: string; // Background color for jGallery container.; ; [ '#ffffff', 'silver' ]
+    browserHistory?: boolean; // If set as 'true', changes of active item will be saved in browser history.; [ true, false ]
+    canMinimalizeThumbnails?: boolean; // If set as 'true', you can minimalize thumbnails(only when 'thumbnails' parameter set as 'true').; [ true, false ]
+    canChangePreviewSize?: boolean; // If set as 'true', you can change preview size (only for images).; [ true, false ]
+    itemOnHide?: (p: { album: Album, item: AlbumItem }) => any; // Custom function that will be called after hide item.; ; [ function() { console.log("called") } ]
+    itemOnLoad?: (p: { album: Album, item: AlbumItem }) => any; // Custom function that will be called after load item.; ; [ function() { console.log("called") } ]
+    itemOnShow?: (p: { album: Album, item: AlbumItem }) => any; // Custom function that will be called after show item.; ; [ function() { console.log("called") } ]
+    navigationOnPreviewClick?: boolean; // If set as 'true', clicking in preview area will change active item(to next if click on right side, or previous if click on left side).; [ true, false ]
+    onChange?: (p: { album: Album, item: AlbumItem, prevItem: AlbumItem }) => any; // Custom function that will be called before change (hide) item.; ; [ function() { console.log("called") } ]
+    slideShow?: true; // If set as 'true', option slideshow is enabled.; [ true, false ]
+    slideShowAutoStart?: boolean; // Boolean; If set as 'true', slideshow will be started immediately after initializing jGallery(only when 'slideshow' has been set as true).; [ true, false ]
+    slideShowInterval?: number; // Time (in ms) between change of photos for slideshow(only when 'slideshow' has been set as true).; [ '3s', '6s', '10s' ]
+    textColor?: string; // Color of text and icons.; ; [ '#000000', 'rgb(0,153,221)' ]
+    thumbnailHeight?: string; // Height(pixels) of thumbnails.; ; [ 50, 75, 125 ]
+    thumbnailHeightOnFullScreen?: string; // Height(pixels) of thumbnails for thumbnails displayed in full-screen.; ; [ 125, 160, 200 ]
+    thumbnailWidth?: string; // Width(pixels) of thumbnails.; ; [ 50, 75, 125 ]
+    thumbnailWidthOnFullScreen?: string; // Width(pixels) of thumbnails for thumbnails displayed in full-screen.; ; [ 125, 160, 200 ]
+    thumbnails?: boolean; // If set as 'true', thumbnails will be displayed.; [ true, false ]
+    thumbnailsFullScreen?: boolean; // If set as 'true', thumbnails will be displayed in full-screen.; [ true, false ]
+    thumbnailsPosition?: ThumbnailsPosition; // Thumbnails position(only when 'thumbnails' parameter set as 'true').; [ 'top',  'bottom', 'left', 'right' ]
+    thumbnailsVisible?: boolean; // If set as 'true', thumbnails will be displayed on gallery initialization.; [ true, false ]
+    tooltipChangeSize?: string; // Text of tooltip which will be displayed next to icon for change preview size(only for images).; ; [ 'Change size', 'Zmień rozmiar' ]
+    tooltipSeeAllItems?: string; // Text of tooltip which will be displayed next to icon for change thumbnails view.; ; [ 'See all items', 'Zobacz wszystkie elementy' ]
+    tooltipSeeOtherAlbums?: string; // Text of tooltip which will be displayed next to icon for change album(if your jGallery has more than one album).; ; [ 'See other albums', 'Zobacz pozostałe albumy' ]
+    tooltipSlideShowPause?: string; // Text of tooltip which will be displayed next to icon for pause slideshow.; ; [ 'Pause slide show', 'Zatrzymaj pokaz slajdów' ]
+    tooltipSlideShowStart?: string; // Text of tooltip which will be displayed next to icon for play slideshow.; ; [ 'Start slide show', 'Uruchom pokaz slajdów' ]
+    tooltipThumbnailsToggle?: string; // Text of tooltip which will be displayed next to icon for toggle thumbnails.; ; [ 'Toggle thumbnails', 'Pokaż/ukryj miniatury' ]
+    transitionDetails?: number; // Specifies how many slices will have transition mask.; ; [ 1, 0.25, 0.5, 2, 4 ]
+    transitionDuration?: number; // Duration(in ms) of transition between items.; [ '500', '250', '1000', '2000' ]
+    transitionOriginX?: number; // Specifies center point of transition at X axis; [ '.5', '0', '1' ]
+    transitionOriginY?: number; // Specifies center point of transition at Y axis; [ '.5', '0', '1' ]
+    transitionXAxis?: boolean; // If set as 'true', transition mask will be sliced along X axis.; [ true, false ]
+    transitionYAxis?: boolean; // If set as 'true', transition mask will be sliced along Y axis.; [ true, false ]
 }
