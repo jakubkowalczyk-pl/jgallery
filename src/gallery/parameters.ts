@@ -33,9 +33,9 @@ export default interface Params {
     tooltipSlideShowStart?: string; // Text of tooltip which will be displayed next to icon for play slideshow.; ; [ 'Start slide show', 'Uruchom pokaz slajdów' ]
     tooltipThumbnailsToggle?: string; // Text of tooltip which will be displayed next to icon for toggle thumbnails.; ; [ 'Toggle thumbnails', 'Pokaż/ukryj miniatury' ]
     transitionDetails?: number; // Specifies how many slices will have transition mask.; ; [ 1, 0.25, 0.5, 2, 4 ]
-    transitionDuration?: number; // Duration(in ms) of transition between items.; [ '500', '250', '1000', '2000' ]
-    transitionOriginX?: number; // Specifies center point of transition at X axis; [ '.5', '0', '1' ]
-    transitionOriginY?: number; // Specifies center point of transition at Y axis; [ '.5', '0', '1' ]
+    transitionDuration?: number; // Duration(in ms) of transition between items.; [ 500, 250, 1000, 2000 ]
+    transitionOriginX?: number; // Specifies center point of transition at X axis; [ 0.5, 0, 1 ]
+    transitionOriginY?: number; // Specifies center point of transition at Y axis; [ 0.5, 0, 1 ]
     transitionXAxis?: boolean; // If set as 'true', transition mask will be sliced along X axis.; [ true, false ]
     transitionYAxis?: boolean; // If set as 'true', transition mask will be sliced along Y axis.; [ true, false ]
 }
