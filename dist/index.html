@@ -3,52 +3,94 @@
 <head>
     <meta charset="UTF-8" />
     <title>jGallery</title>
-    <script type="text/javascript" src="assets/bundle.js"></script>
+    <script type="text/javascript" src="js/jgallery.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body style="margin:0; font-family: sans-serif;">
 <div id="gallery">
 </div>
 <script type="text/javascript">
-var createElement = JGallery.createElement;
-var items = [
+    document.querySelector('#gallery').appendChild(JGallery.create([{
+        title: 'Images',
+        items: [
             {
-                url: "images/large/1.jpg",
-                thumbUrl: "images/thumbs/1.jpg",
-                title: 'Photo1'
+                url: 'images/large/1.jpg',
+                thumbUrl: 'images/thumbs/1.jpg',
+                title: 'Photo1',
+                hash: 'photo-1'
             },
             {
-                url: "images/large/2.jpg",
-                thumbUrl: "images/thumbs/2.jpg",
-                title: 'Photo2'
+                url: 'images/large/2.jpg',
+                thumbUrl: 'images/thumbs/2.jpg',
+                title: 'Photo2',
+                hash: 'photo-2'
             },
             {
-                url: "images/large/3.jpg",
-                thumbUrl: "images/thumbs/3.jpg",
-                title: 'Photo3'
+                url: 'images/large/3.jpg',
+                thumbUrl: 'images/thumbs/3.jpg',
+                title: 'Photo3',
+                hash: 'photo-3'
             },
             {
-                element: createElement(`<div class="slide" style="padding: 60px; font-size: 2em; line-height: 1.5;">Morbi cursus rutrum turpis, nec iaculis enim bibendum eget. Donec elementum pretium risus ut sollicitudin. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce auctor quam tortor, sit amet tristique est faucibus a. Mauris a tellus ultrices sapien consequat porttitor. Vivamus vel metus sed massa pulvinar consequat non ut nunc. Vestibulum et metus in quam cursus condimentum ut a mauris. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed dapibus ultricies dui, placerat aliquam ligula elementum nec. Morbi in imperdiet metus. Etiam feugiat mattis nulla ac egestas. Praesent rhoncus fermentum semper. Sed ultrices aliquet feugiat.</div>`),
-                thumbElement: createElement(`<span style="background: #666; display: flex; width: 100%; height: 100%; justify-content: center; align-items: center;">HTML</span>`),
-                title: 'HTML'
+                url: 'images/large/4.jpg',
+                thumbUrl: 'images/thumbs/4.jpg',
+                title: 'Photo4',
+                hash: 'photo-4'
             },
             {
-                element: createElement(`<video src="SampleVideo_1280x720_1mb.mp4" loop autoplay/>`),
-                thumbElement: createElement(`<span style="background: #333; display: flex; width: 100%; height: 100%; justify-content: center; align-items: center;">Video</span>`),
-                title: 'Video'
+                url: 'images/large/5.jpg',
+                thumbUrl: 'images/thumbs/5.jpg',
+                title: 'Photo5',
+                hash: 'photo-5'
+            },
+            {
+                url: 'images/large/6.jpg',
+                thumbUrl: 'images/thumbs/6.jpg',
+                title: 'Photo6',
+                hash: 'photo-6'
+            },
+            {
+                url: 'images/large/7.jpg',
+                thumbUrl: 'images/thumbs/7.jpg',
+                title: 'Photo7',
+                hash: 'photo-7'
+            },
+            {
+                url: 'images/large/8.jpg',
+                thumbUrl: 'images/thumbs/8.jpg',
+                title: 'Photo8',
+                hash: 'photo-8'
+            },
+            {
+                url: 'images/large/9.jpg',
+                thumbUrl: 'images/thumbs/9.jpg',
+                title: 'Photo9',
+                hash: 'photo-9'
+            },
+            {
+                url: 'images/large/10.jpg',
+                thumbUrl: 'images/thumbs/10.jpg',
+                title: 'Photo10',
+                hash: 'photo-10'
             }
-        ];
-items = [...items,...items,...items,...items,...items,...items,...items,...items,...items,...items,...items,...items];
-document.body.appendChild(JGallery.create([
-    {
-        title: 'Album 1',
-        items: items.map((item, i) => ({...item, hash: `Album1_Photo${i}`})),
-    },
-    {
-        title: 'Album 2',
-        items: items.slice(0, 3).map((item, i) => ({...item, hash: `Album2_Photo${i}`})),
-    }
-], { browserHistory: true }).getElement());
+        ]
+    }, {
+        title: 'HTML',
+        items: [
+            {
+                element: JGallery.createElement('<video src="SampleVideo_1280x720_1mb.mp4" loop autoplay/>'),
+                thumbElement: JGallery.createElement('<span>Video</span>'),
+                title: 'Video',
+                hash: 'video'
+            },
+            {
+                element: JGallery.createElement('<span style="font-size: 10vmax">Any HTML content</span>'),
+                thumbElement: JGallery.createElement('<span>HTML</span>'),
+                title: 'HTML',
+                hash: 'html'
+            }
+        ]
+    }]).getElement());
 </script>
 </body>
 </html>

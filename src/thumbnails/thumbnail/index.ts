@@ -23,7 +23,7 @@ export default class Thumbnail extends Component {
         const content: HTMLElement = createElement(
             item.thumbElement ?
             item.thumbElement.outerHTML :
-            `<img draggable="false" src="${item.thumbUrl}"/>`
+            `<img draggable="false" src="${item.thumbUrl}" style="max-width: 100%; max-height: 100%"/>`
         );
 
         this.element = createElement(`<span class="j-gallery-thumbnail"></span>`, {

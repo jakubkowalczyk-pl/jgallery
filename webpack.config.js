@@ -3,9 +3,9 @@ var path = require('path');
 module.exports = {
   entry: './src/index.ts',
   output: {
-    filename: 'bundle.js',
-    publicPath: '/assets/',
-    path: path.resolve(__dirname, 'dist', 'assets')
+    filename: 'jgallery.js',
+    publicPath: '/js/',
+    path: path.resolve(__dirname, 'dist', 'js')
   },
   resolve: {
     extensions: ['.ts', '.js']

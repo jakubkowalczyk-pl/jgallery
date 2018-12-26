@@ -5,7 +5,8 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "webpack-dev-server --content-base dist/ --disableHostCheck --host 0.0.0.0",
-    "build": "webpack -p --entry ./src",
+    "build-min": "webpack -p --entry ./src --output-filename jgallery.min.js",
+    "build": "webpack --entry ./src --output-filename jgallery.js",
     "test": "karma start"
   },
   "author": "Jakub Kowalczyk",
