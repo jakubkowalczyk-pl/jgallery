@@ -8,7 +8,7 @@ export interface ThumbOnClick {
     (item: AlbumItem): void
 }
 
-interface Params {
+export interface Params {
     item: AlbumItem,
     textColor: string;
     onClick: ThumbOnClick;

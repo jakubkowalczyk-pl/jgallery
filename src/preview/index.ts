@@ -5,7 +5,7 @@ import load from '../utils/load/index';
 import AlbumItem from '../album-item';
 import Component from '../component';
 
-type Size = 'contain' | 'cover' | 'auto';
+export type Size = 'contain' | 'cover' | 'auto';
 
 export default class Preview extends Component {
     public hasImage: boolean;

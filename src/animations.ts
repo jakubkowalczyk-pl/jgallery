@@ -1,10 +1,10 @@
 import Animation from './animation';
 
-interface OnChange {
+export interface OnChange {
     (): any;
 }
 
-interface Params {
+export interface Params {
     onChange: OnChange
 }
 

@@ -1,16 +1,16 @@
-interface Resolve<T> {
+export interface Resolve<T> {
     (value?: T | PromiseLike<T>): void;
 }
 
-interface Reject {
+export interface Reject {
     (reason?: any): void;
 }
 
-interface OnCancel {
+export interface OnCancel {
     (fn: Function): any;
 }
 
-interface Executor<T> {
+export interface Executor<T> {
     (resolve: Resolve<T>, reject: Reject, onCancel: OnCancel): any;
 }
 

@@ -5,7 +5,7 @@ export interface OnChange {
     (value: number): any;
 }
 
-interface Params {
+export interface Params {
     items: Array<string>;
     textColor: string;
     backgroundColor: string;

@@ -1,3 +1,4 @@
+(function(){var JGallery =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -36,12 +37,32 @@
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -57,2346 +78,373 @@
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
 /******/
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "/js/";
+/******/ 	__webpack_require__.p = "js/";
+/******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 10);
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/index.ts");
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ "./src/animation.ts":
+/*!**************************!*\
+  !*** ./src/animation.ts ***!
+  \**************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var defaultOptions = {
-    style: {},
-    children: [],
-};
-function default_1(html, options) {
-    var element = (new DOMParser().parseFromString(html, 'text/html').body.firstChild);
-    options = __assign({}, defaultOptions, options);
-    Object.assign(element.style, options.style);
-    options.children.forEach(function (child) { return element.appendChild(child); });
-    return element;
-}
-exports.default = default_1;
-;
-
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar Animation = /** @class */ (function () {\n    function Animation(_a) {\n        var _b = _a.initialValue, initialValue = _b === void 0 ? 0 : _b, _c = _a.finalValue, finalValue = _c === void 0 ? 0 : _c, _d = _a.onChange, onChange = _d === void 0 ? function () { } : _d, _e = _a.onComplete, onComplete = _e === void 0 ? function () { } : _e, _f = _a.duration, duration = _f === void 0 ? 500 : _f, _g = _a.easingFunction, easingFunction = _g === void 0 ? function (t) { return 1 + (--t) * t * t * t * t; } : _g;\n        this.initialValue = initialValue;\n        this.currentValue = initialValue;\n        this.finalValue = finalValue;\n        this.duration = duration;\n        this.easingFunction = easingFunction;\n        this.onComplete = onComplete;\n        this.currentTime = 0;\n        this.onChange = onChange;\n        this.completed = false;\n        this.start = this.start.bind(this);\n    }\n    Animation.prototype.start = function () {\n        this.goToNextFrame();\n        if (!this.completed) {\n            this.animationFrame = requestAnimationFrame(this.start);\n        }\n    };\n    Animation.prototype.pause = function () {\n        cancelAnimationFrame(this.animationFrame);\n    };\n    Animation.prototype.setValue = function (value) {\n        this.currentValue = value;\n    };\n    Animation.prototype.reset = function () {\n        this.pause();\n        this.currentTime = 0;\n        this.currentValue = this.initialValue;\n        this.completed = false;\n    };\n    Animation.prototype.goToNextFrame = function () {\n        this.currentTime += 16 / this.duration;\n        this.currentValue = this.initialValue + (this.finalValue - this.initialValue) * this.easingFunction(this.currentTime);\n        if (this.currentTime < 1) {\n            this.onChange(this.currentValue);\n        }\n        else {\n            this.currentValue = this.finalValue;\n            this.onChange(this.currentValue);\n            this.completed = true;\n            this.onComplete();\n        }\n    };\n    Animation.prototype.addCompleteListener = function (fn) {\n        var onComplete = this.onComplete;\n        this.onComplete = function () {\n            onComplete();\n            fn();\n        };\n    };\n    Animation.prototype.cancel = function () {\n        this.goToNextFrame = function () { };\n    };\n    return Animation;\n}());\nexports.default = Animation;\n\n\n//# sourceURL=webpack://JGallery/./src/animation.ts?");
 
 /***/ }),
-/* 1 */
+
+/***/ "./src/animations.ts":
+/*!***************************!*\
+  !*** ./src/animations.ts ***!
+  \***************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Component = /** @class */ (function () {
-    function Component() {
-    }
-    Component.prototype.getElement = function () {
-        return this.element;
-    };
-    Component.prototype.appendStyle = function (style) {
-        Object.assign(this.element.style, style);
-    };
-    return Component;
-}());
-exports.default = Component;
-
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar Animations = /** @class */ (function () {\n    function Animations(_a) {\n        var onChange = _a.onChange;\n        this.items = [];\n        this.onChange = onChange;\n        this.goToNextFrames = this.goToNextFrames.bind(this);\n    }\n    Animations.prototype.play = function () {\n        if (!this.rendering) {\n            this.goToNextFrames();\n        }\n    };\n    Animations.prototype.add = function (animations) {\n        var _a;\n        (_a = this.items).push.apply(_a, animations);\n        this.play();\n    };\n    Animations.prototype.remove = function (animation) {\n        var items = this.items;\n        var index = items.indexOf(animation);\n        if (index > -1) {\n            items.splice(index, 1);\n        }\n    };\n    Animations.prototype.count = function () {\n        return this.items.length;\n    };\n    Animations.prototype.cancelAll = function () {\n        this.items.forEach(function (animation) { return animation.cancel(); });\n    };\n    Animations.prototype.clear = function () {\n        this.items.length = 0;\n    };\n    Animations.prototype.goToNextFrames = function () {\n        this.rendering = true;\n        this.items.forEach(function (animation) { return animation.goToNextFrame(); });\n        this.onChange();\n        this.removeCompleted();\n        if (this.count()) {\n            requestAnimationFrame(this.goToNextFrames);\n        }\n        else {\n            this.rendering = false;\n        }\n    };\n    Animations.prototype.getCompleted = function () {\n        return this.items.filter(function (animation) { return animation.completed; });\n    };\n    Animations.prototype.removeCompleted = function () {\n        var _this = this;\n        this.getCompleted().forEach(function (animation) { return _this.remove(animation); });\n    };\n    return Animations;\n}());\nexports.default = Animations;\n\n\n//# sourceURL=webpack://JGallery/./src/animations.ts?");
 
 /***/ }),
-/* 2 */
+
+/***/ "./src/canvas/circle.ts":
+/*!******************************!*\
+  !*** ./src/canvas/circle.ts ***!
+  \******************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Layer = /** @class */ (function () {
-    function Layer(_a) {
-        var _b = _a.width, width = _b === void 0 ? 0 : _b, _c = _a.height, height = _c === void 0 ? 0 : _c, _d = _a.translateX, translateX = _d === void 0 ? 0 : _d, _e = _a.translateY, translateY = _e === void 0 ? 0 : _e, _f = _a.centerX, centerX = _f === void 0 ? 0 : _f, _g = _a.centerY, centerY = _g === void 0 ? 0 : _g, _h = _a.fillStyle, fillStyle = _h === void 0 ? '' : _h, _j = _a.alpha, alpha = _j === void 0 ? 1 : _j;
-        this.width = width;
-        this.height = height;
-        this.translateX = translateX;
-        this.translateY = translateY;
-        this.centerX = centerX;
-        this.centerY = centerY;
-        this.fillStyle = fillStyle;
-        this.alpha = alpha;
-        this.layers = [];
-    }
-    Layer.prototype.add = function (layer) {
-        this.layers.push(layer);
-    };
-    Layer.prototype.remove = function (layer) {
-        var layers = this.layers;
-        var index = layers.indexOf(layer);
-        if (index > -1) {
-            layers.splice(index, 1);
-        }
-    };
-    Layer.prototype.clearLayers = function () {
-        this.layers.length = 0;
-    };
-    return Layer;
-}());
-exports.default = Layer;
-
+eval("\nvar __extends = (this && this.__extends) || (function () {\n    var extendStatics = function (d, b) {\n        extendStatics = Object.setPrototypeOf ||\n            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||\n            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };\n        return extendStatics(d, b);\n    }\n    return function (d, b) {\n        extendStatics(d, b);\n        function __() { this.constructor = d; }\n        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());\n    };\n})();\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar layer_1 = __webpack_require__(/*! ./layer */ \"./src/canvas/layer.ts\");\nvar PI = Math.PI;\nvar Circle = /** @class */ (function (_super) {\n    __extends(Circle, _super);\n    function Circle(_a) {\n        var _b = _a.translateX, translateX = _b === void 0 ? 0 : _b, _c = _a.translateY, translateY = _c === void 0 ? 0 : _c, _d = _a.radius, radius = _d === void 0 ? 0 : _d, _e = _a.startAngle, startAngle = _e === void 0 ? 0 : _e, _f = _a.endAngle, endAngle = _f === void 0 ? 2 * PI : _f;\n        var _this = _super.call(this, { translateX: translateX, translateY: translateY }) || this;\n        _this.radius = radius;\n        _this.startAngle = startAngle;\n        _this.endAngle = endAngle;\n        return _this;\n    }\n    return Circle;\n}(layer_1.default));\nexports.default = Circle;\n\n\n//# sourceURL=webpack://JGallery/./src/canvas/circle.ts?");
 
 /***/ }),
-/* 3 */
+
+/***/ "./src/canvas/index.ts":
+/*!*****************************!*\
+  !*** ./src/canvas/index.ts ***!
+  \*****************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var create_element_1 = __webpack_require__(0);
-var withTooltip = function (element, params) {
-    params = __assign({ content: '', style: {} }, params);
-    var tooltip = create_element_1.default("<span class=\"j-gallery-tooltip\">" + params.content + "</span>", {
-        style: __assign({ padding: '.3em .6em', left: '0', bottom: '100%', opacity: '.85', fontSize: '.85em', whiteSpace: 'pre', position: 'absolute', display: 'none' }, params.style),
-    });
-    element.style.position = 'relative';
-    element.appendChild(tooltip);
-    element.addEventListener('mouseenter', function () { return tooltip.style.display = 'block'; });
-    element.addEventListener('mouseleave', function () { return tooltip.style.display = 'none'; });
-    return element;
-};
-exports.default = withTooltip;
-
+eval("\nvar __extends = (this && this.__extends) || (function () {\n    var extendStatics = function (d, b) {\n        extendStatics = Object.setPrototypeOf ||\n            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||\n            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };\n        return extendStatics(d, b);\n    }\n    return function (d, b) {\n        extendStatics(d, b);\n        function __() { this.constructor = d; }\n        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());\n    };\n})();\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar index_1 = __webpack_require__(/*! ../utils/create-element/index */ \"./src/utils/create-element/index.ts\");\nvar animations_1 = __webpack_require__(/*! ../animations */ \"./src/animations.ts\");\nvar layer_1 = __webpack_require__(/*! ./layer */ \"./src/canvas/layer.ts\");\nvar path_1 = __webpack_require__(/*! ./path */ \"./src/canvas/path.ts\");\nvar circle_1 = __webpack_require__(/*! ./circle */ \"./src/canvas/circle.ts\");\nvar Canvas = /** @class */ (function (_super) {\n    __extends(Canvas, _super);\n    function Canvas(_a) {\n        var width = _a.width, height = _a.height;\n        var _this = _super.call(this, {}) || this;\n        _this.layers = [];\n        _this.animations = new animations_1.default({\n            onChange: function () {\n                _this.clear();\n                _this.draw();\n            }\n        });\n        _this.translateX = 0;\n        _this.translateY = 0;\n        _this.element = index_1.default('<canvas></canvas>');\n        _this.element.width = width;\n        _this.element.height = height;\n        _this.ctx = _this.element.getContext(\"2d\");\n        return _this;\n    }\n    Canvas.prototype.setDimensions = function (width, height) {\n        var element = this.element;\n        var widthRatio = width / element.width;\n        var heightRatio = height / element.height;\n        element.width = width;\n        element.height = height;\n        this.getLayersRecursive().forEach(function (layer) {\n            layer.width *= widthRatio;\n            layer.height *= heightRatio;\n        });\n    };\n    Canvas.prototype.containsLayer = function (layer) {\n        return this.layers.indexOf(layer) > -1;\n    };\n    Canvas.prototype.addAnimations = function (animations) {\n        this.animations.add(animations);\n    };\n    Canvas.prototype.addLayers = function (layers) {\n        var _this = this;\n        layers.forEach(function (layer) {\n            if (!_this.containsLayer(layer)) {\n                _this.layers.push(layer);\n            }\n        });\n    };\n    Canvas.prototype.removeLayers = function (layers) {\n        var _this = this;\n        layers.forEach(function (layer) {\n            if (_this.containsLayer(layer)) {\n                _this.layers.splice(_this.layers.indexOf(layer), 1);\n            }\n        });\n    };\n    Canvas.prototype.clearLayers = function () {\n        this.layers.length = 0;\n    };\n    Canvas.prototype.redraw = function () {\n        this.clear();\n        this.draw();\n    };\n    Canvas.prototype.getLayersRecursive = function () {\n        return getLayersRecursive(this);\n    };\n    Canvas.prototype.applyPathMask = function (path) {\n        if (path === void 0) { path = new path_1.default([]); }\n        var ctx = this.ctx;\n        var points = path.points;\n        ctx.save();\n        ctx.beginPath();\n        ctx.moveTo(points[0].x, points[0].y);\n        points.slice(1).forEach(function (point) { return ctx.lineTo(point.x, point.y); });\n        ctx.closePath();\n        ctx.clip();\n    };\n    Canvas.prototype.applyCircleMask = function (_a) {\n        var _b = _a.circle, circle = _b === void 0 ? new circle_1.default({}) : _b, _c = _a.translateX, translateX = _c === void 0 ? 0 : _c, _d = _a.translateY, translateY = _d === void 0 ? 0 : _d;\n        var ctx = this.ctx;\n        ctx.save();\n        ctx.beginPath();\n        ctx.moveTo(translateX + circle.translateX, translateY + circle.translateY);\n        ctx.arc(translateX + circle.translateX, translateY + circle.translateY, circle.radius, circle.startAngle, circle.endAngle);\n        ctx.closePath();\n        ctx.clip();\n    };\n    Canvas.prototype.drawPath = function (_a) {\n        var _b = _a.path, path = _b === void 0 ? new path_1.default([]) : _b, _c = _a.translateX, translateX = _c === void 0 ? 0 : _c, _d = _a.translateY, translateY = _d === void 0 ? 0 : _d;\n        var ctx = this.ctx;\n        var points = path.points;\n        ctx.fillStyle = path.fillStyle;\n        ctx.beginPath();\n        ctx.moveTo(points[0].x + translateX, points[0].y + translateY);\n        points.slice(1).forEach(function (point) { return ctx.lineTo(point.x + translateX, point.y + translateY); });\n        ctx.closePath();\n        ctx.fill();\n    };\n    Canvas.prototype.draw = function () {\n        this.drawLayer({ layer: this });\n    };\n    Canvas.prototype.drawLayer = function (_a) {\n        var _this = this;\n        var _b = _a.layer, layer = _b === void 0 ? new layer_1.default({}) : _b, _c = _a.translateX, translateX = _c === void 0 ? 0 : _c, _d = _a.translateY, translateY = _d === void 0 ? 0 : _d;\n        var ctx = this.ctx;\n        translateX += layer.translateX + layer.centerX * layer.width;\n        translateY += layer.translateY + layer.centerY * layer.height;\n        ctx.globalAlpha = layer.alpha;\n        if (layer.mask instanceof path_1.default) {\n            this.applyPathMask(layer.mask);\n        }\n        else if (layer.mask instanceof circle_1.default) {\n            this.applyCircleMask({ circle: layer.mask, translateX: translateX, translateY: translateY });\n        }\n        if (layer instanceof path_1.default) {\n            this.drawPath({ path: layer, translateX: translateX, translateY: translateY });\n        }\n        else if (layer.fillStyle) {\n            ctx.fillStyle = layer.fillStyle;\n            ctx.fillRect(translateX, translateY, layer.width, layer.height);\n        }\n        if (layer.mask) {\n            ctx.restore();\n        }\n        layer.layers.forEach(function (layer) { return _this.drawLayer({ layer: layer, translateX: translateX, translateY: translateY }); });\n    };\n    Canvas.prototype.clear = function () {\n        this.ctx.clearRect(0, 0, innerWidth, innerHeight);\n    };\n    return Canvas;\n}(layer_1.default));\nvar getLayersRecursive = function (layer) {\n    return layer.layers.concat(layer.layers.reduce(function (layers, layer) {\n        return layers.concat(getLayersRecursive(layer));\n    }, []));\n};\nexports.default = Canvas;\n\n\n//# sourceURL=webpack://JGallery/./src/canvas/index.ts?");
 
 /***/ }),
-/* 4 */
+
+/***/ "./src/canvas/layer.ts":
+/*!*****************************!*\
+  !*** ./src/canvas/layer.ts ***!
+  \*****************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Animation = /** @class */ (function () {
-    function Animation(_a) {
-        var _b = _a.initialValue, initialValue = _b === void 0 ? 0 : _b, _c = _a.finalValue, finalValue = _c === void 0 ? 0 : _c, _d = _a.onChange, onChange = _d === void 0 ? function () { } : _d, _e = _a.onComplete, onComplete = _e === void 0 ? function () { } : _e, _f = _a.duration, duration = _f === void 0 ? 500 : _f, _g = _a.easingFunction, easingFunction = _g === void 0 ? function (t) { return 1 + (--t) * t * t * t * t; } : _g;
-        this.initialValue = initialValue;
-        this.currentValue = initialValue;
-        this.finalValue = finalValue;
-        this.duration = duration;
-        this.easingFunction = easingFunction;
-        this.onComplete = onComplete;
-        this.currentTime = 0;
-        this.onChange = onChange;
-        this.completed = false;
-        this.start = this.start.bind(this);
-    }
-    Animation.prototype.start = function () {
-        this.goToNextFrame();
-        if (!this.completed) {
-            this.animationFrame = requestAnimationFrame(this.start);
-        }
-    };
-    Animation.prototype.pause = function () {
-        cancelAnimationFrame(this.animationFrame);
-    };
-    Animation.prototype.setValue = function (value) {
-        this.currentValue = value;
-    };
-    Animation.prototype.reset = function () {
-        this.pause();
-        this.currentTime = 0;
-        this.currentValue = this.initialValue;
-        this.completed = false;
-    };
-    Animation.prototype.goToNextFrame = function () {
-        this.currentTime += 16 / this.duration;
-        this.currentValue = this.initialValue + (this.finalValue - this.initialValue) * this.easingFunction(this.currentTime);
-        if (this.currentTime < 1) {
-            this.onChange(this.currentValue);
-        }
-        else {
-            this.currentValue = this.finalValue;
-            this.onChange(this.currentValue);
-            this.completed = true;
-            this.onComplete();
-        }
-    };
-    Animation.prototype.addCompleteListener = function (fn) {
-        var onComplete = this.onComplete;
-        this.onComplete = function () {
-            onComplete();
-            fn();
-        };
-    };
-    Animation.prototype.cancel = function () {
-        this.goToNextFrame = function () { };
-    };
-    return Animation;
-}());
-exports.default = Animation;
-
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar Layer = /** @class */ (function () {\n    function Layer(_a) {\n        var _b = _a.width, width = _b === void 0 ? 0 : _b, _c = _a.height, height = _c === void 0 ? 0 : _c, _d = _a.translateX, translateX = _d === void 0 ? 0 : _d, _e = _a.translateY, translateY = _e === void 0 ? 0 : _e, _f = _a.centerX, centerX = _f === void 0 ? 0 : _f, _g = _a.centerY, centerY = _g === void 0 ? 0 : _g, _h = _a.fillStyle, fillStyle = _h === void 0 ? '' : _h, _j = _a.alpha, alpha = _j === void 0 ? 1 : _j;\n        this.width = width;\n        this.height = height;\n        this.translateX = translateX;\n        this.translateY = translateY;\n        this.centerX = centerX;\n        this.centerY = centerY;\n        this.fillStyle = fillStyle;\n        this.alpha = alpha;\n        this.layers = [];\n    }\n    Layer.prototype.add = function (layer) {\n        this.layers.push(layer);\n    };\n    Layer.prototype.remove = function (layer) {\n        var layers = this.layers;\n        var index = layers.indexOf(layer);\n        if (index > -1) {\n            layers.splice(index, 1);\n        }\n    };\n    Layer.prototype.clearLayers = function () {\n        this.layers.length = 0;\n    };\n    return Layer;\n}());\nexports.default = Layer;\n\n\n//# sourceURL=webpack://JGallery/./src/canvas/layer.ts?");
 
 /***/ }),
-/* 5 */
+
+/***/ "./src/canvas/path.ts":
+/*!****************************!*\
+  !*** ./src/canvas/path.ts ***!
+  \****************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var cancellablePromise = function (executor) {
-    var cancelListeners = [];
-    var cancel;
-    var onCancel = function (listener) { return cancelListeners.push(listener); };
-    var promise = new Promise(function (resolve, reject) {
-        executor(resolve, reject, onCancel);
-        cancel = function () {
-            resolve();
-            cancelListeners.forEach(function (fn) { return fn(); });
-        };
-    });
-    promise.cancel = cancel;
-    return promise;
-};
-exports.default = cancellablePromise;
-
+eval("\nvar __extends = (this && this.__extends) || (function () {\n    var extendStatics = function (d, b) {\n        extendStatics = Object.setPrototypeOf ||\n            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||\n            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };\n        return extendStatics(d, b);\n    }\n    return function (d, b) {\n        extendStatics(d, b);\n        function __() { this.constructor = d; }\n        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());\n    };\n})();\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar layer_1 = __webpack_require__(/*! ./layer */ \"./src/canvas/layer.ts\");\nvar Path = /** @class */ (function (_super) {\n    __extends(Path, _super);\n    function Path(points) {\n        var _this = _super.call(this, {}) || this;\n        _this.points = points;\n        return _this;\n    }\n    Path.prototype.clone = function () {\n        return new Path(this.points.map(function (point) { return point.clone(); }));\n    };\n    Path.prototype.move = function (vector) {\n        this.points.forEach(function (point) { return point.move(vector); });\n    };\n    return Path;\n}(layer_1.default));\nexports.default = Path;\n\n\n//# sourceURL=webpack://JGallery/./src/canvas/path.ts?");
 
 /***/ }),
-/* 6 */
+
+/***/ "./src/component.ts":
+/*!**************************!*\
+  !*** ./src/component.ts ***!
+  \**************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var index_1 = __webpack_require__(0);
-var defaultIconStyle = {
-    display: 'inline-flex',
-    cursor: 'pointer',
-    width: '32px',
-    height: '24px',
-    verticalAlign: 'middle',
-    alignItems: 'center',
-    boxSizing: 'border-box',
-    justifyContent: 'center',
-};
-var dot = function (style) {
-    if (style === void 0) { style = {}; }
-    return index_1.default("<span class=\"j-gallery-dot-icon\" style=\"width: 4px; height: 4px; display: inline-block; margin: 1px\"></span>", { style: style });
-};
-exports.iconPlay = function (_a, style) {
-    var color = _a.color;
-    if (style === void 0) { style = {}; }
-    return index_1.default("<span class=\"j-gallery-play-icon\"></span>", {
-        style: __assign({}, defaultIconStyle, style),
-        children: [index_1.default("<span></span>", {
-                style: {
-                    border: 'solid',
-                    borderColor: "transparent transparent transparent " + color,
-                    borderWidth: '.4em 0 .4em .7em',
-                }
-            })]
-    });
-};
-exports.iconScreen = function (_a, style) {
-    var color = _a.color;
-    if (style === void 0) { style = {}; }
-    return index_1.default("<span class=\"j-gallery-screen-icon\"></span>", {
-        style: __assign({}, defaultIconStyle, style),
-        children: [index_1.default("<span></span>", {
-                style: {
-                    width: '1em',
-                    height: '.8em',
-                    border: "solid " + color,
-                    borderWidth: '.2em .1em',
-                    boxSizing: 'border-box',
-                }
-            })]
-    });
-};
-exports.iconEllipsisHorizontal = function (_a, style) {
-    var color = _a.color;
-    if (style === void 0) { style = {}; }
-    return index_1.default("<span class=\"j-gallery-ellipsis-horizontal-icon\"></span>", {
-        style: __assign({}, defaultIconStyle, style),
-        children: [dot({ background: color }), dot({ background: color }), dot({ background: color })]
-    });
-};
-exports.iconPause = function (_a, style) {
-    var color = _a.color;
-    if (style === void 0) { style = {}; }
-    return index_1.default("<span class=\"j-gallery-pause-icon\"></span>", {
-        style: __assign({}, defaultIconStyle, { justifyContent: 'center' }, style),
-        children: [dot({ width: '.35em', height: '.9em', background: color }), dot({ width: '.35em', height: '.9em', background: color })]
-    });
-};
-exports.iconGrid = function (_a, style) {
-    var color = _a.color;
-    if (style === void 0) { style = {}; }
-    return index_1.default("<span class=\"j-gallery-grid-icon\"></span>", {
-        style: __assign({}, defaultIconStyle, { height: 'auto', flexWrap: 'wrap', padding: '7px' }, style),
-        children: [
-            dot({ background: color }), dot({ background: color }), dot({ background: color }),
-            dot({ background: color }), dot({ background: color }), dot({ background: color }),
-            dot({ background: color }), dot({ background: color }), dot({ background: color }),
-        ]
-    });
-};
-
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar Component = /** @class */ (function () {\n    function Component() {\n    }\n    Component.prototype.getElement = function () {\n        return this.element;\n    };\n    Component.prototype.appendStyle = function (style) {\n        Object.assign(this.element.style, style);\n    };\n    return Component;\n}());\nexports.default = Component;\n\n\n//# sourceURL=webpack://JGallery/./src/component.ts?");
 
 /***/ }),
-/* 7 */
+
+/***/ "./src/dropdown/index.ts":
+/*!*******************************!*\
+  !*** ./src/dropdown/index.ts ***!
+  \*******************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var index_1 = __webpack_require__(0);
-var component_1 = __webpack_require__(1);
-var Loading = /** @class */ (function (_super) {
-    __extends(Loading, _super);
-    function Loading(params) {
-        if (params === void 0) { params = { color: '#fff' }; }
-        var _this = _super.call(this) || this;
-        params = __assign({ style: {} }, params);
-        var color = params.color;
-        _this.element = index_1.default("\n            <span class=\"j-gallery-loading\" style=\"display: inline-flex\">\n            </span>\n        ", {
-            style: params.style,
-            children: [
-                item({ animationDelay: '-.375s', background: color }),
-                item({ animationDelay: '-.250s', background: color }),
-                item({ animationDelay: '-.125s', background: color }),
-                item({ background: color }),
-                item({ background: color }),
-                item({ animationDelay: '-.125s', background: color }),
-                item({ animationDelay: '-.250s', background: color }),
-                item({ animationDelay: '-.375s', background: color }),
-            ],
-        });
-        return _this;
-    }
-    return Loading;
-}(component_1.default));
-exports.default = Loading;
-var item = function (style) {
-    if (style === void 0) { style = {}; }
-    return index_1.default("<span/>", {
-        style: __assign({ width: '1em', height: '1em', animation: 'jGalleryLoading .5s linear infinite alternate', display: 'inline-block' }, style),
-    });
-};
-var style = document.createElement('style');
-style.innerHTML = "\n    @keyframes jGalleryLoading {\n        0% {\n            transform: scaleX(0);\n            opacity: 1;\n        }\n\n        100% {\n            transform: scaleX(1);\n            opacity: 1;\n        }\n    }\n";
-if (typeof document !== 'undefined') {
-    document.querySelector('head').appendChild(style);
-}
-
+eval("\nvar __extends = (this && this.__extends) || (function () {\n    var extendStatics = function (d, b) {\n        extendStatics = Object.setPrototypeOf ||\n            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||\n            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };\n        return extendStatics(d, b);\n    }\n    return function (d, b) {\n        extendStatics(d, b);\n        function __() { this.constructor = d; }\n        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());\n    };\n})();\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar index_1 = __webpack_require__(/*! ../utils/create-element/index */ \"./src/utils/create-element/index.ts\");\nvar component_1 = __webpack_require__(/*! ../component */ \"./src/component.ts\");\nvar Dropdown = /** @class */ (function (_super) {\n    __extends(Dropdown, _super);\n    function Dropdown(_a) {\n        var items = _a.items, backgroundColor = _a.backgroundColor, textColor = _a.textColor, _b = _a.onChange, onChange = _b === void 0 ? function () { } : _b;\n        var _this = _super.call(this) || this;\n        _this.element = index_1.default(\"<select class=\\\"j-gallery-drop-down\\\" style=\\\"padding: 10px; background: \" + backgroundColor + \"; font-size: 1em; color: \" + textColor + \"; border: 0; outline: none; vertical-align: middle;\\\"></select>\");\n        _this.options = items.map(function (item, i) {\n            var htmlElement = index_1.default(\"<option value=\\\"\" + i + \"\\\">\" + item + \"</option>\");\n            _this.element.appendChild(htmlElement);\n            return htmlElement;\n        });\n        _this.element.addEventListener('change', function () {\n            onChange(+_this.element.value);\n        });\n        return _this;\n    }\n    Dropdown.prototype.setActive = function (index) {\n        var option = this.options[index];\n        if (option) {\n            option.setAttribute('selected', 'true');\n        }\n    };\n    return Dropdown;\n}(component_1.default));\nexports.default = Dropdown;\n\n\n//# sourceURL=webpack://JGallery/./src/dropdown/index.ts?");
 
 /***/ }),
-/* 8 */
+
+/***/ "./src/gallery/defaults.ts":
+/*!*********************************!*\
+  !*** ./src/gallery/defaults.ts ***!
+  \*********************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Queue = /** @class */ (function () {
-    function Queue() {
-        var tasks = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            tasks[_i] = arguments[_i];
-        }
-        this.tasks = tasks.slice();
-        this.run = this.run.bind(this);
-    }
-    Queue.prototype.run = function () {
-        var task = this.tasks.shift();
-        if (task) {
-            this.currentProcess = task();
-            this.currentProcess.then(this.run);
-        }
-        else {
-            this.currentProcess = null;
-        }
-    };
-    Queue.prototype.cancel = function () {
-        this.tasks.length = 0;
-        this.currentProcess && this.currentProcess.cancel && this.currentProcess.cancel();
-    };
-    return Queue;
-}());
-exports.default = Queue;
-
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar defaults = {\n    autostartAtAlbum: 1,\n    autostartAtItem: 1,\n    backgroundColor: '#000',\n    browserHistory: true,\n    canChangePreviewSize: true,\n    canMinimalizeThumbnails: true,\n    itemOnHide: function () { },\n    itemOnLoad: function () { },\n    itemOnShow: function () { },\n    navigationOnPreviewClick: true,\n    onChange: function () { },\n    slideShow: true,\n    slideShowAutoStart: false,\n    slideShowInterval: 4000,\n    textColor: '#fff',\n    thumbnailHeight: '64px',\n    thumbnailHeightOnFullScreen: '128px',\n    thumbnailWidth: '64px',\n    thumbnailWidthOnFullScreen: '128px',\n    thumbnails: true,\n    thumbnailsFullScreen: true,\n    thumbnailsPosition: 'bottom',\n    thumbnailsVisible: true,\n    tooltipChangeSize: 'Change size',\n    tooltipSeeAllItems: 'See all items',\n    tooltipSeeOtherAlbums: 'See other albums',\n    tooltipSlideShowPause: 'Pause slide show',\n    tooltipSlideShowStart: 'Start slide show',\n    tooltipThumbnailsToggle: 'Toogle whumbnails',\n    transitionDetails: 1,\n    transitionDuration: 500,\n    transitionOriginX: .5,\n    transitionOriginY: .5,\n    transitionXAxis: true,\n    transitionYAxis: false,\n};\nexports.default = defaults;\n\n\n//# sourceURL=webpack://JGallery/./src/gallery/defaults.ts?");
 
 /***/ }),
-/* 9 */
+
+/***/ "./src/gallery/index.ts":
+/*!******************************!*\
+  !*** ./src/gallery/index.ts ***!
+  \******************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = (function (src) {
-    return typeof src === 'string' ? loadImg(src) : loadElement(src);
-});
-var loadImg = function (src) { return new Promise(function (resolve, reject) {
-    var img = new Image;
-    img.src = src;
-    img.onload = function () { return resolve(); };
-    img.onerror = reject;
-}); };
-var loadElement = function (element) { return Promise.all([element, Array.from(element.querySelectorAll('*'))]
-    .reduce(function (paths, element) {
-    if (element instanceof Image) {
-        paths.push(loadImg(element.getAttribute('src')));
-    }
-    return paths;
-}, [])); };
-
+eval("\nvar __extends = (this && this.__extends) || (function () {\n    var extendStatics = function (d, b) {\n        extendStatics = Object.setPrototypeOf ||\n            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||\n            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };\n        return extendStatics(d, b);\n    }\n    return function (d, b) {\n        extendStatics(d, b);\n        function __() { this.constructor = d; }\n        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());\n    };\n})();\nvar __assign = (this && this.__assign) || function () {\n    __assign = Object.assign || function(t) {\n        for (var s, i = 1, n = arguments.length; i < n; i++) {\n            s = arguments[i];\n            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))\n                t[p] = s[p];\n        }\n        return t;\n    };\n    return __assign.apply(this, arguments);\n};\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\nvar __generator = (this && this.__generator) || function (thisArg, body) {\n    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;\n    return g = { next: verb(0), \"throw\": verb(1), \"return\": verb(2) }, typeof Symbol === \"function\" && (g[Symbol.iterator] = function() { return this; }), g;\n    function verb(n) { return function (v) { return step([n, v]); }; }\n    function step(op) {\n        if (f) throw new TypeError(\"Generator is already executing.\");\n        while (_) try {\n            if (f = 1, y && (t = op[0] & 2 ? y[\"return\"] : op[0] ? y[\"throw\"] || ((t = y[\"return\"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;\n            if (y = 0, t) op = [op[0] & 2, t.value];\n            switch (op[0]) {\n                case 0: case 1: t = op; break;\n                case 4: _.label++; return { value: op[1], done: false };\n                case 5: _.label++; y = op[1]; op = [0]; continue;\n                case 7: op = _.ops.pop(); _.trys.pop(); continue;\n                default:\n                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }\n                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }\n                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }\n                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }\n                    if (t[2]) _.ops.pop();\n                    _.trys.pop(); continue;\n            }\n            op = body.call(thisArg, _);\n        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }\n        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };\n    }\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar index_1 = __webpack_require__(/*! ../utils/create-element/index */ \"./src/utils/create-element/index.ts\");\nvar component_1 = __webpack_require__(/*! ../component */ \"./src/component.ts\");\nvar index_2 = __webpack_require__(/*! ../canvas/index */ \"./src/canvas/index.ts\");\nvar transition_effect_1 = __webpack_require__(/*! ../transition-effect */ \"./src/transition-effect.ts\");\nvar index_3 = __webpack_require__(/*! ../loading/index */ \"./src/loading/index.ts\");\nvar with_albums_menu_1 = __webpack_require__(/*! ./with-albums-menu */ \"./src/gallery/with-albums-menu.ts\");\nvar with_preview_size_changer_1 = __webpack_require__(/*! ./with-preview-size-changer */ \"./src/gallery/with-preview-size-changer.ts\");\nvar with_browser_history_1 = __webpack_require__(/*! ./with-browser-history */ \"./src/gallery/with-browser-history.ts\");\nvar index_4 = __webpack_require__(/*! ../preview/index */ \"./src/preview/index.ts\");\nvar swipe_1 = __webpack_require__(/*! ../swipe */ \"./src/swipe.ts\");\nvar cancellable_promise_1 = __webpack_require__(/*! ../utils/cancellable-promise */ \"./src/utils/cancellable-promise.ts\");\nvar queue_1 = __webpack_require__(/*! ../utils/queue */ \"./src/utils/queue.ts\");\nvar defaults_1 = __webpack_require__(/*! ./defaults */ \"./src/gallery/defaults.ts\");\nvar with_slideshow_1 = __webpack_require__(/*! ./with-slideshow */ \"./src/gallery/with-slideshow.ts\");\nvar with_thumbnails_1 = __webpack_require__(/*! ./with-thumbnails */ \"./src/gallery/with-thumbnails.ts\");\nvar with_navigation_on_preview_click_1 = __webpack_require__(/*! ./with-navigation-on-preview-click */ \"./src/gallery/with-navigation-on-preview-click.ts\");\nvar id = 1;\nvar Gallery = /** @class */ (function (_super) {\n    __extends(Gallery, _super);\n    function Gallery(albums, params) {\n        if (params === void 0) { params = {}; }\n        var _this = _super.call(this) || this;\n        _this.params = params;\n        _this.albums = albums;\n        _this.album = albums[params.autostartAtAlbum - 1];\n        _this.loading = new index_3.default({ color: params.textColor });\n        _this.goToItem = _this.goToItem.bind(_this);\n        _this.next = _this.next.bind(_this);\n        _this.prev = _this.prev.bind(_this);\n        var style = document.createElement('style');\n        style.innerHTML = \"\\n            .j-gallery-\" + id + \" ::-webkit-scrollbar {\\n                height: 1em;\\n                background: transparent;\\n                top: 0;\\n                left: 0;\\n                right: 0;\\n                position: absolute;\\n            }\\n\\n            .j-gallery-\" + id + \" *::-webkit-scrollbar-thumb {\\n                background: \" + params.textColor + \";\\n            }\\n        \";\n        if (typeof document !== 'undefined') {\n            document.querySelector('head').appendChild(style);\n        }\n        _this.title = index_1.default('<div class=\"j-gallery-title\"></div>', {\n            style: {\n                paddingRight: '10px',\n                order: '1',\n                textAlign: 'right',\n                flexGrow: '1',\n            }\n        });\n        _this.controlsElement = index_1.default(\"<div class=\\\"j-gallery-controls\\\"></div>\", {\n            style: {\n                padding: '5px 0',\n                position: 'relative',\n                display: 'flex',\n                alignItems: 'center',\n                zIndex: '1',\n            },\n            children: [_this.title],\n        });\n        _this.preview = new index_4.default;\n        _this.previewElement = index_1.default(\"<div class=\\\"j-gallery-preview-container\\\"></div>\", {\n            style: {\n                flex: '1',\n                display: 'flex',\n                flexDirection: 'column',\n                position: 'relative',\n            },\n            children: [_this.preview.getElement(), _this.controlsElement]\n        });\n        (new swipe_1.default({\n            element: _this.previewElement,\n            onSwipeLeft: _this.next,\n            onSwipeRight: _this.prev,\n        })).activate();\n        _this.loading.appendStyle({\n            top: '50%',\n            left: '50%',\n            transform: 'translateX(-50%) translateY(-50%)',\n            position: 'absolute',\n            zIndex: '1',\n        });\n        _this.element = index_1.default(\"\\n            <div class=\\\"j-gallery j-gallery-\" + id++ + \"\\\"></div>\", {\n            children: [\n                _this.previewElement,\n            ],\n            style: {\n                height: '100vh',\n                padding: '10px',\n                background: params.backgroundColor,\n                color: params.textColor,\n                boxSizing: 'border-box',\n                position: 'relative',\n                flexDirection: 'column',\n                userSelect: 'none',\n                display: 'flex',\n            },\n        });\n        window.addEventListener('resize', function () { return _this.refreshTransitionCanvasDimensions(); });\n        requestAnimationFrame(function () {\n            _this.initialize();\n        });\n        return _this;\n    }\n    Gallery.prototype.initialize = function () {\n        this.transitionCanvas = new index_2.default({\n            width: this.element.clientWidth,\n            height: this.element.clientHeight\n        });\n        Object.assign(this.transitionCanvas.element.style, {\n            width: '100%',\n            height: '100%',\n            top: '0',\n            left: '0',\n            position: 'absolute',\n        });\n        this.goToItemByCurrentHash();\n    };\n    Gallery.create = function (albums, params) {\n        if (params === void 0) { params = {}; }\n        var decorators = [];\n        params = __assign({}, defaults_1.default, params);\n        if (params.navigationOnPreviewClick)\n            decorators.push(with_navigation_on_preview_click_1.default);\n        if (params.browserHistory)\n            decorators.push(with_browser_history_1.default);\n        if (params.slideShow)\n            decorators.push(with_slideshow_1.default);\n        if (params.thumbnails)\n            decorators.push(with_thumbnails_1.default);\n        if (params.canChangePreviewSize)\n            decorators.push(with_preview_size_changer_1.default);\n        if (albums.length > 1)\n            decorators.push(with_albums_menu_1.default);\n        return new (compose(decorators, Gallery))(albums, params);\n    };\n    Gallery.createElement = function (html) {\n        return index_1.default(html);\n    };\n    Gallery.prototype.goToItemByCurrentHash = function () {\n        var item = this.findItemByCurrentHash();\n        return this.goToAlbum(this.albums.indexOf(this.findAlbumByAlbumItem(item)), item);\n    };\n    Gallery.prototype.findAlbumByAlbumItem = function (item) {\n        return this.albums.find(function (album) { return !!album.items.includes(item); });\n    };\n    Gallery.prototype.findItemByCurrentHash = function () {\n        return this.findItemByHash(location.hash.replace('#', '')) || this.album.items[this.params.autostartAtItem - 1];\n    };\n    Gallery.prototype.appendControlsElements = function (elements) {\n        var _this = this;\n        elements.forEach(function (element) {\n            Object.assign(element.style, { margin: '0 .25em' });\n            _this.controlsElement.appendChild(element);\n        });\n    };\n    Gallery.prototype.getItems = function () {\n        return this.albums.reduce(function (items, album) { return items.concat(album.items); }, []);\n    };\n    Gallery.prototype.findItemByHash = function (hash) {\n        return this.getItems().find(function (item) { return item.hash === hash; });\n    };\n    Gallery.prototype.next = function () {\n        return __awaiter(this, void 0, void 0, function () {\n            var _a, album, item, items, next;\n            return __generator(this, function (_b) {\n                switch (_b.label) {\n                    case 0:\n                        _a = this, album = _a.album, item = _a.item;\n                        items = album.items;\n                        next = items[items.indexOf(item) + 1];\n                        if (!next) return [3 /*break*/, 2];\n                        return [4 /*yield*/, this.goToItem(next)];\n                    case 1:\n                        _b.sent();\n                        return [3 /*break*/, 4];\n                    case 2: return [4 /*yield*/, this.goToItem(items[0])];\n                    case 3:\n                        _b.sent();\n                        _b.label = 4;\n                    case 4: return [2 /*return*/];\n                }\n            });\n        });\n    };\n    Gallery.prototype.prev = function () {\n        return __awaiter(this, void 0, void 0, function () {\n            var _a, album, item, items, prev;\n            return __generator(this, function (_b) {\n                switch (_b.label) {\n                    case 0:\n                        _a = this, album = _a.album, item = _a.item;\n                        items = album.items;\n                        prev = items[items.indexOf(item) - 1];\n                        if (!prev) return [3 /*break*/, 2];\n                        return [4 /*yield*/, this.goToItem(prev)];\n                    case 1:\n                        _b.sent();\n                        return [3 /*break*/, 4];\n                    case 2: return [4 /*yield*/, this.goToItem(items[items.length - 1])];\n                    case 3:\n                        _b.sent();\n                        _b.label = 4;\n                    case 4: return [2 /*return*/];\n                }\n            });\n        });\n    };\n    Gallery.prototype.showTransitionCanvas = function () {\n        this.previewElement.appendChild(this.transitionCanvas.element);\n    };\n    Gallery.prototype.hideTransitionCanvas = function () {\n        if (this.previewElement.contains(this.transitionCanvas.element)) {\n            this.previewElement.removeChild(this.transitionCanvas.element);\n        }\n    };\n    Gallery.prototype.refreshTransitionCanvasDimensions = function () {\n        this.transitionCanvas.setDimensions(this.element.clientWidth, this.element.clientHeight);\n        this.transitionCanvas.redraw();\n    };\n    Gallery.prototype.showLoading = function () {\n        this.previewElement.appendChild(this.loading.getElement());\n    };\n    Gallery.prototype.hideLoading = function () {\n        if (this.previewElement.contains(this.loading.getElement())) {\n            this.previewElement.removeChild(this.loading.getElement());\n        }\n    };\n    Gallery.prototype.goToItem = function (item) {\n        var _this = this;\n        var options = {\n            backgroundColor: this.params.backgroundColor,\n            duration: this.params.transitionDuration,\n            details: this.params.transitionDetails,\n            xAxis: this.params.transitionXAxis,\n            yAxis: this.params.transitionYAxis,\n            originX: this.params.transitionOriginX,\n            originY: this.params.transitionOriginY,\n        };\n        this.changingItem && this.changingItem.cancel();\n        this.changingItem = cancellable_promise_1.default(function (resolve, reject, onCancel) {\n            var queue = new queue_1.default(function () {\n                _this.showTransitionCanvas();\n                _this.params.onChange({ prevItem: _this.item, item: item, album: _this.album });\n                return _this.item ? transition_effect_1.default(_this.transitionCanvas, options) : Promise.resolve();\n            }, function () {\n                _this.showLoading();\n                _this.params.itemOnHide({ item: _this.item, album: _this.album });\n                return _this.preview.setItem(item);\n            }, function () {\n                _this.params.itemOnLoad({ item: item, album: _this.album });\n                _this.title.innerHTML = item.title || '';\n                _this.hideLoading();\n                _this.transitionCanvas.clearLayers();\n                return transition_effect_1.default(_this.transitionCanvas, __assign({}, options, { reverse: true }));\n            }, function () {\n                _this.params.itemOnShow({ item: item, album: _this.album });\n                _this.transitionCanvas.clearLayers();\n                _this.hideTransitionCanvas();\n                _this.item = item;\n                resolve();\n                return Promise.resolve();\n            });\n            queue.run();\n            onCancel(function () {\n                queue.cancel();\n                _this.transitionCanvas.clearLayers();\n                _this.hideTransitionCanvas();\n                _this.hideLoading();\n            });\n        });\n        return this.changingItem;\n    };\n    Gallery.prototype.goToAlbum = function (value, item) {\n        return __awaiter(this, void 0, void 0, function () {\n            return __generator(this, function (_a) {\n                this.album = this.albums[value];\n                return [2 /*return*/, this.goToItem(item || this.album.items[0])];\n            });\n        });\n    };\n    return Gallery;\n}(component_1.default));\nexports.Gallery = Gallery;\nvar compose = function (decorators, constructor) {\n    return decorators.reduce(function (constructor, decorator) { return decorator(constructor); }, constructor);\n};\nexports.default = Gallery;\n\n\n//# sourceURL=webpack://JGallery/./src/gallery/index.ts?");
 
 /***/ }),
-/* 10 */
+
+/***/ "./src/gallery/with-albums-menu.ts":
+/*!*****************************************!*\
+  !*** ./src/gallery/with-albums-menu.ts ***!
+  \*****************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var index_1 = __webpack_require__(11);
-if (typeof window !== 'undefined' && !window.JGallery) {
-    window.JGallery = index_1.default;
-}
-
+eval("\nvar __extends = (this && this.__extends) || (function () {\n    var extendStatics = function (d, b) {\n        extendStatics = Object.setPrototypeOf ||\n            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||\n            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };\n        return extendStatics(d, b);\n    }\n    return function (d, b) {\n        extendStatics(d, b);\n        function __() { this.constructor = d; }\n        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());\n    };\n})();\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar index_1 = __webpack_require__(/*! ../dropdown/index */ \"./src/dropdown/index.ts\");\nvar with_tooltip_1 = __webpack_require__(/*! ../utils/with-tooltip */ \"./src/utils/with-tooltip.ts\");\nvar create_element_1 = __webpack_require__(/*! ../utils/create-element */ \"./src/utils/create-element/index.ts\");\nvar withAlbumsMenu = function (constructor) {\n    return /** @class */ (function (_super) {\n        __extends(class_1, _super);\n        function class_1(albums, params) {\n            var _this = _super.call(this, albums, params) || this;\n            var container = create_element_1.default('<span class=\"j-gallery-albums-drop-down\"/>');\n            _this.dropdown = new index_1.default({\n                items: _this.albums.map(function (album) { return album.title; }),\n                textColor: params.textColor,\n                backgroundColor: params.backgroundColor,\n                onChange: function (value) {\n                    _this.goToAlbum(value);\n                }\n            });\n            container.appendChild(_this.dropdown.getElement());\n            with_tooltip_1.default(container, {\n                style: {\n                    color: params.backgroundColor,\n                    background: params.textColor,\n                },\n                content: params.tooltipSeeOtherAlbums,\n            });\n            _this.appendControlsElements([container]);\n            return _this;\n        }\n        class_1.prototype.initialize = function () {\n            _super.prototype.initialize.call(this);\n            this.dropdown.setActive(this.albums.indexOf(this.album));\n        };\n        return class_1;\n    }(constructor));\n};\nexports.default = withAlbumsMenu;\n\n\n//# sourceURL=webpack://JGallery/./src/gallery/with-albums-menu.ts?");
 
 /***/ }),
-/* 11 */
+
+/***/ "./src/gallery/with-browser-history.ts":
+/*!*********************************************!*\
+  !*** ./src/gallery/with-browser-history.ts ***!
+  \*********************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var index_1 = __webpack_require__(0);
-var component_1 = __webpack_require__(1);
-var index_2 = __webpack_require__(12);
-var transition_effect_1 = __webpack_require__(16);
-var index_3 = __webpack_require__(7);
-var with_albums_menu_1 = __webpack_require__(17);
-var with_preview_size_changer_1 = __webpack_require__(19);
-var with_browser_history_1 = __webpack_require__(20);
-var index_4 = __webpack_require__(21);
-var swipe_1 = __webpack_require__(22);
-var cancellable_promise_1 = __webpack_require__(5);
-var queue_1 = __webpack_require__(8);
-var defaults_1 = __webpack_require__(23);
-var with_slideshow_1 = __webpack_require__(24);
-var with_thumbnails_1 = __webpack_require__(26);
-var with_navigation_on_preview_click_1 = __webpack_require__(29);
-var id = 1;
-var Gallery = /** @class */ (function (_super) {
-    __extends(Gallery, _super);
-    function Gallery(albums, params) {
-        if (params === void 0) { params = {}; }
-        var _this = _super.call(this) || this;
-        _this.params = params;
-        _this.albums = albums;
-        _this.album = albums[params.autostartAtAlbum - 1];
-        _this.loading = new index_3.default({ color: params.textColor });
-        _this.goToItem = _this.goToItem.bind(_this);
-        _this.next = _this.next.bind(_this);
-        _this.prev = _this.prev.bind(_this);
-        var style = document.createElement('style');
-        style.innerHTML = "\n            .j-gallery-" + id + " ::-webkit-scrollbar {\n                height: 1em;\n                background: transparent;\n                top: 0;\n                left: 0;\n                right: 0;\n                position: absolute;\n            }\n\n            .j-gallery-" + id + " *::-webkit-scrollbar-thumb {\n                background: " + params.textColor + ";\n            }\n        ";
-        if (typeof document !== 'undefined') {
-            document.querySelector('head').appendChild(style);
-        }
-        _this.title = index_1.default('<div class="j-gallery-title"></div>', {
-            style: {
-                paddingRight: '10px',
-                order: '1',
-                textAlign: 'right',
-                flexGrow: '1',
-            }
-        });
-        _this.controlsElement = index_1.default("<div class=\"j-gallery-controls\"></div>", {
-            style: {
-                padding: '5px 0',
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
-                zIndex: '1',
-            },
-            children: [_this.title],
-        });
-        _this.preview = new index_4.default;
-        _this.previewElement = index_1.default("<div class=\"j-gallery-preview-container\"></div>", {
-            style: {
-                flex: '1',
-                display: 'flex',
-                flexDirection: 'column',
-                position: 'relative',
-            },
-            children: [_this.preview.getElement(), _this.controlsElement]
-        });
-        (new swipe_1.default({
-            element: _this.previewElement,
-            onSwipeLeft: _this.next,
-            onSwipeRight: _this.prev,
-        })).activate();
-        _this.loading.appendStyle({
-            top: '50%',
-            left: '50%',
-            transform: 'translateX(-50%) translateY(-50%)',
-            position: 'absolute',
-            zIndex: '1',
-        });
-        _this.element = index_1.default("\n            <div class=\"j-gallery j-gallery-" + id++ + "\"></div>", {
-            children: [
-                _this.previewElement,
-            ],
-            style: {
-                height: '100vh',
-                padding: '10px',
-                background: params.backgroundColor,
-                color: params.textColor,
-                boxSizing: 'border-box',
-                position: 'relative',
-                flexDirection: 'column',
-                userSelect: 'none',
-                display: 'flex',
-            },
-        });
-        window.addEventListener('resize', function () { return _this.refreshTransitionCanvasDimensions(); });
-        requestAnimationFrame(function () {
-            _this.initialize();
-        });
-        return _this;
-    }
-    Gallery.prototype.initialize = function () {
-        this.transitionCanvas = new index_2.default({
-            width: this.element.clientWidth,
-            height: this.element.clientHeight
-        });
-        Object.assign(this.transitionCanvas.element.style, {
-            width: '100%',
-            height: '100%',
-            top: '0',
-            left: '0',
-            position: 'absolute',
-        });
-        this.goToItemByCurrentHash();
-    };
-    Gallery.create = function (albums, params) {
-        if (params === void 0) { params = {}; }
-        var decorators = [];
-        params = __assign({}, defaults_1.default, params);
-        if (params.navigationOnPreviewClick)
-            decorators.push(with_navigation_on_preview_click_1.default);
-        if (params.browserHistory)
-            decorators.push(with_browser_history_1.default);
-        if (params.slideShow)
-            decorators.push(with_slideshow_1.default);
-        if (params.thumbnails)
-            decorators.push(with_thumbnails_1.default);
-        if (params.canChangePreviewSize)
-            decorators.push(with_preview_size_changer_1.default);
-        if (albums.length > 1)
-            decorators.push(with_albums_menu_1.default);
-        return new (compose(decorators, Gallery))(albums, params);
-    };
-    Gallery.createElement = function (html) {
-        return index_1.default(html);
-    };
-    Gallery.prototype.goToItemByCurrentHash = function () {
-        var item = this.findItemByCurrentHash();
-        return this.goToAlbum(this.albums.indexOf(this.findAlbumByAlbumItem(item)), item);
-    };
-    Gallery.prototype.findAlbumByAlbumItem = function (item) {
-        return this.albums.find(function (album) { return !!album.items.includes(item); });
-    };
-    Gallery.prototype.findItemByCurrentHash = function () {
-        return this.findItemByHash(location.hash.replace('#', '')) || this.album.items[this.params.autostartAtItem - 1];
-    };
-    Gallery.prototype.appendControlsElements = function (elements) {
-        var _this = this;
-        elements.forEach(function (element) {
-            Object.assign(element.style, { margin: '0 .25em' });
-            _this.controlsElement.appendChild(element);
-        });
-    };
-    Gallery.prototype.getItems = function () {
-        return this.albums.reduce(function (items, album) { return items.concat(album.items); }, []);
-    };
-    Gallery.prototype.findItemByHash = function (hash) {
-        return this.getItems().find(function (item) { return item.hash === hash; });
-    };
-    Gallery.prototype.next = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var _a, album, item, items, next;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _a = this, album = _a.album, item = _a.item;
-                        items = album.items;
-                        next = items[items.indexOf(item) + 1];
-                        if (!next) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.goToItem(next)];
-                    case 1:
-                        _b.sent();
-                        return [3 /*break*/, 4];
-                    case 2: return [4 /*yield*/, this.goToItem(items[0])];
-                    case 3:
-                        _b.sent();
-                        _b.label = 4;
-                    case 4: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    Gallery.prototype.prev = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var _a, album, item, items, prev;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _a = this, album = _a.album, item = _a.item;
-                        items = album.items;
-                        prev = items[items.indexOf(item) - 1];
-                        if (!prev) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.goToItem(prev)];
-                    case 1:
-                        _b.sent();
-                        return [3 /*break*/, 4];
-                    case 2: return [4 /*yield*/, this.goToItem(items[items.length - 1])];
-                    case 3:
-                        _b.sent();
-                        _b.label = 4;
-                    case 4: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    Gallery.prototype.showTransitionCanvas = function () {
-        this.previewElement.appendChild(this.transitionCanvas.element);
-    };
-    Gallery.prototype.hideTransitionCanvas = function () {
-        if (this.previewElement.contains(this.transitionCanvas.element)) {
-            this.previewElement.removeChild(this.transitionCanvas.element);
-        }
-    };
-    Gallery.prototype.refreshTransitionCanvasDimensions = function () {
-        this.transitionCanvas.setDimensions(this.element.clientWidth, this.element.clientHeight);
-        this.transitionCanvas.redraw();
-    };
-    Gallery.prototype.showLoading = function () {
-        this.previewElement.appendChild(this.loading.getElement());
-    };
-    Gallery.prototype.hideLoading = function () {
-        if (this.previewElement.contains(this.loading.getElement())) {
-            this.previewElement.removeChild(this.loading.getElement());
-        }
-    };
-    Gallery.prototype.goToItem = function (item) {
-        var _this = this;
-        var options = {
-            backgroundColor: this.params.backgroundColor,
-            duration: this.params.transitionDuration,
-            details: this.params.transitionDetails,
-            xAxis: this.params.transitionXAxis,
-            yAxis: this.params.transitionYAxis,
-            originX: this.params.transitionOriginX,
-            originY: this.params.transitionOriginY,
-        };
-        this.changingItem && this.changingItem.cancel();
-        this.changingItem = cancellable_promise_1.default(function (resolve, reject, onCancel) {
-            var queue = new queue_1.default(function () {
-                _this.showTransitionCanvas();
-                _this.params.onChange({ prevItem: _this.item, item: item, album: _this.album });
-                return _this.item ? transition_effect_1.default(_this.transitionCanvas, options) : Promise.resolve();
-            }, function () {
-                _this.showLoading();
-                _this.params.itemOnHide({ item: _this.item, album: _this.album });
-                return _this.preview.setItem(item);
-            }, function () {
-                _this.params.itemOnLoad({ item: item, album: _this.album });
-                _this.title.innerHTML = item.title || '';
-                _this.hideLoading();
-                _this.transitionCanvas.clearLayers();
-                return transition_effect_1.default(_this.transitionCanvas, __assign({}, options, { reverse: true }));
-            }, function () {
-                _this.params.itemOnShow({ item: item, album: _this.album });
-                _this.transitionCanvas.clearLayers();
-                _this.hideTransitionCanvas();
-                _this.item = item;
-                resolve();
-                return Promise.resolve();
-            });
-            queue.run();
-            onCancel(function () {
-                queue.cancel();
-                _this.transitionCanvas.clearLayers();
-                _this.hideTransitionCanvas();
-                _this.hideLoading();
-            });
-        });
-        return this.changingItem;
-    };
-    Gallery.prototype.goToAlbum = function (value, item) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                this.album = this.albums[value];
-                return [2 /*return*/, this.goToItem(item || this.album.items[0])];
-            });
-        });
-    };
-    return Gallery;
-}(component_1.default));
-exports.Gallery = Gallery;
-var compose = function (decorators, constructor) {
-    return decorators.reduce(function (constructor, decorator) { return decorator(constructor); }, constructor);
-};
-exports.default = Gallery;
-
+eval("\nvar __extends = (this && this.__extends) || (function () {\n    var extendStatics = function (d, b) {\n        extendStatics = Object.setPrototypeOf ||\n            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||\n            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };\n        return extendStatics(d, b);\n    }\n    return function (d, b) {\n        extendStatics(d, b);\n        function __() { this.constructor = d; }\n        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());\n    };\n})();\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\nvar __generator = (this && this.__generator) || function (thisArg, body) {\n    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;\n    return g = { next: verb(0), \"throw\": verb(1), \"return\": verb(2) }, typeof Symbol === \"function\" && (g[Symbol.iterator] = function() { return this; }), g;\n    function verb(n) { return function (v) { return step([n, v]); }; }\n    function step(op) {\n        if (f) throw new TypeError(\"Generator is already executing.\");\n        while (_) try {\n            if (f = 1, y && (t = op[0] & 2 ? y[\"return\"] : op[0] ? y[\"throw\"] || ((t = y[\"return\"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;\n            if (y = 0, t) op = [op[0] & 2, t.value];\n            switch (op[0]) {\n                case 0: case 1: t = op; break;\n                case 4: _.label++; return { value: op[1], done: false };\n                case 5: _.label++; y = op[1]; op = [0]; continue;\n                case 7: op = _.ops.pop(); _.trys.pop(); continue;\n                default:\n                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }\n                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }\n                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }\n                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }\n                    if (t[2]) _.ops.pop();\n                    _.trys.pop(); continue;\n            }\n            op = body.call(thisArg, _);\n        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }\n        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };\n    }\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar withBrowserHistory = function (constructor) {\n    return /** @class */ (function (_super) {\n        __extends(class_1, _super);\n        function class_1(albums, params) {\n            var _this = _super.call(this, albums, params) || this;\n            var goToItem = _this.goToItem.bind(_this);\n            var onhashchange = window.onhashchange || (function () { });\n            window.onhashchange = function (event) {\n                onhashchange(event);\n                goToItem(_this.findItemByCurrentHash());\n            };\n            return _this;\n        }\n        class_1.prototype.initialize = function () {\n            var _this = this;\n            _super.prototype.initialize.call(this);\n            var goToItem = this.goToItem.bind(this);\n            this.goToItem = function (item) { return __awaiter(_this, void 0, void 0, function () {\n                return __generator(this, function (_a) {\n                    history.pushState({ jgallery: true }, '', \"#\" + item.hash);\n                    return [2 /*return*/, goToItem(item)];\n                });\n            }); };\n        };\n        return class_1;\n    }(constructor));\n};\nexports.default = withBrowserHistory;\n\n\n//# sourceURL=webpack://JGallery/./src/gallery/with-browser-history.ts?");
 
 /***/ }),
-/* 12 */
+
+/***/ "./src/gallery/with-navigation-on-preview-click.ts":
+/*!*********************************************************!*\
+  !*** ./src/gallery/with-navigation-on-preview-click.ts ***!
+  \*********************************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var index_1 = __webpack_require__(0);
-var animations_1 = __webpack_require__(13);
-var layer_1 = __webpack_require__(2);
-var path_1 = __webpack_require__(14);
-var circle_1 = __webpack_require__(15);
-var Canvas = /** @class */ (function (_super) {
-    __extends(Canvas, _super);
-    function Canvas(_a) {
-        var width = _a.width, height = _a.height;
-        var _this = _super.call(this, {}) || this;
-        _this.layers = [];
-        _this.animations = new animations_1.default({
-            onChange: function () {
-                _this.clear();
-                _this.draw();
-            }
-        });
-        _this.translateX = 0;
-        _this.translateY = 0;
-        _this.element = index_1.default('<canvas></canvas>');
-        _this.element.width = width;
-        _this.element.height = height;
-        _this.ctx = _this.element.getContext("2d");
-        return _this;
-    }
-    Canvas.prototype.setDimensions = function (width, height) {
-        var element = this.element;
-        var widthRatio = width / element.width;
-        var heightRatio = height / element.height;
-        element.width = width;
-        element.height = height;
-        this.getLayersRecursive().forEach(function (layer) {
-            layer.width *= widthRatio;
-            layer.height *= heightRatio;
-        });
-    };
-    Canvas.prototype.containsLayer = function (layer) {
-        return this.layers.indexOf(layer) > -1;
-    };
-    Canvas.prototype.addAnimations = function (animations) {
-        this.animations.add(animations);
-    };
-    Canvas.prototype.addLayers = function (layers) {
-        var _this = this;
-        layers.forEach(function (layer) {
-            if (!_this.containsLayer(layer)) {
-                _this.layers.push(layer);
-            }
-        });
-    };
-    Canvas.prototype.removeLayers = function (layers) {
-        var _this = this;
-        layers.forEach(function (layer) {
-            if (_this.containsLayer(layer)) {
-                _this.layers.splice(_this.layers.indexOf(layer), 1);
-            }
-        });
-    };
-    Canvas.prototype.clearLayers = function () {
-        this.layers.length = 0;
-    };
-    Canvas.prototype.redraw = function () {
-        this.clear();
-        this.draw();
-    };
-    Canvas.prototype.getLayersRecursive = function () {
-        return getLayersRecursive(this);
-    };
-    Canvas.prototype.applyPathMask = function (path) {
-        if (path === void 0) { path = new path_1.default([]); }
-        var ctx = this.ctx;
-        var points = path.points;
-        ctx.save();
-        ctx.beginPath();
-        ctx.moveTo(points[0].x, points[0].y);
-        points.slice(1).forEach(function (point) { return ctx.lineTo(point.x, point.y); });
-        ctx.closePath();
-        ctx.clip();
-    };
-    Canvas.prototype.applyCircleMask = function (_a) {
-        var _b = _a.circle, circle = _b === void 0 ? new circle_1.default({}) : _b, _c = _a.translateX, translateX = _c === void 0 ? 0 : _c, _d = _a.translateY, translateY = _d === void 0 ? 0 : _d;
-        var ctx = this.ctx;
-        ctx.save();
-        ctx.beginPath();
-        ctx.moveTo(translateX + circle.translateX, translateY + circle.translateY);
-        ctx.arc(translateX + circle.translateX, translateY + circle.translateY, circle.radius, circle.startAngle, circle.endAngle);
-        ctx.closePath();
-        ctx.clip();
-    };
-    Canvas.prototype.drawPath = function (_a) {
-        var _b = _a.path, path = _b === void 0 ? new path_1.default([]) : _b, _c = _a.translateX, translateX = _c === void 0 ? 0 : _c, _d = _a.translateY, translateY = _d === void 0 ? 0 : _d;
-        var ctx = this.ctx;
-        var points = path.points;
-        ctx.fillStyle = path.fillStyle;
-        ctx.beginPath();
-        ctx.moveTo(points[0].x + translateX, points[0].y + translateY);
-        points.slice(1).forEach(function (point) { return ctx.lineTo(point.x + translateX, point.y + translateY); });
-        ctx.closePath();
-        ctx.fill();
-    };
-    Canvas.prototype.draw = function () {
-        this.drawLayer({ layer: this });
-    };
-    Canvas.prototype.drawLayer = function (_a) {
-        var _this = this;
-        var _b = _a.layer, layer = _b === void 0 ? new layer_1.default({}) : _b, _c = _a.translateX, translateX = _c === void 0 ? 0 : _c, _d = _a.translateY, translateY = _d === void 0 ? 0 : _d;
-        var ctx = this.ctx;
-        translateX += layer.translateX + layer.centerX * layer.width;
-        translateY += layer.translateY + layer.centerY * layer.height;
-        ctx.globalAlpha = layer.alpha;
-        if (layer.mask instanceof path_1.default) {
-            this.applyPathMask(layer.mask);
-        }
-        else if (layer.mask instanceof circle_1.default) {
-            this.applyCircleMask({ circle: layer.mask, translateX: translateX, translateY: translateY });
-        }
-        if (layer instanceof path_1.default) {
-            this.drawPath({ path: layer, translateX: translateX, translateY: translateY });
-        }
-        else if (layer.fillStyle) {
-            ctx.fillStyle = layer.fillStyle;
-            ctx.fillRect(translateX, translateY, layer.width, layer.height);
-        }
-        if (layer.mask) {
-            ctx.restore();
-        }
-        layer.layers.forEach(function (layer) { return _this.drawLayer({ layer: layer, translateX: translateX, translateY: translateY }); });
-    };
-    Canvas.prototype.clear = function () {
-        this.ctx.clearRect(0, 0, innerWidth, innerHeight);
-    };
-    return Canvas;
-}(layer_1.default));
-var getLayersRecursive = function (layer) {
-    return layer.layers.concat(layer.layers.reduce(function (layers, layer) {
-        return layers.concat(getLayersRecursive(layer));
-    }, []));
-};
-exports.default = Canvas;
-
+eval("\nvar __extends = (this && this.__extends) || (function () {\n    var extendStatics = function (d, b) {\n        extendStatics = Object.setPrototypeOf ||\n            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||\n            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };\n        return extendStatics(d, b);\n    }\n    return function (d, b) {\n        extendStatics(d, b);\n        function __() { this.constructor = d; }\n        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());\n    };\n})();\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar create_element_1 = __webpack_require__(/*! ../utils/create-element */ \"./src/utils/create-element/index.ts\");\nvar withNavigationOnPreviewClick = function (constructor) {\n    return /** @class */ (function (_super) {\n        __extends(class_1, _super);\n        function class_1(albums, params) {\n            var _this = _super.call(this, albums, params) || this;\n            _this.left = create_element_1.default(\"\\n                <div class=\\\"j-gallery-left\\\" style=\\\"left: 0; width: 50%; top: 0; bottom: 0; position: absolute; cursor: pointer;\\\"></div>\\n            \");\n            _this.left.addEventListener('click', function () {\n                _this.prev();\n            });\n            _this.right = create_element_1.default(\"\\n                <div class=\\\"j-gallery-right\\\" style=\\\"right: 0; width: 50%; top: 0; bottom: 0; position: absolute; cursor: pointer;\\\"></div>\\n            \");\n            _this.right.addEventListener('click', function () {\n                _this.next();\n            });\n            _this.previewElement.appendChild(_this.left);\n            _this.previewElement.appendChild(_this.right);\n            return _this;\n        }\n        return class_1;\n    }(constructor));\n};\nexports.default = withNavigationOnPreviewClick;\n\n\n//# sourceURL=webpack://JGallery/./src/gallery/with-navigation-on-preview-click.ts?");
 
 /***/ }),
-/* 13 */
+
+/***/ "./src/gallery/with-preview-size-changer.ts":
+/*!**************************************************!*\
+  !*** ./src/gallery/with-preview-size-changer.ts ***!
+  \**************************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Animations = /** @class */ (function () {
-    function Animations(_a) {
-        var onChange = _a.onChange;
-        this.items = [];
-        this.onChange = onChange;
-        this.goToNextFrames = this.goToNextFrames.bind(this);
-    }
-    Animations.prototype.play = function () {
-        if (!this.rendering) {
-            this.goToNextFrames();
-        }
-    };
-    Animations.prototype.add = function (animations) {
-        var _a;
-        (_a = this.items).push.apply(_a, animations);
-        this.play();
-    };
-    Animations.prototype.remove = function (animation) {
-        var items = this.items;
-        var index = items.indexOf(animation);
-        if (index > -1) {
-            items.splice(index, 1);
-        }
-    };
-    Animations.prototype.count = function () {
-        return this.items.length;
-    };
-    Animations.prototype.cancelAll = function () {
-        this.items.forEach(function (animation) { return animation.cancel(); });
-    };
-    Animations.prototype.clear = function () {
-        this.items.length = 0;
-    };
-    Animations.prototype.goToNextFrames = function () {
-        this.rendering = true;
-        this.items.forEach(function (animation) { return animation.goToNextFrame(); });
-        this.onChange();
-        this.removeCompleted();
-        if (this.count()) {
-            requestAnimationFrame(this.goToNextFrames);
-        }
-        else {
-            this.rendering = false;
-        }
-    };
-    Animations.prototype.getCompleted = function () {
-        return this.items.filter(function (animation) { return animation.completed; });
-    };
-    Animations.prototype.removeCompleted = function () {
-        var _this = this;
-        this.getCompleted().forEach(function (animation) { return _this.remove(animation); });
-    };
-    return Animations;
-}());
-exports.default = Animations;
-
+eval("\nvar __extends = (this && this.__extends) || (function () {\n    var extendStatics = function (d, b) {\n        extendStatics = Object.setPrototypeOf ||\n            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||\n            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };\n        return extendStatics(d, b);\n    }\n    return function (d, b) {\n        extendStatics(d, b);\n        function __() { this.constructor = d; }\n        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());\n    };\n})();\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\nvar __generator = (this && this.__generator) || function (thisArg, body) {\n    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;\n    return g = { next: verb(0), \"throw\": verb(1), \"return\": verb(2) }, typeof Symbol === \"function\" && (g[Symbol.iterator] = function() { return this; }), g;\n    function verb(n) { return function (v) { return step([n, v]); }; }\n    function step(op) {\n        if (f) throw new TypeError(\"Generator is already executing.\");\n        while (_) try {\n            if (f = 1, y && (t = op[0] & 2 ? y[\"return\"] : op[0] ? y[\"throw\"] || ((t = y[\"return\"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;\n            if (y = 0, t) op = [op[0] & 2, t.value];\n            switch (op[0]) {\n                case 0: case 1: t = op; break;\n                case 4: _.label++; return { value: op[1], done: false };\n                case 5: _.label++; y = op[1]; op = [0]; continue;\n                case 7: op = _.ops.pop(); _.trys.pop(); continue;\n                default:\n                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }\n                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }\n                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }\n                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }\n                    if (t[2]) _.ops.pop();\n                    _.trys.pop(); continue;\n            }\n            op = body.call(thisArg, _);\n        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }\n        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };\n    }\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar icons_1 = __webpack_require__(/*! ../icons */ \"./src/icons.ts\");\nvar with_tooltip_1 = __webpack_require__(/*! ../utils/with-tooltip */ \"./src/utils/with-tooltip.ts\");\nvar withPreviewSizeChanger = function (constructor) {\n    return /** @class */ (function (_super) {\n        __extends(class_1, _super);\n        function class_1(albums, params) {\n            var _this = _super.call(this, albums, params) || this;\n            _this.changePreviewSizeIcon = with_tooltip_1.default(icons_1.iconScreen({ color: params.textColor }), {\n                style: {\n                    color: params.backgroundColor,\n                    background: params.textColor,\n                    transform: 'translateY(-8px)',\n                },\n                content: params.tooltipChangeSize,\n            });\n            _this.changePreviewSizeIcon.addEventListener('click', function () { return _this.changePreviewSize(); });\n            _this.appendControlsElements([_this.changePreviewSizeIcon]);\n            return _this;\n        }\n        class_1.prototype.goToItem = function () {\n            var args = [];\n            for (var _i = 0; _i < arguments.length; _i++) {\n                args[_i] = arguments[_i];\n            }\n            return __awaiter(this, void 0, void 0, function () {\n                var _a, result;\n                return __generator(this, function (_b) {\n                    switch (_b.label) {\n                        case 0: return [4 /*yield*/, (_a = _super.prototype.goToItem).call.apply(_a, [this].concat(args))];\n                        case 1:\n                            result = _b.sent();\n                            this.changePreviewSizeIcon.style.display = this.preview.hasImage ? 'inline-flex' : 'none';\n                            return [2 /*return*/, result];\n                    }\n                });\n            });\n        };\n        class_1.prototype.changePreviewSize = function () {\n            var preview = this.preview;\n            switch (preview.size) {\n                case 'cover':\n                    preview.setSize('contain');\n                    break;\n                default:\n                    preview.setSize('cover');\n            }\n        };\n        return class_1;\n    }(constructor));\n};\nexports.default = withPreviewSizeChanger;\n\n\n//# sourceURL=webpack://JGallery/./src/gallery/with-preview-size-changer.ts?");
 
 /***/ }),
-/* 14 */
+
+/***/ "./src/gallery/with-slideshow.ts":
+/*!***************************************!*\
+  !*** ./src/gallery/with-slideshow.ts ***!
+  \***************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var layer_1 = __webpack_require__(2);
-var Path = /** @class */ (function (_super) {
-    __extends(Path, _super);
-    function Path(points) {
-        var _this = _super.call(this, {}) || this;
-        _this.points = points;
-        return _this;
-    }
-    Path.prototype.clone = function () {
-        return new Path(this.points.map(function (point) { return point.clone(); }));
-    };
-    Path.prototype.move = function (vector) {
-        this.points.forEach(function (point) { return point.move(vector); });
-    };
-    return Path;
-}(layer_1.default));
-exports.default = Path;
-
+eval("\nvar __extends = (this && this.__extends) || (function () {\n    var extendStatics = function (d, b) {\n        extendStatics = Object.setPrototypeOf ||\n            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||\n            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };\n        return extendStatics(d, b);\n    }\n    return function (d, b) {\n        extendStatics(d, b);\n        function __() { this.constructor = d; }\n        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());\n    };\n})();\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\nvar __generator = (this && this.__generator) || function (thisArg, body) {\n    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;\n    return g = { next: verb(0), \"throw\": verb(1), \"return\": verb(2) }, typeof Symbol === \"function\" && (g[Symbol.iterator] = function() { return this; }), g;\n    function verb(n) { return function (v) { return step([n, v]); }; }\n    function step(op) {\n        if (f) throw new TypeError(\"Generator is already executing.\");\n        while (_) try {\n            if (f = 1, y && (t = op[0] & 2 ? y[\"return\"] : op[0] ? y[\"throw\"] || ((t = y[\"return\"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;\n            if (y = 0, t) op = [op[0] & 2, t.value];\n            switch (op[0]) {\n                case 0: case 1: t = op; break;\n                case 4: _.label++; return { value: op[1], done: false };\n                case 5: _.label++; y = op[1]; op = [0]; continue;\n                case 7: op = _.ops.pop(); _.trys.pop(); continue;\n                default:\n                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }\n                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }\n                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }\n                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }\n                    if (t[2]) _.ops.pop();\n                    _.trys.pop(); continue;\n            }\n            op = body.call(thisArg, _);\n        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }\n        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };\n    }\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar index_1 = __webpack_require__(/*! ../utils/create-element/index */ \"./src/utils/create-element/index.ts\");\nvar progress_bar_1 = __webpack_require__(/*! ../progress-bar */ \"./src/progress-bar.ts\");\nvar icons_1 = __webpack_require__(/*! ../icons */ \"./src/icons.ts\");\nvar with_tooltip_1 = __webpack_require__(/*! ../utils/with-tooltip */ \"./src/utils/with-tooltip.ts\");\nvar withSlideShow = function (constructor) {\n    return /** @class */ (function (_super) {\n        __extends(class_1, _super);\n        function class_1(albums, params) {\n            var _this = _super.call(this, albums, params) || this;\n            _this.slideShowRunning = false;\n            _this.playSlideShowIcon = with_tooltip_1.default(icons_1.iconPlay({ color: params.textColor }), {\n                style: {\n                    color: params.backgroundColor,\n                    background: params.textColor,\n                    transform: 'translateY(-8px)',\n                },\n                content: params.tooltipSlideShowStart,\n            });\n            _this.playSlideShowIcon.addEventListener('click', function () { return _this.playSlideShow(); });\n            _this.pauseSlideShowIcon = with_tooltip_1.default(icons_1.iconPause({ color: params.textColor }), {\n                style: {\n                    color: params.backgroundColor,\n                    background: params.textColor,\n                    transform: 'translateY(-8px)',\n                },\n                content: params.tooltipSlideShowPause,\n            });\n            _this.pauseSlideShowIcon.addEventListener('click', function () { return _this.pauseSlideShow(); });\n            _this.progressBar = new progress_bar_1.default({\n                duration: params.slideShowInterval,\n                color: params.textColor,\n                onEnd: function () { return __awaiter(_this, void 0, void 0, function () {\n                    return __generator(this, function (_a) {\n                        switch (_a.label) {\n                            case 0:\n                                this.progressBar.pause();\n                                this.progressBar.setValue(0);\n                                return [4 /*yield*/, this.next()];\n                            case 1:\n                                _a.sent();\n                                this.progressBar.reset();\n                                if (this.slideShowRunning) {\n                                    this.progressBar.start();\n                                }\n                                return [2 /*return*/];\n                        }\n                    });\n                }); },\n                style: {\n                    position: 'absolute',\n                    top: '2px',\n                    left: '0',\n                    right: '0',\n                },\n            });\n            [_this.left, _this.right].forEach(function (element) { return element && element.addEventListener('click', function () { return _this.stopSlideShow(); }); });\n            _this.slideShowIcons = index_1.default('<span class=\"j-gallery-slide-show-icon\"/>', {\n                children: [_this.playSlideShowIcon]\n            });\n            _this.appendControlsElements([\n                _this.slideShowIcons,\n                _this.progressBar.getElement(),\n            ]);\n            _this.progressBar.getElement().style.padding = '0';\n            return _this;\n        }\n        class_1.prototype.initialize = function () {\n            _super.prototype.initialize.call(this);\n            if (this.params.slideShowAutoStart) {\n                this.playSlideShow();\n            }\n        };\n        class_1.prototype.playSlideShow = function () {\n            if (!this.slideShowRunning) {\n                this.slideShowIcons.replaceChild(this.pauseSlideShowIcon, this.playSlideShowIcon);\n                this.progressBar.start();\n                this.slideShowRunning = true;\n            }\n        };\n        class_1.prototype.pauseSlideShow = function () {\n            if (this.slideShowRunning) {\n                this.slideShowIcons.replaceChild(this.playSlideShowIcon, this.pauseSlideShowIcon);\n                this.progressBar.pause();\n                this.slideShowRunning = false;\n            }\n        };\n        class_1.prototype.goToAlbum = function (arg) {\n            var args = [];\n            for (var _i = 1; _i < arguments.length; _i++) {\n                args[_i - 1] = arguments[_i];\n            }\n            return __awaiter(this, void 0, void 0, function () {\n                return __generator(this, function (_a) {\n                    this.stopSlideShow();\n                    return [2 /*return*/, _super.prototype.goToAlbum.apply(this, [arg].concat(args))];\n                });\n            });\n        };\n        class_1.prototype.stopSlideShow = function () {\n            this.pauseSlideShow();\n            this.progressBar.reset();\n        };\n        return class_1;\n    }(constructor));\n};\nexports.default = withSlideShow;\n\n\n//# sourceURL=webpack://JGallery/./src/gallery/with-slideshow.ts?");
 
 /***/ }),
-/* 15 */
+
+/***/ "./src/gallery/with-thumbnails.ts":
+/*!****************************************!*\
+  !*** ./src/gallery/with-thumbnails.ts ***!
+  \****************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var layer_1 = __webpack_require__(2);
-var PI = Math.PI;
-var Circle = /** @class */ (function (_super) {
-    __extends(Circle, _super);
-    function Circle(_a) {
-        var _b = _a.translateX, translateX = _b === void 0 ? 0 : _b, _c = _a.translateY, translateY = _c === void 0 ? 0 : _c, _d = _a.radius, radius = _d === void 0 ? 0 : _d, _e = _a.startAngle, startAngle = _e === void 0 ? 0 : _e, _f = _a.endAngle, endAngle = _f === void 0 ? 2 * PI : _f;
-        var _this = _super.call(this, { translateX: translateX, translateY: translateY }) || this;
-        _this.radius = radius;
-        _this.startAngle = startAngle;
-        _this.endAngle = endAngle;
-        return _this;
-    }
-    return Circle;
-}(layer_1.default));
-exports.default = Circle;
-
+eval("\nvar __extends = (this && this.__extends) || (function () {\n    var extendStatics = function (d, b) {\n        extendStatics = Object.setPrototypeOf ||\n            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||\n            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };\n        return extendStatics(d, b);\n    }\n    return function (d, b) {\n        extendStatics(d, b);\n        function __() { this.constructor = d; }\n        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());\n    };\n})();\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\nvar __generator = (this && this.__generator) || function (thisArg, body) {\n    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;\n    return g = { next: verb(0), \"throw\": verb(1), \"return\": verb(2) }, typeof Symbol === \"function\" && (g[Symbol.iterator] = function() { return this; }), g;\n    function verb(n) { return function (v) { return step([n, v]); }; }\n    function step(op) {\n        if (f) throw new TypeError(\"Generator is already executing.\");\n        while (_) try {\n            if (f = 1, y && (t = op[0] & 2 ? y[\"return\"] : op[0] ? y[\"throw\"] || ((t = y[\"return\"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;\n            if (y = 0, t) op = [op[0] & 2, t.value];\n            switch (op[0]) {\n                case 0: case 1: t = op; break;\n                case 4: _.label++; return { value: op[1], done: false };\n                case 5: _.label++; y = op[1]; op = [0]; continue;\n                case 7: op = _.ops.pop(); _.trys.pop(); continue;\n                default:\n                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }\n                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }\n                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }\n                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }\n                    if (t[2]) _.ops.pop();\n                    _.trys.pop(); continue;\n            }\n            op = body.call(thisArg, _);\n        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }\n        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };\n    }\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar index_1 = __webpack_require__(/*! ../thumbnails/index */ \"./src/thumbnails/index.ts\");\nvar icons_1 = __webpack_require__(/*! ../icons */ \"./src/icons.ts\");\nvar with_tooltip_1 = __webpack_require__(/*! ../utils/with-tooltip */ \"./src/utils/with-tooltip.ts\");\nvar withThumbnails = function (constructor) {\n    return /** @class */ (function (_super) {\n        __extends(class_1, _super);\n        function class_1(albums, params) {\n            var _this = _super.call(this, albums, params) || this;\n            _this.thumbnailsVisible = true;\n            _this.thumbnails = new index_1.default({\n                thumbnailWidth: params.thumbnailWidth,\n                thumbnailHeight: params.thumbnailHeight,\n                textColor: params.textColor,\n                thumbOnClick: function (item) {\n                    if (_this.stopSlideShow) {\n                        _this.stopSlideShow();\n                    }\n                    if (_this.fullScreenThumbnails) {\n                        _this.disableFullScreenThumbnails();\n                    }\n                    _this.goToItem(item);\n                }\n            });\n            _this.thumbnails.appendStyle({\n                position: 'relative',\n                paddingLeft: _this.params.thumbnailsPosition === 'right' ? '10px' : '0',\n                paddingRight: _this.params.thumbnailsPosition === 'left' ? '10px' : '0',\n            });\n            _this.thumbnails.setAlbum(_this.album);\n            _this.toggleThumbnailsIcon = with_tooltip_1.default(icons_1.iconEllipsisHorizontal({ color: params.textColor }), {\n                style: {\n                    color: params.backgroundColor,\n                    background: params.textColor,\n                    transform: 'translateY(-8px)',\n                },\n                content: params.tooltipThumbnailsToggle,\n            });\n            _this.toggleThumbnailsIcon.addEventListener('click', function () { return _this.toggleThumbnails(); });\n            _this.toggleFullScreenThumbnailsIcon = with_tooltip_1.default(icons_1.iconGrid({ color: params.textColor }), {\n                style: {\n                    color: params.backgroundColor,\n                    background: params.textColor,\n                    transform: 'translateY(-4px)',\n                },\n                content: params.tooltipSeeAllItems,\n            });\n            _this.toggleFullScreenThumbnailsIcon.addEventListener('click', function () { return _this.toggleFullScreenThumbnails(); });\n            if (_this.params.thumbnailsFullScreen) {\n                _this.appendControlsElements([_this.toggleFullScreenThumbnailsIcon]);\n            }\n            if (_this.params.canMinimalizeThumbnails) {\n                _this.appendControlsElements([\n                    _this.toggleThumbnailsIcon,\n                ]);\n            }\n            return _this;\n        }\n        class_1.prototype.initialize = function () {\n            _super.prototype.initialize.call(this);\n            if (this.params.thumbnailsVisible) {\n                this.showThumbnails();\n            }\n            if (['left', 'right'].includes(this.params.thumbnailsPosition)) {\n                this.element.style.flexDirection = 'row';\n                this.thumbnails.setContentStyle({\n                    flexDirection: 'column',\n                    justifyContent: 'flex-start',\n                });\n            }\n        };\n        class_1.prototype.goToItem = function (item) {\n            return __awaiter(this, void 0, void 0, function () {\n                return __generator(this, function (_a) {\n                    this.thumbnails.setActive(this.album.items.indexOf(item));\n                    return [2 /*return*/, _super.prototype.goToItem.call(this, item)];\n                });\n            });\n        };\n        class_1.prototype.goToAlbum = function (value) {\n            var args = [];\n            for (var _i = 1; _i < arguments.length; _i++) {\n                args[_i - 1] = arguments[_i];\n            }\n            return __awaiter(this, void 0, void 0, function () {\n                return __generator(this, function (_a) {\n                    this.thumbnails.setAlbum(this.albums[value]);\n                    return [2 /*return*/, _super.prototype.goToAlbum.apply(this, [value].concat(args))];\n                });\n            });\n        };\n        class_1.prototype.disableFullScreenThumbnails = function () {\n            this.fullScreenThumbnails = false;\n            this.thumbnails.setThumbnailSize({\n                width: this.params.thumbnailWidth,\n                height: this.params.thumbnailHeight,\n            });\n            this.previewElement.style.display = 'flex';\n            if (['left', 'right'].includes(this.params.thumbnailsPosition)) {\n                this.thumbnails.setContentStyle({\n                    flexDirection: ['left', 'right'].includes(this.params.thumbnailsPosition) ? 'column' : 'row',\n                });\n                this.thumbnails.getElement().style.flexBasis = 'auto';\n            }\n            this.thumbnails.disableWrap();\n        };\n        class_1.prototype.toggleFullScreenThumbnails = function () {\n            this.fullScreenThumbnails ? this.disableFullScreenThumbnails() : this.enableFullScreenThumbnails();\n        };\n        class_1.prototype.enableFullScreenThumbnails = function () {\n            if (this.stopSlideShow) {\n                this.stopSlideShow();\n            }\n            this.fullScreenThumbnails = true;\n            this.thumbnails.setThumbnailSize({\n                width: this.params.thumbnailWidthOnFullScreen,\n                height: this.params.thumbnailHeightOnFullScreen,\n            });\n            this.previewElement.style.display = 'none';\n            if (['left', 'right'].includes(this.params.thumbnailsPosition)) {\n                this.thumbnails.getElement().style.flexBasis = '100%';\n                this.thumbnails.setContentStyle({\n                    flexDirection: 'row',\n                });\n            }\n            this.showThumbnails();\n            this.thumbnails.enableWrap();\n        };\n        class_1.prototype.hideThumbnails = function () {\n            this.thumbnailsVisible = false;\n            this.element.removeChild(this.thumbnails.getElement());\n            this.disableFullScreenThumbnails();\n        };\n        class_1.prototype.toggleThumbnails = function () {\n            this.thumbnailsVisible ? this.hideThumbnails() : this.showThumbnails();\n        };\n        class_1.prototype.showThumbnails = function () {\n            this.thumbnailsVisible = true;\n            switch (this.params.thumbnailsPosition) {\n                case 'top':\n                case 'left':\n                    this.element.insertBefore(this.thumbnails.getElement(), this.element.firstChild);\n                    break;\n                default:\n                    this.element.appendChild(this.thumbnails.getElement());\n            }\n            this.thumbnails.scrollToActiveItem();\n        };\n        return class_1;\n    }(constructor));\n};\nexports.default = withThumbnails;\n\n\n//# sourceURL=webpack://JGallery/./src/gallery/with-thumbnails.ts?");
 
 /***/ }),
-/* 16 */
+
+/***/ "./src/icons.ts":
+/*!**********************!*\
+  !*** ./src/icons.ts ***!
+  \**********************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var animation_1 = __webpack_require__(4);
-var layer_1 = __webpack_require__(2);
-var cancellable_promise_1 = __webpack_require__(5);
-var defaults = {
-    reverse: false,
-    backgroundColor: '#000',
-    duration: 500,
-    details: 1,
-    originX: .5,
-    originY: .5,
-    xAxis: true,
-    yAxis: true,
-};
-var transitionEffect = function (canvas, params) {
-    if (params === void 0) { params = {}; }
-    params = __assign({}, defaults, params);
-    var sliceSize = 20 * (1 / params.details);
-    var sliceSizeX = params.xAxis ? sliceSize : canvas.element.width;
-    var sliceSizeY = params.yAxis ? sliceSize : canvas.element.height;
-    return cancellable_promise_1.default(function (resolve, reject, onCancel) {
-        var layers = [];
-        var animation = new animation_1.default({
-            initialValue: +params.reverse,
-            finalValue: 1 - +params.reverse,
-            duration: params.duration,
-            onChange: function (value) {
-                var _a = canvas.element, width = _a.width, height = _a.height;
-                value *= sliceSize;
-                params.xAxis && layers.forEach(function (layer) {
-                    layer.width = value + Math.abs(layer.translateX - width * params.originX) / width * value;
-                });
-                params.yAxis && layers.forEach(function (layer) {
-                    layer.height = value + Math.abs(layer.translateY - height * params.originY) / height * value;
-                });
-            },
-            onComplete: function () {
-                resolve();
-            }
-        });
-        for (var x = 0; x < canvas.element.width; x += sliceSizeX) {
-            for (var y = 0; y < canvas.element.height; y += sliceSizeY) {
-                layers.push(new layer_1.default({
-                    translateX: x + (sliceSizeX >> 1),
-                    centerX: -.5,
-                    height: canvas.element.height,
-                    translateY: y + (sliceSizeY >> 1),
-                    centerY: -.5,
-                    width: canvas.element.width,
-                    fillStyle: params.backgroundColor,
-                }));
-            }
-        }
-        canvas.addLayers(layers);
-        canvas.addAnimations([animation]);
-        onCancel(function () { return animation.cancel(); });
-    });
-};
-exports.default = transitionEffect;
-
+eval("\nvar __assign = (this && this.__assign) || function () {\n    __assign = Object.assign || function(t) {\n        for (var s, i = 1, n = arguments.length; i < n; i++) {\n            s = arguments[i];\n            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))\n                t[p] = s[p];\n        }\n        return t;\n    };\n    return __assign.apply(this, arguments);\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar index_1 = __webpack_require__(/*! ./utils/create-element/index */ \"./src/utils/create-element/index.ts\");\nvar defaultIconStyle = {\n    display: 'inline-flex',\n    cursor: 'pointer',\n    width: '32px',\n    height: '24px',\n    verticalAlign: 'middle',\n    alignItems: 'center',\n    boxSizing: 'border-box',\n    justifyContent: 'center',\n};\nvar dot = function (style) {\n    if (style === void 0) { style = {}; }\n    return index_1.default(\"<span class=\\\"j-gallery-dot-icon\\\" style=\\\"width: 4px; height: 4px; display: inline-block; margin: 1px\\\"></span>\", { style: style });\n};\nexports.iconPlay = function (_a, style) {\n    var color = _a.color;\n    if (style === void 0) { style = {}; }\n    return index_1.default(\"<span class=\\\"j-gallery-play-icon\\\"></span>\", {\n        style: __assign({}, defaultIconStyle, style),\n        children: [index_1.default(\"<span></span>\", {\n                style: {\n                    border: 'solid',\n                    borderColor: \"transparent transparent transparent \" + color,\n                    borderWidth: '.4em 0 .4em .7em',\n                }\n            })]\n    });\n};\nexports.iconScreen = function (_a, style) {\n    var color = _a.color;\n    if (style === void 0) { style = {}; }\n    return index_1.default(\"<span class=\\\"j-gallery-screen-icon\\\"></span>\", {\n        style: __assign({}, defaultIconStyle, style),\n        children: [index_1.default(\"<span></span>\", {\n                style: {\n                    width: '1em',\n                    height: '.8em',\n                    border: \"solid \" + color,\n                    borderWidth: '.2em .1em',\n                    boxSizing: 'border-box',\n                }\n            })]\n    });\n};\nexports.iconEllipsisHorizontal = function (_a, style) {\n    var color = _a.color;\n    if (style === void 0) { style = {}; }\n    return index_1.default(\"<span class=\\\"j-gallery-ellipsis-horizontal-icon\\\"></span>\", {\n        style: __assign({}, defaultIconStyle, style),\n        children: [dot({ background: color }), dot({ background: color }), dot({ background: color })]\n    });\n};\nexports.iconPause = function (_a, style) {\n    var color = _a.color;\n    if (style === void 0) { style = {}; }\n    return index_1.default(\"<span class=\\\"j-gallery-pause-icon\\\"></span>\", {\n        style: __assign({}, defaultIconStyle, { justifyContent: 'center' }, style),\n        children: [dot({ width: '.35em', height: '.9em', background: color }), dot({ width: '.35em', height: '.9em', background: color })]\n    });\n};\nexports.iconGrid = function (_a, style) {\n    var color = _a.color;\n    if (style === void 0) { style = {}; }\n    return index_1.default(\"<span class=\\\"j-gallery-grid-icon\\\"></span>\", {\n        style: __assign({}, defaultIconStyle, { height: 'auto', flexWrap: 'wrap', padding: '7px' }, style),\n        children: [\n            dot({ background: color }), dot({ background: color }), dot({ background: color }),\n            dot({ background: color }), dot({ background: color }), dot({ background: color }),\n            dot({ background: color }), dot({ background: color }), dot({ background: color }),\n        ]\n    });\n};\n\n\n//# sourceURL=webpack://JGallery/./src/icons.ts?");
 
 /***/ }),
-/* 17 */
+
+/***/ "./src/index.ts":
+/*!**********************!*\
+  !*** ./src/index.ts ***!
+  \**********************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var index_1 = __webpack_require__(18);
-var with_tooltip_1 = __webpack_require__(3);
-var create_element_1 = __webpack_require__(0);
-var withAlbumsMenu = function (constructor) {
-    return /** @class */ (function (_super) {
-        __extends(class_1, _super);
-        function class_1(albums, params) {
-            var _this = _super.call(this, albums, params) || this;
-            var container = create_element_1.default('<span class="j-gallery-albums-drop-down"/>');
-            _this.dropdown = new index_1.default({
-                items: _this.albums.map(function (album) { return album.title; }),
-                textColor: params.textColor,
-                backgroundColor: params.backgroundColor,
-                onChange: function (value) {
-                    _this.goToAlbum(value);
-                }
-            });
-            container.appendChild(_this.dropdown.getElement());
-            with_tooltip_1.default(container, {
-                style: {
-                    color: params.backgroundColor,
-                    background: params.textColor,
-                },
-                content: params.tooltipSeeOtherAlbums,
-            });
-            _this.appendControlsElements([container]);
-            return _this;
-        }
-        class_1.prototype.initialize = function () {
-            _super.prototype.initialize.call(this);
-            this.dropdown.setActive(this.albums.indexOf(this.album));
-        };
-        return class_1;
-    }(constructor));
-};
-exports.default = withAlbumsMenu;
-
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar index_1 = __webpack_require__(/*! ./gallery/index */ \"./src/gallery/index.ts\");\nexports.default = index_1.default;\n\n\n//# sourceURL=webpack://JGallery/./src/index.ts?");
 
 /***/ }),
-/* 18 */
+
+/***/ "./src/loading/index.ts":
+/*!******************************!*\
+  !*** ./src/loading/index.ts ***!
+  \******************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var index_1 = __webpack_require__(0);
-var component_1 = __webpack_require__(1);
-var Dropdown = /** @class */ (function (_super) {
-    __extends(Dropdown, _super);
-    function Dropdown(_a) {
-        var items = _a.items, backgroundColor = _a.backgroundColor, textColor = _a.textColor, _b = _a.onChange, onChange = _b === void 0 ? function () { } : _b;
-        var _this = _super.call(this) || this;
-        _this.element = index_1.default("<select class=\"j-gallery-drop-down\" style=\"padding: 10px; background: " + backgroundColor + "; font-size: 1em; color: " + textColor + "; border: 0; outline: none; vertical-align: middle;\"></select>");
-        _this.options = items.map(function (item, i) {
-            var htmlElement = index_1.default("<option value=\"" + i + "\">" + item + "</option>");
-            _this.element.appendChild(htmlElement);
-            return htmlElement;
-        });
-        _this.element.addEventListener('change', function () {
-            onChange(+_this.element.value);
-        });
-        return _this;
-    }
-    Dropdown.prototype.setActive = function (index) {
-        var option = this.options[index];
-        if (option) {
-            option.setAttribute('selected', 'true');
-        }
-    };
-    return Dropdown;
-}(component_1.default));
-exports.default = Dropdown;
-
+eval("\nvar __extends = (this && this.__extends) || (function () {\n    var extendStatics = function (d, b) {\n        extendStatics = Object.setPrototypeOf ||\n            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||\n            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };\n        return extendStatics(d, b);\n    }\n    return function (d, b) {\n        extendStatics(d, b);\n        function __() { this.constructor = d; }\n        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());\n    };\n})();\nvar __assign = (this && this.__assign) || function () {\n    __assign = Object.assign || function(t) {\n        for (var s, i = 1, n = arguments.length; i < n; i++) {\n            s = arguments[i];\n            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))\n                t[p] = s[p];\n        }\n        return t;\n    };\n    return __assign.apply(this, arguments);\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar index_1 = __webpack_require__(/*! ../utils/create-element/index */ \"./src/utils/create-element/index.ts\");\nvar component_1 = __webpack_require__(/*! ../component */ \"./src/component.ts\");\nvar Loading = /** @class */ (function (_super) {\n    __extends(Loading, _super);\n    function Loading(params) {\n        if (params === void 0) { params = { color: '#fff' }; }\n        var _this = _super.call(this) || this;\n        params = __assign({ style: {} }, params);\n        var color = params.color;\n        _this.element = index_1.default(\"\\n            <span class=\\\"j-gallery-loading\\\" style=\\\"display: inline-flex\\\">\\n            </span>\\n        \", {\n            style: params.style,\n            children: [\n                item({ animationDelay: '-.375s', background: color }),\n                item({ animationDelay: '-.250s', background: color }),\n                item({ animationDelay: '-.125s', background: color }),\n                item({ background: color }),\n                item({ background: color }),\n                item({ animationDelay: '-.125s', background: color }),\n                item({ animationDelay: '-.250s', background: color }),\n                item({ animationDelay: '-.375s', background: color }),\n            ],\n        });\n        return _this;\n    }\n    return Loading;\n}(component_1.default));\nexports.default = Loading;\nvar item = function (style) {\n    if (style === void 0) { style = {}; }\n    return index_1.default(\"<span/>\", {\n        style: __assign({ width: '1em', height: '1em', animation: 'jGalleryLoading .5s linear infinite alternate', display: 'inline-block' }, style),\n    });\n};\nvar style = document.createElement('style');\nstyle.innerHTML = \"\\n    @keyframes jGalleryLoading {\\n        0% {\\n            transform: scaleX(0);\\n            opacity: 1;\\n        }\\n\\n        100% {\\n            transform: scaleX(1);\\n            opacity: 1;\\n        }\\n    }\\n\";\nif (typeof document !== 'undefined') {\n    document.querySelector('head').appendChild(style);\n}\n\n\n//# sourceURL=webpack://JGallery/./src/loading/index.ts?");
 
 /***/ }),
-/* 19 */
+
+/***/ "./src/preview/index.ts":
+/*!******************************!*\
+  !*** ./src/preview/index.ts ***!
+  \******************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var icons_1 = __webpack_require__(6);
-var with_tooltip_1 = __webpack_require__(3);
-var withPreviewSizeChanger = function (constructor) {
-    return /** @class */ (function (_super) {
-        __extends(class_1, _super);
-        function class_1(albums, params) {
-            var _this = _super.call(this, albums, params) || this;
-            _this.changePreviewSizeIcon = with_tooltip_1.default(icons_1.iconScreen({ color: params.textColor }), {
-                style: {
-                    color: params.backgroundColor,
-                    background: params.textColor,
-                    transform: 'translateY(-8px)',
-                },
-                content: params.tooltipChangeSize,
-            });
-            _this.changePreviewSizeIcon.addEventListener('click', function () { return _this.changePreviewSize(); });
-            _this.appendControlsElements([_this.changePreviewSizeIcon]);
-            return _this;
-        }
-        class_1.prototype.goToItem = function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i] = arguments[_i];
-            }
-            return __awaiter(this, void 0, void 0, function () {
-                var _a, result;
-                return __generator(this, function (_b) {
-                    switch (_b.label) {
-                        case 0: return [4 /*yield*/, (_a = _super.prototype.goToItem).call.apply(_a, [this].concat(args))];
-                        case 1:
-                            result = _b.sent();
-                            this.changePreviewSizeIcon.style.display = this.preview.hasImage ? 'inline-flex' : 'none';
-                            return [2 /*return*/, result];
-                    }
-                });
-            });
-        };
-        class_1.prototype.changePreviewSize = function () {
-            var preview = this.preview;
-            switch (preview.size) {
-                case 'cover':
-                    preview.setSize('contain');
-                    break;
-                default:
-                    preview.setSize('cover');
-            }
-        };
-        return class_1;
-    }(constructor));
-};
-exports.default = withPreviewSizeChanger;
-
+eval("\nvar __extends = (this && this.__extends) || (function () {\n    var extendStatics = function (d, b) {\n        extendStatics = Object.setPrototypeOf ||\n            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||\n            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };\n        return extendStatics(d, b);\n    }\n    return function (d, b) {\n        extendStatics(d, b);\n        function __() { this.constructor = d; }\n        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());\n    };\n})();\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar index_1 = __webpack_require__(/*! ../utils/create-element/index */ \"./src/utils/create-element/index.ts\");\nvar cancellable_promise_1 = __webpack_require__(/*! ../utils/cancellable-promise */ \"./src/utils/cancellable-promise.ts\");\nvar queue_1 = __webpack_require__(/*! ../utils/queue */ \"./src/utils/queue.ts\");\nvar index_2 = __webpack_require__(/*! ../utils/load/index */ \"./src/utils/load/index.ts\");\nvar component_1 = __webpack_require__(/*! ../component */ \"./src/component.ts\");\nvar Preview = /** @class */ (function (_super) {\n    __extends(Preview, _super);\n    function Preview() {\n        var _this = _super.call(this) || this;\n        _this.size = 'cover';\n        _this.element = index_1.default(\"<div class=\\\"j-gallery-preview\\\"/>\", {\n            style: {\n                alignItems: 'center',\n                justifyContent: 'center',\n                overflow: 'hidden',\n                display: 'flex',\n                flex: '1',\n            }\n        });\n        return _this;\n    }\n    Preview.prototype.setItem = function (item) {\n        var _this = this;\n        var element = this.element;\n        var content = index_1.default(item.element ?\n            item.element.outerHTML :\n            \"<div class=\\\"j-gallery-preview-content\\\" style=\\\"\\n                height: 100%;\\n                background: center center url(\" + item.url + \") no-repeat;\\n                background-size: \" + this.size + \";\\n                flex: 1;\\n            \\\"/>\");\n        this.hasImage = !item.element;\n        this.item = item;\n        element.innerHTML = '';\n        return cancellable_promise_1.default(function (resolve, reject, onCancel) {\n            var queue = new queue_1.default(function () { return index_2.default(_this.hasImage ? item.url : content); }, function () {\n                element.appendChild(content);\n                resolve();\n                return Promise.resolve();\n            });\n            queue.run();\n            onCancel(function () { return queue.cancel(); });\n        });\n    };\n    Preview.prototype.setSize = function (size) {\n        this.size = size;\n        if (this.hasImage) {\n            this.element.firstChild.style.backgroundSize = this.size;\n        }\n    };\n    return Preview;\n}(component_1.default));\nexports.default = Preview;\n\n\n//# sourceURL=webpack://JGallery/./src/preview/index.ts?");
 
 /***/ }),
-/* 20 */
+
+/***/ "./src/progress-bar.ts":
+/*!*****************************!*\
+  !*** ./src/progress-bar.ts ***!
+  \*****************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var withBrowserHistory = function (constructor) {
-    return /** @class */ (function (_super) {
-        __extends(class_1, _super);
-        function class_1(albums, params) {
-            var _this = _super.call(this, albums, params) || this;
-            var goToItem = _this.goToItem.bind(_this);
-            var onhashchange = window.onhashchange || (function () { });
-            window.onhashchange = function (event) {
-                onhashchange(event);
-                goToItem(_this.findItemByCurrentHash());
-            };
-            return _this;
-        }
-        class_1.prototype.initialize = function () {
-            var _this = this;
-            _super.prototype.initialize.call(this);
-            var goToItem = this.goToItem.bind(this);
-            this.goToItem = function (item) { return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    history.pushState({ jgallery: true }, '', "#" + item.hash);
-                    return [2 /*return*/, goToItem(item)];
-                });
-            }); };
-        };
-        return class_1;
-    }(constructor));
-};
-exports.default = withBrowserHistory;
-
+eval("\nvar __extends = (this && this.__extends) || (function () {\n    var extendStatics = function (d, b) {\n        extendStatics = Object.setPrototypeOf ||\n            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||\n            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };\n        return extendStatics(d, b);\n    }\n    return function (d, b) {\n        extendStatics(d, b);\n        function __() { this.constructor = d; }\n        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());\n    };\n})();\nvar __assign = (this && this.__assign) || function () {\n    __assign = Object.assign || function(t) {\n        for (var s, i = 1, n = arguments.length; i < n; i++) {\n            s = arguments[i];\n            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))\n                t[p] = s[p];\n        }\n        return t;\n    };\n    return __assign.apply(this, arguments);\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar index_1 = __webpack_require__(/*! ./utils/create-element/index */ \"./src/utils/create-element/index.ts\");\nvar component_1 = __webpack_require__(/*! ./component */ \"./src/component.ts\");\nvar animation_1 = __webpack_require__(/*! ./animation */ \"./src/animation.ts\");\nvar ProgressBar = /** @class */ (function (_super) {\n    __extends(ProgressBar, _super);\n    function ProgressBar(_a) {\n        var duration = _a.duration, onEnd = _a.onEnd, color = _a.color, _b = _a.style, style = _b === void 0 ? {} : _b;\n        var _this = _super.call(this) || this;\n        _this.duration = duration;\n        _this.onEnd = onEnd;\n        _this.element = index_1.default(\"\\n            <div class=\\\"j-gallery-progress-bar\\\"></div>\\n        \");\n        _this.appendStyle(__assign({ height: '1px', background: color }, style));\n        _this.animation = new animation_1.default({\n            initialValue: _this.value,\n            finalValue: 1,\n            duration: _this.duration,\n            easingFunction: function (x) { return x; },\n            onChange: function (value) { return _this.setValue(value); },\n            onComplete: _this.onEnd,\n        });\n        _this.setValue(0);\n        return _this;\n    }\n    ProgressBar.prototype.start = function () {\n        this.animation.start();\n    };\n    ProgressBar.prototype.pause = function () {\n        this.animation.pause();\n    };\n    ProgressBar.prototype.reset = function () {\n        this.animation.reset();\n        this.setValue(0);\n    };\n    ProgressBar.prototype.setValue = function (value) {\n        this.appendStyle({\n            width: value * 100 + \"%\",\n        });\n        this.animation.setValue(value);\n        this.value = value;\n    };\n    return ProgressBar;\n}(component_1.default));\nexports.default = ProgressBar;\n\n\n//# sourceURL=webpack://JGallery/./src/progress-bar.ts?");
 
 /***/ }),
-/* 21 */
+
+/***/ "./src/swipe.ts":
+/*!**********************!*\
+  !*** ./src/swipe.ts ***!
+  \**********************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var index_1 = __webpack_require__(0);
-var cancellable_promise_1 = __webpack_require__(5);
-var queue_1 = __webpack_require__(8);
-var index_2 = __webpack_require__(9);
-var component_1 = __webpack_require__(1);
-var Preview = /** @class */ (function (_super) {
-    __extends(Preview, _super);
-    function Preview() {
-        var _this = _super.call(this) || this;
-        _this.size = 'cover';
-        _this.element = index_1.default("<div class=\"j-gallery-preview\"/>", {
-            style: {
-                alignItems: 'center',
-                justifyContent: 'center',
-                overflow: 'hidden',
-                display: 'flex',
-                flex: '1',
-            }
-        });
-        return _this;
-    }
-    Preview.prototype.setItem = function (item) {
-        var _this = this;
-        var element = this.element;
-        var content = index_1.default(item.element ?
-            item.element.outerHTML :
-            "<div class=\"j-gallery-preview-content\" style=\"\n                height: 100%;\n                background: center center url(" + item.url + ") no-repeat;\n                background-size: " + this.size + ";\n                flex: 1;\n            \"/>");
-        this.hasImage = !item.element;
-        this.item = item;
-        element.innerHTML = '';
-        return cancellable_promise_1.default(function (resolve, reject, onCancel) {
-            var queue = new queue_1.default(function () { return index_2.default(_this.hasImage ? item.url : content); }, function () {
-                element.appendChild(content);
-                resolve();
-                return Promise.resolve();
-            });
-            queue.run();
-            onCancel(function () { return queue.cancel(); });
-        });
-    };
-    Preview.prototype.setSize = function (size) {
-        this.size = size;
-        if (this.hasImage) {
-            this.element.firstChild.style.backgroundSize = this.size;
-        }
-    };
-    return Preview;
-}(component_1.default));
-exports.default = Preview;
-
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar touchSupport = 'ontouchstart' in window || navigator.msMaxTouchPoints;\nvar Swipe = /** @class */ (function () {\n    function Swipe(_a) {\n        var element = _a.element, onSwipeRight = _a.onSwipeRight, onSwipeLeft = _a.onSwipeLeft;\n        this.element = element;\n        this.onSwipeLeft = onSwipeLeft;\n        this.onSwipeRight = onSwipeRight;\n        this.startPoint = {\n            x: 0,\n            y: 0\n        };\n        this.onTouchMove = this.onTouchMove.bind(this);\n        this.onMouseMove = this.onMouseMove.bind(this);\n        this.onTouchStart = this.onTouchStart.bind(this);\n        this.onMouseDown = this.onMouseDown.bind(this);\n    }\n    Swipe.prototype.activate = function () {\n        this.element.addEventListener(touchSupport ? 'touchstart' : 'mousedown', touchSupport ? this.onTouchStart : this.onMouseDown);\n    };\n    Swipe.prototype.deactivate = function () {\n        this.element.removeEventListener(touchSupport ? 'touchstart' : 'mousedown', touchSupport ? this.onTouchStart : this.onMouseDown);\n    };\n    Swipe.prototype.onTouchStart = function (event) {\n        var touch = event.touches[0];\n        this.start({ x: touch.pageX, y: touch.pageY });\n    };\n    Swipe.prototype.onMouseDown = function (event) {\n        this.start({ x: event.pageX, y: event.pageY });\n    };\n    Swipe.prototype.start = function (point) {\n        this.startPoint = point;\n        this.element.addEventListener(touchSupport ? 'touchmove' : 'mousemove', touchSupport ? this.onTouchMove : this.onMouseMove);\n        this.element.addEventListener(touchSupport ? 'touchend' : 'mouseup', this.end.bind(this));\n    };\n    Swipe.prototype.onTouchMove = function (event) {\n        var touch = event.touches[0];\n        this.swipe({ x: touch.pageX, y: touch.pageY });\n    };\n    Swipe.prototype.onMouseMove = function (event) {\n        this.swipe({ x: event.pageX, y: event.pageY });\n    };\n    Swipe.prototype.swipe = function (point) {\n        if (this.startPoint.x + 100 < point.x) {\n            this.onSwipeRight();\n            this.end();\n        }\n        else if (point.x < this.startPoint.x - 100) {\n            this.onSwipeLeft();\n            this.end();\n        }\n    };\n    Swipe.prototype.end = function () {\n        this.element.removeEventListener(touchSupport ? 'touchmove' : 'mousemove', touchSupport ? this.onTouchMove : this.onMouseMove);\n    };\n    return Swipe;\n}());\nexports.default = Swipe;\n\n\n//# sourceURL=webpack://JGallery/./src/swipe.ts?");
 
 /***/ }),
-/* 22 */
+
+/***/ "./src/thumbnails/index.ts":
+/*!*********************************!*\
+  !*** ./src/thumbnails/index.ts ***!
+  \*********************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var touchSupport = 'ontouchstart' in window || navigator.msMaxTouchPoints;
-var Swipe = /** @class */ (function () {
-    function Swipe(_a) {
-        var element = _a.element, onSwipeRight = _a.onSwipeRight, onSwipeLeft = _a.onSwipeLeft;
-        this.element = element;
-        this.onSwipeLeft = onSwipeLeft;
-        this.onSwipeRight = onSwipeRight;
-        this.startPoint = {
-            x: 0,
-            y: 0
-        };
-        this.onTouchMove = this.onTouchMove.bind(this);
-        this.onMouseMove = this.onMouseMove.bind(this);
-        this.onTouchStart = this.onTouchStart.bind(this);
-        this.onMouseDown = this.onMouseDown.bind(this);
-    }
-    Swipe.prototype.activate = function () {
-        this.element.addEventListener(touchSupport ? 'touchstart' : 'mousedown', touchSupport ? this.onTouchStart : this.onMouseDown);
-    };
-    Swipe.prototype.deactivate = function () {
-        this.element.removeEventListener(touchSupport ? 'touchstart' : 'mousedown', touchSupport ? this.onTouchStart : this.onMouseDown);
-    };
-    Swipe.prototype.onTouchStart = function (event) {
-        var touch = event.touches[0];
-        this.start({ x: touch.pageX, y: touch.pageY });
-    };
-    Swipe.prototype.onMouseDown = function (event) {
-        this.start({ x: event.pageX, y: event.pageY });
-    };
-    Swipe.prototype.start = function (point) {
-        this.startPoint = point;
-        this.element.addEventListener(touchSupport ? 'touchmove' : 'mousemove', touchSupport ? this.onTouchMove : this.onMouseMove);
-        this.element.addEventListener(touchSupport ? 'touchend' : 'mouseup', this.end.bind(this));
-    };
-    Swipe.prototype.onTouchMove = function (event) {
-        var touch = event.touches[0];
-        this.swipe({ x: touch.pageX, y: touch.pageY });
-    };
-    Swipe.prototype.onMouseMove = function (event) {
-        this.swipe({ x: event.pageX, y: event.pageY });
-    };
-    Swipe.prototype.swipe = function (point) {
-        if (this.startPoint.x + 100 < point.x) {
-            this.onSwipeRight();
-            this.end();
-        }
-        else if (point.x < this.startPoint.x - 100) {
-            this.onSwipeLeft();
-            this.end();
-        }
-    };
-    Swipe.prototype.end = function () {
-        this.element.removeEventListener(touchSupport ? 'touchmove' : 'mousemove', touchSupport ? this.onTouchMove : this.onMouseMove);
-    };
-    return Swipe;
-}());
-exports.default = Swipe;
-
+eval("\nvar __extends = (this && this.__extends) || (function () {\n    var extendStatics = function (d, b) {\n        extendStatics = Object.setPrototypeOf ||\n            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||\n            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };\n        return extendStatics(d, b);\n    }\n    return function (d, b) {\n        extendStatics(d, b);\n        function __() { this.constructor = d; }\n        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());\n    };\n})();\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar index_1 = __webpack_require__(/*! ../utils/create-element/index */ \"./src/utils/create-element/index.ts\");\nvar component_1 = __webpack_require__(/*! ../component */ \"./src/component.ts\");\nvar animation_1 = __webpack_require__(/*! ../animation */ \"./src/animation.ts\");\nvar index_2 = __webpack_require__(/*! ./thumbnail/index */ \"./src/thumbnails/thumbnail/index.ts\");\nvar Thumbnails = /** @class */ (function (_super) {\n    __extends(Thumbnails, _super);\n    function Thumbnails(_a) {\n        var _b = _a.thumbOnClick, thumbOnClick = _b === void 0 ? function () { } : _b, textColor = _a.textColor, thumbnailWidth = _a.thumbnailWidth, thumbnailHeight = _a.thumbnailHeight;\n        var _this = _super.call(this) || this;\n        _this.textColor = textColor;\n        _this.thumbnailWidth = thumbnailWidth;\n        _this.thumbnailHeight = thumbnailHeight;\n        _this.scrollAnimations = [];\n        _this.element = index_1.default('<div class=\"j-gallery-thumbnails\"></div>', {\n            style: {\n                display: 'flex',\n                overflow: 'auto',\n            }\n        });\n        _this.content = index_1.default('<div class=\"j-gallery-thumbnails-content\"></div>', {\n            style: {\n                margin: '0 auto',\n                textAlign: 'center',\n                display: 'flex',\n                justifyContent: 'center',\n            }\n        });\n        _this.element.appendChild(_this.content);\n        _this.thumbOnClick = thumbOnClick;\n        return _this;\n    }\n    Thumbnails.prototype.setAlbum = function (album) {\n        var _this = this;\n        this.album = album;\n        this.items = album.items.map(function (item) { return new index_2.default({\n            item: item,\n            textColor: _this.textColor,\n            width: _this.thumbnailWidth,\n            height: _this.thumbnailHeight,\n            onClick: function (item) { return _this.thumbOnClick(item); },\n        }); });\n        this.content.innerHTML = '';\n        this.items.forEach(function (item) {\n            _this.content.appendChild(item.getElement());\n        });\n    };\n    Thumbnails.prototype.setActive = function (index) {\n        this.item && this.item.appendStyle({ border: 'none' });\n        this.item = this.items[index];\n        this.item.appendStyle({ border: \"2px solid \" + this.textColor });\n        this.scrollToActiveItem();\n    };\n    Thumbnails.prototype.setThumbnailSize = function (_a) {\n        var width = _a.width, height = _a.height;\n        this.items.forEach(function (thumbnail) { return thumbnail.setSize({ width: width, height: height }); });\n    };\n    Thumbnails.prototype.enableWrap = function () {\n        this.content.style.flexWrap = 'wrap';\n        this.scrollToActiveItem();\n    };\n    Thumbnails.prototype.disableWrap = function () {\n        this.content.style.flexWrap = 'initial';\n        this.scrollToActiveItem();\n    };\n    Thumbnails.prototype.setContentStyle = function (style) {\n        Object.assign(this.content.style, style);\n    };\n    Thumbnails.prototype.scrollToActiveItem = function () {\n        var _this = this;\n        var element = this.item.getElement();\n        this.scrollAnimations.forEach(function (animation) { return animation.cancel(); });\n        this.scrollAnimations = [\n            new animation_1.default({\n                initialValue: this.element.scrollLeft,\n                finalValue: element.offsetLeft + element.clientWidth / 2 - this.element.clientWidth / 2,\n                onChange: function (value) { return _this.element.scrollLeft = value; },\n            }),\n            new animation_1.default({\n                initialValue: this.element.scrollTop,\n                finalValue: element.offsetTop + element.clientHeight / 2 - this.element.clientHeight / 2,\n                onChange: function (value) { return _this.element.scrollTop = value; },\n            }),\n        ];\n        this.scrollAnimations.forEach(function (animation) { return animation.start(); });\n    };\n    return Thumbnails;\n}(component_1.default));\nexports.default = Thumbnails;\n\n\n//# sourceURL=webpack://JGallery/./src/thumbnails/index.ts?");
 
 /***/ }),
-/* 23 */
+
+/***/ "./src/thumbnails/thumbnail/index.ts":
+/*!*******************************************!*\
+  !*** ./src/thumbnails/thumbnail/index.ts ***!
+  \*******************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var defaults = {
-    autostartAtAlbum: 1,
-    autostartAtItem: 1,
-    backgroundColor: '#000',
-    browserHistory: true,
-    canChangePreviewSize: true,
-    canMinimalizeThumbnails: true,
-    itemOnHide: function () { },
-    itemOnLoad: function () { },
-    itemOnShow: function () { },
-    navigationOnPreviewClick: true,
-    onChange: function () { },
-    slideShow: true,
-    slideShowAutoStart: false,
-    slideShowInterval: 4000,
-    textColor: '#fff',
-    thumbnailHeight: '64px',
-    thumbnailHeightOnFullScreen: '128px',
-    thumbnailWidth: '64px',
-    thumbnailWidthOnFullScreen: '128px',
-    thumbnails: true,
-    thumbnailsFullScreen: true,
-    thumbnailsPosition: 'bottom',
-    thumbnailsVisible: true,
-    tooltipChangeSize: 'Change size',
-    tooltipSeeAllItems: 'See all items',
-    tooltipSeeOtherAlbums: 'See other albums',
-    tooltipSlideShowPause: 'Pause slide show',
-    tooltipSlideShowStart: 'Start slide show',
-    tooltipThumbnailsToggle: 'Toogle whumbnails',
-    transitionDetails: 1,
-    transitionDuration: 500,
-    transitionOriginX: .5,
-    transitionOriginY: .5,
-    transitionXAxis: true,
-    transitionYAxis: false,
-};
-exports.default = defaults;
-
+eval("\nvar __extends = (this && this.__extends) || (function () {\n    var extendStatics = function (d, b) {\n        extendStatics = Object.setPrototypeOf ||\n            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||\n            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };\n        return extendStatics(d, b);\n    }\n    return function (d, b) {\n        extendStatics(d, b);\n        function __() { this.constructor = d; }\n        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());\n    };\n})();\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar component_1 = __webpack_require__(/*! ../../component */ \"./src/component.ts\");\nvar index_1 = __webpack_require__(/*! ../../loading/index */ \"./src/loading/index.ts\");\nvar index_2 = __webpack_require__(/*! ../../utils/create-element/index */ \"./src/utils/create-element/index.ts\");\nvar index_3 = __webpack_require__(/*! ../../utils/load/index */ \"./src/utils/load/index.ts\");\nvar Thumbnail = /** @class */ (function (_super) {\n    __extends(Thumbnail, _super);\n    function Thumbnail(_a) {\n        var item = _a.item, onClick = _a.onClick, textColor = _a.textColor, width = _a.width, height = _a.height;\n        var _this = _super.call(this) || this;\n        var content = index_2.default(item.thumbElement ?\n            item.thumbElement.outerHTML :\n            \"<img draggable=\\\"false\\\" src=\\\"\" + item.thumbUrl + \"\\\" style=\\\"max-width: 100%; max-height: 100%\\\"/>\");\n        _this.element = index_2.default(\"<span class=\\\"j-gallery-thumbnail\\\"></span>\", {\n            style: {\n                width: width,\n                height: height,\n                marginRight: '5px',\n                marginBottom: '5px',\n                color: textColor,\n                overflow: 'hidden',\n                cursor: 'pointer',\n                alignItems: 'center',\n                justifyContent: 'center',\n                display: 'inline-flex',\n                boxSizing: 'border-box',\n                flex: \"0 0 \" + width,\n                position: 'relative',\n            }\n        });\n        _this.element.appendChild((new index_1.default({ style: { fontSize: '.5em' }, color: textColor })).getElement());\n        _this.element.addEventListener('click', function () { return onClick(item); });\n        index_3.default(content).then(function () {\n            _this.element.innerHTML = '';\n            _this.element.appendChild(content);\n        });\n        return _this;\n    }\n    Thumbnail.prototype.setSize = function (_a) {\n        var width = _a.width, height = _a.height;\n        Object.assign(this.element.style, {\n            width: width,\n            height: height,\n            flexBasis: width,\n        });\n    };\n    return Thumbnail;\n}(component_1.default));\nexports.default = Thumbnail;\n\n\n//# sourceURL=webpack://JGallery/./src/thumbnails/thumbnail/index.ts?");
 
 /***/ }),
-/* 24 */
+
+/***/ "./src/transition-effect.ts":
+/*!**********************************!*\
+  !*** ./src/transition-effect.ts ***!
+  \**********************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var index_1 = __webpack_require__(0);
-var progress_bar_1 = __webpack_require__(25);
-var icons_1 = __webpack_require__(6);
-var with_tooltip_1 = __webpack_require__(3);
-var withSlideShow = function (constructor) {
-    return /** @class */ (function (_super) {
-        __extends(class_1, _super);
-        function class_1(albums, params) {
-            var _this = _super.call(this, albums, params) || this;
-            _this.slideShowRunning = false;
-            _this.playSlideShowIcon = with_tooltip_1.default(icons_1.iconPlay({ color: params.textColor }), {
-                style: {
-                    color: params.backgroundColor,
-                    background: params.textColor,
-                    transform: 'translateY(-8px)',
-                },
-                content: params.tooltipSlideShowStart,
-            });
-            _this.playSlideShowIcon.addEventListener('click', function () { return _this.playSlideShow(); });
-            _this.pauseSlideShowIcon = with_tooltip_1.default(icons_1.iconPause({ color: params.textColor }), {
-                style: {
-                    color: params.backgroundColor,
-                    background: params.textColor,
-                    transform: 'translateY(-8px)',
-                },
-                content: params.tooltipSlideShowPause,
-            });
-            _this.pauseSlideShowIcon.addEventListener('click', function () { return _this.pauseSlideShow(); });
-            _this.progressBar = new progress_bar_1.default({
-                duration: params.slideShowInterval,
-                color: params.textColor,
-                onEnd: function () { return __awaiter(_this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                this.progressBar.pause();
-                                this.progressBar.setValue(0);
-                                return [4 /*yield*/, this.next()];
-                            case 1:
-                                _a.sent();
-                                this.progressBar.reset();
-                                if (this.slideShowRunning) {
-                                    this.progressBar.start();
-                                }
-                                return [2 /*return*/];
-                        }
-                    });
-                }); },
-                style: {
-                    position: 'absolute',
-                    top: '2px',
-                    left: '0',
-                    right: '0',
-                },
-            });
-            [_this.left, _this.right].forEach(function (element) { return element && element.addEventListener('click', function () { return _this.stopSlideShow(); }); });
-            _this.slideShowIcons = index_1.default('<span class="j-gallery-slide-show-icon"/>', {
-                children: [_this.playSlideShowIcon]
-            });
-            _this.appendControlsElements([
-                _this.slideShowIcons,
-                _this.progressBar.getElement(),
-            ]);
-            _this.progressBar.getElement().style.padding = '0';
-            return _this;
-        }
-        class_1.prototype.initialize = function () {
-            _super.prototype.initialize.call(this);
-            if (this.params.slideShowAutoStart) {
-                this.playSlideShow();
-            }
-        };
-        class_1.prototype.playSlideShow = function () {
-            if (!this.slideShowRunning) {
-                this.slideShowIcons.replaceChild(this.pauseSlideShowIcon, this.playSlideShowIcon);
-                this.progressBar.start();
-                this.slideShowRunning = true;
-            }
-        };
-        class_1.prototype.pauseSlideShow = function () {
-            if (this.slideShowRunning) {
-                this.slideShowIcons.replaceChild(this.playSlideShowIcon, this.pauseSlideShowIcon);
-                this.progressBar.pause();
-                this.slideShowRunning = false;
-            }
-        };
-        class_1.prototype.goToAlbum = function (arg) {
-            var args = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                args[_i - 1] = arguments[_i];
-            }
-            return __awaiter(this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    this.stopSlideShow();
-                    return [2 /*return*/, _super.prototype.goToAlbum.apply(this, [arg].concat(args))];
-                });
-            });
-        };
-        class_1.prototype.stopSlideShow = function () {
-            this.pauseSlideShow();
-            this.progressBar.reset();
-        };
-        return class_1;
-    }(constructor));
-};
-exports.default = withSlideShow;
-
+eval("\nvar __assign = (this && this.__assign) || function () {\n    __assign = Object.assign || function(t) {\n        for (var s, i = 1, n = arguments.length; i < n; i++) {\n            s = arguments[i];\n            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))\n                t[p] = s[p];\n        }\n        return t;\n    };\n    return __assign.apply(this, arguments);\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar animation_1 = __webpack_require__(/*! ./animation */ \"./src/animation.ts\");\nvar layer_1 = __webpack_require__(/*! ./canvas/layer */ \"./src/canvas/layer.ts\");\nvar cancellable_promise_1 = __webpack_require__(/*! ./utils/cancellable-promise */ \"./src/utils/cancellable-promise.ts\");\nvar defaults = {\n    reverse: false,\n    backgroundColor: '#000',\n    duration: 500,\n    details: 1,\n    originX: .5,\n    originY: .5,\n    xAxis: true,\n    yAxis: true,\n};\nvar transitionEffect = function (canvas, params) {\n    if (params === void 0) { params = {}; }\n    params = __assign({}, defaults, params);\n    var sliceSize = 20 * (1 / params.details);\n    var sliceSizeX = params.xAxis ? sliceSize : canvas.element.width;\n    var sliceSizeY = params.yAxis ? sliceSize : canvas.element.height;\n    return cancellable_promise_1.default(function (resolve, reject, onCancel) {\n        var layers = [];\n        var animation = new animation_1.default({\n            initialValue: +params.reverse,\n            finalValue: 1 - +params.reverse,\n            duration: params.duration,\n            onChange: function (value) {\n                var _a = canvas.element, width = _a.width, height = _a.height;\n                value *= sliceSize;\n                params.xAxis && layers.forEach(function (layer) {\n                    layer.width = value + Math.abs(layer.translateX - width * params.originX) / width * value;\n                });\n                params.yAxis && layers.forEach(function (layer) {\n                    layer.height = value + Math.abs(layer.translateY - height * params.originY) / height * value;\n                });\n            },\n            onComplete: function () {\n                resolve();\n            }\n        });\n        for (var x = 0; x < canvas.element.width; x += sliceSizeX) {\n            for (var y = 0; y < canvas.element.height; y += sliceSizeY) {\n                layers.push(new layer_1.default({\n                    translateX: x + (sliceSizeX >> 1),\n                    centerX: -.5,\n                    height: canvas.element.height,\n                    translateY: y + (sliceSizeY >> 1),\n                    centerY: -.5,\n                    width: canvas.element.width,\n                    fillStyle: params.backgroundColor,\n                }));\n            }\n        }\n        canvas.addLayers(layers);\n        canvas.addAnimations([animation]);\n        onCancel(function () { return animation.cancel(); });\n    });\n};\nexports.default = transitionEffect;\n\n\n//# sourceURL=webpack://JGallery/./src/transition-effect.ts?");
 
 /***/ }),
-/* 25 */
+
+/***/ "./src/utils/cancellable-promise.ts":
+/*!******************************************!*\
+  !*** ./src/utils/cancellable-promise.ts ***!
+  \******************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var index_1 = __webpack_require__(0);
-var component_1 = __webpack_require__(1);
-var animation_1 = __webpack_require__(4);
-var ProgressBar = /** @class */ (function (_super) {
-    __extends(ProgressBar, _super);
-    function ProgressBar(_a) {
-        var duration = _a.duration, onEnd = _a.onEnd, color = _a.color, _b = _a.style, style = _b === void 0 ? {} : _b;
-        var _this = _super.call(this) || this;
-        _this.duration = duration;
-        _this.onEnd = onEnd;
-        _this.element = index_1.default("\n            <div class=\"j-gallery-progress-bar\"></div>\n        ");
-        _this.appendStyle(__assign({ height: '1px', background: color }, style));
-        _this.animation = new animation_1.default({
-            initialValue: _this.value,
-            finalValue: 1,
-            duration: _this.duration,
-            easingFunction: function (x) { return x; },
-            onChange: function (value) { return _this.setValue(value); },
-            onComplete: _this.onEnd,
-        });
-        _this.setValue(0);
-        return _this;
-    }
-    ProgressBar.prototype.start = function () {
-        this.animation.start();
-    };
-    ProgressBar.prototype.pause = function () {
-        this.animation.pause();
-    };
-    ProgressBar.prototype.reset = function () {
-        this.animation.reset();
-        this.setValue(0);
-    };
-    ProgressBar.prototype.setValue = function (value) {
-        this.appendStyle({
-            width: value * 100 + "%",
-        });
-        this.animation.setValue(value);
-        this.value = value;
-    };
-    return ProgressBar;
-}(component_1.default));
-exports.default = ProgressBar;
-
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar cancellablePromise = function (executor) {\n    var cancelListeners = [];\n    var cancel;\n    var onCancel = function (listener) { return cancelListeners.push(listener); };\n    var promise = new Promise(function (resolve, reject) {\n        executor(resolve, reject, onCancel);\n        cancel = function () {\n            resolve();\n            cancelListeners.forEach(function (fn) { return fn(); });\n        };\n    });\n    promise.cancel = cancel;\n    return promise;\n};\nexports.default = cancellablePromise;\n\n\n//# sourceURL=webpack://JGallery/./src/utils/cancellable-promise.ts?");
 
 /***/ }),
-/* 26 */
+
+/***/ "./src/utils/create-element/index.ts":
+/*!*******************************************!*\
+  !*** ./src/utils/create-element/index.ts ***!
+  \*******************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var index_1 = __webpack_require__(27);
-var icons_1 = __webpack_require__(6);
-var with_tooltip_1 = __webpack_require__(3);
-var withThumbnails = function (constructor) {
-    return /** @class */ (function (_super) {
-        __extends(class_1, _super);
-        function class_1(albums, params) {
-            var _this = _super.call(this, albums, params) || this;
-            _this.thumbnailsVisible = true;
-            _this.thumbnails = new index_1.default({
-                thumbnailWidth: params.thumbnailWidth,
-                thumbnailHeight: params.thumbnailHeight,
-                textColor: params.textColor,
-                thumbOnClick: function (item) {
-                    if (_this.stopSlideShow) {
-                        _this.stopSlideShow();
-                    }
-                    if (_this.fullScreenThumbnails) {
-                        _this.disableFullScreenThumbnails();
-                    }
-                    _this.goToItem(item);
-                }
-            });
-            _this.thumbnails.appendStyle({
-                position: 'relative',
-                paddingLeft: _this.params.thumbnailsPosition === 'right' ? '10px' : '0',
-                paddingRight: _this.params.thumbnailsPosition === 'left' ? '10px' : '0',
-            });
-            _this.thumbnails.setAlbum(_this.album);
-            _this.toggleThumbnailsIcon = with_tooltip_1.default(icons_1.iconEllipsisHorizontal({ color: params.textColor }), {
-                style: {
-                    color: params.backgroundColor,
-                    background: params.textColor,
-                    transform: 'translateY(-8px)',
-                },
-                content: params.tooltipThumbnailsToggle,
-            });
-            _this.toggleThumbnailsIcon.addEventListener('click', function () { return _this.toggleThumbnails(); });
-            _this.toggleFullScreenThumbnailsIcon = with_tooltip_1.default(icons_1.iconGrid({ color: params.textColor }), {
-                style: {
-                    color: params.backgroundColor,
-                    background: params.textColor,
-                    transform: 'translateY(-4px)',
-                },
-                content: params.tooltipSeeAllItems,
-            });
-            _this.toggleFullScreenThumbnailsIcon.addEventListener('click', function () { return _this.toggleFullScreenThumbnails(); });
-            if (_this.params.thumbnailsFullScreen) {
-                _this.appendControlsElements([_this.toggleFullScreenThumbnailsIcon]);
-            }
-            if (_this.params.canMinimalizeThumbnails) {
-                _this.appendControlsElements([
-                    _this.toggleThumbnailsIcon,
-                ]);
-            }
-            return _this;
-        }
-        class_1.prototype.initialize = function () {
-            _super.prototype.initialize.call(this);
-            if (this.params.thumbnailsVisible) {
-                this.showThumbnails();
-            }
-            if (['left', 'right'].includes(this.params.thumbnailsPosition)) {
-                this.element.style.flexDirection = 'row';
-                this.thumbnails.setContentStyle({
-                    flexDirection: 'column',
-                    justifyContent: 'flex-start',
-                });
-            }
-        };
-        class_1.prototype.goToItem = function (item) {
-            return __awaiter(this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    this.thumbnails.setActive(this.album.items.indexOf(item));
-                    return [2 /*return*/, _super.prototype.goToItem.call(this, item)];
-                });
-            });
-        };
-        class_1.prototype.goToAlbum = function (value) {
-            var args = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                args[_i - 1] = arguments[_i];
-            }
-            return __awaiter(this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    this.thumbnails.setAlbum(this.albums[value]);
-                    return [2 /*return*/, _super.prototype.goToAlbum.apply(this, [value].concat(args))];
-                });
-            });
-        };
-        class_1.prototype.disableFullScreenThumbnails = function () {
-            this.fullScreenThumbnails = false;
-            this.thumbnails.setThumbnailSize({
-                width: this.params.thumbnailWidth,
-                height: this.params.thumbnailHeight,
-            });
-            this.previewElement.style.display = 'flex';
-            if (['left', 'right'].includes(this.params.thumbnailsPosition)) {
-                this.thumbnails.setContentStyle({
-                    flexDirection: ['left', 'right'].includes(this.params.thumbnailsPosition) ? 'column' : 'row',
-                });
-                this.thumbnails.getElement().style.flexBasis = 'auto';
-            }
-            this.thumbnails.disableWrap();
-        };
-        class_1.prototype.toggleFullScreenThumbnails = function () {
-            this.fullScreenThumbnails ? this.disableFullScreenThumbnails() : this.enableFullScreenThumbnails();
-        };
-        class_1.prototype.enableFullScreenThumbnails = function () {
-            if (this.stopSlideShow) {
-                this.stopSlideShow();
-            }
-            this.fullScreenThumbnails = true;
-            this.thumbnails.setThumbnailSize({
-                width: this.params.thumbnailWidthOnFullScreen,
-                height: this.params.thumbnailHeightOnFullScreen,
-            });
-            this.previewElement.style.display = 'none';
-            if (['left', 'right'].includes(this.params.thumbnailsPosition)) {
-                this.thumbnails.getElement().style.flexBasis = '100%';
-                this.thumbnails.setContentStyle({
-                    flexDirection: 'row',
-                });
-            }
-            this.showThumbnails();
-            this.thumbnails.enableWrap();
-        };
-        class_1.prototype.hideThumbnails = function () {
-            this.thumbnailsVisible = false;
-            this.element.removeChild(this.thumbnails.getElement());
-            this.disableFullScreenThumbnails();
-        };
-        class_1.prototype.toggleThumbnails = function () {
-            this.thumbnailsVisible ? this.hideThumbnails() : this.showThumbnails();
-        };
-        class_1.prototype.showThumbnails = function () {
-            this.thumbnailsVisible = true;
-            switch (this.params.thumbnailsPosition) {
-                case 'top':
-                case 'left':
-                    this.element.insertBefore(this.thumbnails.getElement(), this.element.firstChild);
-                    break;
-                default:
-                    this.element.appendChild(this.thumbnails.getElement());
-            }
-            this.thumbnails.scrollToActiveItem();
-        };
-        return class_1;
-    }(constructor));
-};
-exports.default = withThumbnails;
-
+eval("\nvar __assign = (this && this.__assign) || function () {\n    __assign = Object.assign || function(t) {\n        for (var s, i = 1, n = arguments.length; i < n; i++) {\n            s = arguments[i];\n            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))\n                t[p] = s[p];\n        }\n        return t;\n    };\n    return __assign.apply(this, arguments);\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar defaultOptions = {\n    style: {},\n    children: [],\n};\nfunction default_1(html, options) {\n    var element = (new DOMParser().parseFromString(html, 'text/html').body.firstChild);\n    options = __assign({}, defaultOptions, options);\n    Object.assign(element.style, options.style);\n    options.children.forEach(function (child) { return element.appendChild(child); });\n    return element;\n}\nexports.default = default_1;\n;\n\n\n//# sourceURL=webpack://JGallery/./src/utils/create-element/index.ts?");
 
 /***/ }),
-/* 27 */
+
+/***/ "./src/utils/load/index.ts":
+/*!*********************************!*\
+  !*** ./src/utils/load/index.ts ***!
+  \*********************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var index_1 = __webpack_require__(0);
-var component_1 = __webpack_require__(1);
-var animation_1 = __webpack_require__(4);
-var index_2 = __webpack_require__(28);
-var Thumbnails = /** @class */ (function (_super) {
-    __extends(Thumbnails, _super);
-    function Thumbnails(_a) {
-        var _b = _a.thumbOnClick, thumbOnClick = _b === void 0 ? function () { } : _b, textColor = _a.textColor, thumbnailWidth = _a.thumbnailWidth, thumbnailHeight = _a.thumbnailHeight;
-        var _this = _super.call(this) || this;
-        _this.textColor = textColor;
-        _this.thumbnailWidth = thumbnailWidth;
-        _this.thumbnailHeight = thumbnailHeight;
-        _this.scrollAnimations = [];
-        _this.element = index_1.default('<div class="j-gallery-thumbnails"></div>', {
-            style: {
-                display: 'flex',
-                overflow: 'auto',
-            }
-        });
-        _this.content = index_1.default('<div class="j-gallery-thumbnails-content"></div>', {
-            style: {
-                margin: '0 auto',
-                textAlign: 'center',
-                display: 'flex',
-                justifyContent: 'center',
-            }
-        });
-        _this.element.appendChild(_this.content);
-        _this.thumbOnClick = thumbOnClick;
-        return _this;
-    }
-    Thumbnails.prototype.setAlbum = function (album) {
-        var _this = this;
-        this.album = album;
-        this.items = album.items.map(function (item) { return new index_2.default({
-            item: item,
-            textColor: _this.textColor,
-            width: _this.thumbnailWidth,
-            height: _this.thumbnailHeight,
-            onClick: function (item) { return _this.thumbOnClick(item); },
-        }); });
-        this.content.innerHTML = '';
-        this.items.forEach(function (item) {
-            _this.content.appendChild(item.getElement());
-        });
-    };
-    Thumbnails.prototype.setActive = function (index) {
-        this.item && this.item.appendStyle({ border: 'none' });
-        this.item = this.items[index];
-        this.item.appendStyle({ border: "2px solid " + this.textColor });
-        this.scrollToActiveItem();
-    };
-    Thumbnails.prototype.setThumbnailSize = function (_a) {
-        var width = _a.width, height = _a.height;
-        this.items.forEach(function (thumbnail) { return thumbnail.setSize({ width: width, height: height }); });
-    };
-    Thumbnails.prototype.enableWrap = function () {
-        this.content.style.flexWrap = 'wrap';
-        this.scrollToActiveItem();
-    };
-    Thumbnails.prototype.disableWrap = function () {
-        this.content.style.flexWrap = 'initial';
-        this.scrollToActiveItem();
-    };
-    Thumbnails.prototype.setContentStyle = function (style) {
-        Object.assign(this.content.style, style);
-    };
-    Thumbnails.prototype.scrollToActiveItem = function () {
-        var _this = this;
-        var element = this.item.getElement();
-        this.scrollAnimations.forEach(function (animation) { return animation.cancel(); });
-        this.scrollAnimations = [
-            new animation_1.default({
-                initialValue: this.element.scrollLeft,
-                finalValue: element.offsetLeft + element.clientWidth / 2 - this.element.clientWidth / 2,
-                onChange: function (value) { return _this.element.scrollLeft = value; },
-            }),
-            new animation_1.default({
-                initialValue: this.element.scrollTop,
-                finalValue: element.offsetTop + element.clientHeight / 2 - this.element.clientHeight / 2,
-                onChange: function (value) { return _this.element.scrollTop = value; },
-            }),
-        ];
-        this.scrollAnimations.forEach(function (animation) { return animation.start(); });
-    };
-    return Thumbnails;
-}(component_1.default));
-exports.default = Thumbnails;
-
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nexports.default = (function (src) {\n    return typeof src === 'string' ? loadImg(src) : loadElement(src);\n});\nvar loadImg = function (src) { return new Promise(function (resolve, reject) {\n    var img = new Image;\n    img.src = src;\n    img.onload = function () { return resolve(); };\n    img.onerror = reject;\n}); };\nvar loadElement = function (element) { return Promise.all([element, Array.from(element.querySelectorAll('*'))]\n    .reduce(function (paths, element) {\n    if (element instanceof Image) {\n        paths.push(loadImg(element.getAttribute('src')));\n    }\n    return paths;\n}, [])); };\n\n\n//# sourceURL=webpack://JGallery/./src/utils/load/index.ts?");
 
 /***/ }),
-/* 28 */
+
+/***/ "./src/utils/queue.ts":
+/*!****************************!*\
+  !*** ./src/utils/queue.ts ***!
+  \****************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(1);
-var index_1 = __webpack_require__(7);
-var index_2 = __webpack_require__(0);
-var index_3 = __webpack_require__(9);
-var Thumbnail = /** @class */ (function (_super) {
-    __extends(Thumbnail, _super);
-    function Thumbnail(_a) {
-        var item = _a.item, onClick = _a.onClick, textColor = _a.textColor, width = _a.width, height = _a.height;
-        var _this = _super.call(this) || this;
-        var content = index_2.default(item.thumbElement ?
-            item.thumbElement.outerHTML :
-            "<img draggable=\"false\" src=\"" + item.thumbUrl + "\"/>");
-        _this.element = index_2.default("<span class=\"j-gallery-thumbnail\"></span>", {
-            style: {
-                width: width,
-                height: height,
-                marginRight: '5px',
-                marginBottom: '5px',
-                color: textColor,
-                overflow: 'hidden',
-                cursor: 'pointer',
-                alignItems: 'center',
-                justifyContent: 'center',
-                display: 'inline-flex',
-                boxSizing: 'border-box',
-                flex: "0 0 " + width,
-                position: 'relative',
-            }
-        });
-        _this.element.appendChild((new index_1.default({ style: { fontSize: '.5em' }, color: textColor })).getElement());
-        _this.element.addEventListener('click', function () { return onClick(item); });
-        index_3.default(content).then(function () {
-            _this.element.innerHTML = '';
-            _this.element.appendChild(content);
-        });
-        return _this;
-    }
-    Thumbnail.prototype.setSize = function (_a) {
-        var width = _a.width, height = _a.height;
-        Object.assign(this.element.style, {
-            width: width,
-            height: height,
-            flexBasis: width,
-        });
-    };
-    return Thumbnail;
-}(component_1.default));
-exports.default = Thumbnail;
-
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar Queue = /** @class */ (function () {\n    function Queue() {\n        var tasks = [];\n        for (var _i = 0; _i < arguments.length; _i++) {\n            tasks[_i] = arguments[_i];\n        }\n        this.tasks = tasks.slice();\n        this.run = this.run.bind(this);\n    }\n    Queue.prototype.run = function () {\n        var task = this.tasks.shift();\n        if (task) {\n            this.currentProcess = task();\n            this.currentProcess.then(this.run);\n        }\n        else {\n            this.currentProcess = null;\n        }\n    };\n    Queue.prototype.cancel = function () {\n        this.tasks.length = 0;\n        this.currentProcess && this.currentProcess.cancel && this.currentProcess.cancel();\n    };\n    return Queue;\n}());\nexports.default = Queue;\n\n\n//# sourceURL=webpack://JGallery/./src/utils/queue.ts?");
 
 /***/ }),
-/* 29 */
+
+/***/ "./src/utils/with-tooltip.ts":
+/*!***********************************!*\
+  !*** ./src/utils/with-tooltip.ts ***!
+  \***********************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var create_element_1 = __webpack_require__(0);
-var withNavigationOnPreviewClick = function (constructor) {
-    return /** @class */ (function (_super) {
-        __extends(class_1, _super);
-        function class_1(albums, params) {
-            var _this = _super.call(this, albums, params) || this;
-            _this.left = create_element_1.default("\n                <div class=\"j-gallery-left\" style=\"left: 0; width: 50%; top: 0; bottom: 0; position: absolute; cursor: pointer;\"></div>\n            ");
-            _this.left.addEventListener('click', function () {
-                _this.prev();
-            });
-            _this.right = create_element_1.default("\n                <div class=\"j-gallery-right\" style=\"right: 0; width: 50%; top: 0; bottom: 0; position: absolute; cursor: pointer;\"></div>\n            ");
-            _this.right.addEventListener('click', function () {
-                _this.next();
-            });
-            _this.previewElement.appendChild(_this.left);
-            _this.previewElement.appendChild(_this.right);
-            return _this;
-        }
-        return class_1;
-    }(constructor));
-};
-exports.default = withNavigationOnPreviewClick;
-
+eval("\nvar __assign = (this && this.__assign) || function () {\n    __assign = Object.assign || function(t) {\n        for (var s, i = 1, n = arguments.length; i < n; i++) {\n            s = arguments[i];\n            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))\n                t[p] = s[p];\n        }\n        return t;\n    };\n    return __assign.apply(this, arguments);\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar create_element_1 = __webpack_require__(/*! ./create-element */ \"./src/utils/create-element/index.ts\");\nvar withTooltip = function (element, params) {\n    params = __assign({ content: '', style: {} }, params);\n    var tooltip = create_element_1.default(\"<span class=\\\"j-gallery-tooltip\\\">\" + params.content + \"</span>\", {\n        style: __assign({ padding: '.3em .6em', left: '0', bottom: '100%', opacity: '.85', fontSize: '.85em', whiteSpace: 'pre', position: 'absolute', display: 'none' }, params.style),\n    });\n    element.style.position = 'relative';\n    element.appendChild(tooltip);\n    element.addEventListener('mouseenter', function () { return tooltip.style.display = 'block'; });\n    element.addEventListener('mouseleave', function () { return tooltip.style.display = 'none'; });\n    return element;\n};\nexports.default = withTooltip;\n\n\n//# sourceURL=webpack://JGallery/./src/utils/with-tooltip.ts?");
 
 /***/ })
-/******/ ]);
+
+/******/ });if (typeof window !== "undefined") window.JGallery = JGallery.default; if (typeof module !== "undefined") module.exports = JGallery; })()

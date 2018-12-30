@@ -5,7 +5,7 @@ import Layer from './layer';
 import Path from './path';
 import Circle from './circle';
 
-interface Params {
+export interface Params {
     width: number;
     height: number;
 }

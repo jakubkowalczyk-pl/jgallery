@@ -5,7 +5,7 @@ import Album from '../album';
 import AlbumItem from '../album-item';
 import Thumbnail, {ThumbOnClick} from './thumbnail/index';
 
-interface Params {
+export interface Params {
     textColor: string;
     thumbnailWidth: string;
     thumbnailHeight: string;

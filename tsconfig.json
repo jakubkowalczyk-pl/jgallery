@@ -1,7 +1,10 @@
 {
     "compilerOptions": {
         "target": "ES5",
+        "declaration": true,
+        "declarationDir": "types",
         "lib": ["es2016", "dom", "es2017"],
         "noImplicitAny": true
-    }
+    },
+    "exclude": ["dist", "types", "node_modules"]
 }

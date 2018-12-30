@@ -3,7 +3,7 @@ import Canvas from './canvas/index';
 import Layer from './canvas/layer';
 import promise from './utils/cancellable-promise';
 
-interface Params {
+export interface Params {
     backgroundColor?: string;
     reverse?: boolean;
     duration?: number;

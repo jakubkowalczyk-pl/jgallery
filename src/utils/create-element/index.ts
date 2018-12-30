@@ -1,4 +1,4 @@
-interface Options {
+export interface Options {
     style?: Partial<CSSStyleDeclaration>;
     children?: HTMLElement[];
 }

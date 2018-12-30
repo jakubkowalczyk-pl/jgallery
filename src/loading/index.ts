@@ -1,7 +1,7 @@
 import createElement from '../utils/create-element/index';
 import Component from '../component';
 
-interface Params {
+export interface Params {
     color: string;
     style?: Partial<CSSStyleDeclaration>;
 }

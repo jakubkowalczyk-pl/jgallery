@@ -1,6 +1,6 @@
 const touchSupport = 'ontouchstart' in window || navigator.msMaxTouchPoints;
 
-interface Params {
+export interface Params {
     element: HTMLElement;
     onSwipeLeft: Function;
     onSwipeRight: Function;

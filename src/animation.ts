@@ -1,12 +1,12 @@
-interface OnChange {
+export interface OnChange {
     (value: number): void;
 }
 
-interface OnComplete {
+export interface OnComplete {
     (): void;
 }
 
-interface Params {
+export interface Params {
     initialValue?: number;
     finalValue?: number;
     onChange?: OnChange;

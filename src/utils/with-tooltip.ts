@@ -1,6 +1,6 @@
 import createElement from './create-element';
 
-interface Params {
+export interface Params {
     content: string;
     style?: Partial<CSSStyleDeclaration>;
 }

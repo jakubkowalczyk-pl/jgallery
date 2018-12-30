@@ -1,6 +1,6 @@
 import {CancellablePromise} from './cancellable-promise';
 
-interface Task {
+export interface Task {
     (): CancellablePromise<any>;
 }
 

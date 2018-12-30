@@ -2,7 +2,7 @@ import createElement from './utils/create-element/index';
 import Component from './component';
 import Animation from './animation';
 
-interface Params {
+export interface Params {
     duration: number;
     onEnd: () => any;
     color: string;
