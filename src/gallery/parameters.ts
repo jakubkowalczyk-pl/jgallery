@@ -38,4 +38,5 @@ export default interface Params {
     transitionOriginY?: number; // Specifies center point of transition at Y axis; [ 0.5, 0, 1 ]
     transitionXAxis?: boolean; // If set as 'true', transition mask will be sliced along X axis.; [ true, false ]
     transitionYAxis?: boolean; // If set as 'true', transition mask will be sliced along Y axis.; [ true, false ]
+    transitionEasingFunction?: (time: number) => number; // Specifies transition easing. Argument 'time' is value between 0, 1.; ; [ function(time) { return time; } ]
 }

@@ -50,4 +50,5 @@ export default interface Params {
     transitionOriginY?: number;
     transitionXAxis?: boolean;
     transitionYAxis?: boolean;
+    transitionEasingFunction?: (time: number) => number;
 }

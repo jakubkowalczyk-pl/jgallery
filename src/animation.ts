@@ -6,13 +6,17 @@ export interface OnComplete {
     (): void;
 }
 
+export interface EasingFunction {
+    (time: number): number;
+}
+
 export interface Params {
     initialValue?: number;
     finalValue?: number;
     onChange?: OnChange;
     onComplete?: OnComplete;
     duration?: number;
-    easingFunction?: (t: number) => number;
+    easingFunction?: EasingFunction;
 }
 
 export default class Animation {
@@ -24,10 +28,10 @@ export default class Animation {
     onChange: OnChange;
     onComplete: OnComplete;
     duration: number;
-    easingFunction: (t: number) => number;
+    easingFunction: EasingFunction;
     private animationFrame: number;
 
-    constructor({ initialValue = 0, finalValue = 0, onChange = () => {}, onComplete = () => {}, duration = 500, easingFunction = t => 1+(--t)*t*t*t*t }: Params) {
+    constructor({ initialValue = 0, finalValue = 0, onChange = () => {}, onComplete = () => {}, duration = 500, easingFunction = t => Math.sin(t*1.5707963267948966) }: Params) {
         this.initialValue = initialValue;
         this.currentValue = initialValue;
         this.finalValue = finalValue;

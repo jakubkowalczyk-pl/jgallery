@@ -31,11 +31,12 @@ const defaults: Params = {
     tooltipSlideShowStart: 'Start slide show',
     tooltipThumbnailsToggle: 'Toogle whumbnails',
     transitionDetails: 1,
-    transitionDuration: 500,
+    transitionDuration: 250,
     transitionOriginX: .5,
     transitionOriginY: .5,
     transitionXAxis: true,
     transitionYAxis: false,
+    transitionEasingFunction: t => Math.sin(t*1.5707963267948966),
 };
 
 export default defaults;

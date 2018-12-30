@@ -1,4 +1,4 @@
-import Animation from './animation';
+import Animation, {EasingFunction} from './animation';
 import Canvas from './canvas/index';
 import Layer from './canvas/layer';
 import promise from './utils/cancellable-promise';
@@ -12,6 +12,7 @@ export interface Params {
     originY?: number;
     xAxis?: boolean;
     yAxis?: boolean;
+    easingFunction?: EasingFunction;
 }
 
 const defaults: Params = {
@@ -37,6 +38,7 @@ const transitionEffect = (canvas: Canvas, params: Params = {}) => {
         const animation = new Animation({
             initialValue: +params.reverse,
             finalValue: 1 - +params.reverse,
+            easingFunction: params.easingFunction,
             duration: params.duration,
             onChange: value => {
                 const { width, height } = canvas.element;

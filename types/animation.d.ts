@@ -4,13 +4,16 @@ export interface OnChange {
 export interface OnComplete {
     (): void;
 }
+export interface EasingFunction {
+    (time: number): number;
+}
 export interface Params {
     initialValue?: number;
     finalValue?: number;
     onChange?: OnChange;
     onComplete?: OnComplete;
     duration?: number;
-    easingFunction?: (t: number) => number;
+    easingFunction?: EasingFunction;
 }
 export default class Animation {
     initialValue: number;
@@ -21,7 +24,7 @@ export default class Animation {
     onChange: OnChange;
     onComplete: OnComplete;
     duration: number;
-    easingFunction: (t: number) => number;
+    easingFunction: EasingFunction;
     private animationFrame;
     constructor({ initialValue, finalValue, onChange, onComplete, duration, easingFunction }: Params);
     start(): void;

@@ -1,3 +1,4 @@
+import { EasingFunction } from './animation';
 import Canvas from './canvas/index';
 export interface Params {
     backgroundColor?: string;
@@ -8,6 +9,7 @@ export interface Params {
     originY?: number;
     xAxis?: boolean;
     yAxis?: boolean;
+    easingFunction?: EasingFunction;
 }
 declare const transitionEffect: (canvas: Canvas, params?: Params) => import("./utils/cancellable-promise").CancellablePromise<{}>;
 export default transitionEffect;
