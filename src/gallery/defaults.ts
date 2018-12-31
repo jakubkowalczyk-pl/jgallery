@@ -1,12 +1,12 @@
 import Params from './parameters';
 
 const defaults: Params = {
-    autostartAtAlbum: 1,
-    autostartAtItem: 1,
+    autoStartAtAlbum: 1,
+    autoStartAtItem: 1,
     backgroundColor: '#000',
     browserHistory: true,
     canChangePreviewSize: true,
-    canMinimalizeThumbnails: true,
+    canMinimizeThumbnails: true,
     itemOnHide: () => {},
     itemOnLoad: () => {},
     itemOnShow: () => {},

@@ -3,11 +3,11 @@ import AlbumItem from '../album-item';
 import {ThumbnailsPosition} from "./with-thumbnails";
 
 export default interface Params {
-    autostartAtAlbum?: number; // Index of album which will be loaded by autostart.; ; [ 1, 2 ]
-    autostartAtItem?: number; // Index of item which will be loaded by autostart.; ; [ 1, 2, 3 ]
+    autoStartAtAlbum?: number; // Index of album which will be loaded by auto start.; ; [ 1, 2 ]
+    autoStartAtItem?: number; // Index of item which will be loaded by auto start.; ; [ 1, 2, 3 ]
     backgroundColor?: string; // Background color for jGallery container.; ; [ '#ffffff', 'silver' ]
     browserHistory?: boolean; // If set as 'true', changes of active item will be saved in browser history.; [ true, false ]
-    canMinimalizeThumbnails?: boolean; // If set as 'true', you can minimalize thumbnails(only when 'thumbnails' parameter set as 'true').; [ true, false ]
+    canMinimizeThumbnails?: boolean; // If set as 'true', you can minimize thumbnails(only when 'thumbnails' parameter set as 'true').; [ true, false ]
     canChangePreviewSize?: boolean; // If set as 'true', you can change preview size (only for images).; [ true, false ]
     itemOnHide?: (p: { album: Album, item: AlbumItem }) => any; // Custom function that will be called after hide item.; ; [ function() { console.log('called') } ]
     itemOnLoad?: (p: { album: Album, item: AlbumItem }) => any; // Custom function that will be called after load item.; ; [ function() { console.log('called') } ]

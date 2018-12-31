@@ -39,7 +39,7 @@ export class Gallery extends Component {
         super();
         this.params = params;
         this.albums = albums;
-        this.album = albums[params.autostartAtAlbum-1];
+        this.album = albums[params.autoStartAtAlbum-1];
         this.loading = new Loading({ color: params.textColor });
         this.goToItem = this.goToItem.bind(this);
         this.next = this.next.bind(this);
@@ -173,7 +173,7 @@ export class Gallery extends Component {
     }
 
     protected findItemByCurrentHash(): AlbumItem {
-        return this.findItemByHash(location.hash.replace('#', '')) || this.album.items[this.params.autostartAtItem-1];
+        return this.findItemByHash(location.hash.replace('#', '')) || this.album.items[this.params.autoStartAtItem-1];
     }
 
     protected appendControlsElements(elements: HTMLElement[]) {
