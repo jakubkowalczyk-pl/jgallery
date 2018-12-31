@@ -62,7 +62,7 @@ const withSlideShow: GalleryDecorator = (constructor) =>
                 this.slideShowIcons,
                 this.progressBar.getElement(),
             ]);
-            this.progressBar.getElement().style.padding = '0';
+            this.progressBar.getElement().style.margin = '0';
         }
 
         protected initialize() {
