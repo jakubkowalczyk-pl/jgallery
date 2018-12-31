@@ -13,6 +13,9 @@ export interface Params {
     xAxis?: boolean;
     yAxis?: boolean;
     easingFunction?: EasingFunction;
+    opacity?: boolean;
+    animateSliceWidth?: boolean;
+    animateSliceHeight?: boolean;
 }
 
 const defaults: Params = {
@@ -24,6 +27,9 @@ const defaults: Params = {
     originY: .5,
     xAxis: true,
     yAxis: true,
+    opacity: false,
+    animateSliceWidth: true,
+    animateSliceHeight: false,
 };
 
 const transitionEffect = (canvas: Canvas, params: Params = {}) => {
@@ -32,6 +38,25 @@ const transitionEffect = (canvas: Canvas, params: Params = {}) => {
     const sliceSize = 20*(1/params.details);
     const sliceSizeX = params.xAxis ? sliceSize : canvas.element.width;
     const sliceSizeY = params.yAxis ? sliceSize : canvas.element.height;
+    const distanceToOrigin = (layer: Layer) => {
+        const { width, height } = canvas.element;
+
+        return Math.sqrt(
+            Math.pow(Math.abs(layer.translateX-width*params.originX)/width, 2) +
+            Math.pow(Math.abs(layer.translateY-height*params.originY)/height, 2)
+        );
+    };
+    const listeners: ((layer: Layer, progress: number) => void)[] = [];
+
+    params.animateSliceWidth && listeners.push((layer, progress) => {
+        layer.width = progress * sliceSizeX * (1 + distanceToOrigin(layer));
+    });
+    params.animateSliceHeight && listeners.push((layer, progress) => {
+        layer.height = progress * sliceSizeY * (1 + distanceToOrigin(layer));
+    });
+    params.opacity && listeners.push((layer, progress) => {
+        layer.alpha = progress;
+    });
 
     return promise((resolve, reject, onCancel) => {
         const layers: Layer[] = [];
@@ -40,20 +65,8 @@ const transitionEffect = (canvas: Canvas, params: Params = {}) => {
             finalValue: 1 - +params.reverse,
             easingFunction: params.easingFunction,
             duration: params.duration,
-            onChange: value => {
-                const { width, height } = canvas.element;
-
-                value *= sliceSize;
-                params.xAxis && layers.forEach(layer => {
-                    layer.width = value + Math.abs(layer.translateX-width*params.originX)/width * value;
-                });
-                params.yAxis && layers.forEach(layer => {
-                    layer.height = value + Math.abs(layer.translateY-height*params.originY)/height * value;
-                });
-            },
-            onComplete: () => {
-                resolve();
-            }
+            onChange: value => layers.forEach(layer => listeners.forEach(listener => listener(layer, value))),
+            onComplete: () => resolve(),
         });
 
         for (let x = 0; x < canvas.element.width; x+=sliceSizeX) {

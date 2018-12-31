@@ -1,12 +1,12 @@
 import Params from './parameters';
 
 const defaults: Params = {
-    autostartAtAlbum: 1,
-    autostartAtItem: 1,
+    autoStartAtAlbum: 1,
+    autoStartAtItem: 1,
     backgroundColor: '#000',
     browserHistory: true,
     canChangePreviewSize: true,
-    canMinimalizeThumbnails: true,
+    canMinimizeThumbnails: true,
     itemOnHide: () => {},
     itemOnLoad: () => {},
     itemOnShow: () => {},
@@ -30,8 +30,11 @@ const defaults: Params = {
     tooltipSlideShowPause: 'Pause slide show',
     tooltipSlideShowStart: 'Start slide show',
     tooltipThumbnailsToggle: 'Toogle whumbnails',
+    transitionAnimateSliceHeight: false,
+    transitionAnimateSliceWidth: true,
     transitionDetails: 1,
     transitionDuration: 250,
+    transitionOpacity: false,
     transitionOriginX: .5,
     transitionOriginY: .5,
     transitionXAxis: true,

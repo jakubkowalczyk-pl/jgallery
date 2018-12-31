@@ -3,11 +3,11 @@ import AlbumItem from '../album-item';
 import {ThumbnailsPosition} from "./with-thumbnails";
 
 export default interface Params {
-    autostartAtAlbum?: number; // Index of album which will be loaded by autostart.; ; [ 1, 2 ]
-    autostartAtItem?: number; // Index of item which will be loaded by autostart.; ; [ 1, 2, 3 ]
+    autoStartAtAlbum?: number; // Index of album which will be loaded by auto start.; ; [ 1, 2 ]
+    autoStartAtItem?: number; // Index of item which will be loaded by auto start.; ; [ 1, 2, 3 ]
     backgroundColor?: string; // Background color for jGallery container.; ; [ '#ffffff', 'silver' ]
     browserHistory?: boolean; // If set as 'true', changes of active item will be saved in browser history.; [ true, false ]
-    canMinimalizeThumbnails?: boolean; // If set as 'true', you can minimalize thumbnails(only when 'thumbnails' parameter set as 'true').; [ true, false ]
+    canMinimizeThumbnails?: boolean; // If set as 'true', you can minimize thumbnails(only when 'thumbnails' parameter set as 'true').; [ true, false ]
     canChangePreviewSize?: boolean; // If set as 'true', you can change preview size (only for images).; [ true, false ]
     itemOnHide?: (p: { album: Album, item: AlbumItem }) => any; // Custom function that will be called after hide item.; ; [ function() { console.log('called') } ]
     itemOnLoad?: (p: { album: Album, item: AlbumItem }) => any; // Custom function that will be called after load item.; ; [ function() { console.log('called') } ]
@@ -32,8 +32,11 @@ export default interface Params {
     tooltipSlideShowPause?: string; // Text of tooltip which will be displayed next to icon for pause slideshow.; ; [ 'Pause slide show', 'Zatrzymaj pokaz slajdów' ]
     tooltipSlideShowStart?: string; // Text of tooltip which will be displayed next to icon for play slideshow.; ; [ 'Start slide show', 'Uruchom pokaz slajdów' ]
     tooltipThumbnailsToggle?: string; // Text of tooltip which will be displayed next to icon for toggle thumbnails.; ; [ 'Toggle thumbnails', 'Pokaż/ukryj miniatury' ]
+    transitionAnimateSliceHeight?: boolean; // If set as 'true', slices' height will be animated.; [ true, false ]
+    transitionAnimateSliceWidth?: boolean; // If set as 'true', slices' width will be animated.; [ true, false ]
     transitionDetails?: number; // Specifies how many slices will have transition mask.; ; [ 1, 0.25, 0.5, 2, 4 ]
     transitionDuration?: number; // Duration(in ms) of transition between items.; [ 500, 250, 1000, 2000 ]
+    transitionOpacity?: boolean; // If set as 'true', slices' opacity will be animated.; [ true, false ]
     transitionOriginX?: number; // Specifies center point of transition at X axis; [ 0.5, 0, 1 ]
     transitionOriginY?: number; // Specifies center point of transition at Y axis; [ 0.5, 0, 1 ]
     transitionXAxis?: boolean; // If set as 'true', transition mask will be sliced along X axis.; [ true, false ]

@@ -59,7 +59,7 @@ const withThumbnails: GalleryDecorator = (constructor) =>
             if (this.params.thumbnailsFullScreen) {
                 this.appendControlsElements([this.toggleFullScreenThumbnailsIcon]);
             }
-            if (this.params.canMinimalizeThumbnails) {
+            if (this.params.canMinimizeThumbnails) {
                 this.appendControlsElements([
                     this.toggleThumbnailsIcon,
                 ]);
