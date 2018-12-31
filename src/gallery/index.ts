@@ -251,6 +251,9 @@ export class Gallery extends Component {
             yAxis: this.params.transitionYAxis,
             originX: this.params.transitionOriginX,
             originY: this.params.transitionOriginY,
+            animateSliceHeight: this.params.transitionAnimateSliceHeight,
+            animateSliceWidth: this.params.transitionAnimateSliceWidth,
+            opacity: this.params.transitionOpacity,
         };
 
         this.changingItem && this.changingItem.cancel();
