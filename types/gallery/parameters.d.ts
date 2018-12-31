@@ -2,11 +2,11 @@ import Album from '../album';
 import AlbumItem from '../album-item';
 import { ThumbnailsPosition } from "./with-thumbnails";
 export default interface Params {
-    autostartAtAlbum?: number;
-    autostartAtItem?: number;
+    autoStartAtAlbum?: number;
+    autoStartAtItem?: number;
     backgroundColor?: string;
     browserHistory?: boolean;
-    canMinimalizeThumbnails?: boolean;
+    canMinimizeThumbnails?: boolean;
     canChangePreviewSize?: boolean;
     itemOnHide?: (p: {
         album: Album;
@@ -44,8 +44,11 @@ export default interface Params {
     tooltipSlideShowPause?: string;
     tooltipSlideShowStart?: string;
     tooltipThumbnailsToggle?: string;
+    transitionAnimateSliceHeight?: boolean;
+    transitionAnimateSliceWidth?: boolean;
     transitionDetails?: number;
     transitionDuration?: number;
+    transitionOpacity?: boolean;
     transitionOriginX?: number;
     transitionOriginY?: number;
     transitionXAxis?: boolean;
