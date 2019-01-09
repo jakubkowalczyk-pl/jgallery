@@ -9,13 +9,14 @@ import withPreviewSizeChanger from './with-preview-size-changer';
 import withBrowserHistory from './with-browser-history';
 import Preview from '../preview/index';
 import AlbumItem from '../album-item';
-import Swipe from '../swipe';
+import SwipeListener from '../swipe-listener';
 import promise, {CancellablePromise} from '../utils/cancellable-promise';
 import Queue from '../utils/queue';
 import Params from './parameters';
 import defaults from './defaults';
 import withSlideShow from "./with-slideshow";
 import withThumbnails from "./with-thumbnails";
+import withDraggablePreview from "./with-draggable-preview";
 import withNavigationOnPreviewClick from './with-navigation-on-preview-click';
 
 let id = 1;
@@ -91,7 +92,7 @@ export class Gallery extends Component {
             },
             children: [this.preview.getElement(), this.controlsElement]
         });
-        (new Swipe({
+        (new SwipeListener({
             element: this.previewElement,
             onSwipeLeft: this.next,
             onSwipeRight: this.prev,
@@ -142,7 +143,7 @@ export class Gallery extends Component {
     }
 
     static create(albums: Array<Album>, params: Params = {}): Gallery {
-        const decorators: GalleryDecorator[] = [];
+        const decorators: GalleryDecorator[] = [withDraggablePreview];
 
         params = { ...defaults, ...params };
 

@@ -4,6 +4,7 @@ import Queue from '../utils/queue';
 import load from '../utils/load/index';
 import AlbumItem from '../album-item';
 import Component from '../component';
+import Point from '../point';
 
 export enum Size {
     contain = 'contain',
@@ -15,6 +16,7 @@ export default class Preview extends Component {
     public hasImage: boolean;
     public size: Size;
     private item: AlbumItem;
+    private moveDistance: Point;
 
     constructor() {
         super();
@@ -31,6 +33,8 @@ export default class Preview extends Component {
     }
 
     setItem(item: AlbumItem) {
+        this.moveDistance = new Point;
+
         const { element } = this;
         const content: HTMLElement = createElement(
             item.element ?
@@ -65,7 +69,24 @@ export default class Preview extends Component {
     setSize(size: Size) {
         this.size = size;
         if (this.hasImage) {
-            (<HTMLElement>this.element.firstChild).style.backgroundSize = this.size;
+            this.moveDistance = new Point;
+            Object.assign(
+                (<HTMLElement>this.element.firstChild).style, {
+                    backgroundSize: this.size,
+                    backgroundPosition: 'center center',
+                }
+            );
+        }
+    }
+
+    move(move: Point) {
+        if (this.hasImage) {
+            this.moveDistance = this.moveDistance.add(move);
+            Object.assign(
+                (<HTMLElement>this.element.firstChild).style, {
+                    backgroundPosition: `calc(50% + ${this.moveDistance.x}px) calc(50% + ${this.moveDistance.y}px)`,
+                }
+            );
         }
     }
 }
