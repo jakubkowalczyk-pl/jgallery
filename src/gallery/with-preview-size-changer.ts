@@ -2,6 +2,7 @@ import {GalleryDecorator} from './index';
 import Params from './parameters';
 import {iconScreen} from "../icons";
 import AlbumItem from "../album-item";
+import {Size} from '../preview';
 import withTooltip from "../utils/with-tooltip";
 
 const withPreviewSizeChanger: GalleryDecorator = (constructor) =>
@@ -34,11 +35,14 @@ const withPreviewSizeChanger: GalleryDecorator = (constructor) =>
             const { preview } = this;
 
             switch (preview.size) {
-                case 'cover':
-                    preview.setSize('contain');
+                case Size.COVER:
+                    preview.setSize(Size.CONTAIN);
+                    break;
+                case Size.CONTAIN:
+                    preview.setSize(Size.AUTO);
                     break;
                 default:
-                    preview.setSize('cover');
+                    preview.setSize(Size.COVER);
             }
         }
     };

@@ -5,7 +5,11 @@ import load from '../utils/load/index';
 import AlbumItem from '../album-item';
 import Component from '../component';
 
-export type Size = 'contain' | 'cover' | 'auto';
+export enum Size {
+    CONTAIN = 'CONTAIN',
+    COVER = 'COVER',
+    AUTO = 'AUTO',
+}
 
 export default class Preview extends Component {
     public hasImage: boolean;
@@ -14,7 +18,7 @@ export default class Preview extends Component {
 
     constructor() {
         super();
-        this.size = 'cover';
+        this.size = Size.COVER;
         this.element = createElement(`<div class="j-gallery-preview"/>`, {
             style: {
                 alignItems: 'center',
