@@ -1,9 +1,9 @@
 import AlbumItem from '../album-item';
 import Component from '../component';
 export declare enum Size {
-    CONTAIN = "CONTAIN",
-    COVER = "COVER",
-    AUTO = "AUTO"
+    contain = "contain",
+    cover = "cover",
+    auto = "auto"
 }
 export default class Preview extends Component {
     hasImage: boolean;

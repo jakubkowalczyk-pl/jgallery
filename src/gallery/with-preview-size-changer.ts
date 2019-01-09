@@ -35,14 +35,14 @@ const withPreviewSizeChanger: GalleryDecorator = (constructor) =>
             const { preview } = this;
 
             switch (preview.size) {
-                case Size.COVER:
-                    preview.setSize(Size.CONTAIN);
+                case Size.cover:
+                    preview.setSize(Size.contain);
                     break;
-                case Size.CONTAIN:
-                    preview.setSize(Size.AUTO);
+                case Size.contain:
+                    preview.setSize(Size.auto);
                     break;
                 default:
-                    preview.setSize(Size.COVER);
+                    preview.setSize(Size.cover);
             }
         }
     };

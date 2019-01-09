@@ -1,4 +1,5 @@
 import Params from './parameters';
+import {Size} from '../preview';
 
 const defaults: Params = {
     autoStartAtAlbum: 1,
@@ -12,6 +13,7 @@ const defaults: Params = {
     itemOnShow: () => {},
     navigationOnPreviewClick: true,
     onChange: () => {},
+    previewSize: Size.cover,
     slideShow: true,
     slideShowAutoStart: false,
     slideShowInterval: 4000,

@@ -1,5 +1,6 @@
 import Album from '../album';
 import AlbumItem from '../album-item';
+import { Size } from '../preview';
 import { ThumbnailsPosition } from "./with-thumbnails";
 export default interface Params {
     autoStartAtAlbum?: number;
@@ -26,6 +27,7 @@ export default interface Params {
         item: AlbumItem;
         prevItem: AlbumItem;
     }) => any;
+    previewSize?: Size;
     slideShow?: boolean;
     slideShowAutoStart?: boolean;
     slideShowInterval?: number;

@@ -81,6 +81,7 @@ export class Gallery extends Component {
             children: [this.title],
         });
         this.preview = new Preview;
+        this.preview.setSize(params.previewSize);
         this.previewElement = createElement(`<div class="j-gallery-preview-container"></div>`, {
             style: {
                 flex: '1',
