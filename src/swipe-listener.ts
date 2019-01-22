@@ -17,7 +17,6 @@ export default class SwipeListener {
         this.draggableListener = new DraggableListener({
             element,
             onMove: ({ drag, move }) => {
-                console.log({drag,move})
                 if (drag.x > 100) {
                     this.onSwipeRight();
                     this.draggableListener.end();
