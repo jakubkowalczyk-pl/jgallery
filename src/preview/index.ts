@@ -5,6 +5,8 @@ import load from '../utils/load/index';
 import AlbumItem from '../album-item';
 import Component from '../component';
 import Point from '../point';
+import SwipeListener from '../swipe-listener';
+import DragListener from '../drag-listener';
 
 export enum Size {
     contain = 'contain',
@@ -12,15 +14,27 @@ export enum Size {
     auto = 'auto',
 }
 
+export interface Params {
+    onSwipeLeft?: Function;
+    onSwipeRight?: Function;
+    canDrag?: boolean;
+}
+
 export default class Preview extends Component {
     public hasImage: boolean;
     public size: Size;
     private item: AlbumItem;
     private moveDistance: Point;
+    private dragListener: DragListener;
+    private swipeListener: SwipeListener;
+    private canDrag: boolean;
 
-    constructor() {
+    constructor(params: Params = {}) {
+        const { onSwipeLeft = () => {}, onSwipeRight = () => {}, canDrag } = params;
+
         super();
         this.size = Size.cover;
+        this.canDrag = canDrag;
         this.element = createElement(`<div class="j-gallery-preview"/>`, {
             style: {
                 alignItems: 'center',
@@ -29,6 +43,15 @@ export default class Preview extends Component {
                 display: 'flex',
                 flex: '1',
             }
+        });
+        this.dragListener = new DragListener({
+            element: this.element,
+            onMove: ({ move }) => this.move(move),
+        });
+        this.swipeListener = new SwipeListener({
+            element: this.element,
+            onSwipeLeft,
+            onSwipeRight,
         });
     }
 
@@ -77,9 +100,22 @@ export default class Preview extends Component {
                 }
             );
         }
+        this.hasImage && size === 'auto' ? this.activateDragging() : this.deactivateDragging();
     }
 
-    move(move: Point) {
+    private activateDragging() {
+        this.canDrag && this.dragListener.activate();
+        this.swipeListener.deactivate();
+        this.element.style.cursor = 'move';
+    }
+
+    private deactivateDragging() {
+        this.canDrag && this.dragListener.deactivate();
+        this.swipeListener.activate();
+        this.element.style.cursor = 'default';
+    }
+
+    private move(move: Point) {
         if (this.hasImage) {
             this.moveDistance = this.moveDistance.add(move);
             Object.assign(
