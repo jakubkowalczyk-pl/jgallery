@@ -16,6 +16,7 @@ export default class DragListener {
     private onMove: OnMove;
     private startPoint: Point;
     private prevPosition: Point;
+    private active: boolean;
 
     constructor({element, onMove = () => {}}: Params) {
         this.element = element;
@@ -27,17 +28,23 @@ export default class DragListener {
     }
 
     activate() {
-        this.element.addEventListener(
-            touchSupport ? 'touchstart' : 'mousedown',
-            touchSupport ? this.onTouchStart : this.onMouseDown
-        );
+        if (!this.active) {
+            this.active = true;
+            this.element.addEventListener(
+                touchSupport ? 'touchstart' : 'mousedown',
+                touchSupport ? this.onTouchStart : this.onMouseDown
+            );
+        }
     }
 
     deactivate() {
-        this.element.removeEventListener(
-            touchSupport ? 'touchstart' : 'mousedown',
-            touchSupport ? this.onTouchStart : this.onMouseDown
-        );
+        if (this.active) {
+            this.active = false;
+            this.element.removeEventListener(
+                touchSupport ? 'touchstart' : 'mousedown',
+                touchSupport ? this.onTouchStart : this.onMouseDown
+            );
+        }
     }
 
     end() {
