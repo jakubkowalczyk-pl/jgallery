@@ -15,7 +15,6 @@ import Params from './parameters';
 import defaults from './defaults';
 import withSlideShow from "./with-slideshow";
 import withThumbnails from "./with-thumbnails";
-import withNavigationOnPreviewClick from './with-navigation-on-preview-click';
 
 let id = 1;
 
@@ -26,8 +25,6 @@ export class Gallery extends Component {
     protected preview: Preview;
     protected previewElement: HTMLElement;
     private controlsElement: HTMLElement;
-    protected left: HTMLElement;
-    protected right: HTMLElement;
     private title: HTMLElement;
     private transitionCanvas: Canvas;
     private loading: Loading;
@@ -83,6 +80,8 @@ export class Gallery extends Component {
             onSwipeLeft: this.next,
             onSwipeRight: this.prev,
             canDrag: true,
+            leftOnClick: params.navigationOnPreviewClick ? this.prev : () => {},
+            rightOnClick: params.navigationOnPreviewClick ? this.next : () => {},
         });
         this.preview.setSize(params.previewSize);
         this.previewElement = createElement(`<div class="j-gallery-preview-container"></div>`, {
@@ -143,8 +142,6 @@ export class Gallery extends Component {
         const decorators: GalleryDecorator[] = [];
 
         params = { ...defaults, ...params };
-
-        if (params.navigationOnPreviewClick) decorators.push(withNavigationOnPreviewClick);
         if (params.browserHistory) decorators.push(withBrowserHistory);
         if (params.slideShow) decorators.push(withSlideShow);
         if (params.thumbnails) decorators.push(withThumbnails);

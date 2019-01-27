@@ -17,6 +17,8 @@ export enum Size {
 export interface Params {
     onSwipeLeft?: Function;
     onSwipeRight?: Function;
+    leftOnClick?: Function;
+    rightOnClick?: Function;
     canDrag?: boolean;
 }
 
@@ -28,9 +30,11 @@ export default class Preview extends Component {
     private dragListener: DragListener;
     private swipeListener: SwipeListener;
     private canDrag: boolean;
+    private left: HTMLElement;
+    private right: HTMLElement;
 
     constructor(params: Params = {}) {
-        const { onSwipeLeft = () => {}, onSwipeRight = () => {}, canDrag } = params;
+        const { onSwipeLeft = () => {}, onSwipeRight = () => {}, canDrag, leftOnClick = () => {}, rightOnClick = () => {} } = params;
 
         super();
         this.size = Size.cover;
@@ -40,6 +44,7 @@ export default class Preview extends Component {
                 alignItems: 'center',
                 justifyContent: 'center',
                 overflow: 'hidden',
+                position: 'relative',
                 display: 'flex',
                 flex: '1',
             }
@@ -53,6 +58,14 @@ export default class Preview extends Component {
             onSwipeLeft,
             onSwipeRight,
         });
+        this.left = createElement(`
+            <div class="j-gallery-left" style="left: 0; width: 50%; top: 0; bottom: 0; position: absolute; cursor: pointer;"></div>
+        `);
+        this.left.addEventListener('click', () => leftOnClick());
+        this.right = createElement(`
+            <div class="j-gallery-right" style="right: 0; width: 50%; top: 0; bottom: 0; position: absolute; cursor: pointer;"></div>
+        `);
+        this.right.addEventListener('click', () => rightOnClick());
     }
 
     setItem(item: AlbumItem) {
@@ -73,6 +86,8 @@ export default class Preview extends Component {
         this.hasImage = !item.element;
         this.item = item;
         element.innerHTML = '';
+        element.appendChild(this.left);
+        element.appendChild(this.right);
 
         return promise((resolve, reject, onCancel) => {
             const queue = new Queue(
@@ -103,16 +118,24 @@ export default class Preview extends Component {
         this.hasImage && size === 'auto' ? this.activateDragging() : this.deactivateDragging();
     }
 
+    onClick(fn: Function) {
+        [this.left, this.right].forEach(element => element.addEventListener('click', () => fn()));
+    }
+
     private activateDragging() {
-        this.canDrag && this.dragListener.activate();
-        this.swipeListener.deactivate();
-        this.element.style.cursor = 'move';
+        if (this.canDrag) {
+            this.dragListener.activate();
+            this.swipeListener.deactivate();
+            this.element.style.cursor = 'move';
+        }
     }
 
     private deactivateDragging() {
-        this.canDrag && this.dragListener.deactivate();
-        this.swipeListener.activate();
-        this.element.style.cursor = 'default';
+        if (this.canDrag) {
+            this.dragListener.deactivate();
+            this.swipeListener.activate();
+            this.element.style.cursor = 'default';
+        }
     }
 
     private move(move: Point) {
