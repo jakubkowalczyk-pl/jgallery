@@ -126,6 +126,7 @@ export default class Preview extends Component {
         if (this.canDrag) {
             this.dragListener.activate();
             this.swipeListener.deactivate();
+            this.deactivateClickableArea();
             this.element.style.cursor = 'move';
         }
     }
@@ -134,6 +135,7 @@ export default class Preview extends Component {
         if (this.canDrag) {
             this.dragListener.deactivate();
             this.swipeListener.activate();
+            this.activateClickableArea();
             this.element.style.cursor = 'default';
         }
     }
@@ -147,5 +149,13 @@ export default class Preview extends Component {
                 }
             );
         }
+    }
+
+    private activateClickableArea() {
+        [this.left, this.right].forEach(element => this.element.appendChild(element));
+    }
+
+    private deactivateClickableArea() {
+        [this.left, this.right].forEach(element => this.element.removeChild(element));
     }
 }
