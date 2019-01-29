@@ -30,6 +30,7 @@ export default class Preview extends Component {
     private dragListener: DragListener;
     private swipeListener: SwipeListener;
     private canDrag: boolean;
+    private content: HTMLElement;
     private left: HTMLElement;
     private right: HTMLElement;
 
@@ -72,7 +73,8 @@ export default class Preview extends Component {
         this.moveDistance = new Point;
 
         const { element } = this;
-        const content: HTMLElement = createElement(
+
+        this.content = createElement(
             item.element ?
             item.element.outerHTML :
             `<div class="j-gallery-preview-content" style="
@@ -91,9 +93,9 @@ export default class Preview extends Component {
 
         return promise((resolve, reject, onCancel) => {
             const queue = new Queue(
-                () => load(this.hasImage ? item.url : content),
+                () => load(this.hasImage ? item.url : this.content),
                 () => {
-                    element.appendChild(content);
+                    element.appendChild(this.content);
                     resolve();
                     return Promise.resolve();
                 },
@@ -109,7 +111,7 @@ export default class Preview extends Component {
         if (this.hasImage) {
             this.moveDistance = new Point;
             Object.assign(
-                (<HTMLElement>this.element.firstChild).style, {
+                this.content.style, {
                     backgroundSize: this.size,
                     backgroundPosition: 'center center',
                 }
@@ -144,7 +146,7 @@ export default class Preview extends Component {
         if (this.hasImage) {
             this.moveDistance = this.moveDistance.add(move);
             Object.assign(
-                (<HTMLElement>this.element.firstChild).style, {
+                this.content.style, {
                     backgroundPosition: `calc(50% + ${this.moveDistance.x}px) calc(50% + ${this.moveDistance.y}px)`,
                 }
             );
