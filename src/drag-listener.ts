@@ -60,10 +60,12 @@ export default class DragListener {
     private onTouchStart(event: TouchEvent) {
         const touch = event.touches[0];
 
+        event.preventDefault();
         this.start(new Point({ x: touch.pageX, y: touch.pageY }));
     }
 
     private onMouseDown (event: MouseEvent) {
+        event.preventDefault();
         this.start(new Point({ x: event.pageX, y: event.pageY }));
     }
 
@@ -82,10 +84,12 @@ export default class DragListener {
     private onTouchMove(event: TouchEvent) {
         const touch = event.touches[0];
 
+        event.preventDefault();
         this.move(new Point({ x: touch.pageX, y: touch.pageY }));
     }
 
     private onMouseMove(event: MouseEvent) {
+        event.preventDefault();
         this.move(new Point({ x: event.pageX, y: event.pageY }));
     }
 
