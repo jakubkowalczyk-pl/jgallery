@@ -11,8 +11,6 @@ export declare class Gallery extends Component {
     protected preview: Preview;
     protected previewElement: HTMLElement;
     private controlsElement;
-    protected left: HTMLElement;
-    protected right: HTMLElement;
     private title;
     private transitionCanvas;
     private loading;

@@ -1,18 +1,35 @@
 import AlbumItem from '../album-item';
 import Component from '../component';
-import Point from '../point';
 export declare enum Size {
     contain = "contain",
     cover = "cover",
     auto = "auto"
+}
+export interface Params {
+    onSwipeLeft?: Function;
+    onSwipeRight?: Function;
+    leftOnClick?: Function;
+    rightOnClick?: Function;
+    canDrag?: boolean;
 }
 export default class Preview extends Component {
     hasImage: boolean;
     size: Size;
     private item;
     private moveDistance;
-    constructor();
+    private dragListener;
+    private swipeListener;
+    private canDrag;
+    private content;
+    private left;
+    private right;
+    constructor(params?: Params);
     setItem(item: AlbumItem): import("../utils/cancellable-promise").CancellablePromise<{}>;
     setSize(size: Size): void;
-    move(move: Point): void;
+    onClick(fn: Function): void;
+    private activateDragging;
+    private deactivateDragging;
+    private move;
+    private activateClickableArea;
+    private deactivateClickableArea;
 }

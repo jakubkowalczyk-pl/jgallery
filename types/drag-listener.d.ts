@@ -14,6 +14,7 @@ export default class DragListener {
     private onMove;
     private startPoint;
     private prevPosition;
+    private active;
     constructor({ element, onMove }: Params);
     activate(): void;
     deactivate(): void;

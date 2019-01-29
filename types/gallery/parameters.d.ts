@@ -27,6 +27,7 @@ export default interface Params {
         item: AlbumItem;
         prevItem: AlbumItem;
     }) => any;
+    previewDraggable?: boolean;
     previewSize?: Size;
     slideShow?: boolean;
     slideShowAutoStart?: boolean;
