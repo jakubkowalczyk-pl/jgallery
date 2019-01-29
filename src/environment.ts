@@ -1,0 +1,1 @@
+export const touchSupport = 'ontouchstart' in window || navigator.msMaxTouchPoints;

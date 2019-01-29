@@ -1,6 +1,5 @@
 import Point from './point';
-
-const touchSupport = 'ontouchstart' in window || navigator.msMaxTouchPoints;
+import {touchSupport} from './environment';
 
 export interface Params {
     element: HTMLElement;
