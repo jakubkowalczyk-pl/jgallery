@@ -1,6 +1,6 @@
 {
   "name": "jgallery",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "JGallery",
   "main": "dist/js/jgallery.js",
   "types": "types/index.d.ts",
