@@ -79,7 +79,7 @@ export class Gallery extends Component {
         this.preview = new Preview({
             onSwipeLeft: this.next,
             onSwipeRight: this.prev,
-            canDrag: true,
+            canDrag: params.previewDraggable,
             leftOnClick: params.navigationOnPreviewClick ? this.prev : () => {},
             rightOnClick: params.navigationOnPreviewClick ? this.next : () => {},
         });

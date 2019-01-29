@@ -14,6 +14,7 @@ const defaults: Params = {
     navigationOnPreviewClick: true,
     onChange: () => {},
     previewSize: Size.cover,
+    previewDraggable: true,
     slideShow: true,
     slideShowAutoStart: false,
     slideShowInterval: 4000,

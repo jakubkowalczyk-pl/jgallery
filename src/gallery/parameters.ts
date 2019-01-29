@@ -15,6 +15,7 @@ export default interface Params {
     itemOnShow?: (p: { album: Album, item: AlbumItem }) => any; // Custom function that will be called after show item.; ; [ function() { console.log('called') } ]
     navigationOnPreviewClick?: boolean; // If set as 'true', clicking in preview area will change active item(to next if click on right side, or previous if click on left side).; [ true, false ]
     onChange?: (p: { album: Album, item: AlbumItem, prevItem: AlbumItem }) => any; // Custom function that will be called before change (hide) item.; ; [ function() { console.log('called') } ]
+    previewDraggable?: boolean; // If set as 'true', you can drag image in preview (only for preview size 'auto').; [ true, false ]
     previewSize?: Size; // Size of preview for images.; [ 'cover', 'contain', 'auto' ]
     slideShow?: boolean; // If set as 'true', option slideshow is enabled.; [ true, false ]
     slideShowAutoStart?: boolean; // If set as 'true', slideshow will be started immediately after initializing jGallery(only when 'slideshow' has been set as true).; [ true, false ]
