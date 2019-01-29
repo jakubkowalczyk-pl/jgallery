@@ -25,6 +25,7 @@ export default class DragListener {
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onTouchStart = this.onTouchStart.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
+        this.end = this.end.bind(this);
     }
 
     activate() {
@@ -52,6 +53,9 @@ export default class DragListener {
             touchSupport ? 'touchmove' : 'mousemove',
             touchSupport ? this.onTouchMove : this.onMouseMove
         );
+        (touchSupport ? ['touchend'] : ['mouseleave', 'mouseup']).forEach(event => {
+            this.element.removeEventListener(event, this.end);
+        });
     }
 
     private onTouchStart(event: TouchEvent) {
@@ -71,10 +75,9 @@ export default class DragListener {
             touchSupport ? 'touchmove' : 'mousemove',
             touchSupport ? this.onTouchMove : this.onMouseMove
         );
-        this.element.addEventListener(
-            touchSupport ? 'touchend' : 'mouseup',
-            this.end.bind(this)
-        );
+        (touchSupport ? ['touchend'] : ['mouseleave', 'mouseup']).forEach(event => {
+            this.element.addEventListener(event, this.end);
+        });
     }
 
     private onTouchMove(event: TouchEvent) {
