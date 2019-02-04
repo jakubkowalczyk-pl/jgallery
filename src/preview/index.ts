@@ -96,6 +96,7 @@ export default class Preview extends Component {
                 () => load(this.hasImage ? item.url : this.content),
                 () => {
                     element.appendChild(this.content);
+                    this.manageDraggingMode();
                     resolve();
                     return Promise.resolve();
                 },
@@ -117,11 +118,15 @@ export default class Preview extends Component {
                 }
             );
         }
-        this.hasImage && size === 'auto' ? this.activateDragging() : this.deactivateDragging();
+        this.manageDraggingMode();
     }
 
     onClick(fn: Function) {
         [this.left, this.right].forEach(element => element.addEventListener('click', () => fn()));
+    }
+
+    private manageDraggingMode() {
+        this.hasImage && this.canDrag && this.size === 'auto' ? this.activateDragging() : this.deactivateDragging();
     }
 
     private activateDragging() {

@@ -27,6 +27,7 @@ export default class Preview extends Component {
     setItem(item: AlbumItem): import("../utils/cancellable-promise").CancellablePromise<{}>;
     setSize(size: Size): void;
     onClick(fn: Function): void;
+    private manageDraggingMode;
     private activateDragging;
     private deactivateDragging;
     private move;
