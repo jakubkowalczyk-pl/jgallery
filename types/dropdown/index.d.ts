@@ -9,7 +9,13 @@ export interface Params {
     onChange?: OnChange;
 }
 export default class Dropdown extends Component {
-    private options;
+    private list;
+    private activeItem;
+    private textColor;
+    private backgroundColor;
+    private opened;
+    private value;
     constructor({ items, backgroundColor, textColor, onChange }: Params);
     setActive(index: number): void;
+    private toggle;
 }
