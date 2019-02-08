@@ -23,6 +23,7 @@ export default class Preview extends Component {
     private content;
     private left;
     private right;
+    private title;
     constructor(params?: Params);
     setItem(item: AlbumItem): import("../utils/cancellable-promise").CancellablePromise<{}>;
     setSize(size: Size): void;

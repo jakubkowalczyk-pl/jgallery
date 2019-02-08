@@ -25,7 +25,6 @@ export class Gallery extends Component {
     protected preview: Preview;
     protected previewElement: HTMLElement;
     private controlsElement: HTMLElement;
-    private title: HTMLElement;
     private transitionCanvas: Canvas;
     private loading: Loading;
     protected params: Params;
@@ -58,14 +57,6 @@ export class Gallery extends Component {
         if (typeof document !== 'undefined') {
             document.querySelector('head').appendChild(style);
         }
-        this.title = createElement('<div class="j-gallery-title"></div>', {
-            style: {
-                paddingRight: '10px',
-                order: '1',
-                textAlign: 'right',
-                flexGrow: '1',
-            }
-        });
         this.controlsElement = createElement(`<div class="j-gallery-controls"></div>`, {
             style: {
                 padding: '5px 0',
@@ -74,7 +65,6 @@ export class Gallery extends Component {
                 alignItems: 'center',
                 zIndex: '1',
             },
-            children: [this.title],
         });
         this.preview = new Preview({
             onSwipeLeft: this.next,
@@ -268,7 +258,6 @@ export class Gallery extends Component {
                 },
                 () => {
                     this.params.itemOnLoad({ item, album: this.album });
-                    this.title.innerHTML = item.title || '';
                     this.hideLoading();
                     this.transitionCanvas.clearLayers();
                     return transitionEffect(this.transitionCanvas, {...options, reverse: true});

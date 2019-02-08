@@ -11,7 +11,6 @@ export declare class Gallery extends Component {
     protected preview: Preview;
     protected previewElement: HTMLElement;
     private controlsElement;
-    private title;
     private transitionCanvas;
     private loading;
     protected params: Params;

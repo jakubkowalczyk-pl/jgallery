@@ -33,6 +33,7 @@ export default class Preview extends Component {
     private content: HTMLElement;
     private left: HTMLElement;
     private right: HTMLElement;
+    private title: HTMLElement;
 
     constructor(params: Params = {}) {
         const { onSwipeLeft = () => {}, onSwipeRight = () => {}, canDrag, leftOnClick = () => {}, rightOnClick = () => {} } = params;
@@ -50,6 +51,15 @@ export default class Preview extends Component {
                 flex: '1',
             }
         });
+        this.title = createElement(`<div class="j-gallery-preview-title"/>`, {
+            style: {
+                textShadow: '1px 1px 1px #000',
+                bottom: '10px',
+                right: '10px',
+                position: 'absolute',
+            }
+        });
+        this.element.appendChild(this.title);
         this.dragListener = new DragListener({
             element: this.element,
             onMove: ({ move }) => this.move(move),
@@ -67,13 +77,16 @@ export default class Preview extends Component {
             <div class="j-gallery-right" style="right: 0; width: 50%; top: 0; bottom: 0; position: absolute; cursor: pointer;"></div>
         `);
         this.right.addEventListener('click', () => rightOnClick());
+        this.element.appendChild(this.left);
+        this.element.appendChild(this.right);
     }
 
     setItem(item: AlbumItem) {
         this.moveDistance = new Point;
 
-        const { element } = this;
+        const { element, title } = this;
 
+        this.content && this.element.removeChild(this.content);
         this.content = createElement(
             item.element ?
             item.element.outerHTML :
@@ -87,15 +100,14 @@ export default class Preview extends Component {
 
         this.hasImage = !item.element;
         this.item = item;
-        element.innerHTML = '';
-        element.appendChild(this.left);
-        element.appendChild(this.right);
+        title.innerHTML = '';
 
         return promise((resolve, reject, onCancel) => {
             const queue = new Queue(
                 () => load(this.hasImage ? item.url : this.content),
                 () => {
                     element.appendChild(this.content);
+                    title.innerHTML = item.title || '';
                     this.manageDraggingMode();
                     resolve();
                     return Promise.resolve();
