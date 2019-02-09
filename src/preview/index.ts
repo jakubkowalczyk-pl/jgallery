@@ -53,9 +53,10 @@ export default class Preview extends Component {
         });
         this.title = createElement(`<div class="j-gallery-preview-title"/>`, {
             style: {
+                color: '#fff',
                 textShadow: '1px 1px 1px #000',
                 bottom: '10px',
-                right: '10px',
+                right: '15px',
                 position: 'absolute',
             }
         });
