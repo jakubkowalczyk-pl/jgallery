@@ -175,6 +175,8 @@ export default class Preview extends Component {
     }
 
     private deactivateClickableArea() {
-        [this.left, this.right].forEach(element => this.element.removeChild(element));
+        [this.left, this.right].forEach(element => {
+            element.parentNode === this.element && this.element.removeChild(element);
+        });
     }
 }
