@@ -2,6 +2,7 @@ import Point from './point';
 export interface Params {
     element: HTMLElement;
     onMove?: OnMove;
+    preventDefault?: boolean;
 }
 export interface OnMove {
     (p: {
@@ -15,7 +16,7 @@ export default class DragListener {
     private startPoint;
     private prevPosition;
     private active;
-    constructor({ element, onMove }: Params);
+    constructor({ element, onMove, preventDefault }: Params);
     activate(): void;
     deactivate(): void;
     end(): void;
@@ -25,4 +26,5 @@ export default class DragListener {
     private onTouchMove;
     private onMouseMove;
     private move;
+    private preventDefault;
 }

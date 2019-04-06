@@ -4,6 +4,7 @@ import {touchSupport} from './environment';
 export interface Params {
     element: HTMLElement;
     onMove?: OnMove;
+    preventDefault?: boolean;
 }
 
 export interface OnMove {
@@ -17,7 +18,7 @@ export default class DragListener {
     private prevPosition: Point;
     private active: boolean;
 
-    constructor({element, onMove = () => {}}: Params) {
+    constructor({element, onMove = () => {}, preventDefault = true}: Params) {
         this.element = element;
         this.onMove = onMove;
         this.onTouchMove = this.onTouchMove.bind(this);
@@ -25,6 +26,9 @@ export default class DragListener {
         this.onTouchStart = this.onTouchStart.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
         this.end = this.end.bind(this);
+        if (!preventDefault) {
+            this.preventDefault = () => {};
+        }
     }
 
     activate() {
@@ -60,12 +64,12 @@ export default class DragListener {
     private onTouchStart(event: TouchEvent) {
         const touch = event.touches[0];
 
-        event.preventDefault();
+        this.preventDefault(event);
         this.start(new Point({ x: touch.pageX, y: touch.pageY }));
     }
 
     private onMouseDown (event: MouseEvent) {
-        event.preventDefault();
+        this.preventDefault(event);
         this.start(new Point({ x: event.pageX, y: event.pageY }));
     }
 
@@ -84,12 +88,12 @@ export default class DragListener {
     private onTouchMove(event: TouchEvent) {
         const touch = event.touches[0];
 
-        event.preventDefault();
+        this.preventDefault(event);
         this.move(new Point({ x: touch.pageX, y: touch.pageY }));
     }
 
     private onMouseMove(event: MouseEvent) {
-        event.preventDefault();
+        this.preventDefault(event);
         this.move(new Point({ x: event.pageX, y: event.pageY }));
     }
 
@@ -99,5 +103,9 @@ export default class DragListener {
             move: point.subtract(this.prevPosition),
         });
         this.prevPosition = point;
+    }
+
+    private preventDefault<T extends Event>(event: T) {
+        event.preventDefault();
     }
 }

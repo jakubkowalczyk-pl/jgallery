@@ -16,6 +16,7 @@ export default class SwipeListener {
         this.onSwipeRight = onSwipeRight;
         this.draggableListener = new DraggableListener({
             element,
+            preventDefault: false,
             onMove: ({ drag, move }) => {
                 if (drag.x > 100) {
                     this.onSwipeRight();
