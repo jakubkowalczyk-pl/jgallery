@@ -2,6 +2,7 @@ import Album from '../album';
 import AlbumItem from '../album-item';
 import {Size} from '../preview';
 import {ThumbnailsPosition} from "./with-thumbnails";
+import {GalleryDecorator} from './index';
 
 export default interface Params {
     autoStartAtAlbum?: number; // Index of album which will be loaded by auto start.; ; [ 1, 2 ]
@@ -10,6 +11,7 @@ export default interface Params {
     browserHistory?: boolean; // If set as 'true', changes of active item will be saved in browser history.; [ true, false ]
     canMinimizeThumbnails?: boolean; // If set as 'true', you can minimize thumbnails(only when 'thumbnails' parameter set as 'true').; [ true, false ]
     canChangePreviewSize?: boolean; // If set as 'true', you can change preview size (only for images).; [ true, false ]
+    decorators?: GalleryDecorator[];
     itemOnHide?: (p: { album: Album, item: AlbumItem }) => any; // Custom function that will be called after hide item.; ; [ function() { console.log('called') } ]
     itemOnLoad?: (p: { album: Album, item: AlbumItem }) => any; // Custom function that will be called after load item.; ; [ function() { console.log('called') } ]
     itemOnShow?: (p: { album: Album, item: AlbumItem }) => any; // Custom function that will be called after show item.; ; [ function() { console.log('called') } ]

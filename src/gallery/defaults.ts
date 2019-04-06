@@ -8,6 +8,7 @@ const defaults: Params = {
     browserHistory: true,
     canChangePreviewSize: true,
     canMinimizeThumbnails: true,
+    decorators: [],
     itemOnHide: () => {},
     itemOnLoad: () => {},
     itemOnShow: () => {},

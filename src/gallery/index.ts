@@ -138,7 +138,7 @@ export class Gallery extends Component {
         if (params.canChangePreviewSize) decorators.push(withPreviewSizeChanger);
         if (albums.length > 1) decorators.push(withAlbumsMenu);
 
-        return new (compose(decorators, Gallery))(albums, params);
+        return new (compose([...decorators, ...params.decorators], Gallery))(albums, params);
     }
 
     static createElement(html: string): HTMLElement {

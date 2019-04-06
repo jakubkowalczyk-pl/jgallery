@@ -2,6 +2,7 @@ import Album from '../album';
 import AlbumItem from '../album-item';
 import { Size } from '../preview';
 import { ThumbnailsPosition } from "./with-thumbnails";
+import { GalleryDecorator } from './index';
 export default interface Params {
     autoStartAtAlbum?: number;
     autoStartAtItem?: number;
@@ -9,6 +10,7 @@ export default interface Params {
     browserHistory?: boolean;
     canMinimizeThumbnails?: boolean;
     canChangePreviewSize?: boolean;
+    decorators?: GalleryDecorator[];
     itemOnHide?: (p: {
         album: Album;
         item: AlbumItem;
