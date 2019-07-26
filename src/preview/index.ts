@@ -85,9 +85,9 @@ export default class Preview extends Component {
     setItem(item: AlbumItem) {
         this.moveDistance = new Point;
 
-        const { element, title } = this;
+        const { element, content, title } = this;
 
-        this.content && this.element.removeChild(this.content);
+        content && content.parentElement === element && element.removeChild(content);
         this.content = createElement(
             item.element ?
             item.element.outerHTML :
