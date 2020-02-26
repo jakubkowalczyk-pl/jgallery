@@ -33,7 +33,7 @@ const defaults: Params = {
     tooltipSeeOtherAlbums: 'See other albums',
     tooltipSlideShowPause: 'Pause slide show',
     tooltipSlideShowStart: 'Start slide show',
-    tooltipThumbnailsToggle: 'Toogle whumbnails',
+    tooltipThumbnailsToggle: 'Toggle thumbnails',
     transitionAnimateSliceHeight: false,
     transitionAnimateSliceWidth: true,
     transitionDetails: 1,
