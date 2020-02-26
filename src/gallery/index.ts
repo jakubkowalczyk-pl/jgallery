@@ -15,6 +15,7 @@ import Params from './parameters';
 import defaults from './defaults';
 import withSlideShow from "./with-slideshow";
 import withThumbnails from "./with-thumbnails";
+import load from '../utils/load';
 
 let id = 1;
 
@@ -177,30 +178,34 @@ export class Gallery extends Component {
         return this.getItems().find(item => item.hash === hash);
     }
 
-    protected async next(): Promise<void> {
+    protected get nextItem() {
         const { album, item } = this;
         const { items } = album;
         const next = items[items.indexOf(item)+1];
-
         if (next) {
-            await this.goToItem(next);
+            return next;
+        } else {
+            return items[0];
         }
-        else {
-            await this.goToItem(items[0]);
+    }
+
+    protected async next(): Promise<void> {
+        await this.goToItem(this.nextItem);
+    }
+
+    protected get prevItem() {
+        const { album, item } = this;
+        const { items } = album;
+        const prev = items[items.indexOf(item)-1];
+        if (prev) {
+            return prev;
+        } else {
+            return items[items.length-1];
         }
     }
 
     protected async prev(): Promise<void> {
-        const { album, item } = this;
-        const { items } = album;
-        const prev = items[items.indexOf(item)-1];
-
-        if (prev) {
-            await this.goToItem(prev);
-        }
-        else {
-            await this.goToItem(items[items.length-1]);
-        }
+        await this.goToItem(this.prevItem);
     }
 
     private showTransitionCanvas(): void {
@@ -270,6 +275,10 @@ export class Gallery extends Component {
                     resolve();
                     return Promise.resolve();
                 },
+                () => Promise.all([
+                    () => this.nextItem.element ? Promise.resolve() : load(this.nextItem.url),
+                    () => this.prevItem.element ? Promise.resolve() : load(this.prevItem.url)
+                ]),
             );
 
             queue.run();
