@@ -20,10 +20,10 @@ const cancellablePromise = <T>(executor: Executor<T>): CancellablePromise<T> => 
     const cancelListeners: Array<() => any> = [];
     let cancel: () => any;
     const onCancel = (listener: () => any) => cancelListeners.push(listener);
-    const promise: CancellablePromise<T> = new Promise((resolve, reject) => {
+    const promise: CancellablePromise<T> = new Promise<T>((resolve, reject) => {
         executor(resolve, reject, onCancel);
         cancel = () => {
-            resolve();
+            resolve(null);
             cancelListeners.forEach(fn => fn());
         };
     });
