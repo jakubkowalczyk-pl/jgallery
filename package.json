@@ -11,10 +11,10 @@
   "author": "Jakub Kowalczyk",
   "license": "MIT",
   "devDependencies": {
-    "ts-loader": "^5.3.2",
+    "ts-loader": "^9.4.2",
     "typescript": "^3.1.6",
-    "webpack": "^4.28.2",
-    "webpack-cli": "^3.1.2",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1",
     "webpack-dev-server": "^3.1.14",
     "wrapper-webpack-plugin": "^2.1.0"
   }
